@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
     const senderAddress = String(campaign.sender_email || "").trim();
     const brandedSender = senderAddress.includes("<")
       ? senderAddress
-      : `Atanda Verse <${senderAddress || "letters@atanda.site"}>`;
+      : `Atanda Verse Blog <${senderAddress || "letters@atanda.site"}>`;
 
     for (const sub of subscribers || []) {
       const payload = {

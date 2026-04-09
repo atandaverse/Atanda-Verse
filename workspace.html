@@ -480,7 +480,7 @@ create table if not exists newsletter_campaigns (
   subject text not null,
   preview_text text default '',
   status text default 'draft',
-  sender_email text default 'Atanda Verse <letters@atanda.site>',
+  sender_email text default 'Atanda Verse Blog <letters@atanda.site>',
   reply_to text default 'letters@atanda.site',
   audience_filter text default 'all',
   created_at timestamptz default now(),
@@ -4550,7 +4550,7 @@ async function ensureNewsletterDraftForPost(post){
       subject:post.title+' | Atanda Verse',
       preview_text:(post.excerpt||'').slice(0,180),
       status:'draft',
-      sender_email:'Atanda Verse <letters@atanda.site>',
+      sender_email:'Atanda Verse Blog <letters@atanda.site>',
       reply_to:'letters@atanda.site',
       audience_filter:'all',
       created_at:new Date().toISOString()
