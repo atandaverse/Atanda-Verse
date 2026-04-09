@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-primary:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 30%,#ffffff 100%);--bg-secondary:rgba(255,255,255,0.85);--bg-card:white;--text-primary:#1a365d;--text-secondary:#4a5568;--text-muted:#6b7280;--border-color:rgba(0,0,0,0.08);--shadow:rgba(0,0,0,0.08);--shadow-hover:rgba(0,0,0,0.14);--accent:#dc3545;--accent-hover:#b02a37;--nav-bg:rgba(255,255,255,0.85);--glass:rgba(255,255,255,0.6);--glass-border:rgba(255,255,255,0.8)}
+[data-theme="dark"]{--bg-primary:linear-gradient(135deg,#0f172a 0%,#1e293b 30%,#334155 100%);--bg-secondary:rgba(15,23,42,0.8);--bg-card:#1e293b;--text-primary:#f1f5f9;--text-secondary:#cbd5e1;--text-muted:#94a3b8;--border-color:rgba(255,255,255,0.08);--shadow:rgba(0,0,0,0.3);--shadow-hover:rgba(0,0,0,0.4);--accent:#ef4444;--accent-hover:#dc2626;--nav-bg:rgba(15,23,42,0.85);--newsletter-bg:#0f172a;--glass:rgba(30,41,59,0.55);--glass-border:rgba(255,255,255,0.08)}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.7;transition:background .4s,color .4s;cursor:auto;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.02;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.c-dot,.c-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);border-radius:50%}
+.c-dot{width:8px;height:8px;background:var(--accent)}
+.c-ring{width:36px;height:36px;border:2px solid var(--accent);opacity:.55;transition:width .2s,height .2s,opacity .2s}
+.c-ring.hov{width:54px;height:54px;opacity:1}
+.loader{position:fixed;inset:0;background:var(--text-primary);z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity .7s,visibility .7s}
+.loader.gone{opacity:0;visibility:hidden}
+.l-brand{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:4px;color:#fff}
+.l-brand span{color:var(--accent)}
+.l-track{width:180px;height:2px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden}
+.l-fill{height:100%;background:var(--accent);animation:lf 1.2s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes lf{from{width:0}to{width:100%}}
+.progress{position:fixed;top:0;left:0;z-index:9999;height:3px;background:linear-gradient(90deg,var(--accent),#ff7070);transform-origin:left;transform:scaleX(0);box-shadow:0 0 10px rgba(220,53,69,.45)}
+.theme-btn{position:fixed;top:50%;right:22px;transform:translateY(-50%);z-index:1001;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:50px;width:50px;height:50px;cursor:none;display:flex;align-items:center;justify-content:center;font-size:1.15rem;box-shadow:0 8px 30px var(--shadow);transition:all .3s}
+.theme-btn:hover{transform:translateY(-50%) scale(1.1)}
+nav{position:fixed;top:0;width:100%;background:var(--nav-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);z-index:1000;padding:1rem 0;border-bottom:1px solid var(--border-color);transition:all .35s}
+nav.scrolled{padding:.65rem 0;box-shadow:0 4px 30px var(--shadow)}
+.nav-container{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:0 2rem}
+.nav-logo{display:flex;align-items:center;gap:.9rem}
+.logo-icon{width:48px;height:48px;background:white;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:transform .3s}
+.logo-icon:hover{transform:rotate(-5deg) scale(1.05)}
+.logo-icon img{width:100%;height:100%;object-fit:contain}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:2px;color:var(--text-primary);text-decoration:none}
+.logo-verse{color:var(--accent)}
+.nav-links{display:flex;list-style:none;gap:2rem;align-items:center}
+.nav-links a{text-decoration:none;color:var(--text-primary);font-weight:500;font-size:.88rem;letter-spacing:.5px;transition:color .3s;position:relative;padding-bottom:4px}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--accent);transition:width .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--accent)}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.back-btn{background:linear-gradient(135deg,var(--accent),var(--accent-hover)) !important;color:white !important;padding:.45rem 1rem !important;border-radius:8px !important;font-weight:700 !important;transition:all .3s cubic-bezier(.34,1.56,.64,1) !important}
+.back-btn:hover{transform:translateY(-2px) !important;box-shadow:0 8px 20px rgba(220,53,69,.3) !important}
+.back-btn::after{display:none !important}
+.mob-menu{display:none;flex-direction:column;gap:5px;cursor:none}
+.mob-menu span{width:24px;height:2px;background:var(--text-primary);display:block;transition:.3s;transform-origin:center}
+.mob-menu.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.mob-menu.open span:nth-child(2){opacity:0}
+.mob-menu.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.container{max-width:900px;margin:0 auto;padding:0 2rem;position:relative;z-index:1}
+.container-wide{max-width:1200px;margin:0 auto;padding:0 2rem}
+.article-header{padding:calc(80px + 4rem) 0 4rem;text-align:center;background:var(--bg-secondary);position:relative;overflow:hidden;transition:background .4s}
+.article-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 0%,rgba(220,53,69,.07),transparent 55%);pointer-events:none}
+.article-header-inner{position:relative;z-index:2}
+.article-category{display:inline-block;background:rgba(220,53,69,.08);color:var(--accent);padding:.4rem 1.1rem;border-radius:50px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:1.5rem;border:1px solid rgba(220,53,69,.25);animation:fadeUp .8s ease 1.5s both}
+.article-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,7vw,5rem);color:var(--text-primary);margin-bottom:.8rem;line-height:.95;letter-spacing:1px;text-transform:uppercase;animation:fadeUp .8s ease 1.65s both}
+.article-subtitle{font-family:'Instrument Serif',serif;font-size:clamp(1.1rem,2.5vw,1.5rem);font-weight:400;font-style:italic;color:var(--text-muted);margin-bottom:2rem;line-height:1.4;animation:fadeUp .8s ease 1.8s both}
+.article-meta{display:flex;justify-content:center;gap:1.5rem;color:var(--text-muted);font-size:.85rem;margin-bottom:1rem;flex-wrap:wrap;animation:fadeUp .8s ease 1.95s both}
+.article-meta span{display:flex;align-items:center;gap:.4rem}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.featured-image{position:relative;width:100%;aspect-ratio:2/1;display:flex;align-items:center;justify-content:center;color:white;font-size:4rem;overflow:hidden;background:linear-gradient(135deg,var(--text-primary) 0%,var(--accent) 100%);border-radius:20px;margin:3rem auto;max-width:1300px;box-shadow:0 20px 60px var(--shadow)}
+.featured-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:20px;transition:transform .6s ease}
+.featured-image:hover img{transform:scale(1.02)}
+.featured-image-fallback{position:absolute;inset:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--text-primary),var(--accent));color:white;font-size:4rem;border-radius:20px}
+.article-content{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:4rem;border-radius:24px;border:1px solid var(--glass-border);box-shadow:0 20px 60px var(--shadow);margin-bottom:3rem;position:relative;z-index:1}
+.article-content h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,4vw,2.5rem);font-weight:400;color:var(--text-primary);margin:3rem 0 1.2rem;line-height:1.1;letter-spacing:1px}
+.article-content h3{font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:2.5rem 0 1rem;line-height:1.3}
+.article-content h4{font-size:1.15rem;font-weight:600;color:var(--text-primary);margin:2rem 0 .8rem}
+.article-content p{font-size:1.05rem;margin-bottom:1.4rem;color:var(--text-secondary);line-height:1.8}
+.article-content ul,.article-content ol{margin:1.5rem 0;padding-left:2rem}
+.article-content li{margin-bottom:.6rem;color:var(--text-secondary);font-size:1.05rem;line-height:1.7}
+.article-content blockquote{background:rgba(220,53,69,.07);border-left:3px solid var(--accent);padding:1.5rem 2rem;margin:2rem 0;font-style:italic;font-size:1.1rem;color:var(--text-primary);border-radius:0 12px 12px 0}
+.article-content img{width:100%;height:auto;border-radius:12px;margin:2rem 0}
+.article-content strong{color:var(--text-primary)}
+/* Custom article components - preserved + upgraded */
+.three-pillars{display:grid;gap:1rem;margin:1.5rem 0;padding:1.8rem;border-radius:16px;background:var(--bg-secondary);border:1px solid var(--border-color)}
+.pill{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:1.2rem;transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+.pill:hover{box-shadow:0 8px 24px var(--shadow);transform:translateY(-3px)}
+.pill .emoji{font-size:1.5rem;margin-right:.5rem}
+.pill h3{display:inline;font-size:1.05rem;margin:0;color:var(--text-primary)}
+.pill p{margin:.5rem 0 0;color:var(--text-secondary);font-size:.92rem}
+.three-pillars .note{font-size:.88rem;color:var(--text-muted);margin-top:1rem;text-align:center;font-style:italic}
+.degree-matters,.bottom-line,.whats-next,.discussion{margin:2rem 0;padding:1.8rem;border-radius:16px;background:var(--bg-card);border:1px solid var(--border-color);box-shadow:0 4px 16px var(--shadow)}
+.degree-matters h2,.bottom-line h2,.whats-next h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:1px;margin-top:0;color:var(--text-primary)}
+.degree-matters p,.bottom-line p,.whats-next p,.discussion p{font-size:.95rem;color:var(--text-secondary);margin:.5rem 0}
+.degree-matters ul,.whats-next ul{margin:.5rem 0 1rem 1.2rem;padding:0;color:var(--text-secondary);font-size:.95rem}
+.degree-matters li,.whats-next li{margin-bottom:.5rem}
+.degree-matters .note,.bottom-line .note{font-size:.88rem;color:var(--text-muted);font-style:italic;margin:0}
+.insight{margin:1.5rem 0;padding:1.2rem 1.5rem;border-left:3px solid var(--accent);background:rgba(220,53,69,.06);color:var(--text-secondary);font-style:italic;font-size:.97rem;border-radius:0 12px 12px 0}
+.advice-list{margin:1.2rem 0 1.2rem 1.2rem;color:var(--text-secondary);font-size:.97rem;line-height:1.6}
+.advice-list li{margin-bottom:.6rem}
+.divider{border:none;border-top:1px dashed var(--border-color);margin:2.5rem 0}
+/* Comments */
+.comments-section{margin:2rem 0;padding:2rem;border-radius:16px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--glass-border);box-shadow:0 8px 24px var(--shadow)}
+.comments-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:1px;margin-top:0;margin-bottom:1.5rem;color:var(--text-primary)}
+.comment-form{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border-color)}
+.comment-form h4{margin:0 0 1rem;font-size:1rem;font-weight:700;color:var(--text-primary)}
+.comment-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.comment-form input,.comment-form textarea{width:100%;padding:.8rem 1rem;border:2px solid var(--border-color);border-radius:10px;font-size:.9rem;font-family:'DM Sans',sans-serif;background:var(--bg-card);color:var(--text-primary);transition:border-color .3s;outline:none}
+.comment-form input:focus,.comment-form textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(220,53,69,.1)}
+.comment-form textarea{min-height:100px;resize:vertical}
+.comment{margin-bottom:1.2rem;padding:1rem 1.2rem;background:var(--bg-secondary);border-radius:10px;border-left:3px solid var(--accent)}
+.comment-header{display:flex;justify-content:space-between;margin-bottom:.5rem}
+.comment-author{color:var(--text-primary);font-weight:700;font-size:.9rem}
+.comment-date{color:var(--text-muted);font-size:.8rem}
+.comment-text{color:var(--text-secondary);line-height:1.5;margin:0;font-size:.9rem}
+/* CTA */
+.article-cta{background:var(--text-primary);color:white;padding:3rem;border-radius:20px;text-align:center;margin:3rem 0;position:relative;overflow:hidden}
+[data-theme="dark"] .article-cta{background:#0f172a}
+.article-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(220,53,69,.25),transparent 60%)}
+.article-cta *{color:white !important;position:relative;z-index:1}
+.article-cta h3{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:2px;margin-bottom:.8rem}
+.article-cta p{font-size:1rem;margin-bottom:2rem;opacity:.85}
+.cta-button{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent-hover));color:white;padding:.95rem 2.2rem;border-radius:10px;text-decoration:none;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;font-size:.9rem;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 24px rgba(220,53,69,.3)}
+.cta-button:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(220,53,69,.4)}
+/* Inline btns */
+.cta{margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap}
+.btn{text-decoration:none;padding:.55rem 1.2rem;border-radius:8px;background:var(--accent);color:white;font-size:.85rem;font-weight:600;transition:all .3s cubic-bezier(.34,1.56,.64,1);border:none;cursor:none;display:inline-block}
+.btn:hover{background:var(--accent-hover);transform:translateY(-2px)}
+/* Post nav */
+.post-navigation{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:3rem 0}
+.nav-post{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:1.8rem;border-radius:16px;border:1px solid var(--glass-border);box-shadow:0 8px 24px var(--shadow);text-decoration:none;color:inherit;transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.nav-post:hover{transform:translateY(-6px);box-shadow:0 20px 50px var(--shadow-hover);border-color:rgba(220,53,69,.3)}
+.nav-direction{font-size:.75rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem}
+.nav-post-title{font-size:.97rem;font-weight:600;color:var(--text-primary);line-height:1.3}
+/* Footer */
+footer{background:var(--text-primary);padding:4rem 0 2rem;text-align:center}
+[data-theme="dark"] footer{background:#0f172a}
+footer *{color:#fff !important}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:3px;margin-bottom:.8rem}
+.footer-logo span{color:var(--accent) !important}
+.footer-links{display:flex;justify-content:center;gap:2rem;margin:1.5rem 0;flex-wrap:wrap}
+.footer-links a{color:rgba(255,255,255,.65) !important;text-decoration:none;font-size:.88rem;font-weight:500;transition:color .3s}
+.footer-links a:hover{color:#fff !important}
+.footer-divider{width:60px;height:2px;background:var(--accent);margin:1.5rem auto;opacity:.5}
+footer p{color:rgba(255,255,255,.45) !important;font-size:.82rem}
+:root[data-theme="light"] footer{background:rgba(255,255,255,.82)!important;border-top:1px solid rgba(15,23,42,.08)!important}
+:root[data-theme="light"] footer *{color:var(--text-primary)!important}
+:root[data-theme="light"] footer p,:root[data-theme="light"] .footer-links a{color:var(--text-secondary)!important}
+:root[data-theme="light"] .footer-links a:hover{color:var(--accent)!important}
+a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointer!important}
+.c-dot,.c-ring{display:none!important}
+/* Reveal */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:translateY(0)}
+/* Mobile */
+@media(max-width:768px){body{cursor:auto}.c-dot,.c-ring{display:none}.theme-btn{top:100px;right:14px;width:46px;height:46px}.nav-links{display:none;position:absolute;top:100%;left:0;width:100%;background:var(--nav-bg);backdrop-filter:blur(28px);flex-direction:column;padding:1.5rem 2rem;border-top:1px solid var(--border-color);gap:1.2rem}.nav-links.active{display:flex}.mob-menu{display:flex}.article-header{padding:calc(80px + 2rem) 0 2rem}.article-content{padding:2rem 1.2rem}.post-navigation{grid-template-columns:1fr}.comment-form .form-row{grid-template-columns:1fr}.cta{flex-direction:column}.btn{width:100%;text-align:center}.container,.nav-container,.container-wide{padding:0 1rem}.featured-image{aspect-ratio:16/9;margin:2rem auto}.article-meta{flex-direction:column;gap:.6rem;align-items:center}}
+@media(max-width:480px){.article-content{padding:1.5rem 1rem}.article-header{padding:calc(80px + 1.5rem) 0 1.5rem}}
+</style>
+<title>Beyond "School Na Scam" Episode 3 - Business Skills - Atanda Verse</title>
+<meta name="description" content="Business skills that work regardless of your technical ability.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
+</head>
+<body>
+<div class="progress" id="pb"></div>
+<div class="c-dot" id="cd"></div>
+<div class="c-ring" id="cr"></div>
+<div class="loader" id="loader"><div class="l-brand">ATANDA <span>VERSE</span></div><div class="l-track"><div class="l-fill"></div></div></div>
+<button class="theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+<nav id="mainNav">
+  <div class="nav-container">
+    <div class="nav-logo">
+<div class="logo-icon"><img src="../logo.png" alt="Atanda Verse Logo" onerror="this.style.display='none'"></div>
+<a href="../index.html" class="logo-text">ATANDA <span class="logo-verse">VERSE</span></a>
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+<li><a href="../index.html#sessions">Sessions</a></li>
+<li><a href="../blog.html" class="active">Blog</a></li>
+<li><a href="../index.html#library">Library</a></li>
+<li><a href="../blog.html" class="back-btn">← Back to Blog</a></li>
+    </ul>
+    <div class="mob-menu" id="mobMenu"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<main>
+<article>
+  <header class="article-header">
+    <div class="container article-header-inner">
+      <div class="article-category">Business Skills & Entrepreneurship</div>
+      <h1 class="article-title">Beyond "School Na Scam" Episode 3</h1>
+      <p class="article-subtitle">The Business Skills That Pay in Nigeria</p>
+      <div class="article-meta">
+        <span>📅 October 15, 2025</span>
+        <span>⏱️ 7 min read</span>
+        <span>👁️ <span id="viewCount">—</span> views</span>
+      </div>
+    </div>
+  </header>
+  <div class="container">
+    <div class="featured-image rv">
+      <img src="../images/headers3.png" alt="Business Skills Article" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="featured-image-fallback" style="display:none">💼</div>
+    </div>
+    <div class="article-content">
+                    <blockquote>
+                        <strong>Series Update:</strong> In Episode 1, we introduced the Paper + Brain + Network framework. Episode 2 covered digital skills for tech-minded graduates. Today we're exploring business skills that work regardless of your technical ability.
+                    </blockquote>
+
+                    <p>Not everyone is cut out for coding or graphic design. And that's perfectly fine.</p>
+
+                    <p>Some of Nigeria's highest earners got there through people skills, communication abilities, and understanding human psychology - not technical expertise.</p>
+
+                    <p>If you're more comfortable talking to people than staring at computer screens, this episode is for you.</p>
+
+                    <p>According to recent data, about 9.87 million Nigerians are currently unemployed, but many successful entrepreneurs and high earners never followed traditional employment paths.</p>
+
+                    <p><strong>Today, we're exploring business skills that can generate substantial income regardless of your degree or technical background.</strong></p>
+
+                    <h2>Why Business Skills Are Recession-Proof</h2>
+
+                    <p>Here's what I've observed: During economic downturns, companies cut expenses everywhere except areas that directly generate revenue or solve critical problems.</p>
+
+                    <p>Sales people who bring in money keep their jobs. Project managers who keep operations running smoothly are retained. Content creators who attract customers continue getting paid.</p>
+
+                    <p><strong>These skills are valuable because they directly impact business success.</strong></p>
+
+                    <!-- Skill 1: Sales -->
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span class="skill-emoji">💼</span>
+                            <h3 class="skill-title">Sales & Customer Relationship Management</h3>
+                        </div>
+
+                        <div class="skill-meta">
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Entry Level</div>
+                                <div class="skill-meta-value">₦100k - ₦300k/month</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Experienced</div>
+                                <div class="skill-meta-value">₦400k - ₦1M+/month</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Time to Proficiency</div>
+                                <div class="skill-meta-value">1-3 months</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Top Performers</div>
+                                <div class="skill-meta-value">₦2M+/month</div>
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>What You Actually Do:</h5>
+                            <ul>
+                                <li>Generate leads and identify potential customers</li>
+                                <li>Present products/services and close deals through calls, emails, or meetings</li>
+                                <li>Manage customer relationships to ensure repeat business and referrals</li>
+                                <li>Track sales performance and optimize your approach based on results</li>
+                            </ul>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>Why This Works:</h5>
+                            <p>Sales skills are universally valuable because every business needs revenue. Unlike technical skills that become outdated, the psychology of persuasion and relationship building remains constant. Nigerian businesses especially value salespeople who understand local culture and communication styles.</p>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>High-Demand Industries:</h5>
+                            <div class="industries-grid">
+                                <div class="industry-item">
+                                    <div class="industry-title">Insurance</div>
+                                    <p class="industry-desc">High commissions, growing market awareness</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">Real Estate</div>
+                                    <p class="industry-desc">Premium commissions on property transactions</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">B2B Services</div>
+                                    <p class="industry-desc">Software, consulting, business solutions</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">Financial Services</div>
+                                    <p class="industry-desc">Investment products, banking services</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>How to Start:</h5>
+                            <ol>
+                                <li><strong>Read foundational books:</strong> "How to Win Friends and Influence People," "The Psychology of Selling"</li>
+                                <li><strong>Practice in low-stakes situations:</strong> Convince friends to try new restaurants, negotiate prices at markets</li>
+                                <li><strong>Join commission-based roles</strong> to learn while earning (insurance, real estate, retail)</li>
+                                <li><strong>Study your industry deeply:</strong> Understand products, competitors, customer pain points</li>
+                                <li><strong>Track everything:</strong> Calls made, meetings scheduled, deals closed, conversion rates</li>
+                            </ol>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>Resources:</h5>
+                            <ul>
+                                <li>Books: Dale Carnegie, Brian Tracy, Jeffrey Gitomer</li>
+                                <li>Free courses: HubSpot Sales Training, Google Digital Sales Certification</li>
+                                <li>Practice opportunities: Insurance companies, real estate agencies, retail positions</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Skill 2: Project Management -->
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span class="skill-emoji">📋</span>
+                            <h3 class="skill-title">Project Management & Business Operations</h3>
+                        </div>
+
+                        <div class="skill-meta">
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Entry Level</div>
+                                <div class="skill-meta-value">₦200k - ₦400k/month</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Experienced</div>
+                                <div class="skill-meta-value">₦500k - ₦800k/month</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Time to Proficiency</div>
+                                <div class="skill-meta-value">3-6 months</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Senior/Consultant</div>
+                                <div class="skill-meta-value">₦800k - ₦1.5M+/month</div>
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>Why This Works:</h5>
+                            <p>Nigerian businesses are often chaotic and poorly organized. Many have growth potential but lack systems and proper project management. Someone who can bring structure, improve efficiency, and ensure projects are completed on time becomes invaluable.</p>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>High-Demand Areas:</h5>
+                            <div class="industries-grid">
+                                <div class="industry-item">
+                                    <div class="industry-title">Tech Companies</div>
+                                    <p class="industry-desc">Product launches, software development projects</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">Construction</div>
+                                    <p class="industry-desc">Building projects, infrastructure development</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">NGOs/Development</div>
+                                    <p class="industry-desc">Grant-funded programs, community projects</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">Financial Services</div>
+                                    <p class="industry-desc">System implementations, process improvements</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>How to Start:</h5>
+                            <ol>
+                                <li><strong>Learn project management fundamentals:</strong> Take free online courses</li>
+                                <li><strong>Master basic tools:</strong> Asana, Trello, Monday.com, Microsoft Project</li>
+                                <li><strong>Volunteer to manage projects:</strong> In your current job, community organization, or church</li>
+                                <li><strong>Document everything:</strong> Timeline, budget, outcomes, lessons learned</li>
+                                <li><strong>Consider certification:</strong> PMP, PRINCE2, or Google Project Management Certificate</li>
+                            </ol>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>Resources:</h5>
+                            <ul>
+                                <li>Google Project Management Certificate (Coursera)</li>
+                                <li>Project Management Institute (PMI) resources and local chapters</li>
+                                <li>Free tools: Trello, Asana, Monday.com (all have extensive tutorials)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Skill 3: Content Creation -->
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span class="skill-emoji">📱</span>
+                            <h3 class="skill-title">Content Creation & Personal Branding</h3>
+                        </div>
+
+                        <div class="skill-meta">
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Starting Out</div>
+                                <div class="skill-meta-value">₦50k - ₦200k/month</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Established</div>
+                                <div class="skill-meta-value">₦300k - ₦800k/month</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Time to Proficiency</div>
+                                <div class="skill-meta-value">6-12 months</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Top Tier</div>
+                                <div class="skill-meta-value">₦1M+/month</div>
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>What You Actually Do:</h5>
+                            <ul>
+                                <li>Create educational or entertaining content in your area of expertise</li>
+                                <li>Build and engage with online communities around your niche</li>
+                                <li>Partner with brands for sponsored content and product collaborations</li>
+                                <li>Develop and sell your own digital products, courses, or consulting services</li>
+                            </ul>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>Why This Works:</h5>
+                            <p>Nigerian audiences are hungry for local content that addresses their specific challenges. International content often doesn't resonate with our cultural context and unique problems. There's also growing demand for Nigerian expertise in global markets.</p>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>High-Potential Niches:</h5>
+                            <div class="industries-grid">
+                                <div class="industry-item">
+                                    <div class="industry-title">Personal Finance</div>
+                                    <p class="industry-desc">Budgeting, investing, side hustles in Nigerian context</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">Career Development</div>
+                                    <p class="industry-desc">Job search, skill building, entrepreneurship</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">Health & Lifestyle</div>
+                                    <p class="industry-desc">Fitness, nutrition, mental health awareness</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">Business Education</div>
+                                    <p class="industry-desc">Startups, small business management, sales</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>Revenue Streams:</h5>
+                            <ul>
+                                <li><strong>Sponsored Content:</strong> Brands pay for product promotion</li>
+                                <li><strong>Digital Products:</strong> Courses, ebooks, templates, coaching</li>
+                                <li><strong>Speaking Engagements:</strong> Corporate training, conference presentations</li>
+                                <li><strong>Consulting:</strong> One-on-one advisory services</li>
+                                <li><strong>Affiliate Marketing:</strong> Commissions from product recommendations</li>
+                            </ul>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>How to Start:</h5>
+                            <ol>
+                                <li><strong>Choose your niche:</strong> Based on your knowledge, interests, and market demand</li>
+                                <li><strong>Pick one platform initially:</strong> YouTube, Instagram, LinkedIn, or TikTok</li>
+                                <li><strong>Commit to consistency:</strong> Post valuable content regularly for 6+ months</li>
+                                <li><strong>Engage authentically:</strong> Respond to comments, ask questions, build community</li>
+                                <li><strong>Document your expertise:</strong> Share your learning journey and professional insights</li>
+                            </ol>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>Resources:</h5>
+                            <ul>
+                                <li>Platform creator programs: YouTube Partner, Instagram Creator Fund</li>
+                                <li>Free editing tools: DaVinci Resolve, Canva, CapCut</li>
+                                <li>Learning: Think Media (YouTube), Social Media Examiner, local creator communities</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Skill 4: Copywriting -->
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span class="skill-emoji">✍️</span>
+                            <h3 class="skill-title">Copywriting & Content Marketing</h3>
+                        </div>
+
+                        <div class="skill-meta">
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Beginner</div>
+                                <div class="skill-meta-value">₦30k - ₦100k/project</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Intermediate</div>
+                                <div class="skill-meta-value">₦100k - ₦300k/project</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Time to Proficiency</div>
+                                <div class="skill-meta-value">3-6 months</div>
+                            </div>
+                            <div class="skill-meta-item">
+                                <div class="skill-meta-label">Monthly Retainers</div>
+                                <div class="skill-meta-value">₦200k+/month</div>
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>What You Actually Do:</h5>
+                            <ul>
+                                <li>Write sales emails and marketing copy that persuade people to take action</li>
+                                <li>Create blog posts and articles that attract and convert website visitors</li>
+                                <li>Develop email marketing sequences that nurture leads into customers</li>
+                                <li>Write website copy that clearly communicates value and drives conversions</li>
+                            </ul>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>Why This Works:</h5>
+                            <p>Most Nigerian businesses write terrible marketing copy. Their emails don't convert, their websites don't sell effectively, and their advertisements don't persuade. Anyone who can write copy that generates measurable results becomes extremely valuable.</p>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>High-Demand Applications:</h5>
+                            <div class="industries-grid">
+                                <div class="industry-item">
+                                    <div class="industry-title">Email Marketing</div>
+                                    <p class="industry-desc">Welcome sequences, promotional campaigns, newsletters</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">Website Copy</div>
+                                    <p class="industry-desc">Landing pages, product descriptions, about pages</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">Social Media</div>
+                                    <p class="industry-desc">Captions that drive engagement and sales</p>
+                                </div>
+                                <div class="industry-item">
+                                    <div class="industry-title">Sales Pages</div>
+                                    <p class="industry-desc">Long-form copy for digital products and services</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>How to Start:</h5>
+                            <ol>
+                                <li><strong>Study successful copy:</strong> Save examples of emails/ads that made you consider buying</li>
+                                <li><strong>Learn fundamentals:</strong> Take copywriting courses from recognized institutions</li>
+                                <li><strong>Practice daily:</strong> Rewrite existing ads, create sample campaigns</li>
+                                <li><strong>Offer free audits:</strong> Review small businesses' marketing copy and suggest improvements</li>
+                                <li><strong>Build a portfolio:</strong> Document your work and results achieved</li>
+                            </ol>
+                        </div>
+
+                        <div class="skill-section">
+                            <h5>Resources:</h5>
+                            <ul>
+                                <li>Books: "The Copywriter's Handbook" by Robert Bly, "Breakthrough Advertising" by Eugene Schwartz</li>
+                                <li>Courses: Copyblogger.com, AWAI (American Writers & Artists Institute)</li>
+                                <li>Practice: Rewrite existing ads, join copywriting communities</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Success Framework -->
+                    <div class="framework-section">
+                        <h3 class="framework-title">The Business Skills Success Framework</h3>
+                        
+                        <div class="phase-item">
+                            <h4 class="phase-title">Phase 1: Foundation Building (Months 1-3)</h4>
+                            <ul>
+                                <li><strong>Choose your primary skill</strong> based on natural strengths and market demand</li>
+                                <li><strong>Invest in learning</strong> through books, courses, and practical application</li>
+                                <li><strong>Practice consistently</strong> in low-risk environments</li>
+                                <li><strong>Network with professionals</strong> in your chosen field</li>
+                                <li><strong>Document your progress</strong> and early results</li>
+                            </ul>
+                        </div>
+
+                        <div class="phase-item">
+                            <h4 class="phase-title">Phase 2: Market Entry (Months 4-6)</h4>
+                            <ul>
+                                <li><strong>Start charging for your services</strong> even if rates are initially low</li>
+                                <li><strong>Focus on delivering measurable results</strong> for every client or project</li>
+                                <li><strong>Collect testimonials and case studies</strong> aggressively</li>
+                                <li><strong>Refine your approach</strong> based on real-world feedback</li>
+                                <li><strong>Build professional relationships</strong> within your industry</li>
+                            </ul>
+                        </div>
+
+                        <div class="phase-item">
+                            <h4 class="phase-title">Phase 3: Growth and Specialization (Months 7+)</h4>
+                            <ul>
+                                <li><strong>Increase your rates</strong> based on proven results and growing demand</li>
+                                <li><strong>Develop signature systems</strong> or methodologies</li>
+                                <li><strong>Consider specializing</strong> in profitable niches or industries</li>
+                                <li><strong>Build recurring revenue</strong> through retainers, long-term projects, or products</li>
+                                <li><strong>Explore teaching opportunities</strong> to establish thought leadership</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Success Factors -->
+                    <div class="success-factors">
+                        <h3>Critical Success Factors</h3>
+                        
+                        <div class="factor-item">
+                            <h4 class="factor-title">1. Focus on Value Creation</h4>
+                            <p>Always measure and communicate the results you deliver. Clients pay more for proven outcomes than theoretical expertise.</p>
+                        </div>
+
+                        <div class="factor-item">
+                            <h4 class="factor-title">2. Master the Fundamentals</h4>
+                            <p>These skills seem "easy" but require deep understanding of human psychology, business operations, and market dynamics.</p>
+                        </div>
+
+                        <div class="factor-item">
+                            <h4 class="factor-title">3. Build Relationships First</h4>
+                            <p>Nigerian business culture is relationship-based. Invest time in getting to know people before pitching services.</p>
+                        </div>
+
+                        <div class="factor-item">
+                            <h4 class="factor-title">4. Stay Consistent</h4>
+                            <p>Success comes from showing up regularly and improving incrementally, not from sporadic bursts of activity.</p>
+                        </div>
+                    </div>
+
+                    <h2>Your Action Plan This Week</h2>
+                    
+                    <h4>Day 1-2: Choose Your Path</h4>
+                    <ol>
+                        <li>Review the four skills and identify which aligns best with your personality and interests</li>
+                        <li>Research current market demand by checking job boards and business needs in your area</li>
+                    </ol>
+                    
+                    <h4>Day 3-5: Begin Learning</h4>
+                    <ol start="3">
+                        <li>Get one quality book or course related to your chosen skill</li>
+                        <li>Join relevant professional communities and social media groups</li>
+                        <li>Find someone successful in your chosen area to follow and study</li>
+                    </ol>
+                    
+                    <h4>Day 6-7: Start Practicing</h4>
+                    <ol start="6">
+                        <li>Begin practicing your skill in low-stakes situations</li>
+                        <li>Set up systems to track your progress and results</li>
+                    </ol>
+
+                   
+                    <h2>The Reality Check</h2>
+
+                    <p>These business skills offer sustainable career paths that don't require expensive equipment or complex technical knowledge.</p>
+
+                    <p>They're based on understanding people, solving problems, and creating value - capabilities that become more valuable with experience.</p>
+
+                    <p><strong>Your degree provides credibility and initial access. These skills provide ongoing income and career growth.</strong></p>
+
+                    <p>The combination of formal education + practical business skills + strategic networking creates the strongest foundation for long-term success in Nigeria.</p>
+
+                     <div class="cta-section">
+                        <h3>What's Coming in Episode 4</h3>
+                        <p>Next Tuesday: <strong>"The Network Effect: Why Your Classmates Matter More Than Your Grades"</strong></p>
+                        <ul>
+                            <li>How to strategically leverage educational connections for career opportunities</li>
+                            <li>Why private university graduates often appear to "succeed faster"</li>
+                            <li>Networking strategies that work in Nigeria's relationship-based business culture</li>
+                        </ul>
+
+                        <div class="cta-buttons">
+                            <button onclick="subscribeToNewsletter()" class="btn">SUBSCRIBE TO SERIES</button>
+                            <button onclick="shareArticle()" class="btn">SHARE EPISODE</button>
+                            <button onclick="scrollToComments()" class="btn">JOIN DISCUSSION</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Comments Section -->
+                    <div class="comments-section" id="comments-section">
+                        <h3>Comments & Discussion</h3>
+                        
+                        <!-- Comment Form -->
+                        <div class="comment-form">
+                            <h4>Share Your Thoughts</h4>
+                            <form id="commentForm">
+                                <div class="form-row">
+                                    <input type="text" id="commentName" placeholder="Your Name" required>
+                                    <input type="email" id="commentEmail" placeholder="Your Email (won't be published)" required>
+                                </div>
+                                <textarea id="commentText" placeholder="Which business skill feels most natural to your personality? What's stopping you from starting this week?" rows="4" required></textarea>
+                                <button type="submit" class="btn">Post Comment</button>
+                            </form>
+                        </div>
+                        
+                        <!-- Comments Display -->
+                        <div class="comments-list" id="commentsList">
+                            <!-- Sample comment to show structure -->
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <strong class="comment-author">Business Mind</strong>
+                                    <span class="comment-date">2 hours ago</span>
+                                </div>
+                                <p class="comment-text">Sales has always intimidated me, but seeing the earning potential and knowing it's learnable gives me hope. Time to start practicing!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    <!-- Call to Action -->
+    <div class="article-cta rv">
+      <h3>Ready to Find Your Clarity?</h3>
+      <p>Take the first step towards transforming confusion into purpose with our free virtual clarity session.</p>
+      <a href="../index.html#contact" class="cta-button">Book Free Session</a>
+    </div>
+    <div class="post-navigation rv">
+  <a href="school-na-scam-ep2.html" class="nav-post">
+    <div class="nav-direction">← Previous</div>
+    <div class="nav-post-title">Episode 2: Digital Skills That Actually Pay</div>
+  </a>
+  <a href="school-na-scam-ep4.html" class="nav-post">
+    <div class="nav-direction">Next →</div>
+    <div class="nav-post-title">Episode 4: The Network Effect</div>
+  </a>
+</div>
+  </div>
+</article>
+</main>
+<footer>
+  <div class="container-wide">
+<div class="footer-logo">ATANDA</div>
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+<a href="../index.html#sessions">Sessions</a>
+<a href="../blog.html">Blog</a>
+<a href="../index.html#library">Library</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+    <div class="footer-divider"></div>
+<p>&copy; 2025 Atanda. All rights reserved.</p>
+  </div>
+</footer>
+<script>
+window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('gone'),1200));
+const themeBtn=document.getElementById('themeBtn'),body=document.body;
+body.setAttribute('data-theme',localStorage.getItem('theme')||'light');
+const upIcon=()=>themeBtn.textContent=body.getAttribute('data-theme')==='light'?'🌙':'☀️';
+upIcon();themeBtn.addEventListener('click',()=>{const t=body.getAttribute('data-theme')==='light'?'dark':'light';body.setAttribute('data-theme',t);localStorage.setItem('theme',t);upIcon()});
+const cd=document.getElementById('cd'),cr=document.getElementById('cr');let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+(function a(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;if(cd)cd.style.transform=`translate(${mx-4}px,${my-4}px)`;if(cr)cr.style.transform=`translate(${rx-18}px,${ry-18}px)`;requestAnimationFrame(a)})();
+document.querySelectorAll('a,button,.nav-post,.btn,.cta-button').forEach(el=>{el.addEventListener('mouseenter',()=>cr&&cr.classList.add('hov'));el.addEventListener('mouseleave',()=>cr&&cr.classList.remove('hov'))});
+const pb=document.getElementById('pb');window.addEventListener('scroll',()=>{pb.style.transform=`scaleX(${window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)})`});
+window.addEventListener('scroll',()=>document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>60));
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in')}),{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+const mm=document.getElementById('mobMenu'),nl=document.getElementById('navLinks');
+if(mm)mm.addEventListener('click',()=>{nl.classList.toggle('active');mm.classList.toggle('open')});
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}));
+// View counter increment
+const API_BASE='https://api.hits.sh/hits/';
+function slugToKey(slug){return(slug||location.pathname).replace(/[^a-z0-9]/gi,'-').toLowerCase().replace(/-+/g,'-').replace(/^-|-$/g,'').substring(0,40)}
+fetch(API_BASE+'innerverse-blog-'+slugToKey(location.pathname),{method:'POST'}).catch(()=>{});
+// Comments
+const commentForm=document.getElementById('commentForm'),commentsList=document.getElementById('commentsList');
+const COMMENT_KEY='iv_comments_'+slugToKey(location.pathname);
+function escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML}
+function getTimeAgo(ts){const diff=Math.floor((Date.now()-new Date(ts))/60000);if(diff<1)return'Just now';if(diff<60)return diff+' minutes ago';if(diff<1440)return Math.floor(diff/60)+' hours ago';return Math.floor(diff/1440)+' days ago'}
+function loadComments(){const cs=JSON.parse(localStorage.getItem(COMMENT_KEY)||'[]');const existing=commentsList.querySelectorAll('.comment:not(.sample)');existing.forEach(c=>c.remove());cs.forEach(c=>{const d=document.createElement('div');d.className='comment';d.innerHTML=`<div class="comment-header"><strong class="comment-author">${escapeHtml(c.name)}</strong><span class="comment-date">${getTimeAgo(c.timestamp)}</span></div><p class="comment-text">${escapeHtml(c.text)}</p>`;commentsList.appendChild(d)})}
+if(commentForm){commentForm.addEventListener('submit',function(e){e.preventDefault();const name=document.getElementById('commentName').value.trim(),email=document.getElementById('commentEmail').value.trim(),text=document.getElementById('commentText').value.trim();if(name&&email&&text){const cs=JSON.parse(localStorage.getItem(COMMENT_KEY)||'[]');cs.unshift({name,email,text,timestamp:new Date().toISOString()});localStorage.setItem(COMMENT_KEY,JSON.stringify(cs));loadComments();this.reset();alert('Comment posted!')} })}
+function subscribeToNewsletter(){const e=prompt('Enter your email to subscribe:');if(e&&e.includes('@'))alert(`Thanks! We\'ve added ${e} to our newsletter.`);else if(e)alert('Please enter a valid email.')}
+function shareArticle(){if(navigator.share){navigator.share({title:document.title,url:location.href})}else{navigator.clipboard.writeText(location.href).then(()=>alert('Link copied!')).catch(()=>window.open(`https://wa.me/?text=${encodeURIComponent(document.title+' '+location.href)}`,'_blank'))}}
+function scrollToComments(){document.getElementById('comments-section').scrollIntoView({behavior:'smooth',block:'start'})}
+document.addEventListener('DOMContentLoaded',loadComments);
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 768" role="img" aria-labelledby="title desc">
+  <title id="title">Atanda logo</title>
+  <desc id="desc">A navy shield containing a stylized A and keyhole.</desc>
+  <defs>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="55%" stop-color="#f5f7fb"/>
+      <stop offset="100%" stop-color="#d9e0ec"/>
+    </linearGradient>
+  </defs>
+  <rect width="768" height="768" fill="none"/>
+  <path fill="#17243b" d="M384 107c97 0 171 12 242 39v134c0 143-68 246-242 380C210 526 142 423 142 280V146c71-27 145-39 242-39z"/>
+  <path fill="#ffffff" d="M384 133c84 0 151 10 214 33v113c0 130-60 224-214 342C230 503 170 409 170 279V166c63-23 130-33 214-33z"/>
+  <path fill="#17243b" d="M384 155c73 0 133 8 189 27v97c0 117-54 204-189 305-135-101-189-188-189-305v-97c56-19 116-27 189-27z"/>
+  <path fill="url(#shine)" d="M350 188h68l63 153h-81l-16-29h-1l-16 29h-72l55-153zm33 43-31 88h62l-31-88z"/>
+  <path fill="url(#shine)" d="M289 353h192v13H289z"/>
+  <path fill="url(#shine)" d="M334 341h101l34 73h-71l-14-34h-2l-14 34h-69l35-73z"/>
+  <circle cx="384" cy="315" r="28" fill="#17243b"/>
+  <path fill="#17243b" d="M354 344h60l35 91h-130z"/>
+  <path fill="#17243b" d="M314 414h140l28 74-98 71-98-71z"/>
+</svg>

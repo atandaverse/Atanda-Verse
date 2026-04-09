@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>!function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.style.colorScheme=t==="dark"?"dark":"light"}();</script>
+<script src="config.js"></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal — Terms, Privacy & Disclaimer | Atanda Verse</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-primary:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 30%,#ffffff 100%);--bg-secondary:rgba(255,255,255,0.62);--bg-card:white;--text-primary:#1a365d;--text-secondary:#4a5568;--text-muted:#6b7280;--border-color:rgba(0,0,0,0.08);--shadow:rgba(15,23,42,0.10);--accent:#dc3545;--accent-hover:#b02a37;--nav-bg:rgba(255,255,255,0.58);--glass:rgba(255,255,255,0.34);--glass-border:rgba(255,255,255,0.52)}
+[data-theme="dark"]{--bg-primary:linear-gradient(135deg,#0f172a 0%,#1e293b 30%,#334155 100%);--bg-secondary:rgba(15,23,42,0.62);--bg-card:#1e293b;--text-primary:#f1f5f9;--text-secondary:#cbd5e1;--text-muted:#94a3b8;--border-color:rgba(255,255,255,0.08);--shadow:rgba(2,6,23,0.34);--accent:#ef4444;--nav-bg:rgba(15,23,42,0.58);--glass:rgba(30,41,59,0.30);--glass-border:rgba(255,255,255,0.10)}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--text-primary);overflow-x:hidden;line-height:1.7;transition:background .4s,color .4s}
+nav{position:fixed;top:0;width:100%;background:var(--nav-bg);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);z-index:1000;padding:1rem 0;border-bottom:1px solid var(--glass-border);box-shadow:0 12px 38px var(--shadow)}
+.nav-container{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:0 2rem}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:2px;color:var(--text-primary);text-decoration:none}
+.logo-verse{color:var(--accent)}
+.theme-toggle{position:fixed;top:50%;right:22px;transform:translateY(-50%);z-index:1001;background:var(--glass);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid var(--glass-border);border-radius:50px;width:50px;height:50px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.15rem;box-shadow:0 12px 34px var(--shadow),inset 0 1px 0 rgba(255,255,255,.4);transition:all .3s}
+.container{max-width:820px;margin:0 auto;padding:0 2rem}
+.page-hero{padding:calc(80px + 4rem) 0 3rem;text-align:center;background:var(--bg-secondary);position:relative}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 0%,rgba(220,53,69,.08),transparent 55%);pointer-events:none}
+.page-tag{display:inline-block;background:rgba(220,53,69,.08);border:1px solid rgba(220,53,69,.3);padding:.4rem 1.2rem;border-radius:50px;font-size:.75rem;font-weight:700;color:var(--accent);margin-bottom:1.2rem;text-transform:uppercase;letter-spacing:2px}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,7vw,4.5rem);letter-spacing:2px;color:var(--text-primary);margin-bottom:.8rem}
+.page-sub{color:var(--text-muted);font-size:.92rem;max-width:500px;margin:0 auto}
+.legal-nav{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;padding-bottom:2rem}
+.legal-nav a{background:var(--glass);border:1px solid var(--glass-border);border-radius:50px;padding:.42rem 1.1rem;font-size:.8rem;font-weight:600;color:var(--text-primary);text-decoration:none;transition:all .3s;backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);box-shadow:0 8px 22px var(--shadow),inset 0 1px 0 rgba(255,255,255,.34)}
+.legal-nav a:hover,.legal-nav a.active{background:var(--accent);color:white;border-color:var(--accent);box-shadow:0 12px 28px rgba(220,53,69,.22),inset 0 1px 0 rgba(255,255,255,.28)}
+.legal-body{padding:4rem 0 6rem}
+.legal-section{background:var(--glass);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid var(--glass-border);border-radius:22px;padding:2.5rem;margin-bottom:2rem;box-shadow:0 14px 36px var(--shadow),inset 0 1px 0 rgba(255,255,255,.4)}
+.legal-section:hover{box-shadow:0 20px 48px var(--shadow-hover),inset 0 1px 0 rgba(255,255,255,.48)}
+.legal-section-tag{font-size:.68rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:2px;margin-bottom:.5rem}
+.legal-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1.5px;color:var(--text-primary);margin-bottom:1.2rem;padding-bottom:.7rem;border-bottom:1px solid var(--border-color)}
+.legal-section h3{font-size:.95rem;font-weight:700;color:var(--text-primary);margin:1.4rem 0 .5rem}
+.legal-section p{color:var(--text-secondary);font-size:.88rem;margin-bottom:.9rem;line-height:1.75}
+.legal-section ul{color:var(--text-secondary);font-size:.88rem;padding-left:1.3rem;margin-bottom:.9rem}
+.legal-section ul li{margin-bottom:.4rem;line-height:1.7}
+.legal-section a{color:var(--accent);text-decoration:none}
+.legal-section a:hover{text-decoration:underline}
+.disclaimer-box{background:rgba(220,53,69,.06);border:1px solid rgba(220,53,69,.25);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem}
+.disclaimer-box p{color:var(--text-primary)!important;font-size:.86rem!important;margin:0!important}
+.updated{font-size:.75rem;color:var(--text-muted);margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border-color)}
+.site-footer{background:var(--nav-bg);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);padding:3rem 0 2rem;text-align:center;border-top:1px solid var(--glass-border);box-shadow:0 -12px 38px var(--shadow)}
+[data-theme="dark"] .site-footer{background:var(--nav-bg)}
+.site-footer *{color:#fff!important}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;margin-bottom:.8rem}
+.footer-logo span{color:var(--accent)!important}
+.footer-links{display:flex;justify-content:center;gap:1.5rem;margin:1.2rem 0;flex-wrap:wrap}
+.footer-links a{color:rgba(255,255,255,.65)!important;text-decoration:none;font-size:.85rem;font-weight:500;transition:color .3s}
+.footer-links a:hover{color:#fff!important}
+.footer-divider{width:60px;height:2px;background:var(--accent);margin:1.2rem auto;opacity:.55}
+:root[data-theme="light"] .site-footer{background:rgba(255,255,255,.82)!important;border-top:1px solid rgba(15,23,42,.08)!important}
+:root[data-theme="light"] .site-footer *{color:var(--text-primary)!important}
+:root[data-theme="light"] .footer-links a{color:var(--text-secondary)!important}
+:root[data-theme="light"] .footer-links a:hover{color:var(--accent)!important}
+a,button,input,select,textarea,.legal-nav a,.theme-toggle{cursor:pointer!important}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle">🌙</button>
+<nav><div class="nav-container"><a href="index.html" class="logo-text">ATANDA <span class="logo-verse">VERSE</span></a><a href="index.html" style="font-size:.84rem;color:var(--text-muted);text-decoration:none">← Back to Site</a></div></nav>
+
+<div class="page-hero">
+  <div class="container" style="position:relative;z-index:2">
+    <div class="page-tag">Legal</div>
+    <h1 class="page-title">TERMS & POLICIES</h1>
+    <p class="page-sub">Last updated: March 2026. Please read these carefully before using our services.</p>
+    <div class="legal-nav">
+      <a href="#disclaimer" class="active">Disclaimer</a>
+      <a href="#terms">Terms of Use</a>
+      <a href="#privacy">Privacy Policy</a>
+      <a href="#cookies">Cookies</a>
+    </div>
+  </div>
+</div>
+
+<div class="legal-body">
+  <div class="container">
+
+    <!-- DISCLAIMER -->
+    <div class="legal-section" id="disclaimer">
+      <div class="legal-section-tag">Important</div>
+      <h2>Coaching Disclaimer</h2>
+      <div class="disclaimer-box">
+        <p>⚠️ Atanda Verse offers <strong>coaching-based clarity sessions</strong>, not therapy, counselling, or any form of clinical mental health treatment. Our services are not a substitute for professional psychological, psychiatric, or medical care.</p>
+      </div>
+      <h3>What Clarity Coaching Is</h3>
+      <p>Clarity coaching is a forward-focused, goal-oriented conversation designed to help you gain perspective, identify mental blocks, and create actionable plans. It draws on coaching methodologies and is designed for people who are mentally well and seeking personal growth, direction, or clarity.</p>
+      <h3>What Clarity Coaching Is Not</h3>
+      <ul>
+        <li>It is not therapy, psychotherapy, or counselling</li>
+        <li>It does not diagnose, treat, or manage mental health conditions</li>
+        <li>It is not a crisis intervention service</li>
+        <li>It does not replace advice from licensed medical or mental health professionals</li>
+      </ul>
+      <h3>If You Need Clinical Support</h3>
+      <p>If you are experiencing a mental health crisis, thoughts of self-harm, or symptoms of a clinical condition, please contact a licensed mental health professional or your nearest emergency service. In Nigeria, you can reach the <strong>Mental Health Foundation Nigeria</strong> or contact LASUTH Psychiatry department on <strong>+234 (0) 1 793 0000</strong>.</p>
+      <h3>Results Disclaimer</h3>
+      <p>Outcomes from clarity sessions vary between individuals. Atanda Verse does not guarantee specific results. Progress depends on your personal commitment, engagement, and circumstances. Testimonials shared on this site reflect individual experiences and are not a promise of similar outcomes.</p>
+      <p class="updated">This disclaimer applies to all sessions, content, and resources provided by Atanda Verse.</p>
+    </div>
+
+    <!-- TERMS OF USE -->
+    <div class="legal-section" id="terms">
+      <div class="legal-section-tag">Agreement</div>
+      <h2>Terms of Use</h2>
+      <p>By accessing or using the Atanda Verse website and services, you agree to be bound by these terms. If you do not agree, please do not use our services.</p>
+      <h3>1. Services</h3>
+      <p>Atanda Verse provides virtual clarity coaching sessions, digital resources, and a community blog. All sessions are currently offered free of charge during our launch period. We reserve the right to introduce paid tiers with reasonable notice.</p>
+      <h3>2. Eligibility</h3>
+      <p>You must be at least 18 years of age to register for sessions independently. Minors may participate only with explicit parental or guardian consent and presence.</p>
+      <h3>3. Conduct</h3>
+      <ul>
+        <li>You agree to engage honestly and respectfully during sessions</li>
+        <li>You will not record sessions without prior written consent from Atanda Verse</li>
+        <li>You will not share session content, resources, or materials without permission</li>
+        <li>Harassment, abuse, or inappropriate behaviour will result in immediate termination of service</li>
+      </ul>
+      <h3>4. Cancellations & Rescheduling</h3>
+      <p>We ask for at least 24 hours notice for cancellations or rescheduling. Repeated no-shows without notice may result in session forfeiture. We reserve the right to cancel or reschedule sessions with reasonable notice.</p>
+      <h3>5. Intellectual Property</h3>
+      <p>All content on this website — including articles, guides, workbooks, and resources — is the intellectual property of Atanda Verse. You may not reproduce, distribute, or commercialise any content without written permission.</p>
+      <h3>6. Limitation of Liability</h3>
+      <p>Atanda Verse and its facilitators shall not be liable for any direct, indirect, or consequential damages arising from your use of our services or reliance on any content provided. Use of our services is entirely at your own discretion and risk.</p>
+      <h3>7. Changes to Terms</h3>
+      <p>We may update these terms at any time. Continued use of our services after changes constitutes acceptance of the updated terms. We will notify users of significant changes where possible.</p>
+      <h3>8. Governing Law</h3>
+      <p>These terms are governed by the laws of the Federal Republic of Nigeria. Any disputes shall be subject to the jurisdiction of Nigerian courts.</p>
+      <p>Our services are provided in alignment with applicable Nigerian legislation including the <strong>Mental Health Act 2021</strong> (which governs mental health services and distinguishes them from coaching), the <strong>Consumer Protection Council Act (Cap C25 LFN 2004)</strong> (protecting users' rights to honest service descriptions), and the <strong>Nigeria Data Protection Regulation (NDPR) 2019</strong> as administered by NITDA (governing how we handle your personal data).</p>
+      <p class="updated">Effective date: March 2026</p>
+    </div>
+
+    <!-- PRIVACY POLICY -->
+    <div class="legal-section" id="privacy">
+      <div class="legal-section-tag">Your Data</div>
+      <h2>Privacy Policy</h2>
+      <p>We take your privacy seriously. This policy explains what data we collect, why, and how it is used.</p>
+      <h3>1. Data We Collect</h3>
+      <ul>
+        <li><strong>Registration data:</strong> Name, email address, phone number, session type, and goals</li>
+        <li><strong>Subscriber data:</strong> Email address and subscription source</li>
+        <li><strong>Testimonials:</strong> Name, role, and testimonial text (only if you voluntarily submit)</li>
+        <li><strong>Usage data:</strong> Page views and basic analytics (no personally identifiable information)</li>
+        <li><strong>Comments:</strong> Name, email, and comment text on blog posts</li>
+      </ul>
+      <h3>2. How We Use Your Data</h3>
+      <ul>
+        <li>To schedule and conduct your clarity sessions</li>
+        <li>To send you relevant resources, updates, and clarity guides (if subscribed)</li>
+        <li>To improve our services based on feedback</li>
+        <li>To display approved testimonials publicly on our website</li>
+      </ul>
+      <h3>3. Data Storage</h3>
+      <p>Your data is stored securely using Supabase, a GDPR-compliant database platform. We do not sell, rent, or trade your personal information to third parties under any circumstances. This policy is consistent with the <strong>Nigeria Data Protection Regulation (NDPR) 2019</strong>, issued under the National Information Technology Development Agency Act.</p>
+      <h3>4. Your Rights</h3>
+      <p>You have the right to access, correct, or request deletion of your personal data at any time. To exercise these rights, contact us at <a href="mailto:deyoungprofcreativehub@gmail.com">deyoungprofcreativehub@gmail.com</a>.</p>
+      <h3>5. Data Retention</h3>
+      <p>We retain your data for as long as necessary to provide our services. If you unsubscribe or request deletion, we will remove your data within 30 days.</p>
+      <h3>6. Third Parties</h3>
+      <p>We use the following third-party services: Supabase (data storage), Google Fonts (typography), and Zoom or similar platforms (session delivery). Each has their own privacy policies which we encourage you to review.</p>
+      <p class="updated">Last updated: March 2026</p>
+    </div>
+
+    <!-- COOKIES -->
+    <div class="legal-section" id="cookies">
+      <div class="legal-section-tag">Tracking</div>
+      <h2>Cookie Policy</h2>
+      <p>We use minimal, functional cookies and browser storage to improve your experience on this site.</p>
+      <h3>What We Store</h3>
+      <ul>
+        <li><strong>Theme preference</strong> (localStorage) — remembers your light/dark mode choice</li>
+        <li><strong>Session credentials</strong> (localStorage) — stores your Supabase connection for cross-device sync (admin only)</li>
+        <li><strong>Site settings</strong> (localStorage) — countdown timer and display preferences set by the admin</li>
+      </ul>
+      <h3>What We Don't Do</h3>
+      <ul>
+        <li>We do not use advertising or tracking cookies</li>
+        <li>We do not use Google Analytics or Facebook Pixel</li>
+        <li>We do not track you across other websites</li>
+      </ul>
+      <h3>Managing Storage</h3>
+      <p>You can clear localStorage and cookies at any time through your browser settings. This will reset your theme preference and any cached content but will not affect your personal data stored on our servers.</p>
+      <p class="updated">Last updated: March 2026</p>
+    </div>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="nav-container" style="flex-direction:column;gap:0">
+    <div class="footer-logo">ATANDA</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="sessions.html">Sessions</a>
+      <a href="blog.html">Blog</a>
+      <a href="faq.html">FAQ</a>
+      <a href="library.html">Library</a>
+      <a href="legal.html">Legal</a>
+    </div>
+    <div class="footer-divider"></div>
+    <p>&copy; 2025–2026 Atanda. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+const _thBtn=document.getElementById('themeToggle');
+const _upIc=()=>_thBtn.textContent=document.documentElement.getAttribute('data-theme')==='light'?'🌙':'☀️';
+_upIc();
+_thBtn.addEventListener('click',()=>{
+  const t=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',t);
+  document.body.setAttribute('data-theme',t);
+  localStorage.setItem('theme',t);
+  _upIc();
+});
+// Highlight active legal nav link on scroll
+const sections=['disclaimer','terms','privacy','cookies'];
+const lnks=document.querySelectorAll('.legal-nav a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sections.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&window.scrollY>=el.offsetTop-120)cur=id;
+  });
+  lnks.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+cur);});
+});
+</script>
+</body>
+</html>
