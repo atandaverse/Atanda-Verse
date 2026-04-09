@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Atanda Verse</title>
+    <meta name="description" content="Register for an Atanda Verse clarity session with your package already selected.">
+    <link rel="canonical" href="https://verse.atanda.site/register.html">
+    <meta property="og:title" content="Register | Atanda Verse">
+    <meta property="og:description" content="Reserve your free clarity session with Atanda Verse.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://verse.atanda.site/register.html">
+    <meta property="og:image" content="https://verse.atanda.site/ChatGPT%20Image%20Apr%206,%202026,%2004_48_50%20AM.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Register | Atanda Verse">
+    <meta name="twitter:description" content="Reserve your free clarity session with Atanda Verse.">
+    <meta name="twitter:image" content="https://verse.atanda.site/ChatGPT%20Image%20Apr%206,%202026,%2004_48_50%20AM.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="config.js"></script>
+    <style>
+        :root{
+            --bg:#f4f6fb;
+            --bg-soft:#eef2f9;
+            --surface:rgba(255,255,255,.72);
+            --surface-strong:rgba(255,255,255,.88);
+            --border:rgba(19,35,67,.1);
+            --text:#16233f;
+            --text-soft:#61708f;
+            --accent:#c7374a;
+            --accent-deep:#8f2430;
+            --gold:#b88620;
+            --gold-soft:#efd48e;
+            --shadow:0 24px 64px rgba(18,33,67,.12);
+        }
+        *{box-sizing:border-box}
+        html,body{margin:0;padding:0}
+        body{
+            font-family:'Instrument Sans',system-ui,sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(214,228,248,.7), transparent 34%),
+                radial-gradient(circle at bottom right, rgba(244,217,168,.28), transparent 30%),
+                linear-gradient(180deg,#f6f8fc 0%,#eef3f9 100%);
+            color:var(--text);
+        }
+        a{color:inherit}
+        .container{width:min(1180px,calc(100% - 2rem));margin:0 auto}
+        nav{
+            position:sticky;top:0;z-index:20;
+            backdrop-filter:blur(22px) saturate(180%);
+            -webkit-backdrop-filter:blur(22px) saturate(180%);
+            background:rgba(255,255,255,.78);
+            border-bottom:1px solid rgba(19,35,67,.08);
+        }
+        .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 0}
+        .nav-logo{display:flex;align-items:center;gap:1rem;text-decoration:none}
+        .logo-icon{
+            width:68px;height:68px;border-radius:20px;background:rgba(255,255,255,.9);
+            border:1px solid rgba(19,35,67,.08);box-shadow:0 14px 30px rgba(18,33,67,.08);
+            display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 68px;
+        }
+        .logo-icon img{width:82%;height:82%;object-fit:contain}
+        .logo-text{
+            font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;text-decoration:none;color:var(--text);
+        }
+        .logo-text span{color:var(--accent)}
+        .nav-links{display:flex;gap:1.4rem;align-items:center;flex-wrap:wrap}
+        .nav-links a{text-decoration:none;color:var(--text-soft);font-weight:600}
+        .nav-links .nav-cta{
+            padding:.78rem 1.25rem;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--accent-deep));
+            color:#fff;box-shadow:0 14px 30px rgba(199,55,74,.22);
+        }
+        .hero{padding:4.5rem 0 2rem}
+        .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:start}
+        .hero-copy,.summary-card,.registration-card,.note-card{
+            background:var(--surface);
+            backdrop-filter:blur(26px) saturate(180%);
+            -webkit-backdrop-filter:blur(26px) saturate(180%);
+            border:1px solid var(--border);
+            box-shadow:var(--shadow);
+            border-radius:28px;
+        }
+        .hero-copy{padding:2.6rem}
+        .eyebrow{
+            display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .9rem;border-radius:999px;
+            background:rgba(255,255,255,.78);border:1px solid rgba(19,35,67,.08);
+            color:var(--text-soft);font-size:.84rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+        }
+        h1,h2,h3{margin:0}
+        .hero h1{font-family:'Bebas Neue',sans-serif;font-size:4rem;line-height:.92;letter-spacing:1px;margin:1rem 0 .9rem}
+        .hero p{margin:0;color:var(--text-soft);font-size:1.05rem;line-height:1.8;max-width:58ch}
+        .mini-points{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.4rem}
+        .mini-points span{
+            padding:.7rem .95rem;border-radius:14px;background:rgba(255,255,255,.7);border:1px solid rgba(19,35,67,.08);
+            color:var(--text);font-size:.9rem;font-weight:600;
+        }
+        .summary-card{padding:2rem;position:relative;overflow:hidden}
+        .summary-card::before{
+            content:'';position:absolute;inset:0;
+            background:radial-gradient(circle at top right, rgba(239,212,142,.34), transparent 35%);
+            pointer-events:none;
+        }
+        .summary-tag{
+            display:inline-block;padding:.48rem .85rem;border-radius:999px;
+            background:linear-gradient(135deg,#7e5910,#c89424 48%,#f6dda0 100%);
+            color:#fffaf0;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+            box-shadow:0 12px 30px rgba(171,122,18,.24);
+        }
+        .summary-title{font-size:2rem;line-height:1.05;margin-top:1rem;font-weight:800}
+        .summary-price{display:flex;align-items:flex-end;gap:.7rem;margin-top:1rem;flex-wrap:wrap}
+        .summary-price strong{font-size:3.5rem;line-height:.9;color:var(--accent-deep);letter-spacing:-.04em}
+        .summary-price span{color:var(--text-soft);text-decoration:line-through;font-weight:700}
+        .summary-note{margin-top:.7rem;color:#6b5318;font-size:.92rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+        .summary-list{margin:1.3rem 0 0;padding:0;list-style:none;display:grid;gap:.8rem}
+        .summary-list li{display:flex;gap:.8rem;align-items:flex-start;color:var(--text);line-height:1.6}
+        .summary-list li::before{content:'✓';color:var(--gold);font-weight:800;margin-top:.02rem}
+        .layout{display:grid;grid-template-columns:1.05fr .95fr;gap:2rem;padding-bottom:5rem}
+        .registration-card{padding:2.4rem}
+        .section-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1.2px;margin-bottom:.55rem}
+        .section-copy{color:var(--text-soft);line-height:1.75;margin-bottom:1.6rem}
+        .form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+        .form-group{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1rem}
+        .form-group label{font-size:.88rem;font-weight:700;color:var(--text)}
+        .form-group input,.form-group select,.form-group textarea{
+            width:100%;border-radius:16px;border:1px solid rgba(19,35,67,.1);
+            background:rgba(255,255,255,.82);color:var(--text);
+            padding:1rem 1rem;font:inherit;outline:none;transition:border-color .2s, box-shadow .2s;
+        }
+        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+            border-color:rgba(199,55,74,.4);box-shadow:0 0 0 4px rgba(199,55,74,.08);
+        }
+        .cta-button{
+            display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
+            width:100%;border:none;border-radius:18px;padding:1.1rem 1.4rem;
+            background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;
+            font:inherit;font-weight:800;cursor:pointer;text-decoration:none;
+            box-shadow:0 18px 40px rgba(199,55,74,.24);transition:transform .22s, box-shadow .22s;
+        }
+        .cta-button:hover{transform:translateY(-2px);box-shadow:0 22px 44px rgba(199,55,74,.3)}
+        .microcopy{font-size:.82rem;color:var(--text-soft);line-height:1.7;margin-top:1rem}
+        .note-card{padding:1.8rem}
+        .note-card h3{font-size:1.15rem;margin-bottom:.6rem}
+        .note-card p{margin:0;color:var(--text-soft);line-height:1.75}
+        .note-grid{display:grid;gap:1rem}
+        .contact-links{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1rem}
+        .contact-links a{
+            text-decoration:none;padding:.9rem 1.1rem;border-radius:14px;font-weight:700;
+            background:rgba(255,255,255,.72);border:1px solid rgba(19,35,67,.08);color:var(--text);
+        }
+        footer{padding:0 0 3rem}
+        .footer-shell{padding-top:1rem;border-top:1px solid rgba(19,35,67,.08);color:var(--text-soft);font-size:.9rem}
+        @media (max-width: 980px){
+            .hero-grid,.layout{grid-template-columns:1fr}
+            .hero h1{font-size:3.3rem}
+        }
+        @media (max-width: 640px){
+            .nav-inner{flex-direction:column;align-items:flex-start}
+            .nav-links{width:100%}
+            .hero{padding:3rem 0 1.5rem}
+            .hero-copy,.summary-card,.registration-card,.note-card{border-radius:22px}
+            .hero-copy,.registration-card,.summary-card,.note-card{padding:1.5rem}
+            .hero h1{font-size:2.7rem}
+            .form-row{grid-template-columns:1fr}
+            .summary-title{font-size:1.75rem}
+            .summary-price strong{font-size:3rem}
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container nav-inner">
+            <a href="index.html" class="nav-logo">
+                <div class="logo-icon"><img src="ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo"></div>
+                <div class="logo-text">ATANDA <span>VERSE</span></div>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="sessions.html">Sessions</a>
+                <a href="blog.html">Blog</a>
+                <a href="faq.html">FAQ</a>
+                <a href="library.html">Library</a>
+                <a href="register.html" class="nav-cta">Register Free</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-copy">
+                <div class="eyebrow">Reserved entry</div>
+                <h1>Register with the right path already selected</h1>
+                <p>
+                    Choose a session, arrive with the right package prefilled, and complete one focused registration flow.
+                    This page is built for conversion, not guesswork.
+                </p>
+                <div class="mini-points">
+                    <span>No payment required during launch</span>
+                    <span>WhatsApp confirmation within 24 hours</span>
+                    <span>Built for future in-app payment</span>
+                </div>
+            </div>
+            <aside class="summary-card" id="selectionSummary">
+                <div class="summary-tag" id="summaryTag">Recommended</div>
+                <h2 class="summary-title" id="summaryTitle">Single Session</h2>
+                <div class="summary-price"><span id="summaryWas">$15</span><strong id="summaryNow">FREE</strong></div>
+                <div class="summary-note" id="summaryNote">N0 · launch access</div>
+                <ul class="summary-list" id="summaryFeatures"></ul>
+            </aside>
+        </div>
+    </section>
+
+    <section>
+        <div class="container layout">
+            <div class="registration-card">
+                <h2 class="section-title">Reserve your session</h2>
+                <p class="section-copy">Your selected package already shapes this form. You can still change it, but the flow starts from the option you clicked.</p>
+                <form id="registrationForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Full Name *</label>
+                            <input type="text" id="fullName" name="fullName" required placeholder="Your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required placeholder="you@example.com">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">WhatsApp / Phone *</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="+234 xxx xxx xxxx">
+                        </div>
+                        <div class="form-group">
+                            <label for="sessionType">Selected Path *</label>
+                            <select id="sessionType" name="sessionType" required>
+                                <option value="">Select Session Type</option>
+                                <option value="single">Single Session (90 minutes)</option>
+                                <option value="three-pack">Three Session Package</option>
+                                <option value="group">Weekly Group Sessions</option>
+                                <option value="intensive">Monthly Intensive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="goals">What do you hope to achieve? (Optional)</label>
+                        <textarea id="goals" name="goals" rows="4" placeholder="Tell us what you're navigating right now, what kind of clarity you need, or what you'd like this session to unlock."></textarea>
+                    </div>
+                    <button type="submit" class="cta-button" id="registerButton">Book my free session</button>
+                    <div class="microcopy" id="registerMicrocopy">
+                        During launch, registration is free. When paid plans go live, payment should happen inside the app, not in WhatsApp DMs.
+                    </div>
+                </form>
+            </div>
+
+            <div class="note-grid">
+                <div class="note-card">
+                    <h3>Why this page exists</h3>
+                    <p>
+                        Package clicks should feel intelligent. This dedicated page keeps the selected offer visible,
+                        gives mobile users more room, and creates a cleaner future path for in-app payment.
+                    </p>
+                </div>
+                <div class="note-card">
+                    <h3>Payment direction</h3>
+                    <p>
+                        WhatsApp should stay for support and reassurance. Payment should happen inside the product when
+                        you switch from launch-free to paid offers, so status, confirmations, and follow-up all stay connected.
+                    </p>
+                    <div class="contact-links">
+                        <a href="https://wa.me/2348147732687?text=Hi! I'd like help choosing the right Atanda Verse session." target="_blank" rel="noopener noreferrer">WhatsApp support</a>
+                        <a href="sessions.html">Compare plans</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-shell">
+            © 2025–2026 Atanda. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        const PACKAGE_MAP = {
+            'single': {
+                tag: 'Fast clarity',
+                title: 'Single Session',
+                oldPrice: '$15',
+                note: 'N0 · was N25,000',
+                button: 'Book my free session',
+                features: [
+                    '90-minute clarity session',
+                    'Personal breakthrough guidance',
+                    'Action plan creation',
+                    '24h follow-up support'
+                ]
+            },
+            'three-pack': {
+                tag: 'Most popular',
+                title: 'Three Session Package',
+                oldPrice: '$40',
+                note: 'N0 · was N65,000',
+                button: 'Start my package',
+                features: [
+                    '3x 90-minute sessions',
+                    'Progressive clarity building',
+                    'Comprehensive life mapping',
+                    'Ongoing support between sessions',
+                    'Digital library access'
+                ]
+            },
+            'group': {
+                tag: 'Community path',
+                title: 'Weekly Group Sessions',
+                oldPrice: '$30',
+                note: 'N0 · was N50,000',
+                button: 'Join the group',
+                features: [
+                    'Weekly group sessions',
+                    'Community support',
+                    'Shared breakthrough experiences',
+                    'Group accountability'
+                ]
+            },
+            'intensive': {
+                tag: 'Deep work',
+                title: 'Monthly Intensive',
+                oldPrice: '$150',
+                note: 'N0 · was N245,000',
+                button: 'Go intensive',
+                features: [
+                    '4 weekly intensive sessions',
+                    'Deep transformation program',
+                    'Personal clarity roadmap',
+                    'Unlimited support access',
+                    'Exclusive resources'
+                ]
+            }
+        };
+
+        function getSelectedPackage() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('session') || 'single';
+        }
+
+        function applyPackage(sessionKey) {
+            const data = PACKAGE_MAP[sessionKey] || PACKAGE_MAP.single;
+            document.getElementById('summaryTag').textContent = data.tag;
+            document.getElementById('summaryTitle').textContent = data.title;
+            document.getElementById('summaryWas').textContent = data.oldPrice;
+            document.getElementById('summaryNow').textContent = 'FREE';
+            document.getElementById('summaryNote').textContent = data.note;
+            document.getElementById('registerButton').textContent = data.button;
+            document.getElementById('summaryFeatures').innerHTML = data.features.map(function(item){
+                return '<li>' + item + '</li>';
+            }).join('');
+            document.getElementById('sessionType').value = sessionKey;
+        }
+
+        applyPackage(getSelectedPackage());
+
+        document.getElementById('sessionType').addEventListener('change', function() {
+            if (this.value) applyPackage(this.value);
+        });
+
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const d = Object.fromEntries(new FormData(this));
+            if (!d.fullName || !d.email || !d.phone || !d.sessionType) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) {
+                alert('Please enter a valid phone number.');
+                return;
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const source = params.get('source') || 'register-page';
+            const sbUrl = localStorage.getItem('iv_sb_url');
+            const sbKey = localStorage.getItem('iv_sb_key');
+
+            if (sbUrl && sbKey) {
+                try {
+                    await fetch(sbUrl + '/rest/v1/registrations', {
+                        method: 'POST',
+                        headers: {
+                            apikey: sbKey,
+                            Authorization: 'Bearer ' + sbKey,
+                            'Content-Type': 'application/json',
+                            Prefer: 'return=minimal'
+                        },
+                        body: JSON.stringify({
+                            id: 'reg-' + Date.now(),
+                            full_name: d.fullName,
+                            email: d.email,
+                            phone: d.phone,
+                            session_type: d.sessionType,
+                            goals: d.goals || '',
+                            source: 'register:' + source,
+                            registered_at: new Date().toISOString()
+                        })
+                    });
+                } catch (err) {
+                    console.warn('Registration save failed', err);
+                }
+            }
+
+            if (window.ivCaptureSubscriber) {
+                await window.ivCaptureSubscriber({
+                    email: d.email,
+                    name: d.fullName || '',
+                    source: 'register-page',
+                    tags: ['registration', 'sessions', d.sessionType || 'general', source]
+                });
+            }
+
+            const selected = PACKAGE_MAP[d.sessionType] || PACKAGE_MAP.single;
+            const msg =
+                'NEW CLARITY SESSION REGISTRATION\n\n' +
+                'Name: ' + d.fullName + '\n' +
+                'Email: ' + d.email + '\n' +
+                'Phone: ' + d.phone + '\n' +
+                'Session: ' + selected.title + '\n' +
+                'Source: ' + source + '\n' +
+                'Goals: ' + (d.goals || 'Not specified');
+            window.open('https://wa.me/2348147732687?text=' + encodeURIComponent(msg), '_blank');
+            alert("Thank you for registering! We'll contact you within 24 hours to confirm your session.");
+            this.reset();
+            applyPackage(getSelectedPackage());
+        });
+    </script>
+</body>
+</html>
