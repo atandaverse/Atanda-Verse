@@ -3919,7 +3919,7 @@ function _saveCampaignExtras(campaignId, extras) {
 }
 
 function _emailSafeImage(path) {
-  const abs = !path ? '' : (/^https?:\/\//i.test(path) ? path : ('https://dalorf.github.io/Innerverse/' + String(path).replace(/^\/+/, '')));
+const abs = !path ? '' : (/^https?:\/\//i.test(path) ? path : ('https://verse.atanda.site/' + String(path).replace(/^\/+/, '')));
   if (!abs || /^(data:|blob:|file:)/i.test(abs)) return '';
   try {
     const u = new URL(abs);

@@ -7,7 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 function absUrl(path: string) {
   if (!path) return "";
   if (/^https?:\/\//i.test(path)) return path;
-  return `https://dalorf.github.io/Innerverse/${String(path).replace(/^\/+/, "")}`;
+  return `https://verse.atanda.site/${String(path).replace(/^\/+/, "")}`;
 }
 
 function emailSafeImage(path: string) {
@@ -71,8 +71,8 @@ Deno.serve(async (req) => {
 
     let sent = 0;
     const browserUrl = campaign.post_id
-      ? `https://dalorf.github.io/Innerverse/post.html?id=${campaign.post_id}`
-      : "https://dalorf.github.io/Innerverse/blog.html";
+      ? `https://verse.atanda.site/post.html?id=${campaign.post_id}`
+      : "https://verse.atanda.site/blog.html";
     const title = post?.title || campaign.subject;
     const preview = overrides.preview_text || campaign.preview_text || post?.excerpt || "";
     const image = emailSafeImage(post?.image || "");
