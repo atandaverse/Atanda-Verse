@@ -542,7 +542,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
     <div class="test-res" id="testRes"></div>
     <div class="sa">
       <button class="btn p" onclick="testAndSave()">Test &amp; Connect →</button>
-      <span class="skip-lnk" onclick="skipSetup()">Skip — use localStorage only</span>
+      <span class="skip-lnk" onclick="skipSetup()">Continue in local mode</span>
     </div>
   </div>
 </div>
@@ -558,7 +558,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
     <button class="lb" onclick="tryLogin()">ENTER DASHBOARD</button>
     <div class="le" id="lerr"></div>
   </div>
-  <div style="font-size:.66rem;color:var(--t3)" id="lockHint">Private workspace access only. On first use, entering a workspace ID and access key creates local access for this browser.</div>
+  <div style="font-size:.66rem;color:var(--t3)" id="lockHint">Private workspace access only. Login is browser-local, and Supabase connection is optional unless you want sync, uploads, analytics, or outbound mail.</div>
 </div>
 
 <!-- SHELL -->
@@ -4658,7 +4658,11 @@ clearSupabaseConnection=function(){
   toast('Supabase connection cleared. Admin is now using local storage.','ok');
 }
 
-(function(){const hasCreds=_useSb(),skipped=localStorage.getItem('iv_setup_skip');if(!hasCreds&&!skipped)setTimeout(()=>document.getElementById('setupScreen').classList.remove('gone'),300);else document.getElementById('setupScreen').classList.add('gone');upDbBadge();probeSupabaseConnection();})();
+(function(){
+  document.getElementById('setupScreen')?.classList.add('gone');
+  upDbBadge();
+  probeSupabaseConnection();
+})();
 </script>
 </body>
 </html>
