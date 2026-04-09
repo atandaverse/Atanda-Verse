@@ -480,7 +480,7 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
             border: 1px solid var(--glass-border); box-shadow: 0 14px 36px var(--shadow), inset 0 1px 0 rgba(255,255,255,.42);
             transition: all .4s cubic-bezier(.34,1.56,.64,1); position: relative; overflow: hidden;
         }
-        .service-card::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%,rgba(255,255,255,.22),rgba(220,53,69,.08) 28%,transparent 62%); opacity: 0; transition: opacity .4s; }
+        .service-card::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%,rgba(255,255,255,.22),rgba(220,53,69,.08) 28%,transparent 62%); opacity: 0; transition: opacity .4s; pointer-events:none; }
         .service-card:hover { transform: translateY(-12px); box-shadow: 0 30px 70px var(--shadow-hover); }
         .service-card:hover::after { opacity: 1; }
         .service-icon { width: 88px; height: 88px; margin: 0 auto 1.8rem; background: linear-gradient(135deg,var(--accent),var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; transition: transform .4s cubic-bezier(.34,1.56,.64,1); position: relative; z-index: 1; }
@@ -1041,13 +1041,13 @@ img.loaded{opacity:1;}
             <span class="section-tag rv">What We Offer</span>
             <h2 class="section-title rv">OUR SERVICES</h2>
             <div class="services-grid">
-                <div class="service-card iv-pop">
+                <div class="service-card iv-pop" data-href="register.html?session=group&label=Weekly%20Group%20Sessions&source=index-services-card" role="link" tabindex="0" aria-label="Register for group sessions">
                     <div class="service-icon">👥</div>
                     <h3>Group Sessions</h3>
                     <p>Join like-minded individuals on a shared journey of discovery and transformation in our supportive group environment.</p>
                     <a href="register.html?session=group&label=Weekly%20Group%20Sessions&source=index-services" class="cta-button">Register for Groups</a>
                 </div>
-                <div class="service-card iv-pop">
+                <div class="service-card iv-pop" data-href="register.html?session=single&label=Single%20Session&source=index-services-card" role="link" tabindex="0" aria-label="Book a personal 1 to 1 session">
                     <div class="service-icon">🎯</div>
                     <h3>Personal 1:1 Sessions</h3>
                     <p>Experience personalized breakthrough sessions tailored specifically to your unique challenges and goals.</p>
@@ -1394,6 +1394,22 @@ img.loaded{opacity:1;}
         btn.addEventListener('mouseleave', () => btn.style.transform = '');
     });
 
+    // ── CLICKABLE SERVICE CARDS ──
+    document.querySelectorAll('.service-card[data-href]').forEach(card => {
+        const href = card.getAttribute('data-href');
+        if (!href) return;
+        card.addEventListener('click', e => {
+            if (e.target && e.target.closest && e.target.closest('a, button, input, select, textarea')) return;
+            window.location.href = href;
+        });
+        card.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = href;
+            }
+        });
+    });
+
     // ── STICKY CTA ──
     let lastST = 0;
     const sc = document.getElementById('stickyCta');
@@ -1507,7 +1523,20 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
           });
           if(r.ok)posts=await r.json();
         }
-        if(!posts||!posts.length){grid.style.display='none';return;}
+        if(!posts||!posts.length){
+          try{
+            const cached=JSON.parse(localStorage.getItem('iv_posts')||'[]');
+            posts=(cached||[]).filter(p=>String(p.status||'').toLowerCase()==='published');
+          }catch{}
+        }
+        if(!posts||!posts.length){
+          posts=[
+            {id:'ep4',title:'Beyond "School Na Scam" Episode 4',excerpt:'Why your network still matters and how to build one that changes outcomes...',image:'images/headers4.png',emoji:'🤝',category:'Networking & Career Strategy',date:'2025-10-22',read_time:'8 min read'},
+            {id:'ep3',title:'Beyond "School Na Scam" Episode 3',excerpt:'Understanding which business skills actually create real earning power in Nigeria today...',image:'images/headers3.png',emoji:'💼',category:'Business Skills & Entrepreneurship',date:'2025-10-15',read_time:'7 min read'},
+            {id:'ep2',title:'Beyond "School Na Scam" Episode 2',excerpt:'We’re diving deep into digital skills that are transforming Nigerian careers...',image:'images/headers2.png',emoji:'💻',category:'Education & Career',date:'2025-10-07',read_time:'8 min read'}
+          ];
+        }
+        posts=posts.slice(0,3);
         function fmtD(d){if(!d)return'';var dt=new Date(d);if(isNaN(dt))return d;return dt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});}
         grid.innerHTML=posts.map(p=>`
           <a href="post.html?id=${p.id}" style="text-decoration:none;display:block;background:var(--glass);backdrop-filter:blur(20px);border-radius:20px;overflow:hidden;border:1px solid var(--glass-border);box-shadow:0 8px 32px var(--shadow);transition:all .4s cubic-bezier(.34,1.56,.64,1)" onmouseover="this.style.transform='translateY(-8px)';this.style.boxShadow='0 24px 60px var(--shadow-hover)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px var(--shadow)'">
@@ -1526,7 +1555,15 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
             </div>
           </a>`).join('');
         if(window.ivRefreshObserver)window.ivRefreshObserver();
-      }catch(e){const g=document.getElementById('latestPostsGrid');if(g)g.style.display='none';}
+      }catch(e){
+        const g=document.getElementById('latestPostsGrid');
+        if(!g)return;
+        g.innerHTML=`
+          <a href="blog.html" style="text-decoration:none;display:block;background:var(--glass);backdrop-filter:blur(20px);border-radius:20px;overflow:hidden;border:1px solid var(--glass-border);box-shadow:0 8px 32px var(--shadow);padding:2rem;color:var(--text-primary)">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1px;margin-bottom:.7rem">Read the Blog</div>
+            <p style="color:var(--text-secondary);line-height:1.7">Fresh clarity notes, session insights, and practical growth articles are available in the blog library.</p>
+          </a>`;
+      }
     })();
 
     let _publicTestimonialAvatarPending = '';

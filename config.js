@@ -351,8 +351,308 @@
     }
   }
 
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function getContactConfig(kind) {
+    var map = {
+      general: {
+        title: 'Contact Atanda',
+        route: 'hello',
+        recipient: 'hello@atanda.site',
+        senderLabel: 'Atanda <hello@atanda.site>',
+        eyebrow: 'General enquiry',
+        subjectLabel: 'Subject',
+        messageLabel: 'Message',
+        messagePlaceholder: 'Tell us what you need, what you are exploring, or what kind of conversation you want to start.',
+        extras: []
+      },
+      sessions: {
+        title: 'Contact Sessions',
+        route: 'sessions',
+        recipient: 'sessions@atanda.site',
+        senderLabel: 'Atanda Verse Sessions <sessions@atanda.site>',
+        eyebrow: 'Session enquiry',
+        subjectLabel: 'Session topic',
+        messageLabel: 'What do you need help with?',
+        messagePlaceholder: 'Ask about a package, timing, confirmation, rescheduling, or anything related to your session.',
+        extras: [
+          { id: 'package', label: 'Package', type: 'select', options: [
+            { value: '', label: 'Select package' },
+            { value: 'single', label: 'Single Session' },
+            { value: 'three-pack', label: 'Three Session Package' },
+            { value: 'group', label: 'Weekly Group Sessions' },
+            { value: 'intensive', label: 'Monthly Intensive' }
+          ]},
+          { id: 'contact_method', label: 'Preferred reply channel', type: 'select', options: [
+            { value: 'email', label: 'Email' },
+            { value: 'whatsapp', label: 'WhatsApp' }
+          ]}
+        ]
+      },
+      support: {
+        title: 'Get Support',
+        route: 'support',
+        recipient: 'support@atanda.site',
+        senderLabel: 'Atanda Support <support@atanda.site>',
+        eyebrow: 'Support request',
+        subjectLabel: 'Issue summary',
+        messageLabel: 'Describe the issue',
+        messagePlaceholder: 'Tell us what went wrong, what page you were on, and how it affected you.',
+        extras: [
+          { id: 'issue_type', label: 'Issue type', type: 'select', options: [
+            { value: '', label: 'Select issue type' },
+            { value: 'payment', label: 'Payment issue' },
+            { value: 'bug', label: 'Bug report' },
+            { value: 'access', label: 'Access problem' },
+            { value: 'feedback', label: 'Feedback' },
+            { value: 'other', label: 'Other' }
+          ]},
+          { id: 'page_url', label: 'Page URL', type: 'text', placeholder: 'Auto-filled from current page' }
+        ]
+      }
+    };
+    return map[kind] || map.general;
+  }
+
+  function ensureContactModal() {
+    if (document.getElementById('ivContactModal')) return;
+    var style = document.createElement('style');
+    style.textContent = ''
+      + '.iv-contact-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:1rem;z-index:12000;background:rgba(8,14,27,.52);backdrop-filter:blur(10px)}'
+      + '.iv-contact-modal.on{display:flex}'
+      + '.iv-contact-sheet{width:min(680px,100%);max-height:min(88vh,860px);overflow:auto;border-radius:24px;background:rgba(255,255,255,.94);box-shadow:0 28px 70px rgba(15,23,42,.28);border:1px solid rgba(15,23,42,.08);padding:1.4rem}'
+      + '.iv-contact-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:1rem}'
+      + '.iv-contact-eyebrow{display:inline-flex;padding:.45rem .8rem;border-radius:999px;background:rgba(199,55,74,.08);color:#c7374a;font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.8rem}'
+      + '.iv-contact-title{font-size:1.8rem;line-height:1.05;color:#16233f;font-weight:800;margin:0 0 .45rem}'
+      + '.iv-contact-copy{margin:0;color:#61708f;line-height:1.7;font-size:.95rem}'
+      + '.iv-contact-close{border:none;background:rgba(22,35,63,.08);color:#16233f;width:42px;height:42px;border-radius:12px;cursor:pointer;font-size:1.2rem;font-weight:700}'
+      + '.iv-contact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}'
+      + '.iv-contact-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.9rem}'
+      + '.iv-contact-group.full{grid-column:1 / -1}'
+      + '.iv-contact-group label{font-size:.84rem;font-weight:700;color:#16233f}'
+      + '.iv-contact-group input,.iv-contact-group select,.iv-contact-group textarea{width:100%;padding:.95rem 1rem;border-radius:16px;border:1px solid rgba(15,23,42,.1);background:#fff;font:inherit;color:#16233f;outline:none}'
+      + '.iv-contact-group textarea{resize:vertical;min-height:130px}'
+      + '.iv-contact-actions{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-top:.4rem}'
+      + '.iv-contact-submit{border:none;border-radius:16px;padding:1rem 1.3rem;background:linear-gradient(135deg,#c7374a,#8f2430);color:#fff;font:inherit;font-weight:800;cursor:pointer;box-shadow:0 16px 34px rgba(199,55,74,.24)}'
+      + '.iv-contact-secondary{font-size:.84rem;color:#61708f;line-height:1.7}'
+      + '.iv-contact-status{margin-top:.9rem;font-size:.88rem;font-weight:700;color:#1f7c67;display:none}'
+      + '.iv-contact-status.on{display:block}'
+      + '@media (max-width:640px){.iv-contact-grid{grid-template-columns:1fr}.iv-contact-sheet{padding:1rem;border-radius:20px}.iv-contact-title{font-size:1.55rem}}';
+    document.head.appendChild(style);
+
+    var modal = document.createElement('div');
+    modal.id = 'ivContactModal';
+    modal.className = 'iv-contact-modal';
+    modal.innerHTML = ''
+      + '<div class="iv-contact-sheet" role="dialog" aria-modal="true" aria-labelledby="ivContactTitle">'
+      + '  <div class="iv-contact-head">'
+      + '    <div>'
+      + '      <div class="iv-contact-eyebrow" id="ivContactEyebrow">General enquiry</div>'
+      + '      <h2 class="iv-contact-title" id="ivContactTitle">Contact Atanda</h2>'
+      + '      <p class="iv-contact-copy" id="ivContactCopy">Tell us what you need and we will route it properly.</p>'
+      + '    </div>'
+      + '    <button type="button" class="iv-contact-close" id="ivContactClose" aria-label="Close">×</button>'
+      + '  </div>'
+      + '  <form id="ivContactForm">'
+      + '    <div class="iv-contact-grid">'
+      + '      <div class="iv-contact-group"><label for="ivContactName">Name *</label><input id="ivContactName" name="name" type="text" required placeholder="Your name"></div>'
+      + '      <div class="iv-contact-group"><label for="ivContactEmail">Email *</label><input id="ivContactEmail" name="email" type="email" required placeholder="you@example.com"></div>'
+      + '      <div class="iv-contact-group full" id="ivContactExtras"></div>'
+      + '      <div class="iv-contact-group full"><label for="ivContactSubject" id="ivContactSubjectLabel">Subject</label><input id="ivContactSubject" name="subject" type="text" required placeholder="What is this about?"></div>'
+      + '      <div class="iv-contact-group full"><label for="ivContactMessage" id="ivContactMessageLabel">Message</label><textarea id="ivContactMessage" name="message" required placeholder="Tell us what you need."></textarea></div>'
+      + '    </div>'
+      + '    <div class="iv-contact-actions">'
+      + '      <button type="submit" class="iv-contact-submit" id="ivContactSubmit">Send request</button>'
+      + '      <div class="iv-contact-secondary" id="ivContactSecondary">We will route this request to the right Atanda inbox.</div>'
+      + '    </div>'
+      + '    <div class="iv-contact-status" id="ivContactStatus"></div>'
+      + '  </form>'
+      + '</div>';
+    document.body.appendChild(modal);
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) modal.classList.remove('on');
+    });
+    document.getElementById('ivContactClose').addEventListener('click', function () {
+      modal.classList.remove('on');
+    });
+  }
+
+  async function captureContactRequest(payload) {
+    var now = new Date().toISOString();
+    var request = {
+      id: 'cr-' + Date.now() + '-' + hashString((payload && payload.email) + '-' + now),
+      category: String((payload && payload.category) || 'general').trim().toLowerCase(),
+      route_to: String((payload && payload.route_to) || 'hello').trim().toLowerCase(),
+      name: String((payload && payload.name) || '').trim(),
+      email: normalizeEmail(payload && payload.email),
+      subject: String((payload && payload.subject) || '').trim(),
+      message: String((payload && payload.message) || '').trim(),
+      package: String((payload && payload.package) || '').trim(),
+      issue_type: String((payload && payload.issue_type) || '').trim(),
+      contact_method: String((payload && payload.contact_method) || '').trim(),
+      source_page: String((payload && payload.source_page) || location.pathname || '').trim(),
+      page_url: String((payload && payload.page_url) || location.href || '').trim(),
+      status: 'new',
+      meta: JSON.stringify((payload && payload.meta) || {}),
+      created_at: now
+    };
+
+    var localQueue = JSON.parse(localStorage.getItem('iv_contact_requests_pending') || '[]');
+    localQueue.push(request);
+    localStorage.setItem('iv_contact_requests_pending', JSON.stringify(localQueue));
+
+    try {
+      await sbFetch('contact_requests', {
+        method: 'POST',
+        headers: { Prefer: 'return=minimal' },
+        body: JSON.stringify(request)
+      });
+      try {
+        await sbInvoke('send-contact-request', { requestId: request.id });
+      } catch (notifyErr) {
+        console.warn('Contact acknowledgement function unavailable', notifyErr);
+      }
+      return { ok: true, request: request };
+    } catch (err) {
+      console.warn('Contact request capture failed', err);
+      return { ok: false, request: request, reason: err && err.message ? err.message : 'contact-capture-failed' };
+    }
+  }
+
+  function buildExtraFields(config, prefill) {
+    return (config.extras || []).map(function (field) {
+      var value = prefill && prefill[field.id] ? String(prefill[field.id]) : '';
+      if (field.type === 'select') {
+        return '<div class="iv-contact-group">'
+          + '<label for="ivContact_' + field.id + '">' + escapeHtml(field.label) + '</label>'
+          + '<select id="ivContact_' + field.id + '" name="' + field.id + '">'
+          + (field.options || []).map(function (opt) {
+            var selected = value && value === opt.value ? ' selected' : '';
+            return '<option value="' + escapeHtml(opt.value) + '"' + selected + '>' + escapeHtml(opt.label) + '</option>';
+          }).join('')
+          + '</select></div>';
+      }
+      return '<div class="iv-contact-group">'
+        + '<label for="ivContact_' + field.id + '">' + escapeHtml(field.label) + '</label>'
+        + '<input id="ivContact_' + field.id + '" name="' + field.id + '" type="text" value="' + escapeHtml(value || (field.id === 'page_url' ? location.href : '')) + '" placeholder="' + escapeHtml(field.placeholder || '') + '">'
+        + '</div>';
+    }).join('');
+  }
+
+  function openContactModal(options) {
+    ensureContactModal();
+    var opts = options || {};
+    var type = String(opts.type || 'general').trim().toLowerCase();
+    var config = getContactConfig(type);
+    var modal = document.getElementById('ivContactModal');
+    var form = document.getElementById('ivContactForm');
+    var extrasWrap = document.getElementById('ivContactExtras');
+    var status = document.getElementById('ivContactStatus');
+    var submit = document.getElementById('ivContactSubmit');
+    var secondary = document.getElementById('ivContactSecondary');
+
+    document.getElementById('ivContactEyebrow').textContent = config.eyebrow;
+    document.getElementById('ivContactTitle').textContent = config.title;
+    document.getElementById('ivContactCopy').textContent = opts.copy || ('This request will be routed to ' + config.senderLabel + '.');
+    document.getElementById('ivContactSubjectLabel').textContent = config.subjectLabel;
+    document.getElementById('ivContactMessageLabel').textContent = config.messageLabel;
+    document.getElementById('ivContactSubject').placeholder = opts.subjectPlaceholder || 'What is this about?';
+    document.getElementById('ivContactMessage').placeholder = config.messagePlaceholder;
+    document.getElementById('ivContactSubject').value = opts.subject || '';
+    document.getElementById('ivContactMessage').value = opts.message || '';
+    document.getElementById('ivContactName').value = opts.name || '';
+    document.getElementById('ivContactEmail').value = opts.email || '';
+    extrasWrap.innerHTML = buildExtraFields(config, opts.prefill || {});
+    secondary.textContent = 'This request will be routed to ' + config.senderLabel + '.';
+    status.className = 'iv-contact-status';
+    status.textContent = '';
+    submit.textContent = opts.submitLabel || 'Send request';
+
+    form.onsubmit = async function (event) {
+      event.preventDefault();
+      submit.disabled = true;
+      submit.textContent = 'Sending...';
+      var fd = new FormData(form);
+      var payload = {
+        category: type,
+        route_to: config.route,
+        name: fd.get('name'),
+        email: fd.get('email'),
+        subject: fd.get('subject'),
+        message: fd.get('message'),
+        package: fd.get('package'),
+        issue_type: fd.get('issue_type'),
+        contact_method: fd.get('contact_method'),
+        page_url: fd.get('page_url') || location.href,
+        source_page: location.pathname,
+        meta: { trigger: opts.trigger || 'modal', source: opts.source || location.pathname }
+      };
+      var result = await captureContactRequest(payload);
+      submit.disabled = false;
+      submit.textContent = opts.submitLabel || 'Send request';
+      if (result.ok) {
+        status.className = 'iv-contact-status on';
+        status.textContent = 'Request received. We will route it to the right Atanda inbox.';
+        form.reset();
+        extrasWrap.innerHTML = buildExtraFields(config, opts.prefill || {});
+        setTimeout(function () { modal.classList.remove('on'); }, 900);
+      } else {
+        var mailto = 'mailto:' + encodeURIComponent(config.recipient)
+          + '?subject=' + encodeURIComponent(payload.subject || config.title)
+          + '&body=' + encodeURIComponent((payload.message || '') + '\n\nName: ' + payload.name + '\nEmail: ' + payload.email);
+        status.className = 'iv-contact-status on';
+        status.style.color = '#c7374a';
+        status.textContent = 'Structured save failed here, so we are falling back to your email app.';
+        window.location.href = mailto;
+      }
+    };
+
+    modal.classList.add('on');
+  }
+
+  function bindContactTriggers() {
+    Array.prototype.slice.call(document.querySelectorAll('a[href^="mailto:"]')).forEach(function (link) {
+      if (link.dataset.contactBound === '1') return;
+      var href = String(link.getAttribute('href') || '').toLowerCase();
+      var type = href.indexOf('sessions@atanda.site') !== -1 ? 'sessions'
+        : href.indexOf('support@atanda.site') !== -1 ? 'support'
+        : 'general';
+      link.dataset.contactBound = '1';
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        openContactModal({
+          type: type,
+          trigger: 'mailto-link',
+          source: location.pathname,
+          subject: link.dataset.subject || '',
+          prefill: {
+            package: link.dataset.package || '',
+            issue_type: link.dataset.issueType || '',
+            page_url: location.href
+          }
+        });
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindContactTriggers);
+  } else {
+    bindContactTriggers();
+  }
+
   window.ivGetSupabaseCreds = getCreds;
   window.ivCaptureSubscriber = captureSubscriber;
+  window.ivCaptureContactRequest = captureContactRequest;
+  window.ivOpenContactModal = openContactModal;
   window.ivGetPostViews = getPostViews;
   window.ivGetPostView = getPostView;
   window.ivGetAnalyticsSnapshot = getAnalyticsSnapshot;
