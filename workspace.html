@@ -509,7 +509,8 @@ alter table newsletter_deliveries enable row level security;
 drop policy if exists "public_read_newsletter_deliveries" on newsletter_deliveries;
 drop policy if exists "public_write_newsletter_deliveries" on newsletter_deliveries;
 create policy "public_read_newsletter_deliveries" on newsletter_deliveries for select using (true);
-create policy "public_write_newsletter_deliveries" on newsletter_deliveries for all using (true);
+
+-- Delivery rows should be written only by the server-side send function.
 
 create table if not exists admin_logins (
   id text primary key,

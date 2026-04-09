@@ -26,8 +26,7 @@ create table if not exists contact_requests (
 alter table contact_requests enable row level security;
 drop policy if exists "public_read_contact_requests" on contact_requests;
 drop policy if exists "public_write_contact_requests" on contact_requests;
-create policy "public_read_contact_requests" on contact_requests for select using (true);
-create policy "public_write_contact_requests" on contact_requests for all using (true);
+create policy "public_write_contact_requests" on contact_requests for insert with check (true);
 ```
 
 ### 2. Create the Edge Function
@@ -56,6 +55,11 @@ Supabase already provides:
 - general contact -> `Atanda <hello@atanda.site>`
 - session enquiries -> `Atanda Verse Sessions <sessions@atanda.site>`
 - support/issues -> `Atanda Support <support@atanda.site>`
+
+### Security note
+
+- Public visitors should only be able to insert new `contact_requests`
+- Reading requests and updating statuses should happen through your server-side function/service role
 
 ### 5. What happens
 
