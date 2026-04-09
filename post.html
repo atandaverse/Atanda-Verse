@@ -1467,6 +1467,29 @@ document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseent
 window.addEventListener('scroll',()=>{const pb=document.getElementById('progressBar')||document.getElementById('pb2');if(pb)pb.style.transform=`scaleX(${window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)})`;document.getElementById('mainNav')?.classList.toggle('scrolled',window.scrollY>60);});
 const _mm=document.getElementById('mobileMenu'),_nl=document.getElementById('navLinks');
 if(_mm)_mm.addEventListener('click',()=>{_nl.classList.toggle('active');_mm.classList.toggle('open');});
+const _postSeedMap=()=>({
+  ep1:{image:'images/headers.png',excerpt:'The new reality of education in Nigeria. We\'re decoding the new rules of the game and revealing the strategy that actually works...',readTime:'5 min read',emoji:'ðŸ“š'},
+  ep2:{image:'images/headers2.png',excerpt:'We\'re diving deep into digital skills that are transforming Nigerian careers...',readTime:'8 min read',emoji:'ðŸ’»'},
+  ep3:{image:'images/headers3.png',excerpt:'Understanding which business skills actually create real earning power in Nigeria today...',readTime:'7 min read',emoji:'ðŸ’¼'},
+  ep4:{image:'images/headers4.png',excerpt:'Why your network still matters and how to build one that changes outcomes...',readTime:'8 min read',emoji:'ðŸ¤'}
+});
+dbGetPosts=async function(){
+  if(_useSb()){try{
+    const rows=await _sbReq('posts?select=*&order=date.desc,id.asc');
+    if(rows){
+      const seedMap=_postSeedMap();
+      let cached=[];
+      try{cached=JSON.parse(localStorage.getItem(LOCAL_KEY)||'[]');}catch{}
+      const cacheMap={};
+      (cached||[]).forEach(post=>{if(post&&post.id)cacheMap[post.id]=post;});
+      const m=rows.map(r=>{const seedPost=seedMap[r.id]||{};const cachedPost=cacheMap[r.id]||{};const content=(r.content&&r.content.trim())?r.content:(cachedPost.content||seedPost.content||'');const excerpt=(r.excerpt&&r.excerpt.trim())?r.excerpt:(cachedPost.excerpt||seedPost.excerpt||'');const image=(r.image&&r.image.trim())?r.image:(cachedPost.image||seedPost.image||'');return{id:r.id,title:r.title,subtitle:r.subtitle||cachedPost.subtitle||seedPost.subtitle||'',category:r.category,status:r.status,readTime:r.read_time||cachedPost.readTime||seedPost.readTime||'5 min read',date:r.date,excerpt,image,emoji:r.emoji||cachedPost.emoji||seedPost.emoji||'ðŸ“',content};});
+      localStorage.setItem(LOCAL_KEY,JSON.stringify(m));
+      return m;
+    }
+  }catch(e){console.warn('SB failed',e);}}
+  try{const r=localStorage.getItem(LOCAL_KEY);if(r){const p=JSON.parse(r);if(p&&p.length)return p;}}catch{}
+  return [];
+}
 initPageLoader();
 initPostPage();
 </script>

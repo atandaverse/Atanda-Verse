@@ -333,30 +333,36 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         .pricing-card:hover { transform: translateY(-12px); box-shadow: 0 30px 70px var(--shadow-hover); border-color: rgba(220,53,69,.25); }
         .pricing-card.featured {
             background:
-                radial-gradient(circle at top, rgba(220,53,69,.14), transparent 48%),
-                linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,249,250,.92));
-            border-color: rgba(220,53,69,.55);
+                radial-gradient(circle at top, rgba(255,224,130,.42), transparent 46%),
+                linear-gradient(180deg, rgba(255,250,232,.98), rgba(247,234,191,.96) 55%, rgba(240,218,161,.94));
+            border-color: rgba(191,145,46,.72);
             transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 28px 70px rgba(220,53,69,.18), 0 18px 42px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.82);
+            box-shadow: 0 30px 72px rgba(176,131,27,.26), 0 18px 42px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.86);
         }
-        .pricing-card.featured::after { content: ''; position: absolute; top: 0; left: 18px; right: 18px; height: 4px; border-radius: 0 0 999px 999px; background: linear-gradient(90deg, rgba(220,53,69,0), rgba(220,53,69,.95), rgba(220,53,69,0)); }
+        .pricing-card.featured::before { opacity: 1; background: linear-gradient(145deg,rgba(255,255,255,.45) 0%,rgba(255,214,102,.18) 38%,rgba(176,131,27,.08) 100%); }
+        .pricing-card.featured::after { content: ''; position: absolute; top: 0; left: 18px; right: 18px; height: 4px; border-radius: 0 0 999px 999px; background: linear-gradient(90deg, rgba(191,145,46,0), rgba(191,145,46,.95), rgba(255,233,153,.95), rgba(191,145,46,0)); }
         .pricing-card.featured:hover { transform: translateY(-16px) scale(1.06); }
         .pricing-card.featured .pricing-badge {
             padding: .55rem 1.25rem;
             font-size: .74rem;
             letter-spacing: 1.6px;
-            box-shadow: 0 12px 30px rgba(220,53,69,.24);
+            background: linear-gradient(135deg, #9a6b10, #d8a92d 55%, #f6df8a);
+            color: #fff9eb;
+            box-shadow: 0 12px 30px rgba(176,131,27,.28);
         }
-        .pricing-card.featured .pricing-title { font-size: 1.35rem; margin-bottom: 1.1rem; }
-        .pricing-card.featured .price-current { font-size: 4rem; letter-spacing: 3px; }
-        .pricing-card.featured .price-naira { font-size: .96rem; font-weight: 600; color: var(--text-secondary); }
-        .pricing-card.featured .pricing-features li { font-size: .94rem; padding: .44rem 0; }
+        .pricing-card.featured .pricing-title { font-size: 1.35rem; margin-bottom: 1.1rem; color:#5b420d; }
+        .pricing-card.featured .price-current { font-size: 4rem; letter-spacing: 3px; color:#9a2f37; text-shadow:0 4px 18px rgba(255,255,255,.35); }
+        .pricing-card.featured .price-original { color: rgba(91,66,13,.58); }
+        .pricing-card.featured .price-naira { font-size: .96rem; font-weight: 700; color: #6d5318; }
+        .pricing-card.featured .pricing-features li { font-size: .94rem; padding: .44rem 0; color:#5c4a1f; }
         .pricing-card.featured .cta-button {
             width: 100%;
             margin: 1rem 0 0;
             border-radius: 14px;
             padding: 1.15rem 1.4rem;
-            box-shadow: 0 18px 36px rgba(220,53,69,.26), inset 0 1px 0 rgba(255,255,255,.22);
+            background: linear-gradient(135deg, #8d6410, #c9951f 52%, #e3b542);
+            color:#fff9ea;
+            box-shadow: 0 18px 36px rgba(176,131,27,.28), inset 0 1px 0 rgba(255,255,255,.3);
         }
         .pricing-badge { background: linear-gradient(135deg,var(--accent),var(--accent-hover)); color: white; padding: .35rem .95rem; border-radius: 50px; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: .9rem; display: inline-block; }
         .pricing-title { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: .9rem; }
@@ -1426,14 +1432,102 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
       }catch(e){const g=document.getElementById('latestPostsGrid');if(g)g.style.display='none';}
     })();
 
+    let _publicTestimonialAvatarPending = '';
+    function showPublicTestimonialAvatarPreview(src) {
+        const wrap = document.getElementById('tAvatarPreviewWrap');
+        if (!wrap) return;
+        if (src) {
+            wrap.innerHTML = `<img src="${src}" alt="Photo preview" style="width:100%;height:100%;object-fit:cover">`;
+        } else {
+            wrap.textContent = '[photo]';
+        }
+    }
+    function previewPublicTestimonialAvatarUrl(url) {
+        _publicTestimonialAvatarPending = url && url.trim() ? url.trim() : '';
+        showPublicTestimonialAvatarPreview(_publicTestimonialAvatarPending);
+    }
+    function previewPublicTestimonialAvatar(event) {
+        const file = event?.target?.files?.[0];
+        const status = document.getElementById('tAvatarPublicStatus');
+        if (!file) {
+            _publicTestimonialAvatarPending = '';
+            showPublicTestimonialAvatarPreview('');
+            if (status) status.textContent = '';
+            return;
+        }
+        _publicTestimonialAvatarPending = file;
+        if (status) status.textContent = `Selected: ${file.name}`;
+        const reader = new FileReader();
+        reader.onload = function(ev) { showPublicTestimonialAvatarPreview(ev.target?.result || ''); };
+        reader.readAsDataURL(file);
+    }
+    async function uploadPublicTestimonialAvatar(file) {
+        const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
+        if (!creds) {
+            return await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = ev => resolve(ev.target?.result || '');
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+        const path = `avatars/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const upload = await fetch(`${creds.url}/storage/v1/object/innerverse-media/${path}`, {
+            method: 'POST',
+            headers: {
+                apikey: creds.key,
+                Authorization: 'Bearer ' + creds.key,
+                'Content-Type': file.type || 'application/octet-stream',
+                'x-upsert': 'true'
+            },
+            body: file
+        });
+        if (!upload.ok) throw new Error('Photo upload failed');
+        return `${creds.url}/storage/v1/object/public/innerverse-media/${path}`;
+    }
     const tForm = document.getElementById('testimonialForm');
-    if (tForm) tForm.addEventListener('submit', async function(e) {
+    if (tForm) {
+        const photoGroup = tForm.querySelector('#tAvatar')?.closest('.form-group');
+        if (photoGroup) {
+            photoGroup.innerHTML = `
+                <label>Your Photo <span style="font-weight:400;color:var(--text-muted);font-size:.8rem">(optional)</span></label>
+                <div style="display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;margin-top:.5rem">
+                    <div id="tAvatarPreviewWrap" style="width:56px;height:56px;border-radius:50%;overflow:hidden;border:1px solid var(--glass-border);background:var(--glass);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:1.1rem;flex:0 0 56px">[photo]</div>
+                    <div style="display:flex;flex-direction:column;gap:.55rem;flex:1 1 280px;min-width:220px">
+                        <label style="display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem 1rem;border:1px solid var(--glass-border);border-radius:14px;background:var(--glass);cursor:pointer;font-size:.9rem;color:var(--text-secondary);font-weight:600;max-width:220px">
+                            <span>Upload photo</span>
+                            <input type="file" id="tAvatarFile" accept="image/*" style="display:none">
+                        </label>
+                        <input type="url" id="tAvatar" placeholder="or paste image URL">
+                        <div id="tAvatarPublicStatus" style="font-size:.82rem;color:var(--text-muted)"></div>
+                    </div>
+                </div>`;
+            const fileInput = document.getElementById('tAvatarFile');
+            const urlInput = document.getElementById('tAvatar');
+            if (fileInput) fileInput.addEventListener('change', previewPublicTestimonialAvatar);
+            if (urlInput) urlInput.addEventListener('input', function() { previewPublicTestimonialAvatarUrl(this.value); });
+        }
+        tForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         const name = document.getElementById('tName').value.trim();
         const role = document.getElementById('tRole').value.trim();
         const text = document.getElementById('tText').value.trim();
-        const avatar = document.getElementById('tAvatar')?.value.trim() || '';
+        let avatar = document.getElementById('tAvatar')?.value.trim() || '';
         if (!name || !text) return;
+        const status = document.getElementById('tAvatarPublicStatus');
+        if (_publicTestimonialAvatarPending instanceof File) {
+            try {
+                if (status) status.textContent = 'Uploading photo...';
+                avatar = await uploadPublicTestimonialAvatar(_publicTestimonialAvatarPending);
+                if (status) status.textContent = 'Photo ready';
+            } catch (err) {
+                if (status) status.textContent = 'Photo upload failed, using form without image';
+                console.warn('Public testimonial photo upload failed', err);
+            }
+        } else if (typeof _publicTestimonialAvatarPending === 'string' && _publicTestimonialAvatarPending) {
+            avatar = _publicTestimonialAvatarPending;
+        }
         const t = { id: 'tm-' + Date.now(), name, role, text, avatar, submittedAt: new Date().toISOString(), source: 'public' };
         // Always save to localStorage as fallback
         const pending = JSON.parse(localStorage.getItem('iv_testimonials_pending') || '[]');
@@ -1458,7 +1552,8 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
         }
         this.style.display = 'none';
         document.getElementById('tSubmitMsg').style.display = 'block';
-    });
+        });
+    }
 </script>
 </body>
 </html>

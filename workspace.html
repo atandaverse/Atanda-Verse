@@ -4602,6 +4602,62 @@ quickToggleStatus=async function(id,currentStatus){
   }catch(e){}
 };
 
+const _workspaceSeedMap=()=>{try{return (getSeedPosts()||[]).reduce((acc,post)=>{if(post&&post.id)acc[post.id]=post;return acc;},{});}catch{return{};}}
+const _workspaceCacheMap=()=>{try{return (_localPosts()||[]).reduce((acc,post)=>{if(post&&post.id)acc[post.id]=post;return acc;},{});}catch{return{};}}
+dbGetPosts=async function(){
+  if(!_useSb()) return [];
+  try{
+    const rows=await _sbReq('posts?select=*&order=date.desc,id.asc');
+    const seed=_workspaceSeedMap();
+    const cache=_workspaceCacheMap();
+    const mapped=(rows||[]).map(r=>{const seedPost=seed[r.id]||{};const cachedPost=cache[r.id]||{};return{id:r.id,title:r.title,subtitle:r.subtitle||seedPost.subtitle||cachedPost.subtitle||'',category:r.category,status:r.status,readTime:r.read_time||seedPost.readTime||cachedPost.readTime||'5 min read',date:r.date,excerpt:r.excerpt||seedPost.excerpt||cachedPost.excerpt||'',image:r.image||seedPost.image||cachedPost.image||'',emoji:r.emoji||seedPost.emoji||cachedPost.emoji||'ðŸ“',content:r.content||seedPost.content||cachedPost.content||''};});
+    if(mapped.length) localStorage.setItem(LOCAL_KEY,JSON.stringify(mapped));
+    return mapped;
+  }catch(e){
+    console.warn('Supabase read failed',e);
+    return [];
+  }
+}
+
+testAndSave=async function(){
+  const url=_cleanSbUrl(document.getElementById('sbUrlIn')?.value),key=(document.getElementById('sbKeyIn')?.value||'').trim();
+  const res=document.getElementById('testRes');
+  if(res){res.style.display='block';res.className='test-res';res.textContent='Testing connection...';}
+  if(!url||!key){if(res){res.className='test-res err';res.textContent='Both fields are required';}return;}
+  if(!_validSbUrl(url)){if(res){res.className='test-res err';res.textContent='URL should look like https://your-project.supabase.co';}return;}
+  try{
+    const r=await fetch(url+'/rest/v1/posts?limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+key}});
+    if(!r.ok)throw new Error('HTTP '+r.status+' - check your credentials');
+    localStorage.setItem(SB_URL_KEY,url);
+    localStorage.setItem(SB_KEY_KEY,key);
+    localStorage.setItem('iv_setup_skip','1');
+    _setSbState('live');
+    if(res){res.className='test-res ok';res.textContent='Connected. Supabase is ready.';}
+    const setup=document.getElementById('setupScreen');
+    if(setup)setTimeout(()=>setup.classList.add('gone'),500);
+    upDbBadge();
+  }catch(e){
+    _setSbState('offline',e&&e.message?e.message:'Failed to reach Supabase');
+    if(res){res.className='test-res err';res.textContent=String(e&&e.message?e.message:'Connection failed');}
+  }
+}
+skipSetup=function(){localStorage.setItem('iv_setup_skip','1');document.getElementById('setupScreen')?.classList.add('gone');upDbBadge();}
+openSupabaseSetup=function(){
+  const urlIn=document.getElementById('sbUrlIn'),keyIn=document.getElementById('sbKeyIn'),res=document.getElementById('testRes');
+  if(urlIn)urlIn.value=_sbUrl();
+  if(keyIn)keyIn.value=_sbKey();
+  if(res){res.className='test-res';res.style.display='none';res.textContent='';}
+  document.getElementById('setupScreen')?.classList.remove('gone');
+}
+clearSupabaseConnection=function(){
+  localStorage.removeItem(SB_URL_KEY);
+  localStorage.removeItem(SB_KEY_KEY);
+  localStorage.removeItem('iv_setup_skip');
+  _setSbState('idle','');
+  upDbBadge();
+  toast('Supabase connection cleared. Admin is now using local storage.','ok');
+}
+
 (function(){const hasCreds=_useSb(),skipped=localStorage.getItem('iv_setup_skip');if(!hasCreds&&!skipped)setTimeout(()=>document.getElementById('setupScreen').classList.remove('gone'),300);else document.getElementById('setupScreen').classList.add('gone');upDbBadge();probeSupabaseConnection();})();
 </script>
 </body>
