@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Clarity Sessions & Plans — Free During Launch | Atanda Verse"><meta name="twitter:description" content="Choose your clarity session plan. Single sessions, three-packs, weekly groups, and monthly intensives — all free during launch.">
 <meta name="twitter:image" content="https://verse.atanda.site/images/headers.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","name":"Atanda Verse Clarity Sessions","description":"Virtual clarity coaching sessions for personal transformation.","url":"https://verse.atanda.site/sessions.html","provider":{"@type":"Organization","name":"Atanda Verse"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"}}</script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128273;</text></svg>">
+<link rel="icon" type="image/png" href="logo I.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
@@ -91,9 +91,14 @@
             transition: opacity .45s, visibility .45s;
         }
         .loader.gone { opacity: 0; visibility: hidden; }
-        .l-brand { font-family: 'Bebas Neue', sans-serif; font-size: 2.15rem; letter-spacing: 3px; color: #17243b; padding: 1rem 1.4rem; border-radius: 20px; background: rgba(255,255,255,.72); border: 1px solid rgba(23,36,59,.08); box-shadow: 0 18px 50px rgba(15,23,42,.10), inset 0 1px 0 rgba(255,255,255,.92); }
-        .l-brand span { color: var(--accent); }
-        .l-track { width: 132px; height: 4px; background: rgba(23,36,59,.10); border-radius: 999px; overflow: hidden; }
+        .l-brand { display:flex; align-items:center; gap:1rem; padding: 1rem 1.25rem; border-radius: 24px; background: rgba(255,255,255,.82); border: 1px solid rgba(23,36,59,.08); box-shadow: 0 22px 60px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.96); }
+        .l-brand-mark { width: 64px; height: 64px; border-radius: 18px; background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(241,245,249,.9)); border: 1px solid rgba(23,36,59,.08); display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow: 0 10px 24px rgba(15,23,42,.08); }
+        .l-brand-mark img { width: 86%; height: 86%; object-fit: contain; display:block; }
+        .l-brand-copy { display:flex; flex-direction:column; gap:.2rem; }
+        .l-brand-word { font-family: 'Bebas Neue', sans-serif; font-size: 2.1rem; letter-spacing: 3px; color: #17243b; line-height: 1; }
+        .l-brand-word span { color: var(--accent); }
+        .l-brand-note { font-size: .72rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(23,36,59,.58); font-weight: 700; }
+        .l-track { width: 184px; height: 5px; background: rgba(23,36,59,.10); border-radius: 999px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(15,23,42,.06); }
         .l-fill { height: 100%; background: linear-gradient(90deg,#17243b,var(--accent),#17243b); animation: lf .95s cubic-bezier(.4,0,.2,1) forwards; }
         @keyframes lf { from { width: 0 } to { width: 100% } }
 
@@ -965,7 +970,7 @@ img.loaded{opacity:1;}
 <body>
 <div class="progress" id="progressBar"></div>
 <div class="c-dot" id="cd" style="opacity:0"></div><div class="c-ring" id="cr" style="opacity:0"></div>
-<div class="loader" id="loader"><div class="l-brand">ATANDA <span>VERSE</span></div><div class="l-track"><div class="l-fill"></div></div></div>
+<div class="loader" id="loader"><div class="l-brand"><div class="l-brand-mark"><img src="ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo"></div><div class="l-brand-copy"><div class="l-brand-word">ATANDA <span>VERSE</span></div><div class="l-brand-note">Clarity in motion</div></div></div><div class="l-track"><div class="l-fill"></div></div></div>
 <button class="theme-toggle" id="themeToggle">&#127769;</button>
 <nav id="mainNav"><div class="nav-container"><div class="nav-logo"><div class="logo-icon"><img src="ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo" onerror="this.style.opacity='0'"></div><a href="index.html" class="logo-text">ATANDA <span class="logo-verse">VERSE</span></a></div><ul class="nav-links" id="navLinks"><li><a href="index.html">Home</a></li><li><a href="sessions.html" class="active">Sessions</a></li><li><a href="blog.html">Blog</a></li><li><a href="faq.html">FAQ</a></li><li><a href="library.html">Library</a></li><li><a href="register.html" class="nav-cta">Register Free</a></li></ul><div class="mobile-menu" id="mobileMenu"><span></span><span></span><span></span></div></div></nav>
 <main>

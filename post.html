@@ -24,7 +24,7 @@
 <meta name="twitter:description" id="twDesc" content="">
 <meta name="twitter:image" id="twImg" content="">
 <script type="application/ld+json" id="ldJson">{}</script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128273;</text></svg>">
+<link rel="icon" type="image/png" href="logo I.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -37,8 +37,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 .c-dot,.c-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);border-radius:50%}
 .c-dot{width:8px;height:8px;background:var(--accent)}.c-ring{width:36px;height:36px;border:2px solid var(--accent);opacity:.55;transition:width .2s,height .2s,opacity .2s}.c-ring.hov{width:54px;height:54px;opacity:1}
 .loader{position:fixed;inset:0;background:rgba(248,250,252,.72);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;transition:opacity .45s,visibility .45s}.loader.gone{opacity:0;visibility:hidden}
-.l-brand{font-family:'Bebas Neue',sans-serif;font-size:2.15rem;letter-spacing:3px;color:#17243b;padding:1rem 1.4rem;border-radius:20px;background:rgba(255,255,255,.72);border:1px solid rgba(23,36,59,.08);box-shadow:0 18px 50px rgba(15,23,42,.10),inset 0 1px 0 rgba(255,255,255,.92)}.l-brand span{color:#dc3545}
-.l-track{width:132px;height:4px;background:rgba(23,36,59,.10);border-radius:999px;overflow:hidden}.l-fill{height:100%;background:linear-gradient(90deg,#17243b,#dc3545,#17243b);animation:lf .95s cubic-bezier(.4,0,.2,1) forwards}
+.l-brand{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;border-radius:24px;background:rgba(255,255,255,.82);border:1px solid rgba(23,36,59,.08);box-shadow:0 22px 60px rgba(15,23,42,.12),inset 0 1px 0 rgba(255,255,255,.96)}.l-brand-mark{width:64px;height:64px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(241,245,249,.9));border:1px solid rgba(23,36,59,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 10px 24px rgba(15,23,42,.08)}.l-brand-mark img{width:86%;height:86%;object-fit:contain;display:block}.l-brand-copy{display:flex;flex-direction:column;gap:.2rem}.l-brand-word{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;letter-spacing:3px;color:#17243b;line-height:1}.l-brand-word span{color:#dc3545}.l-brand-note{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:rgba(23,36,59,.58);font-weight:700}
+.l-track{width:184px;height:5px;background:rgba(23,36,59,.10);border-radius:999px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(15,23,42,.06)}.l-fill{height:100%;background:linear-gradient(90deg,#17243b,#dc3545,#17243b);animation:lf .95s cubic-bezier(.4,0,.2,1) forwards}
 @keyframes lf{from{width:0}to{width:100%}}
 .progress{position:fixed;top:0;left:0;z-index:9999;height:3px;background:linear-gradient(90deg,var(--accent),#ff7070);transform-origin:left;transform:scaleX(0)}
 .theme-toggle{position:fixed;top:50%;right:22px;transform:translateY(-50%);z-index:1001;background:var(--glass);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid var(--glass-border);border-radius:50px;width:50px;height:50px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.15rem;box-shadow:0 12px 34px var(--shadow),inset 0 1px 0 rgba(255,255,255,.4);transition:all .3s}.theme-toggle:hover{transform:translateY(-50%) scale(1.1)}
@@ -1086,7 +1086,7 @@ img.loaded{opacity:1;}
 <body>
 <div class="progress" id="progressBar"></div>
 <div class="c-dot" id="cd" style="opacity:0"></div><div class="c-ring" id="cr" style="opacity:0"></div>
-<div class="loader" id="loader"><div class="l-brand">ATANDA <span>VERSE</span></div><div class="l-track"><div class="l-fill"></div></div></div>
+<div class="loader" id="loader"><div class="l-brand"><div class="l-brand-mark"><img src="ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo"></div><div class="l-brand-copy"><div class="l-brand-word">ATANDA <span>VERSE</span></div><div class="l-brand-note">Clarity in motion</div></div></div><div class="l-track"><div class="l-fill"></div></div></div>
 <button class="theme-toggle" id="themeToggle">&#127769;</button>
 <nav id="mainNav">
   <div class="nav-container">
