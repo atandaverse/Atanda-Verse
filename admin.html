@@ -38,14 +38,14 @@ p{color:var(--muted);line-height:1.75;font-size:1rem;max-width:54ch}
     <div class="stack">
       <div class="eyebrow">Atanda Workspace</div>
       <h1>Private access only.</h1>
-      <p>This route no longer hosts the live workspace login form. Authorized access has been moved away from the public-facing admin URL to reduce browser trust warnings and keep the workspace less exposed.</p>
+      <p>This route no longer hosts the live workspace access form. Authorized access has been moved away from the public-facing admin URL to reduce browser trust warnings and keep the workspace less exposed.</p>
       <div class="actions">
-        <a class="btn primary" href="workspace.html" rel="nofollow">Open private workspace</a>
+        <a class="btn primary" href="/workspace" rel="nofollow">Continue to workspace</a>
         <a class="btn secondary" href="index.html">Return to site</a>
       </div>
       <div class="note">
         <strong>Why this changed</strong>
-        <span>Public password pages on obvious routes like <code>admin.html</code> can trigger browser phishing-style warnings. Moving the real workspace off this route makes the live domain safer and less noisy.</span>
+        <span>Public access forms on obvious routes like <code>admin.html</code> can trigger browser phishing-style warnings. Moving the real workspace off this route makes the live domain safer and less noisy.</span>
       </div>
     </div>
   </main>
