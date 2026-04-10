@@ -533,12 +533,12 @@ create policy "public_write_logins" on admin_logins for all using (true);
     <div class="field">
       <label>Project URL</label>
       <input class="fi" type="text" id="sbUrlIn" placeholder="https://xxxxxxxxxxxx.supabase.co">
-      <div class="fn">Settings → API → Project URL</div>
+      <div class="fn">Settings → API → Project URL. Usually needed once per browser unless you clear storage.</div>
     </div>
     <div class="field">
       <label>Anon / Public Key</label>
       <input class="fi" type="text" id="sbKeyIn" placeholder="eyJhbGci…">
-      <div class="fn">Settings → API → Project API keys → <strong>anon public</strong></div>
+      <div class="fn">Settings → API → Project API keys → <strong>anon public</strong>. Saved on this browser after a successful connection test.</div>
     </div>
     <div class="test-res" id="testRes"></div>
     <div class="sa">
@@ -4653,9 +4653,12 @@ testAndSave=async function(){
   try{
     const r=await fetch(url+'/rest/v1/posts?limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+key}});
     if(!r.ok)throw new Error('HTTP '+r.status+' - check your credentials');
-    localStorage.setItem(SB_URL_KEY,url);
-    localStorage.setItem(SB_KEY_KEY,key);
-    localStorage.setItem('iv_setup_skip','1');
+    if(window.ivRememberSupabaseCreds) window.ivRememberSupabaseCreds(url,key,{skipSetup:true});
+    else{
+      localStorage.setItem(SB_URL_KEY,url);
+      localStorage.setItem(SB_KEY_KEY,key);
+      localStorage.setItem('iv_setup_skip','1');
+    }
     resetPostsAuthority();
     _setSbState('live');
     if(res){res.className='test-res ok';res.textContent='Connected. Supabase is ready.';}

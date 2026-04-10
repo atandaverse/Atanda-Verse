@@ -6,13 +6,41 @@
   var URL_KEY = 'iv_sb_url';
   var KEY_KEY = 'iv_sb_key';
   var SKIP_KEY = 'iv_setup_skip';
+  var DEFAULT_SUPABASE_URL = '';
+  var DEFAULT_SUPABASE_ANON_KEY = '';
 
   function cleanUrl(url) {
     return String(url || '').trim().replace(/\/+$/, '');
   }
 
+  function getDefaultCreds() {
+    var url = cleanUrl(DEFAULT_SUPABASE_URL);
+    var key = String(DEFAULT_SUPABASE_ANON_KEY || '').trim();
+    if (!url || !key) return null;
+    return { url: url, key: key };
+  }
+
+  function rememberCreds(url, key, options) {
+    var clean = cleanUrl(url);
+    var nextKey = String(key || '').trim();
+    if (!clean || !nextKey) return false;
+    localStorage.setItem(URL_KEY, clean);
+    localStorage.setItem(KEY_KEY, nextKey);
+    if (!options || options.skipSetup !== false) {
+      localStorage.setItem(SKIP_KEY, '1');
+    }
+    return true;
+  }
+
   var savedUrl = cleanUrl(localStorage.getItem(URL_KEY));
   var savedKey = String(localStorage.getItem(KEY_KEY) || '').trim();
+  var defaultCreds = getDefaultCreds();
+
+  if ((!savedUrl || !savedKey) && defaultCreds) {
+    rememberCreds(defaultCreds.url, defaultCreds.key, { skipSetup: true });
+    savedUrl = cleanUrl(localStorage.getItem(URL_KEY));
+    savedKey = String(localStorage.getItem(KEY_KEY) || '').trim();
+  }
 
   if (savedUrl) localStorage.setItem(URL_KEY, savedUrl);
   else localStorage.removeItem(URL_KEY);
@@ -74,6 +102,10 @@
     if (response.status === 204) return null;
     return response.json();
   }
+
+  window.ivSupabaseDefaults = defaultCreds;
+  window.ivGetSupabaseCreds = getCreds;
+  window.ivRememberSupabaseCreds = rememberCreds;
 
   async function sbInvoke(fnName, payload) {
     var creds = getCreds();
