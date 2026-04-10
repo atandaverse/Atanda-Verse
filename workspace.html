@@ -3305,6 +3305,10 @@ async function restoreLibraryToSupabase(){
 // Canonical admin content/runtime bindings.
 // This block intentionally sits after older overrides so the admin uses one final source path.
 _localPosts = function(){try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];return Array.isArray(parsed)?parsed:[];}catch{return[];}}
+let __postsAuthorityMode='';
+function resetPostsAuthority(mode=''){
+  __postsAuthorityMode=mode||'';
+}
 dbGetPosts = async function(){
   if(!_useSb()) return [];
   try{
@@ -3318,10 +3322,30 @@ dbGetPosts = async function(){
   }
 }
 async function resolvePostsSource(){
+  if(__postsAuthorityMode==='database'){
+    const dbPosts=await dbGetPosts();
+    if(Array.isArray(dbPosts)&&dbPosts.length)return{items:dbPosts,source:'database'};
+    __postsAuthorityMode='';
+  }
+  if(__postsAuthorityMode==='local cache'){
+    const localPosts=_localPosts();
+    if(Array.isArray(localPosts)&&localPosts.length)return{items:localPosts,source:'local cache'};
+    __postsAuthorityMode='';
+  }
+  if(__postsAuthorityMode==='seed fallback'){
+    return{items:getSeedPosts(),source:'seed fallback'};
+  }
   const dbPosts=await dbGetPosts();
-  if(Array.isArray(dbPosts)&&dbPosts.length)return{items:dbPosts,source:'database'};
+  if(Array.isArray(dbPosts)&&dbPosts.length){
+    __postsAuthorityMode='database';
+    return{items:dbPosts,source:'database'};
+  }
   const localPosts=_localPosts();
-  if(Array.isArray(localPosts)&&localPosts.length)return{items:localPosts,source:'local cache'};
+  if(Array.isArray(localPosts)&&localPosts.length){
+    __postsAuthorityMode='local cache';
+    return{items:localPosts,source:'local cache'};
+  }
+  __postsAuthorityMode='seed fallback';
   return{items:getSeedPosts(),source:'seed fallback'};
 }
 getPosts = async function(){const resolved=await resolvePostsSource();return resolved.items}
@@ -3333,7 +3357,7 @@ renderPostsTbl = async function(){const resolved=await resolvePostsSource();cons
 initAnalytics = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const vm=await getAllViews(posts);const snapshot=window.ivGetAnalyticsSnapshot?await window.ivGetAnalyticsSnapshot(posts.map(p=>p.id)):null;const sorted=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0));const lead=sorted[0];const coverage=[...new Set(posts.map(p=>p.category))].length;const drafts=posts.filter(p=>p.status==='draft').length;const published=posts.filter(p=>p.status==='published').length;const views24h=snapshot?Number(snapshot.views24h||0):0;const visitors24h=snapshot?Number(snapshot.visitors24h||0):0;const sessions24h=snapshot?Number(snapshot.sessions24h||0):0;const leadTitle=document.getElementById('analyticsLeadTitle');if(leadTitle)leadTitle.textContent=lead?lead.title.split(' ').slice(0,3).join(' '):'—';const leadMeta=document.getElementById('analyticsLeadMeta');if(leadMeta)leadMeta.textContent=lead?`${(vm[lead.id]||0).toLocaleString()} total views · ${lead.category}`:'Publish more posts to unlock leaderboard signals.';const vis=document.getElementById('analyticsVisitors24h');if(vis)vis.textContent=visitors24h.toLocaleString();const visMeta=document.getElementById('analyticsVisitors24hMeta');if(visMeta)visMeta.textContent=visitors24h?`${sessions24h.toLocaleString()} tracked session${sessions24h===1?'':'s'} contributed during the last 24 hours.`:'No tracked visitors in the last 24 hours yet.';const v24=document.getElementById('analyticsViews24h');if(v24)v24.textContent=views24h.toLocaleString();const v24Meta=document.getElementById('analyticsViews24hMeta');if(v24Meta)v24Meta.textContent=views24h?'Fresh event rows are flowing into your first-party analytics layer.':'Open live posts in the browser to start generating real activity.';const cov=document.getElementById('analyticsCoverage');if(cov)cov.textContent=coverage;const covMeta=document.getElementById('analyticsCoverageMeta');if(covMeta)covMeta.textContent=coverage?`${coverage} topic area${coverage===1?'':'s'} are represented right now.`:'No category coverage yet.';const mom=document.getElementById('analyticsMomentum');if(mom)mom.textContent=views24h>24?'Rising':views24h>0?'Active':drafts?'Building':published?'Live':'Quiet';const momMeta=document.getElementById('analyticsMomentumMeta');if(momMeta)momMeta.textContent=views24h>24?'Audience activity is meaningfully above idle and the analytics layer is catching it in near real time.':views24h>0?'You have live traffic now, even if it is still early.':drafts?'You still have draft energy waiting to be turned into published reach.':published?'Published posts are carrying attention across the blog.':'The analytics layer will come alive once posts start moving.';document.getElementById('toprank').innerHTML=sorted.slice(0,8).map((p,i)=>`<div class="ri"><div class="rn">#${i+1}</div><div class="rif"><div class="rt2">${p.title}</div><div class="rc">${p.category} · ${p.status}${snapshot?` · ${Number(snapshot.perPostVisitors24h[p.id]||0).toLocaleString()} visitors in 24h`:''}</div></div><div class="rv2">👁 ${(vm[p.id]||0).toLocaleString()}</div></div>`).join('');const cm={};const total=posts.length||1;posts.forEach(p=>{cm[p.category]=(cm[p.category]||0)+1});document.getElementById('catbrk').innerHTML=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([cat,count])=>`<div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px"><span style="color:var(--t2)">${cat}</span><span style="color:var(--t3)">${count}</span></div><div style="height:5px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(count/total*100)}%;background:var(--ac);border-radius:3px;transition:width .8s"></div></div></div>`).join('');renderAnalyticsSparklines(sorted,vm,snapshot)}
 loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');updateLockHint();refreshContentHealth()}
 changeCredentials = function(){const u=document.getElementById('nu').value.trim(),p=document.getElementById('np').value,c=document.getElementById('cp').value;if(!u||!p)return toast('Fill all fields','er');if(p!==c)return toast('Access keys do not match','er');localStorage.setItem(AUTH_K,JSON.stringify({u,p}));updateLockHint();document.getElementById('sbUn').textContent=u;['nu','np','cp'].forEach(id=>document.getElementById(id).value='');toast('Workspace access updated','ok')}
-refreshContentHealth = async function(){const box=document.getElementById('contentHealthBox');if(!box)return;box.innerHTML='<div>Checking content sources...</div>';let dbCount='—',dbState='unavailable';try{if(_useSb()){const rows=await _sbReq('posts?select=id');dbCount=Array.isArray(rows)?rows.length:'0';dbState=Array.isArray(rows)&&rows.length?'available':'empty';}else dbState='not connected';}catch(e){dbState='error'}let localCount=0;try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];localCount=Array.isArray(parsed)?parsed.length:0;}catch(e){}const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;const resolved=await resolvePostsSource();box.innerHTML=`<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div><div><strong style="color:var(--t2)">Local cache posts:</strong> ${localCount}</div><div><strong style="color:var(--t2)">Seed fallback posts:</strong> ${seedCount}</div><div><strong style="color:var(--t2)">Active render source:</strong> ${resolved.source}</div>`}
+refreshContentHealth = async function(){const box=document.getElementById('contentHealthBox');if(!box)return;box.innerHTML='<div>Checking content sources...</div>';let dbCount='—',dbState='unavailable';try{if(_useSb()){const rows=await _sbReq('posts?select=id');dbCount=Array.isArray(rows)?rows.length:'0';dbState=Array.isArray(rows)&&rows.length?'available':'empty';}else dbState='not connected';}catch(e){dbState='error'}let localCount=0;try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];localCount=Array.isArray(parsed)?parsed.length:0;}catch(e){}const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;const resolved=await resolvePostsSource();const sourceMeta=resolved.source==='database'?'Shared live content':'This browser is currently driving the workspace view';box.innerHTML=`<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div><div><strong style="color:var(--t2)">Local cache posts:</strong> ${localCount}</div><div><strong style="color:var(--t2)">Seed fallback posts:</strong> ${seedCount}</div><div><strong style="color:var(--t2)">Active render source:</strong> ${resolved.source}</div><div><strong style="color:var(--t2)">Authority note:</strong> <span style="color:var(--t3)">${sourceMeta}</span></div>`}
 forceResync = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('This will overwrite ALL posts in Supabase with the full seed content (ep1-ep4). Continue?'))return;toast('Resyncing posts to Supabase...','inf');const seed=getSeedPosts();let ok=0;for(const p of seed){try{await _sbReq('posts?id=eq.'+p.id,'DELETE');await _sbReq('posts','POST',{id:p.id,title:p.title,subtitle:p.subtitle||'',category:p.category,status:p.status,read_time:p.readTime||'5 min read',date:p.date,excerpt:p.excerpt||'',image:p.image||'',emoji:p.emoji||'📝',content:p.content||''});ok++;}catch(e){toast('Failed on '+p.id+': '+e.message,'er');}}toast(ok+' posts resynced to Supabase ✓','ok');initDash();renderPostsTbl();refreshContentHealth()}
 restoreLibraryToSupabase = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('Restore the library collection into the current Supabase project?'))return;toast('Restoring library...','inf');const source=(getLibItems()||[]).length?getLibItems():LIB_DEFAULTS;let ok=0;for(const item of source){try{await dbSaveLibItem(item);ok++;}catch(e){console.warn('Library restore failed for',item&&item.id,e);}}toast(ok+' library item'+(ok===1?'':'s')+' restored ✓','ok');try{renderLibTbl();}catch(_e){}refreshContentHealth()}
 
@@ -4632,6 +4656,7 @@ testAndSave=async function(){
     localStorage.setItem(SB_URL_KEY,url);
     localStorage.setItem(SB_KEY_KEY,key);
     localStorage.setItem('iv_setup_skip','1');
+    resetPostsAuthority();
     _setSbState('live');
     if(res){res.className='test-res ok';res.textContent='Connected. Supabase is ready.';}
     const setup=document.getElementById('setupScreen');
@@ -4654,6 +4679,7 @@ clearSupabaseConnection=function(){
   localStorage.removeItem(SB_URL_KEY);
   localStorage.removeItem(SB_KEY_KEY);
   localStorage.removeItem('iv_setup_skip');
+  resetPostsAuthority();
   _setSbState('idle','');
   upDbBadge();
   toast('Supabase connection cleared. Admin is now using local storage.','ok');
