@@ -382,16 +382,15 @@
 
             const params = new URLSearchParams(window.location.search);
             const source = params.get('source') || 'register-page';
-            const sbUrl = localStorage.getItem('iv_sb_url');
-            const sbKey = localStorage.getItem('iv_sb_key');
+            const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
 
-            if (sbUrl && sbKey) {
+            if (creds && creds.url && creds.key) {
                 try {
-                    await fetch(sbUrl + '/rest/v1/registrations', {
+                    await fetch(creds.url + '/rest/v1/registrations', {
                         method: 'POST',
                         headers: {
-                            apikey: sbKey,
-                            Authorization: 'Bearer ' + sbKey,
+                            apikey: creds.key,
+                            Authorization: 'Bearer ' + creds.key,
                             'Content-Type': 'application/json',
                             Prefer: 'return=minimal'
                         },

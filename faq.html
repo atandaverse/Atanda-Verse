@@ -970,12 +970,11 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
       function filterFaq(cat,btn){renderFaqContent(cat);}
 
       (async function loadFaq(){
-        const sbUrl=localStorage.getItem('iv_sb_url');
-        const sbKey=localStorage.getItem('iv_sb_key');
-        if(sbUrl&&sbKey){
+        const creds=window.ivGetSupabaseCreds&&window.ivGetSupabaseCreds();
+        if(creds&&creds.url&&creds.key){
           try{
-            const r=await fetch(sbUrl+'/rest/v1/faq?select=*&order=category.asc,sort_order.asc',{
-              headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}
+            const r=await fetch(creds.url+'/rest/v1/faq?select=*&order=category.asc,sort_order.asc',{
+              headers:{'apikey':creds.key,'Authorization':'Bearer '+creds.key}
             });
             if(r.ok){
               const rows=await r.json();

@@ -6,8 +6,8 @@
   var URL_KEY = 'iv_sb_url';
   var KEY_KEY = 'iv_sb_key';
   var SKIP_KEY = 'iv_setup_skip';
-  var DEFAULT_SUPABASE_URL = '';
-  var DEFAULT_SUPABASE_ANON_KEY = '';
+  var DEFAULT_SUPABASE_URL = 'https://lrgpegfrewlqdqlunrml.supabase.co';
+  var DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyZ3BlZ2ZyZXdscWRxbHVucm1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjgzMDIsImV4cCI6MjA4OTYwNDMwMn0.JyBdLFV7ko8aEYvlZ7a05xn6XMNsYY0COqMmGOm3RR0';
 
   function cleanUrl(url) {
     return String(url || '').trim().replace(/\/+$/, '');
@@ -106,6 +106,32 @@
   window.ivSupabaseDefaults = defaultCreds;
   window.ivGetSupabaseCreds = getCreds;
   window.ivRememberSupabaseCreds = rememberCreds;
+
+  async function getPublicSettings() {
+    var cached = {};
+    try {
+      cached = JSON.parse(localStorage.getItem('iv_settings') || '{}') || {};
+    } catch (_err) {}
+
+    try {
+      var rows = await sbFetch('settings?select=key,value');
+      if (rows && rows.length) {
+        var settings = {};
+        rows.forEach(function (row) {
+          try { settings[row.key] = JSON.parse(row.value); }
+          catch (_err) { settings[row.key] = row.value; }
+        });
+        localStorage.setItem('iv_settings', JSON.stringify(settings));
+        return settings;
+      }
+    } catch (err) {
+      console.warn('Public settings fetch failed', err);
+    }
+
+    return cached;
+  }
+
+  window.ivGetPublicSettings = getPublicSettings;
 
   async function sbInvoke(fnName, payload) {
     var creds = getCreds();
@@ -226,8 +252,12 @@
     var now = Date.now();
     var wait = (Number(throttleHours) || 6) * 60 * 60 * 1000;
     if (last && (now - last) < wait) return false;
-    localStorage.setItem(key, String(now));
     return true;
+  }
+
+  function markCountedView(postId) {
+    var key = getViewThrottleKey(postId);
+    localStorage.setItem(key, String(Date.now()));
   }
 
   async function getPostViews(postIds) {
@@ -352,6 +382,7 @@
     try {
       var fnResult = await sbInvoke('track-post-view', getAnalyticsContext(id));
       if (fnResult && fnResult.ok) {
+        markCountedView(id);
         return { ok: true, views: Number(fnResult.views || 0), source: 'edge-function' };
       }
     } catch (fnErr) {
@@ -376,6 +407,7 @@
         headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
         body: JSON.stringify(nextRow)
       });
+      markCountedView(id);
       return { ok: true, views: nextRow.views, source: 'direct-fallback' };
     } catch (err) {
       console.warn('Post view record failed', err);

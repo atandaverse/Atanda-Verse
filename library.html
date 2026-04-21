@@ -953,12 +953,11 @@ let activeLibCat = 'all';
 
 async function renderLibrary() {
   // Try Supabase first so cross-device admin changes show on public page
-  const sbUrl = localStorage.getItem('iv_sb_url');
-  const sbKey = localStorage.getItem('iv_sb_key');
-  if (sbUrl && sbKey) {
+  const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
+  if (creds && creds.url && creds.key) {
     try {
-      const r = await fetch(sbUrl + '/rest/v1/library?select=*&order=sort_order.asc,id.asc', {
-        headers: { 'apikey': sbKey, 'Authorization': 'Bearer ' + sbKey }
+      const r = await fetch(creds.url + '/rest/v1/library?select=*&order=sort_order.asc,id.asc', {
+        headers: { 'apikey': creds.key, 'Authorization': 'Bearer ' + creds.key }
       });
       if (r.ok) {
         const rows = await r.json();

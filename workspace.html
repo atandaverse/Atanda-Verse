@@ -4671,10 +4671,20 @@ testAndSave=async function(){
   }
 }
 skipSetup=function(){localStorage.setItem('iv_setup_skip','1');document.getElementById('setupScreen')?.classList.add('gone');upDbBadge();}
+function _restoreDefaultSupabaseCreds(){
+  const defaults=window.ivSupabaseDefaults||null;
+  if(!defaults||!defaults.url||!defaults.key)return false;
+  if(window.ivRememberSupabaseCreds) return !!window.ivRememberSupabaseCreds(defaults.url,defaults.key,{skipSetup:true});
+  localStorage.setItem(SB_URL_KEY,defaults.url);
+  localStorage.setItem(SB_KEY_KEY,defaults.key);
+  localStorage.setItem('iv_setup_skip','1');
+  return true;
+}
 openSupabaseSetup=function(){
   const urlIn=document.getElementById('sbUrlIn'),keyIn=document.getElementById('sbKeyIn'),res=document.getElementById('testRes');
-  if(urlIn)urlIn.value=_sbUrl();
-  if(keyIn)keyIn.value=_sbKey();
+  const defaults=window.ivSupabaseDefaults||null;
+  if(urlIn)urlIn.value=_sbUrl()||(defaults&&defaults.url)||'';
+  if(keyIn)keyIn.value=_sbKey()||(defaults&&defaults.key)||'';
   if(res){res.className='test-res';res.style.display='none';res.textContent='';}
   document.getElementById('setupScreen')?.classList.remove('gone');
 }
@@ -4684,11 +4694,20 @@ clearSupabaseConnection=function(){
   localStorage.removeItem('iv_setup_skip');
   resetPostsAuthority();
   _setSbState('idle','');
+  if(_restoreDefaultSupabaseCreds()){
+    _setSbState('live');
+    upDbBadge();
+    document.getElementById('setupScreen')?.classList.add('gone');
+    probeSupabaseConnection();
+    toast('Supabase connection refreshed from live defaults.','ok');
+    return;
+  }
   upDbBadge();
   toast('Supabase connection cleared. Admin is now using local storage.','ok');
 }
 
 (function(){
+  if(!_useSb())_restoreDefaultSupabaseCreds();
   document.getElementById('setupScreen')?.classList.add('gone');
   upDbBadge();
   probeSupabaseConnection();

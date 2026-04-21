@@ -525,9 +525,9 @@ img.loaded{opacity:1;}
 <script>
 
 const SB_URL_KEY='iv_sb_url', SB_KEY_KEY='iv_sb_key', LOCAL_KEY='iv_posts', SETTINGS_KEY='iv_settings';
-const _sbUrl=()=>localStorage.getItem(SB_URL_KEY)||'';
-const _sbKey=()=>localStorage.getItem(SB_KEY_KEY)||'';
-const _useSb=()=>!!(localStorage.getItem(SB_URL_KEY)&&localStorage.getItem(SB_KEY_KEY));
+const _sbUrl=()=>{const c=window.ivGetSupabaseCreds&&window.ivGetSupabaseCreds();return c&&c.url?c.url:(localStorage.getItem(SB_URL_KEY)||'');};
+const _sbKey=()=>{const c=window.ivGetSupabaseCreds&&window.ivGetSupabaseCreds();return c&&c.key?c.key:(localStorage.getItem(SB_KEY_KEY)||'');};
+const _useSb=()=>!!(_sbUrl()&&_sbKey());
 
 async function _sbReq(path,method='GET',body=null){
   const h={'apikey':_sbKey(),'Authorization':'Bearer '+_sbKey(),'Content-Type':'application/json'};
@@ -1951,7 +1951,7 @@ const _blogCacheMap=()=>{try{return (JSON.parse(localStorage.getItem(LOCAL_KEY)|
 dbGetPosts=async function(){
   if(_useSb()){try{
     const rows=await _sbReq('posts?select=*&order=date.desc,id.asc');
-    if(rows){
+    if(Array.isArray(rows)){
       const seedMap=_getSeedMap();
       const cacheMap=_blogCacheMap();
       const merged=(rows||[]).map(r=>{const seedPost=seedMap[r.id]||{};const cachedPost=cacheMap[r.id]||{};return{id:r.id,title:r.title,subtitle:r.subtitle||seedPost.subtitle||cachedPost.subtitle||'',category:r.category,status:r.status,readTime:r.read_time||seedPost.readTime||cachedPost.readTime||'5 min read',date:r.date,excerpt:r.excerpt||seedPost.excerpt||cachedPost.excerpt||'',image:r.image||seedPost.image||cachedPost.image||'',emoji:r.emoji||seedPost.emoji||cachedPost.emoji||'ðŸ“',content:r.content||seedPost.content||cachedPost.content||''};});

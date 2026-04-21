@@ -1085,13 +1085,12 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
   e.preventDefault();
   var d = Object.fromEntries(new FormData(this));
   // Save to Supabase
-  var sbUrl = localStorage.getItem('iv_sb_url');
-  var sbKey = localStorage.getItem('iv_sb_key');
-  if (sbUrl && sbKey) {
+  var creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
+  if (creds && creds.url && creds.key) {
     try {
-      await fetch(sbUrl + '/rest/v1/registrations', {
+      await fetch(creds.url + '/rest/v1/registrations', {
         method: 'POST',
-        headers: { 'apikey': sbKey, 'Authorization': 'Bearer ' + sbKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        headers: { 'apikey': creds.key, 'Authorization': 'Bearer ' + creds.key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify({ id: 'reg-' + Date.now(), full_name: d.fullName, email: d.email, phone: d.phone, session_type: d.sessionType, goals: d.goals || '', source: 'sessions', registered_at: new Date().toISOString() })
       });
     } catch(e) {}

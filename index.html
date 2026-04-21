@@ -1325,17 +1325,20 @@ img.loaded{opacity:1;}
             const s = JSON.parse(localStorage.getItem('iv_settings') || '{}');
             if (s.countdownTarget) return new Date(s.countdownTarget).getTime();
         } catch {}
-        let def = localStorage.getItem('iv_cd_default');
-        if (!def) { def = String(Date.now() + 30 * 24 * 60 * 60 * 1000); localStorage.setItem('iv_cd_default', def); }
-        return parseInt(def);
+        return null;
     }
     function updateCountdown() {
-        const diff = getCountdownTarget() - Date.now();
+        const target = getCountdownTarget();
         try {
             const s = JSON.parse(localStorage.getItem('iv_settings') || '{}');
             const lbl = document.getElementById('cdLabel');
             if (lbl && s.countdownLabel) lbl.textContent = s.countdownLabel;
         } catch {}
+        if (!target) {
+            ['days','hours','minutes','seconds'].forEach(k => { const el = document.getElementById(k); if (el) el.textContent = '--'; });
+            return;
+        }
+        const diff = target - Date.now();
         if (diff <= 0) {
             ['days','hours','minutes','seconds'].forEach(k => { const el = document.getElementById(k); if (el) el.textContent = '00'; });
             return;
@@ -1349,22 +1352,8 @@ img.loaded{opacity:1;}
     }
     // Load settings from Supabase so countdown/label reflect admin changes cross-device
     (async function loadSettings() {
-        const sbUrl = localStorage.getItem('iv_sb_url');
-        const sbKey = localStorage.getItem('iv_sb_key');
-        if (sbUrl && sbKey) {
-            try {
-                const r = await fetch(sbUrl + '/rest/v1/settings?select=key,value', {
-                    headers: { 'apikey': sbKey, 'Authorization': 'Bearer ' + sbKey }
-                });
-                if (r.ok) {
-                    const rows = await r.json();
-                    if (rows && rows.length) {
-                        const s = {};
-                        rows.forEach(row => { try { s[row.key] = JSON.parse(row.value); } catch { s[row.key] = row.value; } });
-                        localStorage.setItem('iv_settings', JSON.stringify(s));
-                    }
-                }
-            } catch(e) { /* use cached localStorage settings */ }
+        if (window.ivGetPublicSettings) {
+            try { await window.ivGetPublicSettings(); } catch(e) {}
         }
         updateCountdown();
     })();
@@ -1437,13 +1426,12 @@ img.loaded{opacity:1;}
         if (!d.fullName || !d.email || !d.phone || !d.sessionType) { alert('Please fill in all required fields.'); return; }
 if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone number.'); return; }
         // Save to Supabase
-        const sbUrl = localStorage.getItem('iv_sb_url');
-        const sbKey = localStorage.getItem('iv_sb_key');
-        if (sbUrl && sbKey) {
+        const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
+        if (creds && creds.url && creds.key) {
             try {
-                await fetch(sbUrl + '/rest/v1/registrations', {
+                await fetch(creds.url + '/rest/v1/registrations', {
                     method: 'POST',
-                    headers: { 'apikey': sbKey, 'Authorization': 'Bearer ' + sbKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+                    headers: { 'apikey': creds.key, 'Authorization': 'Bearer ' + creds.key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
                     body: JSON.stringify({ id: 'reg-' + Date.now(), full_name: d.fullName, email: d.email, phone: d.phone, session_type: d.sessionType, goals: d.goals || '', source: 'index', registered_at: new Date().toISOString() })
                 });
             } catch(e) {}
@@ -1482,12 +1470,11 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
     async function loadTestimonials() {
         try {
             // Try Supabase first (credentials stored by admin)
-            const sbUrl = localStorage.getItem('iv_sb_url');
-            const sbKey = localStorage.getItem('iv_sb_key');
-            if (sbUrl && sbKey) {
+            const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
+            if (creds && creds.url && creds.key) {
                 try {
-                    const r = await fetch(`${sbUrl}/rest/v1/testimonials?select=*&approved=eq.true&order=submitted_at.desc`, {
-                        headers: { 'apikey': sbKey, 'Authorization': 'Bearer ' + sbKey }
+                    const r = await fetch(`${creds.url}/rest/v1/testimonials?select=*&approved=eq.true&order=submitted_at.desc`, {
+                        headers: { 'apikey': creds.key, 'Authorization': 'Bearer ' + creds.key }
                     });
                     if (r.ok) {
                         const rows = await r.json();
@@ -1525,12 +1512,11 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
       const grid=document.getElementById('latestPostsGrid');
       if(!grid)return;
       try{
-        const sbUrl=localStorage.getItem('iv_sb_url');
-        const sbKey=localStorage.getItem('iv_sb_key');
+        const creds=window.ivGetSupabaseCreds&&window.ivGetSupabaseCreds();
         let posts=[];
-        if(sbUrl&&sbKey){
-          const r=await fetch(sbUrl+'/rest/v1/posts?select=id,title,excerpt,image,emoji,category,date,read_time&status=eq.published&order=date.desc&limit=3',{
-            headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}
+        if(creds&&creds.url&&creds.key){
+          const r=await fetch(creds.url+'/rest/v1/posts?select=id,title,excerpt,image,emoji,category,date,read_time&status=eq.published&order=date.desc&limit=3',{
+            headers:{'apikey':creds.key,'Authorization':'Bearer '+creds.key}
           });
           if(r.ok)posts=await r.json();
         }
@@ -1679,15 +1665,14 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
         pending.push(t);
         localStorage.setItem('iv_testimonials_pending', JSON.stringify(pending));
         // Also write to Supabase directly so admin sees it on any device
-        const sbUrl = localStorage.getItem('iv_sb_url');
-        const sbKey = localStorage.getItem('iv_sb_key');
-        if (sbUrl && sbKey) {
+        const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
+        if (creds && creds.url && creds.key) {
             try {
-                await fetch(sbUrl + '/rest/v1/testimonials', {
+                await fetch(creds.url + '/rest/v1/testimonials', {
                     method: 'POST',
                     headers: {
-                        'apikey': sbKey,
-                        'Authorization': 'Bearer ' + sbKey,
+                        'apikey': creds.key,
+                        'Authorization': 'Bearer ' + creds.key,
                         'Content-Type': 'application/json',
                         'Prefer': 'return=minimal'
                     },

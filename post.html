@@ -1206,9 +1206,9 @@ img.loaded{opacity:1;}
 </footer>
 <script>
 const SB_URL_KEY='iv_sb_url',SB_KEY_KEY='iv_sb_key',LOCAL_KEY='iv_posts';
-const _sbUrl=()=>localStorage.getItem(SB_URL_KEY)||'';
-const _sbKey=()=>localStorage.getItem(SB_KEY_KEY)||'';
-const _useSb=()=>!!(localStorage.getItem(SB_URL_KEY)&&localStorage.getItem(SB_KEY_KEY));
+const _sbUrl=()=>{const c=window.ivGetSupabaseCreds&&window.ivGetSupabaseCreds();return c&&c.url?c.url:(localStorage.getItem(SB_URL_KEY)||'');};
+const _sbKey=()=>{const c=window.ivGetSupabaseCreds&&window.ivGetSupabaseCreds();return c&&c.key?c.key:(localStorage.getItem(SB_KEY_KEY)||'');};
+const _useSb=()=>!!(_sbUrl()&&_sbKey());
 
 async function _sbReq(path,method='GET',body=null){
   const h={'apikey':_sbKey(),'Authorization':'Bearer '+_sbKey(),'Content-Type':'application/json'};
@@ -1221,7 +1221,7 @@ async function _sbReq(path,method='GET',body=null){
 async function dbGetPosts(){
   if(_useSb()){try{
     const rows=await _sbReq('posts?select=*&order=date.desc,id.asc');
-    if(rows){
+    if(Array.isArray(rows)){
       let cached=[];
       try{cached=JSON.parse(localStorage.getItem(LOCAL_KEY)||'[]');}catch{}
       const cacheMap={};
