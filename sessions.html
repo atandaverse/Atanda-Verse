@@ -606,6 +606,22 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
     
 
 /* ── UNIFIED NAV ── */
+@media (max-width: 768px) {
+    .container { padding: 0 1.05rem !important; }
+    .page-hero { padding: calc(74px + 2.6rem) 0 3rem !important; }
+    .section-subtitle { margin-bottom: 2rem !important; }
+    .pricing-grid, .services-grid { gap: 1rem !important; }
+    .pricing-card, .service-card { padding: 1.55rem 1.1rem !important; border-radius: 20px !important; }
+    .pricing-card.featured { transform: none !important; }
+    .pricing-card.featured:hover { transform: translateY(-8px) !important; }
+    .cta-button { width: 100% !important; justify-content: center !important; }
+}
+@media (max-width: 480px) {
+    .container { padding: 0 .9rem !important; }
+    .section-title { font-size: clamp(2.2rem, 12vw, 3rem) !important; letter-spacing: 1.2px !important; }
+    .pricing-card, .service-card { padding: 1.3rem 1rem !important; }
+    .pricing-title, .service-card h3 { font-size: 1.55rem !important; }
+}
 nav{position:fixed;top:0;width:100%;background:var(--nav-bg,rgba(255,255,255,.88));backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);z-index:1000;padding:1rem 0;border-bottom:1px solid var(--border-color,rgba(0,0,0,.08));transition:all .35s}
 nav.scrolled{padding:.65rem 0;box-shadow:0 4px 30px var(--shadow,rgba(0,0,0,.08))}
 .nav-container{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:0 2rem}

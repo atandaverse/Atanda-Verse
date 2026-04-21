@@ -822,6 +822,29 @@ img.loaded{opacity:1;}
 @media(max-width:768px){
   input,select,textarea{font-size:16px!important;}
 }
+@media(max-width:768px){
+  .container{padding:0 1.05rem!important;}
+  .hero{padding:6.35rem 0 3.5rem!important;}
+  .hero-badge{font-size:.72rem!important;padding:.58rem .95rem!important;}
+  .hero-title{line-height:.94!important;}
+  .hero-subtitle{margin:1.4rem auto!important;max-width:34ch!important;font-size:1rem!important;}
+  .pricing-grid,.services-grid,.testimonial-grid,.library-grid{gap:1rem!important;}
+  .pricing-card,.service-card{padding:1.55rem 1.15rem!important;border-radius:20px!important;}
+  .pricing-card.featured{transform:none!important;}
+  .pricing-card.featured:hover{transform:translateY(-8px)!important;}
+  #latestPostsGrid{grid-template-columns:1fr!important;gap:1.2rem!important;}
+  .newsletter-form{width:100%!important;max-width:none!important;}
+  .newsletter-form input,.newsletter-form button{width:100%!important;}
+  .sticky-cta{left:12px!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom,0))!important;width:auto!important;max-width:none!important;justify-content:center!important;}
+}
+@media(max-width:480px){
+  .container{padding:0 .9rem!important;}
+  .section-title{font-size:clamp(2.2rem,12vw,3rem)!important;letter-spacing:1.2px!important;}
+  .section-subtitle{font-size:.95rem!important;margin-bottom:2.15rem!important;}
+  .hero-subtitle{font-size:.94rem!important;}
+  .pricing-card,.service-card{padding:1.3rem 1rem!important;}
+  .service-card h3,.pricing-title{font-size:1.6rem!important;}
+}
 </style>
 <script>
 (function(){

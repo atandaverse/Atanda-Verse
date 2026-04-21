@@ -293,7 +293,29 @@ body[data-admin-theme="evolutionary"] .panel{animation:finevo .34s ease}
 .md2 h3{font-family:'Bebas Neue',sans-serif;font-size:1.28rem;letter-spacing:2px;margin-bottom:.38rem}.md2 p{color:var(--t2);font-size:.79rem;margin-bottom:1.4rem;line-height:1.6}.mda{display:flex;gap:.55rem;justify-content:flex-end}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--ac)}
 @media(max-width:1100px){.el{grid-template-columns:1fr}.pc{display:none}.srow{grid-template-columns:1fr 1fr}.crow,.ag{grid-template-columns:1fr}.sg{grid-template-columns:1fr}}
-@media(max-width:900px){.shell{grid-template-columns:1fr}.sidebar{display:none}}
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{display:flex;position:sticky;top:0;height:auto;max-height:none;border-right:none;border-bottom:1px solid var(--b);padding:.8rem 0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;z-index:120}
+  .sb-brand,.sb-sec,.sb-foot{display:none}
+  .sidebar button,.sidebar a{display:inline-flex;min-width:max-content}
+}
+@media(max-width:768px){
+  .topbar{padding:.85rem 1rem!important}
+  .panel{padding:1rem!important}
+  .srow,.ops-strip,.theme-grid,.fr,.fr3,.sg,.attention-grid{grid-template-columns:1fr!important}
+  .tw{border-radius:16px!important}
+  table{min-width:760px}
+  .md2{width:min(92vw,450px)!important;padding:1.25rem!important}
+  .setup{padding:1rem!important}
+  .lock{padding:1.2rem!important;text-align:center}
+}
+@media(max-width:480px){
+  .sidebar{padding:.55rem 0}
+  .topbar{padding:.75rem .85rem!important}
+  .panel{padding:.85rem!important}
+  .sc,.cc,.ac2{padding:1rem!important}
+  .mn,textarea,select,input{font-size:16px!important}
+}
 </style>
 </head>
 <body>

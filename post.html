@@ -171,6 +171,20 @@ a,button,input,select,textarea,.share-btn,.theme-toggle,.comment-submit,.nav-cta
   .nav-links.active{display:flex}
   .mobile-menu{display:flex}
 }
+@media(max-width:768px){
+  .container{padding:0 1rem!important}
+  .article-header{padding:calc(74px + 1.8rem) 0 1.8rem!important}
+  .featured-image{margin:1.6rem auto 1.8rem!important;border-radius:18px!important}
+  .article-content{padding:1.5rem 1rem!important;border-radius:20px!important}
+  .article-content p,.article-content li{font-size:.98rem!important}
+}
+@media(max-width:480px){
+  .container{padding:0 .85rem!important}
+  .featured-image{aspect-ratio:4/3!important}
+  .featured-image-fallback{font-size:3rem!important}
+  .article-content{padding:1.15rem .9rem!important}
+  .article-content h2{font-size:1.35rem!important}
+}
 
 /* === ORIGINAL ARTICLE FORMATTING CSS === */
 .active {
