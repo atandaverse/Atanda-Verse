@@ -944,6 +944,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
         _faqActiveCat=cat;
         document.querySelectorAll('.faq-filter-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+cat+"'")));
         const wrap=document.getElementById('faqContent');if(!wrap)return;
+        if(!_faqItems.length){
+          wrap.innerHTML=`<div class="faq-grid"><div class="faq-item active"><div class="faq-question"><h4>No FAQs are available right now.</h4><span class="faq-toggle">•</span></div><div class="faq-answer"><p>Please check back shortly.</p></div></div></div>`;
+          return;
+        }
         const cats=cat==='all'?['sessions','pricing','logistics','language']:[cat];
         wrap.innerHTML=cats.map((c,ci)=>{
           const items=_faqItems.filter(i=>i.category===c).sort((a,b)=>(a.order||0)-(b.order||0));
@@ -978,7 +982,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
             });
             if(r.ok){
               const rows=await r.json();
-              if(rows&&rows.length){
+              if(Array.isArray(rows)){
                 _faqItems=rows.map(r=>({id:r.id,question:r.question,answer:r.answer,category:r.category||'sessions',order:r.sort_order||0}));
                 renderFaqContent('all');
                 return;

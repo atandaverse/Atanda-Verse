@@ -1952,11 +1952,9 @@ dbGetPosts=async function(){
   if(_useSb()){try{
     const rows=await _sbReq('posts?select=*&order=date.desc,id.asc');
     if(Array.isArray(rows)){
-      const seedMap=_getSeedMap();
-      const cacheMap=_blogCacheMap();
-      const merged=(rows||[]).map(r=>{const seedPost=seedMap[r.id]||{};const cachedPost=cacheMap[r.id]||{};return{id:r.id,title:r.title,subtitle:r.subtitle||seedPost.subtitle||cachedPost.subtitle||'',category:r.category,status:r.status,readTime:r.read_time||seedPost.readTime||cachedPost.readTime||'5 min read',date:r.date,excerpt:r.excerpt||seedPost.excerpt||cachedPost.excerpt||'',image:r.image||seedPost.image||cachedPost.image||'',emoji:r.emoji||seedPost.emoji||cachedPost.emoji||'ðŸ“',content:r.content||seedPost.content||cachedPost.content||''};});
-      localStorage.setItem(LOCAL_KEY,JSON.stringify(merged));
-      return merged;
+      const authoritative=(rows||[]).map(r=>({id:r.id,title:r.title,subtitle:r.subtitle||'',category:r.category,status:r.status,readTime:r.read_time||'5 min read',date:r.date,excerpt:r.excerpt||'',image:r.image||'',emoji:r.emoji||'ðŸ“',content:r.content||''}));
+      localStorage.setItem(LOCAL_KEY,JSON.stringify(authoritative));
+      return authoritative;
     }
   }catch(e){console.warn('Supabase read failed, using cache',e);}}
   return _localPosts();

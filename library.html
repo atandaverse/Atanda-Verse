@@ -952,7 +952,7 @@ const CAT_META = {
 let activeLibCat = 'all';
 
 async function renderLibrary() {
-  // Try Supabase first so cross-device admin changes show on public page
+  let allItems = null;
   const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
   if (creds && creds.url && creds.key) {
     try {
@@ -961,20 +961,20 @@ async function renderLibrary() {
       });
       if (r.ok) {
         const rows = await r.json();
-        if (rows && rows.length) {
-          const mapped = rows.map(r => ({
+        if (Array.isArray(rows)) {
+          allItems = rows.map(r => ({
             id: r.id, title: r.title, category: r.category, desc: r.description || '',
             emoji: r.emoji || '📄', tag: r.tag || '', status: r.status,
             url: r.url || '', image: r.image || '', embed: r.embed || '',
             preview: r.preview || '', duration: r.duration || '',
             order: r.sort_order || 0, featured: !!r.featured, free: r.free !== false
           }));
-          localStorage.setItem(LIB_KEY, JSON.stringify(mapped));
+          localStorage.setItem(LIB_KEY, JSON.stringify(allItems));
         }
       }
     } catch(e) { /* fall through to localStorage/defaults */ }
   }
-  const allItems = getLibItems().sort((a, b) => (a.order || 0) - (b.order || 0));
+  allItems = (allItems || getLibItems()).sort((a, b) => (a.order || 0) - (b.order || 0));
   const cats = activeLibCat === 'all'
     ? ['guides', 'audio', 'workbooks', 'video', 'other']
     : [activeLibCat];
@@ -982,6 +982,9 @@ async function renderLibrary() {
   const wrap = document.getElementById('libSections');
   if (!wrap) return;
 
+  if (!allItems.length) {
+    wrap.innerHTML = `<div class="rv" style="background:var(--glass);backdrop-filter:blur(20px);border-radius:18px;padding:2rem;border:1px solid var(--glass-border);box-shadow:0 6px 24px var(--shadow);text-align:center;color:var(--text-secondary)">The library is empty right now. Please check back shortly.</div>`;
+  } else {
   wrap.innerHTML = cats.map(cat => {
     const catItems = allItems.filter(i => i.category === cat);
     if (!catItems.length) return '';
@@ -1049,6 +1052,7 @@ async function renderLibrary() {
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem">${cards}</div>
     </div>`;
   }).join('');
+  }
 
   // Hide skeleton once content is ready
   var skel=document.getElementById('libSkelGrid');

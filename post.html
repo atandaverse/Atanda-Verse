@@ -1476,13 +1476,8 @@ const _postSeedMap=()=>({
 dbGetPosts=async function(){
   if(_useSb()){try{
     const rows=await _sbReq('posts?select=*&order=date.desc,id.asc');
-    if(rows){
-      const seedMap=_postSeedMap();
-      let cached=[];
-      try{cached=JSON.parse(localStorage.getItem(LOCAL_KEY)||'[]');}catch{}
-      const cacheMap={};
-      (cached||[]).forEach(post=>{if(post&&post.id)cacheMap[post.id]=post;});
-      const m=rows.map(r=>{const seedPost=seedMap[r.id]||{};const cachedPost=cacheMap[r.id]||{};const content=(r.content&&r.content.trim())?r.content:(cachedPost.content||seedPost.content||'');const excerpt=(r.excerpt&&r.excerpt.trim())?r.excerpt:(cachedPost.excerpt||seedPost.excerpt||'');const image=(r.image&&r.image.trim())?r.image:(cachedPost.image||seedPost.image||'');return{id:r.id,title:r.title,subtitle:r.subtitle||cachedPost.subtitle||seedPost.subtitle||'',category:r.category,status:r.status,readTime:r.read_time||cachedPost.readTime||seedPost.readTime||'5 min read',date:r.date,excerpt,image,emoji:r.emoji||cachedPost.emoji||seedPost.emoji||'ðŸ“',content};});
+    if(Array.isArray(rows)){
+      const m=rows.map(r=>({id:r.id,title:r.title,subtitle:r.subtitle||'',category:r.category,status:r.status,readTime:r.read_time||'5 min read',date:r.date,excerpt:r.excerpt||'',image:r.image||'',emoji:r.emoji||'ðŸ“',content:r.content||''}));
       localStorage.setItem(LOCAL_KEY,JSON.stringify(m));
       return m;
     }
