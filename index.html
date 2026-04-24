@@ -1260,7 +1260,7 @@ img.loaded{opacity:1;}
     window.addEventListener('load', () => setTimeout(() => {
         document.getElementById('loader').classList.add('gone');
         sessionStorage.setItem(LOADER_SEEN_KEY, '1');
-    }, 420));
+    }, 220));
 
     // ── THEME ──
     const themeToggle = document.getElementById('themeToggle');
@@ -1275,37 +1275,54 @@ img.loaded{opacity:1;}
     });
 
     // ── CUSTOM CURSOR ──
+    const reduceUiLoad = window.matchMedia('(hover: none), (max-width: 768px), (prefers-reduced-motion: reduce)').matches;
     const cd = document.getElementById('cd'), cr = document.getElementById('cr');
     let mx = 0, my = 0, rx = 0, ry = 0;
-    let _cursorShown=false;document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; if(!_cursorShown){_cursorShown=true;const d=document.getElementById('cd'),r=document.getElementById('cr');if(d)d.style.opacity='1';if(r)r.style.opacity='';} });
-    (function animCursor() {
-        rx += (mx - rx) * .12; ry += (my - ry) * .12;
-        if (cd) cd.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
-        if (cr) cr.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
-        requestAnimationFrame(animCursor);
-    })();
-    document.querySelectorAll('a, button, .faq-question, .cta-button, .contact-btn').forEach(el => {
-        el.addEventListener('mouseenter', () => cr && cr.classList.add('hov'));
-        el.addEventListener('mouseleave', () => cr && cr.classList.remove('hov'));
-    });
+    if (reduceUiLoad) {
+        if (cd) cd.remove();
+        if (cr) cr.remove();
+    } else {
+        let _cursorShown=false;document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; if(!_cursorShown){_cursorShown=true;const d=document.getElementById('cd'),r=document.getElementById('cr');if(d)d.style.opacity='1';if(r)r.style.opacity='';} }, { passive:true });
+        (function animCursor() {
+            rx += (mx - rx) * .12; ry += (my - ry) * .12;
+            if (cd) cd.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
+            if (cr) cr.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+            requestAnimationFrame(animCursor);
+        })();
+        document.querySelectorAll('a, button, .faq-question, .cta-button, .contact-btn').forEach(el => {
+            el.addEventListener('mouseenter', () => cr && cr.classList.add('hov'));
+            el.addEventListener('mouseleave', () => cr && cr.classList.remove('hov'));
+        });
+    }
 
     // ── PROGRESS BAR ──
     const pb = document.getElementById('pb');
     // progress bar scroll handled by ivProgress()
 
     // ── NAV SCROLL ──
-    window.addEventListener('scroll', () => document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60));
+    const parallaxOrbs = reduceUiLoad ? [] : Array.from(document.querySelectorAll('[data-p]'));
+    let uiScrollTick = false;
+    const syncUiScroll = () => {
+        uiScrollTick = false;
+        const y = window.scrollY;
+        document.getElementById('mainNav')?.classList.toggle('scrolled', y > 60);
+        parallaxOrbs.forEach(o => {
+            o.style.transform = `translateY(${y * parseFloat(o.dataset.p)}px)`;
+        });
+    };
+    syncUiScroll();
+    window.addEventListener('scroll', () => {
+        if (uiScrollTick) return;
+        uiScrollTick = true;
+        requestAnimationFrame(syncUiScroll);
+    }, { passive: true });
 
     // ── PARALLAX ORBS ──
-    window.addEventListener('scroll', () => {
-        document.querySelectorAll('[data-p]').forEach(o => {
-            o.style.transform = `translateY(${window.scrollY * parseFloat(o.dataset.p)}px)`;
-        });
-    });
+    // parallax handled by syncUiScroll()
 
     // ── PARTICLES CANVAS ──
     const canvas = document.getElementById('pc');
-    if (canvas) {
+    if (canvas && !reduceUiLoad) {
         const ctx = canvas.getContext('2d');
         const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
         resize(); window.addEventListener('resize', resize);
@@ -1333,6 +1350,8 @@ img.loaded{opacity:1;}
             }));
             requestAnimationFrame(drawPts);
         })();
+    } else if (canvas) {
+        canvas.remove();
     }
 
     // ── REVEAL OBSERVER ──
