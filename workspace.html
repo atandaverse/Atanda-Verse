@@ -1357,6 +1357,11 @@ const _sbKey=()=>String(localStorage.getItem(SB_KEY_KEY)||'').trim();
 const _useSb=()=>_validSbUrl(_sbUrl())&&!!_sbKey();
 let _sbState='idle',_sbStateMsg='';
 function _setSbState(state,msg=''){_sbState=state;_sbStateMsg=msg||'';upDbBadge();}
+function _sbLooksPaused(msg='',status=0){
+  const text=String(msg||'').toLowerCase();
+  return status===540||text.includes('project paused')||text.includes('paused')||text.includes('http 540');
+}
+function _sbIsUnavailable(){return _sbState==='paused'||_sbState==='offline';}
 
 async function _sbReq(path,method='GET',body=null){
   const h={'apikey':_sbKey(),'Authorization':'Bearer '+_sbKey(),'Content-Type':'application/json'};
@@ -1366,11 +1371,12 @@ async function _sbReq(path,method='GET',body=null){
   if(!_useSb()) throw new Error('Supabase is not configured correctly');
   try{
     const r=await fetch(_sbUrl()+'/rest/v1/'+path,{method,headers:h,body:body?JSON.stringify(body):null});
-    if(!r.ok){const t=await r.text();_setSbState('offline',t||('HTTP '+r.status));throw new Error(t);}
+    if(!r.ok){const t=await r.text();_setSbState(_sbLooksPaused(t,r.status)?'paused':'offline',t||('HTTP '+r.status));throw new Error(t);}
     _setSbState('live');
     return r.status===204?null:r.json();
   }catch(e){
-    _setSbState('offline',e&&e.message?e.message:'Failed to reach Supabase');
+    const msg=e&&e.message?e.message:'Failed to reach Supabase';
+    _setSbState(_sbLooksPaused(msg)?'paused':'offline',msg);
     throw e;
   }
 }
@@ -1379,11 +1385,12 @@ async function _sbUpsert(table,body){
   if(!_useSb()) throw new Error('Supabase is not configured correctly');
   try{
     const r=await fetch(_sbUrl()+'/rest/v1/'+table,{method:'POST',headers:h,body:JSON.stringify(body)});
-    if(!r.ok){const t=await r.text();_setSbState('offline',t||('HTTP '+r.status));throw new Error(t);}
+    if(!r.ok){const t=await r.text();_setSbState(_sbLooksPaused(t,r.status)?'paused':'offline',t||('HTTP '+r.status));throw new Error(t);}
     _setSbState('live');
     return r.status===204?null:r.json();
   }catch(e){
-    _setSbState('offline',e&&e.message?e.message:'Failed to reach Supabase');
+    const msg=e&&e.message?e.message:'Failed to reach Supabase';
+    _setSbState(_sbLooksPaused(msg)?'paused':'offline',msg);
     throw e;
   }
 }
@@ -3380,6 +3387,11 @@ initAnalytics = async function(){const resolved=await resolvePostsSource();const
 loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');updateLockHint();refreshContentHealth()}
 changeCredentials = function(){const u=document.getElementById('nu').value.trim(),p=document.getElementById('np').value,c=document.getElementById('cp').value;if(!u||!p)return toast('Fill all fields','er');if(p!==c)return toast('Access keys do not match','er');localStorage.setItem(AUTH_K,JSON.stringify({u,p}));updateLockHint();document.getElementById('sbUn').textContent=u;['nu','np','cp'].forEach(id=>document.getElementById(id).value='');toast('Workspace access updated','ok')}
 refreshContentHealth = async function(){const box=document.getElementById('contentHealthBox');if(!box)return;box.innerHTML='<div>Checking content sources...</div>';let dbCount='—',dbState='unavailable';try{if(_useSb()){const rows=await _sbReq('posts?select=id');dbCount=Array.isArray(rows)?rows.length:'0';dbState=Array.isArray(rows)&&rows.length?'available':'empty';}else dbState='not connected';}catch(e){dbState='error'}let localCount=0;try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];localCount=Array.isArray(parsed)?parsed.length:0;}catch(e){}const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;const resolved=await resolvePostsSource();const sourceMeta=resolved.source==='database'?'Shared live content':'This browser is currently driving the workspace view';box.innerHTML=`<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div><div><strong style="color:var(--t2)">Local cache posts:</strong> ${localCount}</div><div><strong style="color:var(--t2)">Seed fallback posts:</strong> ${seedCount}</div><div><strong style="color:var(--t2)">Active render source:</strong> ${resolved.source}</div><div><strong style="color:var(--t2)">Authority note:</strong> <span style="color:var(--t3)">${sourceMeta}</span></div>`}
+refreshContentHealth = async function(){const box=document.getElementById('contentHealthBox');if(!box)return;box.innerHTML='<div>Checking content sources...</div>';let dbCount='—',dbState='unavailable';try{if(_useSb()){const rows=await _sbReq('posts?select=id');dbCount=Array.isArray(rows)?rows.length:'0';dbState=Array.isArray(rows)&&rows.length?'available':'empty';}else dbState='not connected';}catch(e){dbState=_sbState==='paused'?'paused':_sbState==='offline'?'offline':'error'}let localCount=0;try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];localCount=Array.isArray(parsed)?parsed.length:0;}catch(e){}const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;const resolved=await resolvePostsSource();const sourceMeta=resolved.source==='database'?'Shared live content':_sbIsUnavailable()?'Live database is unavailable, so this browser is driving the workspace view':'This browser is currently driving the workspace view';box.innerHTML=`<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div><div><strong style="color:var(--t2)">Local cache posts:</strong> ${localCount}</div><div><strong style="color:var(--t2)">Seed fallback posts:</strong> ${seedCount}</div><div><strong style="color:var(--t2)">Active render source:</strong> ${resolved.source}</div><div><strong style="color:var(--t2)">Authority note:</strong> <span style="color:var(--t3)">${sourceMeta}</span></div>`}
+const _baseInitDashUnavailableAware=initDash;
+initDash=async function(){await _baseInitDashUnavailableAware();if(!_sbIsUnavailable())return;const liveOnly=['st2','st5','st6','st7','st8'];liveOnly.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});const map={st5s:'Supabase unavailable',st6:'—',st7s:_sbState==='paused'?'Resume project to load live reviews':'Reconnect Supabase to load live reviews'};Object.entries(map).forEach(([id,text])=>{const el=document.getElementById(id);if(el)el.textContent=text;});const subCount=document.getElementById('subCount');if(subCount)subCount.textContent='—';const pendingCount=document.getElementById('pendingCount');if(pendingCount)pendingCount.textContent='—';const cmtCount=document.getElementById('cmtCount');if(cmtCount)cmtCount.textContent='—';const pulseTitle=document.getElementById('dashPulseTitle');if(pulseTitle)pulseTitle.textContent=_sbState==='paused'?'Supabase paused':'Supabase unavailable';const pulseMeta=document.getElementById('dashPulseMeta');if(pulseMeta)pulseMeta.textContent='Live community, campaign, and analytics counters are temporarily unavailable, so the workspace is showing local content only.';}
+const _baseInitAnalyticsUnavailableAware=initAnalytics;
+initAnalytics=async function(){await _baseInitAnalyticsUnavailableAware();if(!_sbIsUnavailable())return;['analyticsVisitors24h','analyticsViews24h'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});const visMeta=document.getElementById('analyticsVisitors24hMeta');if(visMeta)visMeta.textContent=_sbState==='paused'?'This Supabase project is paused, so recent visitor data cannot be queried right now.':'Supabase is currently unavailable, so recent visitor data cannot be queried right now.';const vMeta=document.getElementById('analyticsViews24hMeta');if(vMeta)vMeta.textContent='Live analytics will return once the shared database connection is healthy again.';const mom=document.getElementById('analyticsMomentum');if(mom)mom.textContent='Unavailable';const momMeta=document.getElementById('analyticsMomentumMeta');if(momMeta)momMeta.textContent='Momentum is temporarily hidden because first-party analytics data is not currently reachable.';}
 forceResync = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('This will overwrite ALL posts in Supabase with the full seed content (ep1-ep4). Continue?'))return;toast('Resyncing posts to Supabase...','inf');const seed=getSeedPosts();let ok=0;for(const p of seed){try{await _sbReq('posts?id=eq.'+p.id,'DELETE');await _sbReq('posts','POST',{id:p.id,title:p.title,subtitle:p.subtitle||'',category:p.category,status:p.status,read_time:p.readTime||'5 min read',date:p.date,excerpt:p.excerpt||'',image:p.image||'',emoji:p.emoji||'📝',content:p.content||''});ok++;}catch(e){toast('Failed on '+p.id+': '+e.message,'er');}}toast(ok+' posts resynced to Supabase ✓','ok');initDash();renderPostsTbl();refreshContentHealth()}
 restoreLibraryToSupabase = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('Restore the library collection into the current Supabase project?'))return;toast('Restoring library...','inf');const source=(getLibItems()||[]).length?getLibItems():LIB_DEFAULTS;let ok=0;for(const item of source){try{await dbSaveLibItem(item);ok++;}catch(e){console.warn('Library restore failed for',item&&item.id,e);}}toast(ok+' library item'+(ok===1?'':'s')+' restored ✓','ok');try{renderLibTbl();}catch(_e){}refreshContentHealth()}
 
@@ -4546,6 +4558,12 @@ function upDbBadge(){
   const badge=document.getElementById('dbBadge'),lbl=document.getElementById('dbModeLbl'),blk=document.getElementById('dbStatusTxt');
   if(_useSb()){
     const project=_sbUrl().replace('https://','').split('.')[0];
+    if(_sbState==='paused'){
+      if(badge)badge.innerHTML='<div class="db-badge loc">⏸ Paused</div>';
+      if(lbl)lbl.textContent='Supabase Paused';
+      if(blk)blk.innerHTML='⏸ This Supabase project is currently paused<br><span style="font-family:\'JetBrains Mono\',monospace;font-size:.69rem;color:var(--t3);word-break:break-all">'+_sbUrl()+'</span><br><span style="font-size:.69rem;color:var(--t3)">'+(_sbStateMsg||'Open the Supabase dashboard and resume the project to restore live data')+'</span>';
+      return;
+    }
     if(_sbState==='offline'){
       if(badge)badge.innerHTML='<div class="db-badge loc">ðŸ”´ Offline</div>';
       if(lbl)lbl.textContent='Supabase Offline';
