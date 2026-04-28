@@ -1262,6 +1262,17 @@ function processContent(html){
 
   // Already processed or raw HTML from Quill — run enhancer
   let out=html;
+  out=out
+    .replace(/<section[^>]*class="[^"]*\b(?:discussion|whats-next)\b[^"]*"[\s\S]*?<\/section>/gi,'')
+    .replace(/<div[^>]*class="[^"]*\bcomments-section\b[^"]*"[\s\S]*?<\/div>\s*<\/div>?/gi,'')
+    .replace(/<div[^>]*class="[^"]*\bcomments-list\b[^"]*"[\s\S]*?<\/div>/gi,'')
+    .replace(/<div[^>]*class="[^"]*\bcomment-form\b[^"]*"[\s\S]*?<\/div>/gi,'')
+    .replace(/<div[^>]*class="[^"]*\bcta(?:-buttons)?\b[^"]*"[\s\S]*?<\/div>/gi,'')
+    .replace(/<button[^>]*onclick="(?:subscribeToNewsletter|shareArticle|scrollToComments)\(\)"[^>]*>[\s\S]*?<\/button>/gi,'')
+    .replace(/<hr[^>]*class="[^"]*\bdivider\b[^"]*"[^>]*>\s*(?=<hr[^>]*class="[^"]*\bdivider\b)/gi,'')
+    .replace(/<p>\s*(?:<strong>)?\s*What(?:'|’)s your biggest frustration[\s\S]*?<\/p>/gi,'')
+    .replace(/<p>\s*Drop a comment[\s\S]*?<\/p>/gi,'');
+  out=out.replace(/(<hr[^>]*class="[^"]*\bdivider\b[^"]*"[^>]*>\s*){2,}/gi,'$1');
 
   // 1. Insight cards: <blockquote> → .iv-insight
   out=out.replace(/<blockquote>([\s\S]*?)<\/blockquote>/gi,(_,inner)=>{
