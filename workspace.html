@@ -1436,7 +1436,7 @@ const TPEND_KEY='iv_testimonials_pending', TAPPR_KEY='iv_testimonials_approved';
 async function dbGetTestimonials(){
   if(_useSb()){try{
     const rows=await _sbReq('testimonials?select=*&order=submitted_at.desc');
-    if(rows&&rows.length){
+    if(Array.isArray(rows)){
       const pend=rows.filter(r=>!r.approved).map(r=>({id:r.id,name:r.name,role:r.role||'',text:r.text,avatar:r.avatar||'',submittedAt:r.submitted_at,source:r.source||'public'}));
       const appr=rows.filter(r=>r.approved).map(r=>({id:r.id,name:r.name,role:r.role||'',text:r.text,avatar:r.avatar||'',submittedAt:r.submitted_at,source:r.source||'public'}));
       localStorage.setItem(TPEND_KEY,JSON.stringify(pend));
@@ -1464,7 +1464,7 @@ async function dbDeleteTestimonial(id){
 async function dbGetLibrary(){
   if(_useSb()){try{
     const rows=await _sbReq('library?select=*&order=sort_order.asc,id.asc');
-    if(rows&&rows.length){
+    if(Array.isArray(rows)){
       const items=rows.map(r=>({id:r.id,title:r.title,category:r.category,desc:r.description||'',emoji:r.emoji||'📄',tag:r.tag||'',status:r.status,url:r.url||'',image:r.image||'',embed:r.embed||'',preview:r.preview||'',duration:r.duration||'',order:r.sort_order||0,featured:!!r.featured,free:r.free!==false,notes:r.notes||''}));
       localStorage.setItem(LIB_KEY,JSON.stringify(items));return items;
     }
