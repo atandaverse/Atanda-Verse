@@ -1362,20 +1362,42 @@ img.loaded{opacity:1;}
 
     // ── COUNTDOWN (admin-driven) ──
     let prevCD = {};
-    function getCountdownTarget() {
+    let publicSettingsState = null;
+    let countdownSyncBusy = false;
+    function getStoredPublicSettings() {
+        try { return JSON.parse(localStorage.getItem('iv_settings') || '{}') || {}; }
+        catch { return {}; }
+    }
+    function getCountdownSettings() {
+        return publicSettingsState || getStoredPublicSettings();
+    }
+    function getCountdownTarget(settings) {
+        const s = settings || getCountdownSettings();
+        if (!s || !s.countdownTarget) return null;
+        const ts = new Date(s.countdownTarget).getTime();
+        return Number.isFinite(ts) ? ts : null;
+    }
+    async function syncCountdownSettings(force) {
+        if (!window.ivGetPublicSettings || countdownSyncBusy) return getCountdownSettings();
+        const now = Date.now();
+        const current = publicSettingsState || getStoredPublicSettings();
+        if (!force && current && current.__fetchedAt && (now - current.__fetchedAt) < 60000) return current;
+        countdownSyncBusy = true;
         try {
-            const s = JSON.parse(localStorage.getItem('iv_settings') || '{}');
-            if (s.countdownTarget) return new Date(s.countdownTarget).getTime();
-        } catch {}
-        return null;
+            const fetched = await window.ivGetPublicSettings();
+            publicSettingsState = Object.assign({}, fetched || {}, { __fetchedAt: now });
+            return publicSettingsState;
+        } catch (e) {
+            return current;
+        } finally {
+            countdownSyncBusy = false;
+        }
     }
     function updateCountdown() {
-        const target = getCountdownTarget();
-        try {
-            const s = JSON.parse(localStorage.getItem('iv_settings') || '{}');
-            const lbl = document.getElementById('cdLabel');
-            if (lbl && s.countdownLabel) lbl.textContent = s.countdownLabel;
-        } catch {}
+        const settings = getCountdownSettings();
+        const target = getCountdownTarget(settings);
+        const lbl = document.getElementById('cdLabel');
+        if (lbl) lbl.textContent = settings && settings.countdownLabel ? settings.countdownLabel : '⏰ Free Access Ends In';
         if (!target) {
             ['days','hours','minutes','seconds'].forEach(k => { const el = document.getElementById(k); if (el) el.textContent = '--'; });
             return;
@@ -1394,12 +1416,14 @@ img.loaded{opacity:1;}
     }
     // Load settings from Supabase so countdown/label reflect admin changes cross-device
     (async function loadSettings() {
-        if (window.ivGetPublicSettings) {
-            try { await window.ivGetPublicSettings(); } catch(e) {}
-        }
+        publicSettingsState = Object.assign({}, getStoredPublicSettings());
+        await syncCountdownSettings(true);
         updateCountdown();
     })();
-    setInterval(updateCountdown, 1000);
+    setInterval(() => {
+        updateCountdown();
+        syncCountdownSettings(false);
+    }, 1000);
 
     // ── FAQ ──
     document.querySelectorAll('.faq-question').forEach(q => {

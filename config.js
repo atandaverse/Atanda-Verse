@@ -115,8 +115,8 @@
 
     try {
       var rows = await sbFetch('settings?select=key,value');
-      if (rows && rows.length) {
-        var settings = {};
+      var settings = {};
+      if (Array.isArray(rows)) {
         rows.forEach(function (row) {
           try { settings[row.key] = JSON.parse(row.value); }
           catch (_err) { settings[row.key] = row.value; }
