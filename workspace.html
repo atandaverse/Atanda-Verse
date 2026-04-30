@@ -775,13 +775,15 @@ create policy "public_write_logins" on admin_logins for all using (true);
               <div style="background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);overflow:hidden">
                 <div style="padding:.6rem .9rem;background:var(--s2);border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
                   <span style="font-size:.72rem;color:var(--t2);font-weight:600">✨ Smart Paste — paste plain text, markdown, or drop a .md / .txt file</span>
-                  <div style="display:flex;gap:.4rem;align-items:center">
+                  <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">
                     <label style="background:var(--s2);border:1px solid var(--b);border-radius:4px;padding:2px 8px;font-size:.65rem;color:var(--t3);cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='var(--ac)'" onmouseleave="this.style.borderColor='var(--b)'">
                       📁 Import file
                       <input type="file" accept=".md,.txt,.html" id="pasteFileIn" style="display:none" onchange="importPasteFile(event)">
                     </label>
                     <button class="ab" onclick="convertPaste()" style="background:linear-gradient(135deg,var(--ac),#b02a37);color:#fff;border:none;font-size:.7rem;padding:3px 10px">✨ Convert & Use</button>
                     <button class="ab" onclick="clearPaste()" style="font-size:.7rem">✕ Clear</button>
+                    <button class="ab" onclick="pasteFromClipboard()" style="font-size:.7rem">Clipboard</button>
+                    <button class="ab" onclick="applyPasteMeta()" style="font-size:.7rem">Apply Fields</button>
                   </div>
                 </div>
                 <textarea id="pasteRaw" style="width:100%;min-height:280px;padding:.85rem;background:var(--s2);border:none;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.65;outline:none;resize:vertical" placeholder="Paste your article text or markdown here…&#10;&#10;Examples of what auto-formats:&#10;> This becomes an insight card&#10;## The Bottom Line → styled summary box&#10;## What's Next → styled next section&#10;## Where Degrees Matter → styled info box&#10;&#10;Three consecutive h3 + paragraph pairs → pillar grid&#10;&#10;Plain paragraphs get proper spacing automatically."></textarea>
@@ -789,6 +791,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
                   💡 After converting, switch to Rich Text tab to fine-tune with the editor. The conversion is non-destructive — your raw paste stays here.
                 </div>
               </div>
+              <div id="pasteMeta" style="display:none;margin-top:.85rem;background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);padding:.85rem .95rem;font-size:.74rem;color:var(--t2);line-height:1.6"></div>
               <div id="pastePreview" style="display:none;margin-top:1rem">
                 <div style="font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem">Preview</div>
                 <div id="pastePreviewBody" style="background:var(--bg2);border:1px solid var(--b);border-radius:var(--rs);padding:1.2rem;font-size:.86rem;color:var(--t2);line-height:1.7;max-height:320px;overflow-y:auto"></div>
@@ -2924,9 +2927,121 @@ function syncEditorFlow(){
 }
 
 // ── SMART PASTE ───────────────────────────────────────────────────────────
+function escSmartPasteHtml(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function normalizePasteRaw(raw){
+  return String(raw||'')
+    .replace(/\r\n?/g,'\n')
+    .replace(/\u00a0/g,' ')
+    .replace(/[ \t]+\n/g,'\n')
+    .replace(/\n{3,}/g,'\n\n')
+    .trim();
+}
+function looksLikeMarkdown(raw){
+  return /(^|\n)(#{1,6}\s|>\s|[-*+]\s|\d+\.\s|```|\*\*|__|\[[^\]]+\]\([^)]+\))/m.test(raw||'');
+}
+function plainTextToHtml(raw){
+  const lines=normalizePasteRaw(raw).split('\n');
+  const blocks=[]; let i=0;
+  while(i<lines.length){
+    const line=lines[i].trim();
+    if(!line){i++;continue;}
+    if(/^[-*•]\s+/.test(line)){
+      const items=[];
+      while(i<lines.length&&/^[-*•]\s+/.test(lines[i].trim())){items.push(`<li>${escSmartPasteHtml(lines[i].trim().replace(/^[-*•]\s+/,''))}</li>`);i++;}
+      blocks.push(`<ul>${items.join('')}</ul>`);continue;
+    }
+    if(/^\d+\.\s+/.test(line)){
+      const items=[];
+      while(i<lines.length&&/^\d+\.\s+/.test(lines[i].trim())){items.push(`<li>${escSmartPasteHtml(lines[i].trim().replace(/^\d+\.\s+/,''))}</li>`);i++;}
+      blocks.push(`<ol>${items.join('')}</ol>`);continue;
+    }
+    if(/^>\s*/.test(line)){
+      const quote=[];
+      while(i<lines.length&&/^>\s*/.test(lines[i].trim())){quote.push(escSmartPasteHtml(lines[i].trim().replace(/^>\s*/,'')));i++;}
+      blocks.push(`<blockquote><p>${quote.join(' ')}</p></blockquote>`);continue;
+    }
+    if(/^[A-Z][A-Z0-9\s&:'"-]{6,}$/.test(line) && line===line.toUpperCase()){
+      blocks.push(`<h2>${escSmartPasteHtml(line)}</h2>`);i++;continue;
+    }
+    if(/^[A-Z][^.!?]{8,80}$/.test(line) && i+1<lines.length){
+      blocks.push(`<h3>${escSmartPasteHtml(line)}</h3>`);i++;continue;
+    }
+    const para=[line]; i++;
+    while(i<lines.length&&lines[i].trim()&&!/^[-*•]\s+/.test(lines[i].trim())&&!/^\d+\.\s+/.test(lines[i].trim())&&!/^>\s*/.test(lines[i].trim())){
+      para.push(lines[i].trim()); i++;
+    }
+    blocks.push(`<p>${escSmartPasteHtml(para.join(' '))}</p>`);
+  }
+  return blocks.join('\n');
+}
+function inferPasteMeta(raw){
+  const txt=normalizePasteRaw(String(raw||'').replace(/<[^>]+>/g,' '));
+  const lines=txt.split('\n').map(v=>v.trim()).filter(Boolean);
+  const title=(lines[0]||'').replace(/^#{1,6}\s*/,'').replace(/^Title:\s*/i,'').trim();
+  const subtitle=(lines[1]||'').replace(/^#{1,6}\s*/,'').trim();
+  const excerptSource=lines.slice(title?1:0).find(v=>v.length>40) || lines[1] || '';
+  const excerpt=excerptSource.length>170?excerptSource.slice(0,167).trimEnd()+'...':excerptSource;
+  const words=txt?txt.split(/\s+/).filter(Boolean).length:0;
+  const readTime=Math.max(1,Math.ceil(words/220))+' min read';
+  const lower=txt.toLowerCase();
+  let category='Education & Career';
+  if(/business|sales|market|startup|client|entrepreneur/.test(lower))category='Business Skills & Entrepreneurship';
+  else if(/network|linkedin|relationship capital|career strategy/.test(lower))category='Networking & Career Strategy';
+  else if(/clarity|mindset|anxiety|mental|overwhelm/.test(lower))category='Mental Clarity';
+  else if(/purpose|calling|meaning/.test(lower))category='Finding Purpose';
+  else if(/relationship|love|friendship/.test(lower))category='Relationships';
+  else if(/productivity|focus|habit|discipline/.test(lower))category='Productivity';
+  else if(/mindful|meditation|presence/.test(lower))category='Mindfulness';
+  else if(/spiritual|faith|prayer/.test(lower))category='Spirituality';
+  return {title,subtitle,excerpt,readTime,category,words};
+}
+function renderPasteMeta(meta){
+  const box=document.getElementById('pasteMeta');
+  if(!box)return;
+  if(!meta||(!meta.title&&!meta.excerpt)){box.style.display='none';box.innerHTML='';return;}
+  box.style.display='block';
+  box.innerHTML=`<strong style="display:block;margin-bottom:.35rem;color:var(--t)">Smart suggestions</strong><div><strong>Title:</strong> ${meta.title||'—'}</div><div><strong>Subtitle:</strong> ${meta.subtitle||'—'}</div><div><strong>Excerpt:</strong> ${meta.excerpt||'—'}</div><div><strong>Category:</strong> ${meta.category} <span style="color:var(--t3)">· ${meta.readTime} · ${meta.words.toLocaleString()} words</span></div>`;
+}
+function fillPasteMeta(meta,{force=false}={}){
+  if(!meta)return;
+  const title=document.getElementById('ft');
+  const subtitle=document.getElementById('fsu');
+  const excerpt=document.getElementById('fex');
+  const readTime=document.getElementById('frt');
+  const category=document.getElementById('fcat');
+  if(title&&meta.title&&(force||!title.value.trim()))title.value=meta.title;
+  if(subtitle&&meta.subtitle&&(force||!subtitle.value.trim()))subtitle.value=meta.subtitle;
+  if(excerpt&&meta.excerpt&&(force||!excerpt.value.trim()))excerpt.value=meta.excerpt;
+  if(readTime&&meta.readTime&&(force||!readTime.value.trim()))readTime.value=meta.readTime;
+  if(category&&meta.category&&(force||!category.value))category.value=meta.category;
+  syncExcerptMeta();
+}
+function applyPasteMeta(){
+  const raw=document.getElementById('pasteRaw')?.value||'';
+  const meta=inferPasteMeta(raw);
+  if(!meta.title&&!meta.excerpt)return toast('Nothing useful to apply yet','er');
+  fillPasteMeta(meta,{force:true});
+  renderPasteMeta(meta);
+  upPrev();
+  toast('Smart suggestions applied to post fields','ok');
+}
+async function pasteFromClipboard(){
+  try{
+    if(!navigator.clipboard?.readText)throw new Error('Clipboard access is not available here');
+    const text=normalizePasteRaw(await navigator.clipboard.readText());
+    if(!text)return toast('Clipboard is empty','er');
+    const ta=document.getElementById('pasteRaw');
+    if(ta)ta.value=text;
+    renderPasteMeta(inferPasteMeta(text));
+    toast('Clipboard pasted','ok');
+  }catch(err){
+    toast(err?.message||'Clipboard paste failed','er');
+  }
+}
 function smartProcess(raw){
-  // Convert markdown to HTML via marked first
-  let html = raw.trim().startsWith('<') ? raw : marked.parse(raw);
+  const clean=normalizePasteRaw(raw);
+  if(!clean)return '';
+  let html = clean.trim().startsWith('<') ? clean : looksLikeMarkdown(clean) ? marked.parse(clean) : plainTextToHtml(clean);
 
   // 1. blockquote → insight card
   html = html.replace(/<blockquote>\s*<p>([\s\S]*?)<\/p>\s*<\/blockquote>/gi,
@@ -2959,18 +3074,21 @@ function smartProcess(raw){
 }
 
 function convertPaste(){
-  const raw=document.getElementById('pasteRaw').value.trim();
+  const ta=document.getElementById('pasteRaw');
+  const raw=normalizePasteRaw(ta?.value||'');
+  if(ta)ta.value=raw;
   if(!raw)return toast('Nothing to convert','er');
   const html=smartProcess(raw);
+  const meta=inferPasteMeta(raw);
   // Push into quill
   if(!quill)initQuill();
   quill.root.innerHTML=html;
   upWc();
-  // Show preview
   const prev=document.getElementById('pastePreview');
   const body=document.getElementById('pastePreviewBody');
   if(prev&&body){body.innerHTML=html;prev.style.display='block';}
-  // Switch to rich tab so user can fine-tune
+  renderPasteMeta(meta);
+  fillPasteMeta(meta);
   switchTab('rich');
   toast('Converted ✓ — now in Rich Text editor','ok');
   upPrev();
@@ -2979,6 +3097,7 @@ function convertPaste(){
 function clearPaste(){
   const p=document.getElementById('pasteRaw');if(p)p.value='';
   const prev=document.getElementById('pastePreview');if(prev)prev.style.display='none';
+  const meta=document.getElementById('pasteMeta');if(meta){meta.style.display='none';meta.innerHTML='';}
   const fi=document.getElementById('pasteFileIn');if(fi)fi.value='';
 }
 
@@ -2987,12 +3106,22 @@ function importPasteFile(e){
   const reader=new FileReader();
   reader.onload=ev=>{
     const ta=document.getElementById('pasteRaw');
+    const text=normalizePasteRaw(ev.target.result);
     if(ta){ta.value=ev.target.result;toast('File loaded — click Convert & Use','ok');}
+    if(ta&&ta.value!==text)ta.value=text;
+    renderPasteMeta(inferPasteMeta(text));
   };
   reader.readAsText(f);
 }
 
 // ── LIVE PREVIEW ──────────────────────────────────────────────────────────
+setTimeout(()=>{
+  const ta=document.getElementById('pasteRaw');
+  if(ta&&!ta.dataset.smartPasteBound){
+    ta.dataset.smartPasteBound='1';
+    ta.addEventListener('input',()=>renderPasteMeta(inferPasteMeta(ta.value)));
+  }
+},0);
 function buildPrevHtml(dark){
   const title=document.getElementById('ft')?.value||'Untitled',sub=document.getElementById('fsu')?.value||'',cat=document.getElementById('fcat')?.value||'',date=document.getElementById('fdt')?.value||'',rt=document.getElementById('frt')?.value||'5 min read',emo=document.getElementById('femo')?.value||'📝',body=getContent();
   const bg=dark?'#0f172a':'#f8f9fa',tp=dark?'#f1f5f9':'#1a365d',ts=dark?'#cbd5e1':'#4a5568',tm=dark?'#94a3b8':'#6b7280',ac=dark?'#ef4444':'#dc3545',glass=dark?'rgba(30,41,59,.6)':'rgba(255,255,255,.7)',gb=dark?'rgba(255,255,255,.08)':'rgba(255,255,255,.8)',border=dark?'rgba(255,255,255,.08)':'rgba(0,0,0,.08)';
