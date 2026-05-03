@@ -1180,7 +1180,13 @@ async function searchLibraryInSupabase(query, creds, cat){
     });
     if (!r.ok) return null;
     const rows = await r.json();
-    return Array.isArray(rows) ? rows.map(mapLibraryRow) : null;
+    if (!Array.isArray(rows)) return null;
+    const mapped = rows.map(mapLibraryRow);
+    const relevant = mapped.filter(item => {
+      if (Number(item.searchRank || 0) >= 1.2) return true;
+      return matchesLibSearch(item, query);
+    });
+    return relevant.length ? relevant : null;
   } catch(e) {
     return null;
   }

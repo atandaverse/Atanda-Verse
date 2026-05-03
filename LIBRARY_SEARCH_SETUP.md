@@ -170,7 +170,7 @@ begin
     r.url, r.image, r.embed, r.preview, r.duration, r.sort_order,
     r.featured, r.free, r.notes, r.rank_score as search_rank
   from ranked r
-  where r.rank_score > 0
+  where r.rank_score >= 1.2
   order by r.rank_score desc, r.featured desc, r.sort_order asc, r.title asc
   limit greatest(1, least(coalesce(result_limit, 60), 100));
 end;
