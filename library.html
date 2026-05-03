@@ -905,6 +905,23 @@ img.loaded{opacity:1;}
         <input id="libSearchInput" type="search" placeholder="Try stuck, anxious, career, habits..." oninput="searchLib(this.value)" style="width:100%;border:1px solid var(--border-color);border-radius:12px;padding:.8rem .9rem;font-size:.95rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
         <div id="libSearchHint" style="margin-top:.65rem;color:var(--text-muted);font-size:.78rem;line-height:1.5">Search by feeling, topic, format, title, author, or need.</div>
       </div>
+      <div id="libraryAccessModal" role="dialog" aria-modal="true" aria-labelledby="libraryAccessTitle" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(8,13,24,.72);backdrop-filter:blur(14px);padding:1.25rem;align-items:center;justify-content:center">
+        <div style="width:min(94vw,470px);background:var(--bg-card);border:1px solid var(--glass-border);border-radius:24px;box-shadow:0 30px 90px rgba(15,23,42,.35);padding:1.35rem;position:relative">
+          <button type="button" onclick="closeLibraryAccessModal()" aria-label="Close library access" style="position:absolute;right:1rem;top:1rem;border:none;background:transparent;color:var(--text-muted);font-size:1.2rem;cursor:pointer">x</button>
+          <div style="font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem">Member Library</div>
+          <h3 id="libraryAccessTitle" style="font-family:'Bebas Neue',sans-serif;font-size:2.15rem;letter-spacing:1.5px;color:var(--text-primary);margin-bottom:.5rem">Unlock Full Access</h3>
+          <p id="libraryAccessCopy" style="color:var(--text-secondary);font-size:.94rem;line-height:1.7;margin-bottom:1rem">Enter your library username and password to open full resources. Snippets remain visible so you can decide what is useful first.</p>
+          <div style="display:grid;gap:.75rem">
+            <input id="libAccessUsername" autocomplete="username" placeholder="Library username" style="width:100%;border:1px solid var(--border-color);border-radius:14px;padding:.88rem 1rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
+            <input id="libAccessPassword" autocomplete="current-password" type="password" placeholder="Library password" onkeydown="if(event.key==='Enter')submitLibraryAccess()" style="width:100%;border:1px solid var(--border-color);border-radius:14px;padding:.88rem 1rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
+          </div>
+          <div id="libraryAccessStatus" style="min-height:1.3rem;margin:.7rem 0 0;color:var(--accent);font-size:.82rem;font-weight:700"></div>
+          <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
+            <button type="button" onclick="submitLibraryAccess()" style="border:none;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;border-radius:12px;padding:.78rem 1.2rem;font-weight:800;cursor:pointer;letter-spacing:.3px">Unlock Library</button>
+            <a href="index.html#contact" onclick="closeLibraryAccessModal()" style="display:inline-flex;align-items:center;border:1px solid var(--glass-border);border-radius:12px;padding:.78rem 1.05rem;text-decoration:none;color:var(--text-primary);font-weight:800;background:var(--glass)">Request Access</a>
+          </div>
+        </div>
+      </div>
       <div class="rv" style="background:linear-gradient(135deg,#1a365d,rgba(15,23,42,.9));color:white;border-radius:24px;padding:4rem;text-align:center;position:relative;overflow:hidden;margin-top:4rem">
         <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(220,53,69,.2),transparent 60%)"></div>
         <div style="position:relative;z-index:1">
@@ -996,6 +1013,9 @@ const CAT_META = {
 let activeLibCat = 'all';
 let activeLibSearch = '';
 let lastLibItems = [];
+let libraryAccessConfig = { enabled: true, username: '', passwordHash: '', note: '' };
+let pendingLibraryItemId = '';
+const LIB_ACCESS_SESSION_KEY = 'iv_library_access_v1';
 
 const LIB_SEARCH_GROUPS = [
   ['clarity','clear','mental','mind','fog','foggy','lost','stuck','confused','unclear','overthinking','noise','focus','directionless','decision','decisions'],
@@ -1013,9 +1033,150 @@ const LIB_SEARCH_GROUPS = [
   ['soon','coming','upcoming','later']
 ];
 
+function parseSettingValue(value){
+  if (value === undefined || value === null) return '';
+  try { return JSON.parse(value); } catch(e) { return value; }
+}
+
+async function sha256Text(text){
+  const data = new TextEncoder().encode(String(text || ''));
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function fetchLibraryAccessConfig(creds){
+  if (!creds || !creds.url || !creds.key) return libraryAccessConfig;
+  try {
+    const keys = 'libraryAccessEnabled,libraryAccessUsername,libraryAccessPasswordHash,libraryAccessNote';
+    const r = await fetch(creds.url + '/rest/v1/settings?select=key,value&key=in.(' + keys + ')', {
+      headers: { 'apikey': creds.key, 'Authorization': 'Bearer ' + creds.key }
+    });
+    if (!r.ok) return libraryAccessConfig;
+    const rows = await r.json();
+    if (!Array.isArray(rows)) return libraryAccessConfig;
+    const s = {};
+    rows.forEach(row => { s[row.key] = parseSettingValue(row.value); });
+    libraryAccessConfig = {
+      enabled: s.libraryAccessEnabled !== false,
+      username: String(s.libraryAccessUsername || '').trim(),
+      passwordHash: String(s.libraryAccessPasswordHash || ''),
+      note: String(s.libraryAccessNote || '').trim()
+    };
+  } catch(e) {}
+  return libraryAccessConfig;
+}
+
+function isLibraryUnlocked(){
+  if (libraryAccessConfig.enabled === false) return true;
+  try {
+    const stored = JSON.parse(sessionStorage.getItem(LIB_ACCESS_SESSION_KEY) || '{}');
+    return !!stored.ok && (!libraryAccessConfig.username || stored.username === libraryAccessConfig.username);
+  } catch(e) {
+    return false;
+  }
+}
+
+function isPublicLibrarySnippet(item){
+  if (libraryAccessConfig.enabled === false) return true;
+  if (!item || item.status === 'members') return false;
+  return item.free === true && /free|signup/i.test(String(item.tag || ''));
+}
+
+function shouldGateLibraryItem(item){
+  if (!item || item.status === 'coming-soon') return false;
+  return !isLibraryUnlocked() && !isPublicLibrarySnippet(item);
+}
+
+function findLibraryItem(id){
+  return lastLibItems.find(item => String(item.id) === String(id));
+}
+
+function openLibraryAccessModal(itemId){
+  pendingLibraryItemId = itemId || '';
+  const modal = document.getElementById('libraryAccessModal');
+  const copy = document.getElementById('libraryAccessCopy');
+  const status = document.getElementById('libraryAccessStatus');
+  const user = document.getElementById('libAccessUsername');
+  const pass = document.getElementById('libAccessPassword');
+  if (status) status.textContent = '';
+  if (copy) {
+    copy.textContent = libraryAccessConfig.username && libraryAccessConfig.passwordHash
+      ? (libraryAccessConfig.note || 'Enter your library username and password to open full resources. Snippets remain visible so you can decide what is useful first.')
+      : 'Full library access is controlled by Atanda Verse. Request access and we will send your reader credentials.';
+  }
+  if (modal) modal.style.display = 'flex';
+  setTimeout(() => (libraryAccessConfig.username ? pass : user)?.focus(), 80);
+}
+
+function closeLibraryAccessModal(){
+  const modal = document.getElementById('libraryAccessModal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function submitLibraryAccess(){
+  const status = document.getElementById('libraryAccessStatus');
+  const username = (document.getElementById('libAccessUsername')?.value || '').trim();
+  const password = document.getElementById('libAccessPassword')?.value || '';
+  if (!libraryAccessConfig.username || !libraryAccessConfig.passwordHash) {
+    if (status) status.textContent = 'Access credentials are not public yet. Please request access.';
+    await logLibraryAccessEvent('request_needed', findLibraryItem(pendingLibraryItemId));
+    return;
+  }
+  const enteredHash = await sha256Text(password);
+  if (username === libraryAccessConfig.username && enteredHash === libraryAccessConfig.passwordHash) {
+    sessionStorage.setItem(LIB_ACCESS_SESSION_KEY, JSON.stringify({ ok: true, username, ts: Date.now() }));
+    if (status) status.textContent = 'Access unlocked.';
+    await logLibraryAccessEvent('login', findLibraryItem(pendingLibraryItemId));
+    closeLibraryAccessModal();
+    renderLibrary();
+    const item = findLibraryItem(pendingLibraryItemId);
+    if (item && item.url) setTimeout(() => accessLibraryItem(item.id), 150);
+    return;
+  }
+  if (status) status.textContent = 'Those library credentials did not match.';
+  await logLibraryAccessEvent('denied', findLibraryItem(pendingLibraryItemId), username);
+}
+
+async function accessLibraryItem(id){
+  const item = findLibraryItem(id);
+  if (!item) return;
+  if (shouldGateLibraryItem(item)) {
+    openLibraryAccessModal(id);
+    return;
+  }
+  await logLibraryAccessEvent('open', item);
+  if (item.url) window.open(item.url, '_blank', 'noopener');
+}
+
+async function logLibraryAccessEvent(eventType, item, enteredUsername){
+  const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
+  if (!creds || !creds.url || !creds.key) return;
+  try {
+    await fetch(creds.url + '/rest/v1/library_access_logs', {
+      method: 'POST',
+      headers: {
+        'apikey': creds.key,
+        'Authorization': 'Bearer ' + creds.key,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        username: enteredUsername || (document.getElementById('libAccessUsername')?.value || '').trim() || 'visitor',
+        event_type: eventType,
+        resource_id: item?.id || '',
+        resource_title: item?.title || '',
+        category: item?.category || '',
+        page_url: location.href,
+        user_agent: navigator.userAgent
+      })
+    });
+  } catch(e) {}
+}
+
 async function renderLibrary() {
   let allItems = null;
   const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
+  await fetchLibraryAccessConfig(creds);
   if (creds && creds.url && creds.key) {
     try {
       const r = await fetch(creds.url + '/rest/v1/library?select=*&order=sort_order.asc,id.asc', {
@@ -1097,16 +1258,20 @@ async function renderLibrary() {
 
       // Action button
       let btnHtml = '';
+      const itemId = String(item.id || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      const isLocked = shouldGateLibraryItem(item);
       if (isCS) {
         btnHtml = `<div style="margin-top:auto;padding-top:1rem"><span style="display:inline-block;padding:.4rem 1rem;border-radius:8px;font-size:.74rem;font-weight:600;background:rgba(100,116,139,.08);color:var(--text-muted);border:1px solid rgba(100,116,139,.16);letter-spacing:.2px">Coming soon</span></div>`;
       } else if (isMem) {
-        btnHtml = `<div style="margin-top:auto;padding-top:1rem"><span style="display:inline-block;padding:.4rem 1rem;border-radius:8px;font-size:.76rem;font-weight:600;background:rgba(220,53,69,.1);color:var(--accent);border:1px solid rgba(220,53,69,.2)">🔒 Members Only</span></div>`;
+        btnHtml = `<div style="margin-top:auto;padding-top:1rem"><button type="button" onclick="openLibraryAccessModal('${itemId}')" style="display:inline-block;border:none;background:linear-gradient(135deg,#1a365d,#0f172a);color:white;padding:.5rem 1.3rem;border-radius:8px;text-decoration:none;font-size:.8rem;font-weight:700;cursor:pointer">Unlock Member Resource</button></div>`;
+      } else if (isLocked) {
+        btnHtml = `<div style="margin-top:auto;padding-top:1rem"><button type="button" onclick="openLibraryAccessModal('${itemId}')" style="display:inline-block;border:none;background:linear-gradient(135deg,#1a365d,#0f172a);color:white;padding:.5rem 1.3rem;border-radius:8px;text-decoration:none;font-size:.8rem;font-weight:700;cursor:pointer">Unlock Full Resource</button><div style="font-size:.7rem;color:var(--text-muted);margin-top:.45rem">Snippet visible. Full access requires library credentials.</div></div>`;
       } else if (item.category === 'books' && hasLink) {
-        btnHtml = `<div style="margin-top:auto;padding-top:1rem"><a href="${item.url}" target="_blank" rel="noopener" style="display:inline-block;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;padding:.5rem 1.3rem;border-radius:8px;text-decoration:none;font-size:.8rem;font-weight:700;transition:all .3s">${item.button || 'Explore Book'}</a></div>`;
+        btnHtml = `<div style="margin-top:auto;padding-top:1rem"><a href="#" onclick="accessLibraryItem('${itemId}');return false" style="display:inline-block;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;padding:.5rem 1.3rem;border-radius:8px;text-decoration:none;font-size:.8rem;font-weight:700;transition:all .3s">${item.button || 'Explore Book'}</a></div>`;
       } else if (hasLink) {
-        btnHtml = `<div style="margin-top:auto;padding-top:1rem"><a href="${item.url}" target="_blank" rel="noopener" style="display:inline-block;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;padding:.5rem 1.3rem;border-radius:8px;text-decoration:none;font-size:.8rem;font-weight:700;transition:all .3s">Access Resource →</a></div>`;
+        btnHtml = `<div style="margin-top:auto;padding-top:1rem"><a href="#" onclick="accessLibraryItem('${itemId}');return false" style="display:inline-block;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;padding:.5rem 1.3rem;border-radius:8px;text-decoration:none;font-size:.8rem;font-weight:700;transition:all .3s">Access Resource</a></div>`;
       } else {
-        btnHtml = `<div style="margin-top:auto;padding-top:1rem"><a href="index.html#contact" style="display:inline-block;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;padding:.5rem 1.3rem;border-radius:8px;text-decoration:none;font-size:.8rem;font-weight:700">Get Access Free →</a></div>`;
+        btnHtml = `<div style="margin-top:auto;padding-top:1rem"><button type="button" onclick="openLibraryAccessModal('${itemId}')" style="display:inline-block;border:none;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;padding:.5rem 1.3rem;border-radius:8px;text-decoration:none;font-size:.8rem;font-weight:700;cursor:pointer">Request Full Access</button></div>`;
       }
 
       return `<div class="rv" style="background:var(--glass);backdrop-filter:blur(20px);border-radius:18px;padding:1.8rem;border:1px solid var(--glass-border);box-shadow:0 6px 24px var(--shadow);display:flex;flex-direction:column;transition:all .4s cubic-bezier(.34,1.56,.64,1);${isCS ? 'opacity:.62' : ''}">

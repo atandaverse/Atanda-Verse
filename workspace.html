@@ -371,10 +371,22 @@ create table if not exists library (
   notes text,
   updated_at timestamptz default now()
 );
+create table if not exists library_access_logs (
+  id bigserial primary key,
+  username text,
+  event_type text not null,
+  resource_id text,
+  resource_title text,
+  category text,
+  page_url text,
+  user_agent text,
+  created_at timestamptz default now()
+);
 alter table posts enable row level security;
 alter table settings enable row level security;
 alter table testimonials enable row level security;
 alter table library enable row level security;
+alter table library_access_logs enable row level security;
 create table if not exists comments (
   id text primary key,
   post_id text not null,
@@ -392,6 +404,8 @@ drop policy if exists "public_read_testimonials" on testimonials;
 drop policy if exists "public_write_testimonials" on testimonials;
 drop policy if exists "public_read_library" on library;
 drop policy if exists "public_write_library" on library;
+drop policy if exists "public_read_library_access_logs" on library_access_logs;
+drop policy if exists "public_write_library_access_logs" on library_access_logs;
 drop policy if exists "public_read_comments" on comments;
 drop policy if exists "public_write_comments" on comments;
 drop policy if exists "public_read_posts" on posts;
@@ -402,6 +416,8 @@ drop policy if exists "public_read_testimonials" on testimonials;
 drop policy if exists "public_write_testimonials" on testimonials;
 drop policy if exists "public_read_library" on library;
 drop policy if exists "public_write_library" on library;
+drop policy if exists "public_read_library_access_logs" on library_access_logs;
+drop policy if exists "public_write_library_access_logs" on library_access_logs;
 drop policy if exists "public_read_comments" on comments;
 drop policy if exists "public_write_comments" on comments;
 create policy "public_read_posts" on posts for select using (true);
@@ -412,6 +428,8 @@ create policy "public_read_testimonials" on testimonials for select using (true)
 create policy "public_write_testimonials" on testimonials for all using (true);
 create policy "public_read_library" on library for select using (true);
 create policy "public_write_library" on library for all using (true);
+create policy "public_read_library_access_logs" on library_access_logs for select using (true);
+create policy "public_write_library_access_logs" on library_access_logs for all using (true);
 create policy "public_read_comments" on comments for select using (true);
 create policy "public_write_comments" on comments for all using (true);
 create table if not exists registrations (
@@ -1035,6 +1053,22 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <input class="ci" type="text" id="nhex" placeholder="#ff6b6b" maxlength="7">
             <input type="color" id="nclr" style="width:28px;height:28px;border:none;border-radius:4px;cursor:pointer;background:none;padding:0" oninput="document.getElementById('nhex').value=this.value">
             <button class="btn s" style="padding:.38rem .8rem;font-size:.72rem" onclick="addCustomColor()">+ Add</button>
+          </div>
+        </div>
+        <div class="scc"><div class="sct">Library Access</div><div class="scd">Control the full library gate and monitor reader activity. Public snippets remain visible on the library page.</div>
+          <div class="tr"><div><div class="tl">Require Library Login</div><div class="ts">Visitors need the credentials below before opening locked resources.</div></div><label class="tog"><input type="checkbox" id="libAccessEnabled" checked><span class="tog-t"></span><span class="tog-k"></span></label></div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin-top:.8rem">
+            <input class="mn" id="libAccessUsername" placeholder="Library username" autocomplete="off">
+            <input class="mn" id="libAccessPassword" placeholder="Library password" autocomplete="new-password">
+          </div>
+          <textarea class="mn" id="libAccessNote" placeholder="Optional modal note for visitors" style="width:100%;min-height:82px;margin-top:.65rem;resize:vertical"></textarea>
+          <button class="btn s" style="width:100%;margin-top:.65rem" onclick="saveLibraryAccessSettings()">Save Library Access</button>
+          <div style="margin-top:1rem;padding:.85rem;border-radius:14px;background:var(--bg3);border:1px solid var(--b)">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.5rem">
+              <div style="font-size:.68rem;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--t2)">Recent Library Activity</div>
+              <button class="btn s" style="padding:.3rem .55rem;font-size:.68rem" onclick="loadLibraryAccessLogs()">Refresh</button>
+            </div>
+            <div id="libraryAccessLogBox" style="display:grid;gap:.45rem;font-size:.74rem;color:var(--t3)"><div>No activity loaded yet.</div></div>
           </div>
         </div>
         <div class="scc"><div class="sct">🟢 Supabase Database</div><div class="scd">Current connection status.</div>
@@ -3426,8 +3460,60 @@ async function saveAdminTheme(theme){
   await saveSetting('adminTheme',theme);
   toast((theme==='evolutionary'?'Evolutionary':'Inceptive')+' theme active','ok');
 }
+function loadLibraryAccessSettings(){
+  const s=_localSettings();
+  const enabled=document.getElementById('libAccessEnabled');
+  const user=document.getElementById('libAccessUsername');
+  const pass=document.getElementById('libAccessPassword');
+  const note=document.getElementById('libAccessNote');
+  if(enabled)enabled.checked=s.libraryAccessEnabled!==false;
+  if(user)user.value=s.libraryAccessUsername||'';
+  if(pass){pass.value='';pass.placeholder=s.libraryAccessPasswordHash?'Leave blank to keep current password':'Library password';}
+  if(note)note.value=s.libraryAccessNote||'';
+}
+async function sha256Text(text){
+  const data=new TextEncoder().encode(String(text||''));
+  const hash=await crypto.subtle.digest('SHA-256',data);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function saveLibraryAccessSettings(){
+  const s=_localSettings();
+  const enabled=document.getElementById('libAccessEnabled')?.checked!==false;
+  const username=(document.getElementById('libAccessUsername')?.value||'').trim();
+  const password=document.getElementById('libAccessPassword')?.value||'';
+  const note=(document.getElementById('libAccessNote')?.value||'').trim();
+  const passwordHash=password?await sha256Text(password):(s.libraryAccessPasswordHash||'');
+  if(enabled&&(!username||!passwordHash))return toast('Add a library username and password first','er');
+  await dbSaveSetting('libraryAccessEnabled',enabled);
+  await dbSaveSetting('libraryAccessUsername',username);
+  await dbSaveSetting('libraryAccessPasswordHash',passwordHash);
+  await dbSaveSetting('libraryAccessPassword','');
+  await dbSaveSetting('libraryAccessNote',note);
+  loadLibraryAccessSettings();
+  toast('Library access saved','ok');
+}
+async function loadLibraryAccessLogs(){
+  const box=document.getElementById('libraryAccessLogBox');
+  if(!box)return;
+  if(!_useSb()){box.innerHTML='<div>Connect Supabase to read library activity.</div>';return}
+  box.innerHTML='<div>Loading activity...</div>';
+  try{
+    const rows=await _sbReq('library_access_logs?select=*&order=created_at.desc&limit=12');
+    if(!Array.isArray(rows)||!rows.length){box.innerHTML='<div>No library activity yet.</div>';return}
+    const clean=v=>String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    box.innerHTML=rows.map(r=>{
+      const when=r.created_at?new Date(r.created_at).toLocaleString():'';
+      const title=clean(r.resource_title||'Library');
+      const user=clean(r.username||'visitor');
+      const event=clean(r.event_type||'event');
+      return `<div style="padding:.55rem;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid var(--b)"><strong style="color:var(--t2)">${event}</strong> <span>${title}</span><br><span>${user} · ${when}</span></div>`;
+    }).join('');
+  }catch(e){
+    box.innerHTML='<div>Activity table is not ready yet. Run the latest setup SQL.</div>';
+  }
+}
 function loadSettings(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');refreshContentHealth()}
-loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');updateLockHint();refreshContentHealth()}
+loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');loadLibraryAccessSettings();loadLibraryAccessLogs();updateLockHint();refreshContentHealth()}
 changeCredentials = function(){const u=document.getElementById('nu').value.trim(),p=document.getElementById('np').value,c=document.getElementById('cp').value;if(!u||!p)return toast('Fill all fields','er');if(p!==c)return toast('Access keys do not match','er');localStorage.setItem(AUTH_K,JSON.stringify({u,p}));updateLockHint();document.getElementById('sbUn').textContent=u;['nu','np','cp'].forEach(id=>document.getElementById(id).value='');toast('Workspace access updated','ok')}
 restoreLibraryToSupabase = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('Restore the library collection into the current Supabase project?'))return;toast('Restoring library...','inf');const source=getLibItems();let ok=0;for(const item of source){try{await dbSaveLibItem(item);ok++;}catch(e){console.warn('Library restore failed for',item&&item.id,e);}}toast(ok+' library item'+(ok===1?'':'s')+' restored ✓','ok');try{renderLibTbl();}catch(_e){}refreshContentHealth()}
 async function saveSetting(k,v){await dbSaveSetting(k,v);toast('Saved ✓','ok')}
@@ -3516,7 +3602,7 @@ renderAnalyticsSparklines = function(posts,vm,snapshot){const host=document.getE
 initDash = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const pub=posts.filter(p=>p.status==='published');document.getElementById('st1').textContent=posts.length;document.getElementById('st1s').textContent=pub.length+' published';document.getElementById('st3').textContent=[...new Set(posts.map(p=>p.category))].length;document.getElementById('st4').textContent=posts.filter(p=>p.status==='draft').length;const attention=[];const vm=await getAllViews(posts);document.getElementById('st2').textContent=Object.values(vm).reduce((a,b)=>a+b,0).toLocaleString();renderBarChart(posts,vm);renderDonut(posts);renderRecTbl(posts,vm);const draftCount=posts.filter(p=>p.status==='draft').length;const comingSoonCount=posts.filter(p=>p.status==='coming-soon').length;const topPost=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0))[0];if(draftCount)attention.push({title:`${draftCount} draft${draftCount===1?'':'s'} waiting`,meta:'Finish and publish the posts that are still sitting in draft.',action:"nav('posts')",label:'Open posts'});if(comingSoonCount)attention.push({title:`${comingSoonCount} coming soon item${comingSoonCount===1?'':'s'}`,meta:'Review timing and switch them live when the article is ready.',action:"nav('posts')",label:'Review queue'});const pulseTitle=document.getElementById('dashPulseTitle'),pulseMeta=document.getElementById('dashPulseMeta'),topTitle=document.getElementById('dashTopTitle'),topMeta=document.getElementById('dashTopMeta'),nextMove=document.getElementById('dashNextMove'),nextMeta=document.getElementById('dashNextMeta');if(topTitle)topTitle.textContent=topPost?topPost.title.split(' ').slice(0,3).join(' '):'—';if(topMeta)topMeta.textContent=topPost?`${(vm[topPost.id]||0).toLocaleString()} views so far across the live audience.`:'Publish something to start measuring momentum.';if(draftCount){if(pulseTitle)pulseTitle.textContent='Needs attention';if(pulseMeta)pulseMeta.textContent='Draft work is waiting in the queue, so the studio still needs a publishing decision.';if(nextMove)nextMove.textContent='Finish drafts';if(nextMeta)nextMeta.textContent='Open the posts queue and turn unfinished work into something publishable.';}else if(comingSoonCount){if(pulseTitle)pulseTitle.textContent='Almost live';if(pulseMeta)pulseMeta.textContent='Your queue is mostly clean, but some entries are still parked as Coming Soon.';if(nextMove)nextMove.textContent='Review timing';if(nextMeta)nextMeta.textContent='Decide which scheduled-looking pieces should go live next.';}else if(pub.length){if(pulseTitle)pulseTitle.textContent='Publishing well';if(pulseMeta)pulseMeta.textContent='The content engine looks healthy and live posts are carrying the workload.';if(nextMove)nextMove.textContent='Review campaigns';if(nextMeta)nextMeta.textContent='Use campaign drafts to turn live posts into stronger newsletter moments.';}else{if(pulseTitle)pulseTitle.textContent='Quiet';if(pulseMeta)pulseMeta.textContent='Nothing is live yet, so the next best move is to create the first post.';if(nextMove)nextMove.textContent='Create post';if(nextMeta)nextMeta.textContent='Start a new article draft and move it through the publishing flow.';}if(_useSb()){try{const regs=await _sbReq('registrations?select=id');const el=document.getElementById('st5');if(el)el.textContent=(regs||[]).length;const els=document.getElementById('st5s');if(els)els.textContent=(regs||[]).length===1?'1 booking':(regs||[]).length+' bookings';}catch(e){}try{const subs=await _sbReq('subscribers?select=id');const el=document.getElementById('st6');if(el){el.textContent=(subs||[]).length;document.getElementById('subCount').textContent=(subs||[]).length;}}catch(e){}try{const pend=await _sbReq('testimonials?select=id&approved=eq.false');const el=document.getElementById('st7');if(el)el.textContent=(pend||[]).length;const els=document.getElementById('st7s');if(els){els.textContent=(pend||[]).length+' pending review';document.getElementById('pendingCount').textContent=(pend||[]).length;}}catch(e){}try{const cmts=await _sbReq('comments?select=id');const el=document.getElementById('st8');if(el){el.textContent=(cmts||[]).length;document.getElementById('cmtCount').textContent=(cmts||[]).length;}}catch(e){}try{const camps=await _sbReq('newsletter_campaigns?select=id,status');const active=(camps||[]).filter(c=>['draft','queued','sending'].includes(c.status));const badge=document.getElementById('campCount');if(badge)badge.textContent=(camps||[]).filter(c=>c.status==='draft').length;if(active.length)attention.push({title:`${active.length} campaign${active.length===1?'':'s'} in progress`,meta:'Draft, queued, or sending campaigns still need review or monitoring.',action:"nav('campaigns')",label:'Open campaigns'});}catch(e){}try{const regs=await _sbReq('registrations?select=id');if((regs||[]).length)attention.push({title:`${(regs||[]).length} registration${(regs||[]).length===1?'':'s'} captured`,meta:'Check who recently asked for sessions and decide what needs follow-up.',action:"nav('registrations')",label:'View registrations'});}catch(e){}}const box=document.getElementById('attentionList');if(box){const items=attention.slice(0,4);box.innerHTML=items.length?items.map(item=>`<div class="attention-item"><div class="attention-copy"><strong>${item.title}</strong><span>${item.meta}</span></div><button class="ab" onclick="${item.action}">${item.label}</button></div>`).join(''):'<div class="attention-item"><div class="attention-copy"><strong>Everything looks calm right now.</strong><span>Your content queue, campaigns, and community surfaces are all in a manageable state.</span></div><button class="ab" onclick="nav(\'editor\')">Create post</button></div>';}}
 renderPostsTbl = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const vm=await getAllViews(posts);const srch=(document.getElementById('psrch')?.value||'').toLowerCase();const sf=document.getElementById('pfstt')?.value||'';const filt=posts.filter(p=>(!srch||p.title.toLowerCase().includes(srch)||p.category.toLowerCase().includes(srch))&&(!sf||p.status===sf));document.getElementById('pclbl').textContent=filt.length;upPostCount();const drafts=posts.filter(p=>p.status==='draft').length;const coming=posts.filter(p=>p.status==='coming-soon').length;const published=posts.filter(p=>p.status==='published').length;const totalEl=document.getElementById('postOpsTotal');if(totalEl)totalEl.textContent=posts.length;const draftEl=document.getElementById('postOpsDrafts');if(draftEl)draftEl.textContent=drafts+coming;const pubEl=document.getElementById('postOpsPublished');if(pubEl)pubEl.textContent=published;const tb=document.getElementById('allTbl');if(!filt.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">No posts found for this filter. Clear the queue filters or create a new post.</td></tr>';return}tb.innerHTML=filt.map(p=>{const nextAction=p.status==='published'?'Move to Coming Soon':p.status==='coming-soon'?'Publish now':'Publish';const statusMeta=p.status==='published'?'Live and visible on the blog.':p.status==='coming-soon'?'Visible only as a timed placeholder.':'Still private inside admin.';return`<tr><td class="tc2">${p.title}<span>post.html?id=${p.id}</span><span style="font-family:inherit;font-size:.69rem;color:var(--t3);margin-top:.28rem">${statusMeta}</span></td><td><div style="display:grid;gap:.25rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${p.category}</strong><span class="mini-tag">${p.status==='published'?'Campaign ready':p.status==='draft'?'Needs finishing':'Schedule carefully'}</span></div></td><td><span class="pill ${p.status}">${p.status}</span></td><td class="vc">${(vm[p.id]||0).toLocaleString()}</td><td>${p.readTime||'—'}</td><td>${p.date}</td><td><div class="action-row"><button class="ab" onclick="editPost('${p.id}')">Edit</button><button class="ab" onclick="quickToggleStatus('${p.id}','${p.status}')" title="Toggle status" style="${p.status==='published'?'border-color:rgba(245,158,11,.5);color:var(--yl)':p.status==='draft'?'border-color:rgba(59,130,246,.5);color:var(--bl)':'border-color:rgba(16,185,129,.5);color:var(--gr)'}">${nextAction}</button><button class="ab" onclick="window.open('post.html?id=${p.id}','_blank')">View</button><button class="ab del" onclick="prepDel('${p.id}')">Delete</button></div></td></tr>`}).join('')}
 initAnalytics = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const vm=await getAllViews(posts);const snapshot=window.ivGetAnalyticsSnapshot?await window.ivGetAnalyticsSnapshot(posts.map(p=>p.id)):null;const sorted=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0));const lead=sorted[0];const coverage=[...new Set(posts.map(p=>p.category))].length;const drafts=posts.filter(p=>p.status==='draft').length;const published=posts.filter(p=>p.status==='published').length;const views24h=snapshot?Number(snapshot.views24h||0):0;const visitors24h=snapshot?Number(snapshot.visitors24h||0):0;const sessions24h=snapshot?Number(snapshot.sessions24h||0):0;const leadTitle=document.getElementById('analyticsLeadTitle');if(leadTitle)leadTitle.textContent=lead?lead.title.split(' ').slice(0,3).join(' '):'—';const leadMeta=document.getElementById('analyticsLeadMeta');if(leadMeta)leadMeta.textContent=lead?`${(vm[lead.id]||0).toLocaleString()} total views · ${lead.category}`:'Publish more posts to unlock leaderboard signals.';const vis=document.getElementById('analyticsVisitors24h');if(vis)vis.textContent=visitors24h.toLocaleString();const visMeta=document.getElementById('analyticsVisitors24hMeta');if(visMeta)visMeta.textContent=visitors24h?`${sessions24h.toLocaleString()} tracked session${sessions24h===1?'':'s'} contributed during the last 24 hours.`:'No tracked visitors in the last 24 hours yet.';const v24=document.getElementById('analyticsViews24h');if(v24)v24.textContent=views24h.toLocaleString();const v24Meta=document.getElementById('analyticsViews24hMeta');if(v24Meta)v24Meta.textContent=views24h?'Fresh event rows are flowing into your first-party analytics layer.':'Open live posts in the browser to start generating real activity.';const cov=document.getElementById('analyticsCoverage');if(cov)cov.textContent=coverage;const covMeta=document.getElementById('analyticsCoverageMeta');if(covMeta)covMeta.textContent=coverage?`${coverage} topic area${coverage===1?'':'s'} are represented right now.`:'No category coverage yet.';const mom=document.getElementById('analyticsMomentum');if(mom)mom.textContent=views24h>24?'Rising':views24h>0?'Active':drafts?'Building':published?'Live':'Quiet';const momMeta=document.getElementById('analyticsMomentumMeta');if(momMeta)momMeta.textContent=views24h>24?'Audience activity is meaningfully above idle and the analytics layer is catching it in near real time.':views24h>0?'You have live traffic now, even if it is still early.':drafts?'You still have draft energy waiting to be turned into published reach.':published?'Published posts are carrying attention across the blog.':'The analytics layer will come alive once posts start moving.';document.getElementById('toprank').innerHTML=sorted.slice(0,8).map((p,i)=>`<div class="ri"><div class="rn">#${i+1}</div><div class="rif"><div class="rt2">${p.title}</div><div class="rc">${p.category} · ${p.status}${snapshot?` · ${Number(snapshot.perPostVisitors24h[p.id]||0).toLocaleString()} visitors in 24h`:''}</div></div><div class="rv2">👁 ${(vm[p.id]||0).toLocaleString()}</div></div>`).join('');const cm={};const total=posts.length||1;posts.forEach(p=>{cm[p.category]=(cm[p.category]||0)+1});document.getElementById('catbrk').innerHTML=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([cat,count])=>`<div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px"><span style="color:var(--t2)">${cat}</span><span style="color:var(--t3)">${count}</span></div><div style="height:5px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(count/total*100)}%;background:var(--ac);border-radius:3px;transition:width .8s"></div></div></div>`).join('');renderAnalyticsSparklines(sorted,vm,snapshot)}
-loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');updateLockHint();refreshContentHealth()}
+loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');loadLibraryAccessSettings();loadLibraryAccessLogs();updateLockHint();refreshContentHealth()}
 changeCredentials = function(){const u=document.getElementById('nu').value.trim(),p=document.getElementById('np').value,c=document.getElementById('cp').value;if(!u||!p)return toast('Fill all fields','er');if(p!==c)return toast('Access keys do not match','er');localStorage.setItem(AUTH_K,JSON.stringify({u,p}));updateLockHint();document.getElementById('sbUn').textContent=u;['nu','np','cp'].forEach(id=>document.getElementById(id).value='');toast('Workspace access updated','ok')}
 refreshContentHealth = async function(){const box=document.getElementById('contentHealthBox');if(!box)return;box.innerHTML='<div>Checking content sources...</div>';let dbCount='—',dbState='unavailable';try{if(_useSb()){const rows=await _sbReq('posts?select=id');dbCount=Array.isArray(rows)?rows.length:'0';dbState=Array.isArray(rows)&&rows.length?'available':'empty';}else dbState='not connected';}catch(e){dbState='error'}let localCount=0;try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];localCount=Array.isArray(parsed)?parsed.length:0;}catch(e){}const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;const resolved=await resolvePostsSource();const sourceMeta=resolved.source==='database'?'Shared live content':'This browser is currently driving the workspace view';box.innerHTML=`<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div><div><strong style="color:var(--t2)">Local cache posts:</strong> ${localCount}</div><div><strong style="color:var(--t2)">Seed fallback posts:</strong> ${seedCount}</div><div><strong style="color:var(--t2)">Active render source:</strong> ${resolved.source}</div><div><strong style="color:var(--t2)">Authority note:</strong> <span style="color:var(--t3)">${sourceMeta}</span></div>`}
 refreshContentHealth = async function(){const box=document.getElementById('contentHealthBox');if(!box)return;box.innerHTML='<div>Checking content sources...</div>';let dbCount='—',dbState='unavailable';try{if(_useSb()){const rows=await _sbReq('posts?select=id');dbCount=Array.isArray(rows)?rows.length:'0';dbState=Array.isArray(rows)&&rows.length?'available':'empty';}else dbState='not connected';}catch(e){dbState=_sbState==='paused'?'paused':_sbState==='offline'?'offline':'error'}let localCount=0;try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];localCount=Array.isArray(parsed)?parsed.length:0;}catch(e){}const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;const resolved=await resolvePostsSource();const sourceMeta=resolved.source==='database'?'Shared live content':_sbIsUnavailable()?'Live database is unavailable, so this browser is driving the workspace view':'This browser is currently driving the workspace view';box.innerHTML=`<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div><div><strong style="color:var(--t2)">Local cache posts:</strong> ${localCount}</div><div><strong style="color:var(--t2)">Seed fallback posts:</strong> ${seedCount}</div><div><strong style="color:var(--t2)">Active render source:</strong> ${resolved.source}</div><div><strong style="color:var(--t2)">Authority note:</strong> <span style="color:var(--t3)">${sourceMeta}</span></div>`}
