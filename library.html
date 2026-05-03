@@ -1023,15 +1023,7 @@ async function renderLibrary() {
       if (r.ok) {
         const rows = await r.json();
         if (Array.isArray(rows)) {
-          allItems = rows.map(r => ({
-            id: r.id, title: r.title, category: r.category, desc: r.description || '',
-            emoji: r.emoji || '📄', tag: r.tag || '', status: r.status,
-            url: r.url || '', image: r.image || '', embed: r.embed || '',
-            preview: r.preview || '', duration: r.duration || '',
-            order: r.sort_order || 0, featured: !!r.featured, free: r.free !== false,
-            notes: r.notes || '',
-            author: /^Author:\s*/i.test(r.notes || '') ? String(r.notes || '').replace(/^Author:\s*/i, '') : ''
-          }));
+          allItems = rows.map(mapLibraryRow);
           localStorage.setItem(LIB_KEY, JSON.stringify(allItems));
         }
       }
@@ -1043,9 +1035,23 @@ async function renderLibrary() {
   allItems = allItems.sort((a, b) => (a.order || 0) - (b.order || 0));
   lastLibItems = allItems;
   const q = activeLibSearch.trim().toLowerCase();
-  const visibleItems = q
-    ? allItems.filter(item => matchesLibSearch(item, q))
-    : allItems;
+  let visibleItems = q ? null : allItems;
+  if (q && creds && creds.url && creds.key) {
+    visibleItems = await searchLibraryInSupabase(q, creds, activeLibCat);
+  }
+  if (!visibleItems) {
+    visibleItems = q ? allItems.filter(item => matchesLibSearch(item, q)) : allItems;
+  } else if (q && !visibleItems.length) {
+    visibleItems = allItems.filter(item => matchesLibSearch(item, q));
+  }
+  if (q) {
+    const resultIds = new Set(visibleItems.map(i => i.id));
+    CURATED_BOOKS.forEach(book => {
+      if (!resultIds.has(book.id) && matchesLibSearch(book, q) && (activeLibCat === 'all' || activeLibCat === book.category)) {
+        visibleItems.push(book);
+      }
+    });
+  }
   const cats = activeLibCat === 'all'
     ? ['guides', 'audio', 'workbooks', 'video', 'books', 'other']
     : [activeLibCat];
@@ -1141,6 +1147,43 @@ async function renderLibrary() {
     if (typeof _revObs !== 'undefined') _revObs.observe(el);
   });
   if(window.ivRefreshObserver)window.ivRefreshObserver();
+}
+
+function mapLibraryRow(r){
+  return {
+    id: r.id, title: r.title, category: r.category, desc: r.description || '',
+    emoji: r.emoji || '📄', tag: r.tag || '', status: r.status,
+    url: r.url || '', image: r.image || '', embed: r.embed || '',
+    preview: r.preview || '', duration: r.duration || '',
+    order: r.sort_order || 0, featured: !!r.featured, free: r.free !== false,
+    notes: r.notes || '',
+    searchRank: Number(r.search_rank || 0),
+    author: /^Author:\s*/i.test(r.notes || '') ? String(r.notes || '').replace(/^Author:\s*/i, '') : ''
+  };
+}
+
+async function searchLibraryInSupabase(query, creds, cat){
+  try {
+    const r = await fetch(creds.url + '/rest/v1/rpc/search_library_resources', {
+      method: 'POST',
+      headers: {
+        'apikey': creds.key,
+        'Authorization': 'Bearer ' + creds.key,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        search_query: query,
+        category_filter: cat && cat !== 'all' ? cat : null,
+        status_filter: null,
+        result_limit: 80
+      })
+    });
+    if (!r.ok) return null;
+    const rows = await r.json();
+    return Array.isArray(rows) ? rows.map(mapLibraryRow) : null;
+  } catch(e) {
+    return null;
+  }
 }
 
 function filterLib(cat, btn) {
