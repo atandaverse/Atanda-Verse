@@ -4,23 +4,27 @@
 <script>!function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.style.colorScheme=t==="dark"?"dark":"light"}();</script>
 <script src="config.js"></script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inner Wisdom Blog — Clarity, Career & Growth | Atanda Verse</title>
-<meta name="description" content="Atanda Verse Blog — practical insights on career clarity, digital skills, personal growth and transformation for Nigerian graduates and young professionals. Real stories, real strategies, no fluff.">
-<meta name="keywords" content="Nigeria career advice blog, Nigerian graduates blog, beyond school na scam Nigeria, digital skills Nigeria, career clarity blog, personal development Nigeria, network effect Nigeria career, business skills Nigeria, Atanda Verse blog, clarity insights Nigeria, young Nigerians career growth, Nigerian education reality, skills that pay Nigeria, remote work Nigeria">
-<meta name="robots" content="index, follow">
+<title>Atanda Verse Blog - Career Clarity, Growth & Nigerian Life</title>
+<meta name="description" content="Read Atanda Verse essays on career clarity, Nigerian education, digital skills, relationships, purpose, and reflective living for young Nigerians and the diaspora.">
+<meta name="keywords" content="Nigeria career advice blog, Nigerian graduates blog, digital skills Nigeria, career clarity blog, personal development Nigeria, Nigerian education reality, remote work Nigeria, Atanda Verse blog">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Atanda Verse">
-<link rel="canonical" href="https://verse.atanda.site/blog.html">
+<meta name="theme-color" content="#1a365d">
+<link rel="canonical" href="https://verse.atanda.site/blog">
+<link rel="alternate" hreflang="en-ng" href="https://verse.atanda.site/blog">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Atanda Verse">
-<meta property="og:title" content="Inner Wisdom Blog — Atanda Verse">
-<meta property="og:description" content="Clarity insights, career guidance, and transformation articles for Nigerians navigating education and success.">
+<meta property="og:locale" content="en_NG">
+<meta property="og:title" content="Atanda Verse Blog - Career Clarity, Growth & Nigerian Life">
+<meta property="og:description" content="Practical essays on clarity, career growth, Nigerian education, digital skills, relationships, and purpose.">
 <meta property="og:image" content="https://verse.atanda.site/images/headers.png">
-<meta property="og:url" content="https://verse.atanda.site/blog.html">
+<meta property="og:image:alt" content="Atanda Verse blog on clarity and Nigerian career growth">
+<meta property="og:url" content="https://verse.atanda.site/blog">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Inner Wisdom Blog — Atanda Verse">
-<meta name="twitter:description" content="Clarity insights, career guidance, and transformation articles for Nigerians.">
+<meta name="twitter:title" content="Atanda Verse Blog - Career Clarity & Growth">
+<meta name="twitter:description" content="Essays on clarity, career growth, Nigerian education, digital skills, relationships, and purpose.">
 <meta name="twitter:image" content="https://verse.atanda.site/images/headers.png">
-<script type="application/ld+json" id="blogLdJson">{"@context":"https://schema.org","@type":"Blog","name":"Atanda Verse Blog","description":"Practical insights on career clarity, digital skills, personal growth and transformation for Nigerian graduates and young professionals.","url":"https://verse.atanda.site/blog.html","inLanguage":"en-NG","publisher":{"@type":"Organization","name":"Atanda Verse","url":"https://verse.atanda.site/","logo":{"@type":"ImageObject","url":"https://verse.atanda.site/ChatGPT%20Image%20Apr%206,%202026,%2004_48_50%20AM.png"}},"audience":{"@type":"Audience","audienceType":"Young Nigerians, Graduates, Professionals"}}</script>
+<script type="application/ld+json" id="blogLdJson">{"@context":"https://schema.org","@type":"Blog","name":"Atanda Verse Blog","description":"Essays on career clarity, Nigerian education, digital skills, relationships, purpose, and reflective living.","url":"https://verse.atanda.site/blog","inLanguage":"en-NG","publisher":{"@type":"Organization","name":"Atanda Verse","url":"https://verse.atanda.site/","logo":{"@type":"ImageObject","url":"https://verse.atanda.site/logo%20I.png"}},"audience":{"@type":"Audience","audienceType":"Young Nigerians, Graduates, Professionals, Nigerian diaspora"}}</script>
 <link rel="icon" type="image/png" href="logo I.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -1917,8 +1921,8 @@ function updateBlogSeo(pub){
   document.querySelector('meta[property="og:description"]')?.setAttribute('content','Read Atanda Verse articles on clarity, career growth, relationships, digital life, and reflective living for Nigerians and the diaspora.');
   document.querySelector('meta[name="twitter:title"]')?.setAttribute('content','Atanda Verse Blog | Clarity, Career & Growth for Nigerians');
   document.querySelector('meta[name="twitter:description"]')?.setAttribute('content','Read Atanda Verse articles on clarity, career growth, relationships, digital life, and reflective living for Nigerians and the diaspora.');
-  const items=pub.slice(0,12).map((p,i)=>({"@type":"ListItem",position:i+1,url:absUrl(`post.html?id=${p.id}`),name:p.title,image:absUrl(p.image||'images/headers.png')}));
-  ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"Blog","name":"Atanda Verse Blog","description":"Read Atanda Verse articles on clarity, career growth, relationships, digital life, and reflective living for Nigerians and the diaspora.","url":absUrl('blog.html'),"publisher":{"@type":"Organization","name":"Atanda","logo":{"@type":"ImageObject","url":absUrl('ChatGPT Image Apr 6, 2026, 04_48_50 AM.png')}},"blogPost":items});
+  const items=pub.slice(0,12).map((p,i)=>({"@type":"ListItem",position:i+1,url:absUrl(`post?id=${p.id}`),name:p.title,image:absUrl(p.image||'images/headers.png')}));
+  ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"Blog","name":"Atanda Verse Blog","description":"Read Atanda Verse articles on clarity, career growth, relationships, digital life, and reflective living for Nigerians and the diaspora.","url":absUrl('blog'),"inLanguage":"en-NG","publisher":{"@type":"Organization","name":"Atanda Verse","url":absUrl(''),"logo":{"@type":"ImageObject","url":absUrl('logo I.png')}},"blogPost":items});
 }
 
 async function subscribeToNewsletter(){

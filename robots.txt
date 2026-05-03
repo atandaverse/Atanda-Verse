@@ -2,5 +2,8 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /workspace.html
+Disallow: /admin
+Disallow: /workspace
+Disallow: /*?preview=
 
 Sitemap: https://verse.atanda.site/sitemap.xml

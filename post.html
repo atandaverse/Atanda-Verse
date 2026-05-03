@@ -5,14 +5,16 @@
 <script src="config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title id="pageTitle">Loading… — Atanda Verse</title>
-<meta name="description" id="metaDesc" content="Atanda Verse — Clarity insights and personal transformation.">
+<title id="pageTitle">Atanda Verse Article - Clarity Insights</title>
+<meta name="description" id="metaDesc" content="Read Atanda Verse clarity insights on career growth, Nigerian life, purpose, relationships, and personal transformation.">
 <meta name="keywords" id="metaKeywords" content="Atanda Verse, clarity, reflection, Nigeria">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Atanda Verse">
-<link rel="canonical" id="canonical" href="https://verse.atanda.site/post.html">
+<meta name="theme-color" content="#1a365d">
+<link rel="canonical" id="canonical" href="https://verse.atanda.site/post">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Atanda Verse">
+<meta property="og:locale" content="en_NG">
 <meta property="og:title" id="ogTitle" content="">
 <meta property="og:description" id="ogDesc" content="">
 <meta property="og:image" id="ogImg" content="">
@@ -1315,7 +1317,8 @@ function absUrl(v){try{return new URL(v||'',location.href).href;}catch{return lo
 function stripHtml(v){return (v||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();}
 function seoDesc(post){const base=(post.excerpt&&post.excerpt.trim())||stripHtml(post.content)||post.title||'Atanda Verse article';return base.length>160?base.slice(0,157).trimEnd()+'...':base;}
 function seoKeywords(post){const parts=[post.category,post.title,'Atanda Verse',post.readTime].filter(Boolean).join(' ');return [...new Set(parts.toLowerCase().match(/[a-z0-9&]+/gi)||[])].filter(w=>w.length>2).slice(0,12).join(', ');}
-function updateLdJson(post){const ld=document.getElementById('ldJson');if(!ld)return;ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"Article","headline":post.title||'Atanda Verse Article',"description":seoDesc(post),"image":post.image?[absUrl(post.image)]:[absUrl('images/headers.png')],"datePublished":post.date||new Date().toISOString(),"dateModified":post.date||new Date().toISOString(),"articleSection":post.category||'Clarity',"keywords":seoKeywords(post),"mainEntityOfPage":absUrl(location.href),"author":{"@type":"Organization","name":"Atanda"},"publisher":{"@type":"Organization","name":"Atanda","logo":{"@type":"ImageObject","url":absUrl('ChatGPT Image Apr 6, 2026, 04_48_50 AM.png')}}});}
+function cleanPostUrl(post){return absUrl('post?id='+encodeURIComponent(post.id||new URLSearchParams(location.search).get('id')||''));}
+function updateLdJson(post){const ld=document.getElementById('ldJson');if(!ld)return;ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"Article","headline":post.title||'Atanda Verse Article',"description":seoDesc(post),"image":post.image?[absUrl(post.image)]:[absUrl('images/headers.png')],"datePublished":post.date||new Date().toISOString(),"dateModified":post.date||new Date().toISOString(),"articleSection":post.category||'Clarity',"keywords":seoKeywords(post),"mainEntityOfPage":cleanPostUrl(post),"author":{"@type":"Organization","name":"Atanda Verse"},"publisher":{"@type":"Organization","name":"Atanda Verse","logo":{"@type":"ImageObject","url":absUrl('logo I.png')}}});}
 function updateSEO(post){
   const description=seoDesc(post),image=post.image?absUrl(post.image):absUrl('images/headers.png');
   document.title=(post.title||'Article')+' — Atanda Verse';
@@ -1326,8 +1329,9 @@ function updateSEO(post){
   set('ogImg',image);set('twTitle',post.title||'Atanda Verse');set('twDesc',description);set('twImg',image);
   set('articlePublishedTime',post.date||new Date().toISOString());set('articleSection',post.category||'Clarity');
   set('metaKeywords',seoKeywords(post));
-  const og=document.getElementById('ogUrl');if(og)og.content=location.href;
-  const can=document.getElementById('canonical');if(can)can.href=location.href;
+  const cleanUrl=cleanPostUrl(post);
+  const og=document.getElementById('ogUrl');if(og)og.content=cleanUrl;
+  const can=document.getElementById('canonical');if(can)can.href=cleanUrl;
   updateLdJson(post);
 }
 
