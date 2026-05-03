@@ -1162,9 +1162,9 @@ img.loaded{opacity:1;}
     </article>
   </div>
 
-  <!-- POST NAVIGATION (always in DOM, updated by JS) -->
+  <!-- POST DISCUSSION + NAVIGATION (always in DOM, updated by JS) -->
   <div class="container" id="postNavWrap" style="display:none">
-    <div class="post-navigation iv-stagger">
+    <div class="post-navigation iv-stagger" id="postNavInner" style="display:none">
       <a href="#" class="nav-post disabled" id="navPrev">
         <div class="nav-direction">← Previous</div>
         <div class="nav-post-title" id="navPrevTitle">No previous post</div>
@@ -1174,7 +1174,7 @@ img.loaded{opacity:1;}
         <div class="nav-post-title" id="navNextTitle">No next post</div>
       </a>
     </div>
-    <div class="iv-rule center rv" style="margin:1rem 0"></div>
+    <div class="iv-rule center rv" id="postNavRule" style="display:none;margin:1rem 0"></div>
     <div class="article-cta iv-pop">
       <h3>Ready to Find Your Clarity?</h3>
       <p>Free virtual clarity session — no charge during launch period.</p>
@@ -1196,6 +1196,7 @@ img.loaded{opacity:1;}
       </div>
       <div class="comments-list" id="cmtList"></div>
     </div>
+    <div id="postNavSlot"></div>
   </div>
 
   <!-- NOT FOUND -->
@@ -1370,10 +1371,15 @@ function renderPost(post,all){
 
   const navPrev=document.getElementById('navPrev');
   const navNext=document.getElementById('navNext');
+  const navInner=document.getElementById('postNavInner');
+  const navSlot=document.getElementById('postNavSlot');
+  const navRule=document.getElementById('postNavRule');
   if(prev){navPrev.href='post.html?id='+prev.id;navPrev.classList.remove('disabled');document.getElementById('navPrevTitle').textContent=prev.title;}
   else{navPrev.classList.add('disabled');}
   if(next){navNext.href='post.html?id='+next.id;navNext.classList.remove('disabled');document.getElementById('navNextTitle').textContent=next.title;}
   else{navNext.classList.add('disabled');}
+  if(navInner&&navSlot){navInner.style.display='';navSlot.appendChild(navInner);}
+  if(navRule&&navSlot){navRule.style.display='';navSlot.appendChild(navRule);}
 
   // Show content
   document.getElementById('postSkel').remove();

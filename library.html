@@ -872,10 +872,10 @@ img.loaded{opacity:1;}
           <p style="max-width:420px;color:var(--text-muted);font-size:.92rem;line-height:1.7;margin:0">You do not need to open everything. Start with the pairing that matches your current season, then move deeper when the first layer feels clear.</p>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem">
-          <div style="background:rgba(255,255,255,.42);border:1px solid var(--glass-border);border-radius:16px;padding:1.15rem;min-height:150px"><div style="font-weight:800;color:var(--text-primary);margin-bottom:.55rem">If you feel lost or mentally foggy</div><div style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Start with: <strong>The Clarity Framework</strong> + <strong>5-Day Clarity Challenge</strong></div></div>
-          <div style="background:rgba(255,255,255,.42);border:1px solid var(--glass-border);border-radius:16px;padding:1.15rem;min-height:150px"><div style="font-weight:800;color:var(--text-primary);margin-bottom:.55rem">If you feel overwhelmed or anxious</div><div style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Start with: <strong>Anxiety Release Practice</strong> + <strong>Morning Clarity Meditation</strong></div></div>
-          <div style="background:rgba(255,255,255,.42);border:1px solid var(--glass-border);border-radius:16px;padding:1.15rem;min-height:150px"><div style="font-weight:800;color:var(--text-primary);margin-bottom:.55rem">If you need direction for your next phase</div><div style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Start with: <strong>Life Mapping Workbook</strong> + <strong>Career Clarity Guide</strong></div></div>
-          <div style="background:rgba(255,255,255,.42);border:1px solid var(--glass-border);border-radius:16px;padding:1.15rem;min-height:150px"><div style="font-weight:800;color:var(--text-primary);margin-bottom:.55rem">If you are trying to understand yourself better</div><div style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Start with: <strong>Values Clarification Workbook</strong> + <strong>Understanding Your Mental Patterns</strong></div></div>
+          <button type="button" onclick="guideLib('guides','clarity framework|5-day clarity challenge')" style="text-align:left;background:rgba(255,255,255,.42);border:1px solid var(--glass-border);border-radius:16px;padding:1.15rem;min-height:150px;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 8px 22px rgba(15,23,42,.06)"><div style="font-weight:800;color:var(--text-primary);margin-bottom:.55rem">If you feel lost or mentally foggy</div><div style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Start with: <strong>The Clarity Framework</strong> + <strong>5-Day Clarity Challenge</strong></div></button>
+          <button type="button" onclick="guideLib('audio','anxiety release practice|morning clarity meditation')" style="text-align:left;background:rgba(255,255,255,.42);border:1px solid var(--glass-border);border-radius:16px;padding:1.15rem;min-height:150px;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 8px 22px rgba(15,23,42,.06)"><div style="font-weight:800;color:var(--text-primary);margin-bottom:.55rem">If you feel overwhelmed or anxious</div><div style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Start with: <strong>Anxiety Release Practice</strong> + <strong>Morning Clarity Meditation</strong></div></button>
+          <button type="button" onclick="guideLib('workbooks','life mapping workbook|career clarity guide')" style="text-align:left;background:rgba(255,255,255,.42);border:1px solid var(--glass-border);border-radius:16px;padding:1.15rem;min-height:150px;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 8px 22px rgba(15,23,42,.06)"><div style="font-weight:800;color:var(--text-primary);margin-bottom:.55rem">If you need direction for your next phase</div><div style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Start with: <strong>Life Mapping Workbook</strong> + <strong>Career Clarity Guide</strong></div></button>
+          <button type="button" onclick="guideLib('all','values clarification workbook|understanding your mental patterns')" style="text-align:left;background:rgba(255,255,255,.42);border:1px solid var(--glass-border);border-radius:16px;padding:1.15rem;min-height:150px;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 8px 22px rgba(15,23,42,.06)"><div style="font-weight:800;color:var(--text-primary);margin-bottom:.55rem">If you are trying to understand yourself better</div><div style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Start with: <strong>Values Clarification Workbook</strong> + <strong>Understanding Your Mental Patterns</strong></div></button>
         </div>
       </div>
       <div class="iv-stagger" style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem">
@@ -894,6 +894,15 @@ img.loaded{opacity:1;}
           <div class="iv-skel"><div class="iv-skel-img"></div><div class="iv-skel-body"><div class="iv-skel-line s"></div><div class="iv-skel-line xl m"></div><div class="iv-skel-line l"></div><div class="iv-skel-line m"></div></div></div>
           <div class="iv-skel"><div class="iv-skel-img"></div><div class="iv-skel-body"><div class="iv-skel-line s"></div><div class="iv-skel-line xl m"></div><div class="iv-skel-line l"></div><div class="iv-skel-line m"></div></div></div>
         </div>
+      </div>
+      <button type="button" id="libSearchToggle" onclick="toggleLibSearch()" aria-label="Search library" title="Search library" style="position:fixed;right:22px;bottom:96px;z-index:1002;width:52px;height:52px;border-radius:50%;border:1px solid var(--glass-border);background:linear-gradient(135deg,var(--accent),var(--accent-hover));color:white;font-size:1.25rem;box-shadow:0 16px 42px rgba(15,23,42,.22);cursor:pointer"><span aria-hidden="true" style="display:block;line-height:1">&#128269;</span></button>
+      <div id="libSearchPanel" style="display:none;position:fixed;right:22px;bottom:158px;z-index:1002;width:min(92vw,360px);background:var(--bg-card);border:1px solid var(--glass-border);border-radius:18px;padding:1rem;box-shadow:0 24px 70px rgba(15,23,42,.22)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.75rem">
+          <strong style="color:var(--text-primary);font-size:.88rem">Search the library</strong>
+          <button type="button" onclick="toggleLibSearch(false)" aria-label="Close search" style="border:none;background:transparent;color:var(--text-muted);font-size:1.1rem;cursor:pointer">x</button>
+        </div>
+        <input id="libSearchInput" type="search" placeholder="Try anxiety, career, habits..." oninput="searchLib(this.value)" style="width:100%;border:1px solid var(--border-color);border-radius:12px;padding:.8rem .9rem;font-size:.95rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
+        <div id="libSearchHint" style="margin-top:.65rem;color:var(--text-muted);font-size:.78rem;line-height:1.5">Search by feeling, topic, title, author, or need.</div>
       </div>
       <div class="rv" style="background:linear-gradient(135deg,#1a365d,rgba(15,23,42,.9));color:white;border-radius:24px;padding:4rem;text-align:center;position:relative;overflow:hidden;margin-top:4rem">
         <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(220,53,69,.2),transparent 60%)"></div>
@@ -984,6 +993,8 @@ const CAT_META = {
 };
 
 let activeLibCat = 'all';
+let activeLibSearch = '';
+let lastLibItems = [];
 
 async function renderLibrary() {
   let allItems = null;
@@ -1001,7 +1012,9 @@ async function renderLibrary() {
             emoji: r.emoji || '📄', tag: r.tag || '', status: r.status,
             url: r.url || '', image: r.image || '', embed: r.embed || '',
             preview: r.preview || '', duration: r.duration || '',
-            order: r.sort_order || 0, featured: !!r.featured, free: r.free !== false
+            order: r.sort_order || 0, featured: !!r.featured, free: r.free !== false,
+            notes: r.notes || '',
+            author: /^Author:\s*/i.test(r.notes || '') ? String(r.notes || '').replace(/^Author:\s*/i, '') : ''
           }));
           localStorage.setItem(LIB_KEY, JSON.stringify(allItems));
         }
@@ -1012,6 +1025,11 @@ async function renderLibrary() {
   const existingIds = new Set(allItems.map(i => i.id));
   CURATED_BOOKS.forEach(book => { if (!existingIds.has(book.id)) allItems.push(book); });
   allItems = allItems.sort((a, b) => (a.order || 0) - (b.order || 0));
+  lastLibItems = allItems;
+  const q = activeLibSearch.trim().toLowerCase();
+  const visibleItems = q
+    ? allItems.filter(item => matchesLibSearch(item, q))
+    : allItems;
   const cats = activeLibCat === 'all'
     ? ['guides', 'audio', 'workbooks', 'video', 'books', 'other']
     : [activeLibCat];
@@ -1021,9 +1039,11 @@ async function renderLibrary() {
 
   if (!allItems.length) {
     wrap.innerHTML = `<div class="rv" style="background:var(--glass);backdrop-filter:blur(20px);border-radius:18px;padding:2rem;border:1px solid var(--glass-border);box-shadow:0 6px 24px var(--shadow);text-align:center;color:var(--text-secondary)">The library is empty right now. Please check back shortly.</div>`;
+  } else if (!visibleItems.length) {
+    wrap.innerHTML = `<div class="rv" style="background:var(--glass);backdrop-filter:blur(20px);border-radius:18px;padding:2rem;border:1px solid var(--glass-border);box-shadow:0 6px 24px var(--shadow);text-align:center;color:var(--text-secondary)">No library matches for "${activeLibSearch}". Try a broader word like clarity, anxiety, career, habits, purpose, or money.</div>`;
   } else {
   wrap.innerHTML = cats.map(cat => {
-    const catItems = allItems.filter(i => i.category === cat);
+    const catItems = visibleItems.filter(i => i.category === cat);
     if (!catItems.length) return '';
     const m = CAT_META[cat] || {icon:'📄', label:cat, desc:''};
 
@@ -1109,9 +1129,64 @@ async function renderLibrary() {
 
 function filterLib(cat, btn) {
   activeLibCat = cat;
+  activeLibSearch = '';
+  const input = document.getElementById('libSearchInput');
+  if (input) input.value = '';
   document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   renderLibrary();
+}
+
+function matchesLibSearch(item, query){
+  const haystack = normalizeLibText([item.title, item.author, item.desc, item.tag, item.notes, item.category]
+    .filter(Boolean)
+    .join(' '));
+  if (!query) return true;
+  if (query.includes('|')) {
+    return query.split('|').map(normalizeLibText).filter(Boolean).some(phrase => haystack.includes(phrase));
+  }
+  return normalizeLibText(query).split(/\s+/).filter(Boolean).every(term => haystack.includes(term));
+}
+
+function normalizeLibText(value){
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function setLibFilterButton(cat){
+  document.querySelectorAll('.lib-filter-btn').forEach(b => {
+    const call = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', call.includes(`'${cat}'`));
+  });
+}
+
+function toggleLibSearch(force){
+  const panel=document.getElementById('libSearchPanel');
+  const input=document.getElementById('libSearchInput');
+  if(!panel)return;
+  const show=typeof force==='boolean'?force:panel.style.display==='none';
+  panel.style.display=show?'block':'none';
+  if(show&&input)setTimeout(()=>input.focus(),30);
+}
+
+function searchLib(value){
+  activeLibSearch=value||'';
+  const hint=document.getElementById('libSearchHint');
+  if(hint)hint.textContent=activeLibSearch.trim()
+    ? 'Showing matches by title, author, description, tag, and category.'
+    : 'Search by feeling, topic, title, author, or need.';
+  renderLibrary();
+}
+
+function guideLib(cat, query){
+  activeLibCat=cat||'all';
+  activeLibSearch=query||'';
+  setLibFilterButton(activeLibCat);
+  const input=document.getElementById('libSearchInput');
+  if(input)input.value=activeLibSearch;
+  toggleLibSearch(false);
+  renderLibrary().then(()=>{
+    document.getElementById('libSections')?.scrollIntoView({behavior:'smooth',block:'start'});
+  });
 }
 
 // Sync when admin changes library

@@ -1145,7 +1145,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sec-hdr">
         <div>
           <div class="sl">Library Items (<span id="libCount">0</span>)</div>
-          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Manage your digital library — guides, audio, workbooks, video</div>
+          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Manage your digital library - guides, audio, workbooks, video, and curated reading</div>
         </div>
         <button class="tbb p" onclick="newLibItem()">+ Add Item</button>
       </div>
@@ -1156,6 +1156,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <option value="audio">Audio Sessions</option>
           <option value="workbooks">Workbooks</option>
           <option value="video">Video Library</option>
+          <option value="books">Curated Reading</option>
           <option value="other">Other</option>
         </select>
         <select id="libStatusFilt" class="mn" style="width:auto;padding:.38rem .72rem;font-size:.78rem" onchange="renderLibTbl()">
@@ -1164,6 +1165,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <option value="coming-soon">Coming Soon</option>
           <option value="members">Members Only</option>
         </select>
+        <input id="libSearchFilt" class="mn" type="search" placeholder="Search title, tag, notes..." style="width:220px;padding:.38rem .72rem;font-size:.78rem" oninput="renderLibTbl()">
       </div>
       <div class="tw"><table><thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Tag</th><th>Featured</th><th>Actions</th></tr></thead><tbody id="libTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading...</td></tr></tbody></table></div>
     </div>
@@ -1186,6 +1188,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
                 <option value="guides">📚 Clarity Guide</option>
                 <option value="audio">🎧 Audio Session</option>
                 <option value="workbooks">📝 Workbook</option>
+                <option value="books">Reading / Book</option>
                 <option value="video">🎥 Video</option>
                 <option value="other">📄 Other</option>
               </select>
@@ -3426,7 +3429,7 @@ async function saveAdminTheme(theme){
 function loadSettings(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');refreshContentHealth()}
 loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');updateLockHint();refreshContentHealth()}
 changeCredentials = function(){const u=document.getElementById('nu').value.trim(),p=document.getElementById('np').value,c=document.getElementById('cp').value;if(!u||!p)return toast('Fill all fields','er');if(p!==c)return toast('Access keys do not match','er');localStorage.setItem(AUTH_K,JSON.stringify({u,p}));updateLockHint();document.getElementById('sbUn').textContent=u;['nu','np','cp'].forEach(id=>document.getElementById(id).value='');toast('Workspace access updated','ok')}
-restoreLibraryToSupabase = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('Restore the library collection into the current Supabase project?'))return;toast('Restoring library...','inf');const source=(getLibItems()||[]).length?getLibItems():LIB_DEFAULTS;let ok=0;for(const item of source){try{await dbSaveLibItem(item);ok++;}catch(e){console.warn('Library restore failed for',item&&item.id,e);}}toast(ok+' library item'+(ok===1?'':'s')+' restored ✓','ok');try{renderLibTbl();}catch(_e){}refreshContentHealth()}
+restoreLibraryToSupabase = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('Restore the library collection into the current Supabase project?'))return;toast('Restoring library...','inf');const source=getLibItems();let ok=0;for(const item of source){try{await dbSaveLibItem(item);ok++;}catch(e){console.warn('Library restore failed for',item&&item.id,e);}}toast(ok+' library item'+(ok===1?'':'s')+' restored ✓','ok');try{renderLibTbl();}catch(_e){}refreshContentHealth()}
 async function saveSetting(k,v){await dbSaveSetting(k,v);toast('Saved ✓','ok')}
 async function exportData(){const posts=await getPosts();const blob=new Blob([JSON.stringify(posts,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='atanda-verse-posts.json';a.click();toast('Exported ✓','ok')}
 async function forceResync(){
@@ -3686,12 +3689,18 @@ const LIB_DEFAULTS = [
   {id:'lib-10',title:'Vision Framework Workbook',category:'workbooks',desc:'A structured approach to building a realistic vision for the next 12 months.',emoji:'🌟',tag:'Coming Soon',status:'coming-soon',url:'',image:'',embed:'',preview:'',duration:'',order:2,featured:false,free:true,notes:''},
   {id:'lib-11',title:'Introduction to Clarity Work',category:'video',desc:'A 30-minute orientation explaining the clarity framework.',emoji:'🎤',tag:'Coming Soon - 30 min',status:'coming-soon',url:'',image:'',embed:'',preview:'',duration:'30 min',order:0,featured:false,free:true,notes:''},
   {id:'lib-12',title:'Understanding Your Mental Patterns',category:'video',desc:'A deep-dive workshop on recognising unconscious patterns.',emoji:'🧩',tag:'Coming Soon - 45 min',status:'coming-soon',url:'',image:'',embed:'',preview:'',duration:'45 min',order:1,featured:false,free:true,notes:''},
+  {id:'book-defining-decade',title:'The Defining Decade',category:'books',desc:'Meg Jay. A grounding read for making early adulthood feel less accidental, more intentional, and more honestly owned.',emoji:'Book',tag:'For early adulthood and life direction',status:'available',url:'https://www.google.com/search?q=The+Defining+Decade+Meg+Jay',image:'',embed:'',preview:'',duration:'',order:0,featured:true,free:true,notes:'Author: Meg Jay'},
+  {id:'book-so-good',title:"So Good They Can't Ignore You",category:'books',desc:'Cal Newport. A practical reframe for work, skill, and career direction when passion feels too vague to build a life on.',emoji:'Book',tag:'For skill, work, and career direction',status:'available',url:'https://www.google.com/search?q=So+Good+They+Can%27t+Ignore+You+Cal+Newport',image:'',embed:'',preview:'',duration:'',order:1,featured:false,free:true,notes:'Author: Cal Newport'},
+  {id:'book-atomic-habits',title:'Atomic Habits',category:'books',desc:'James Clear. For turning clarity into small repeated choices, especially when you need progress that does not depend on motivation.',emoji:'Book',tag:'For habits and small consistent change',status:'available',url:'https://www.google.com/search?q=Atomic+Habits+James+Clear',image:'',embed:'',preview:'',duration:'',order:2,featured:false,free:true,notes:'Author: James Clear'},
+  {id:'book-meaning',title:"Man's Search for Meaning",category:'books',desc:'Viktor Frankl. A sober, humane companion for hardship, meaning, and finding perspective when life feels heavy.',emoji:'Book',tag:'For meaning, hardship, and perspective',status:'available',url:'https://www.google.com/search?q=Man%27s+Search+for+Meaning+Viktor+Frankl',image:'',embed:'',preview:'',duration:'',order:3,featured:false,free:true,notes:'Author: Viktor Frankl'},
+  {id:'book-money',title:'The Psychology of Money',category:'books',desc:'Morgan Housel. A clear way into money, behaviour, patience, and the adult responsibility of making better long-term decisions.',emoji:'Book',tag:'For financial thinking and adult responsibility',status:'available',url:'https://www.google.com/search?q=The+Psychology+of+Money+Morgan+Housel',image:'',embed:'',preview:'',duration:'',order:4,featured:false,free:true,notes:'Author: Morgan Housel'},
+  {id:'book-why',title:'Start With Why',category:'books',desc:'Simon Sinek. For clarifying the reason underneath your work, choices, and personal mission before chasing the next visible move.',emoji:'Book',tag:'For purpose and personal mission',status:'available',url:'https://www.google.com/search?q=Start+With+Why+Simon+Sinek',image:'',embed:'',preview:'',duration:'',order:5,featured:false,free:true,notes:'Author: Simon Sinek'},
 ];
 
-function getLibItems(){try{const r=localStorage.getItem(LIB_KEY);if(r){const p=JSON.parse(r);if(p&&p.length)return p;}}catch(e){}localStorage.setItem(LIB_KEY,JSON.stringify(LIB_DEFAULTS));return JSON.parse(JSON.stringify(LIB_DEFAULTS));}
+function getLibItems(){try{const r=localStorage.getItem(LIB_KEY);if(r){const p=JSON.parse(r);if(p&&p.length){let changed=false;const ids=new Set(p.map(i=>i.id));LIB_DEFAULTS.forEach(d=>{if(!ids.has(d.id)){p.push({...d});changed=true;}});if(changed)localStorage.setItem(LIB_KEY,JSON.stringify(p));return p;}}}catch(e){}localStorage.setItem(LIB_KEY,JSON.stringify(LIB_DEFAULTS));return JSON.parse(JSON.stringify(LIB_DEFAULTS));}
 function saveLibItems(items){localStorage.setItem(LIB_KEY,JSON.stringify(items));}
-const CAT_NAMES={guides:'Clarity Guide',audio:'Audio',workbooks:'Workbook',video:'Video',other:'Other'};
-const CAT_ICONS={guides:'📚',audio:'🎧',workbooks:'📝',video:'🎥',other:'📄'};
+const CAT_NAMES={guides:'Clarity Guide',audio:'Audio',workbooks:'Workbook',video:'Video',books:'Curated Reading',other:'Other'};
+const CAT_ICONS={guides:'📚',audio:'🎧',workbooks:'📝',video:'🎥',books:'Book',other:'📄'};
 
 // ── Image upload for library cover ────────────────────────────────────────
 let _libImgFile = null; // pending File object
@@ -3721,7 +3730,8 @@ async function renderLibTbl(){
   const items=(await dbGetLibrary()).sort((a,b)=>(a.order||0)-(b.order||0));
   const cf=document.getElementById('libCatFilt')?.value||'';
   const sf=document.getElementById('libStatusFilt')?.value||'';
-  const filt=items.filter(i=>(!cf||i.category===cf)&&(!sf||i.status===sf));
+  const q=(document.getElementById('libSearchFilt')?.value||'').trim().toLowerCase();
+  const filt=items.filter(i=>(!cf||i.category===cf)&&(!sf||i.status===sf)&&(!q||[i.title,i.desc,i.tag,i.notes,i.category].filter(Boolean).join(' ').toLowerCase().includes(q)));
   const cnt=document.getElementById('libCount');if(cnt)cnt.textContent=filt.length;
   const tb=document.getElementById('libTbl');if(!tb)return;
   if(!filt.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No items found</td></tr>';return;}
