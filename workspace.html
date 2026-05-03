@@ -1165,7 +1165,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <option value="coming-soon">Coming Soon</option>
           <option value="members">Members Only</option>
         </select>
-        <input id="libSearchFilt" class="mn" type="search" placeholder="Search title, tag, notes..." style="width:220px;padding:.38rem .72rem;font-size:.78rem" oninput="renderLibTbl()">
+        <input id="libSearchFilt" class="mn" type="search" placeholder="Search stuck, anxious, career..." style="width:240px;padding:.38rem .72rem;font-size:.78rem" oninput="renderLibTbl()">
       </div>
       <div class="tw"><table><thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Tag</th><th>Featured</th><th>Actions</th></tr></thead><tbody id="libTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading...</td></tr></tbody></table></div>
     </div>
@@ -3701,6 +3701,21 @@ function getLibItems(){try{const r=localStorage.getItem(LIB_KEY);if(r){const p=J
 function saveLibItems(items){localStorage.setItem(LIB_KEY,JSON.stringify(items));}
 const CAT_NAMES={guides:'Clarity Guide',audio:'Audio',workbooks:'Workbook',video:'Video',books:'Curated Reading',other:'Other'};
 const CAT_ICONS={guides:'📚',audio:'🎧',workbooks:'📝',video:'🎥',books:'Book',other:'📄'};
+const LIB_SEARCH_GROUPS_ADMIN=[
+  ['clarity','clear','mental','mind','fog','foggy','lost','stuck','confused','unclear','overthinking','noise','focus','directionless','decision','decisions'],
+  ['anxiety','anxious','overwhelmed','overwhelm','stress','stressed','panic','worried','calm','breathing','grounding','release'],
+  ['career','work','job','graduate','graduates','skill','skills','employment','business','next phase','direction'],
+  ['purpose','mission','why','meaning','vision','values','calling','identity','self','understand','understanding'],
+  ['relationship','relationships','love','friendship','connection','connections','boundaries','patterns'],
+  ['habit','habits','routine','discipline','consistency','consistent','change','progress','motivation'],
+  ['money','financial','finance','responsibility','adult','adulting','saving','spending'],
+  ['guide','guides','framework','reading','read','book','books','author','deep dive','deeper'],
+  ['audio','listen','meditation','practice','exercise','breathing'],
+  ['workbook','workbooks','worksheet','worksheets','journal','journaling','reflection','mapping'],
+  ['video','watch','workshop','talk','orientation'],
+  ['free','signup','access','available','open'],
+  ['soon','coming','upcoming','later']
+];
 
 // ── Image upload for library cover ────────────────────────────────────────
 let _libImgFile = null; // pending File object
@@ -3731,7 +3746,7 @@ async function renderLibTbl(){
   const cf=document.getElementById('libCatFilt')?.value||'';
   const sf=document.getElementById('libStatusFilt')?.value||'';
   const q=(document.getElementById('libSearchFilt')?.value||'').trim().toLowerCase();
-  const filt=items.filter(i=>(!cf||i.category===cf)&&(!sf||i.status===sf)&&(!q||[i.title,i.desc,i.tag,i.notes,i.category].filter(Boolean).join(' ').toLowerCase().includes(q)));
+  const filt=items.filter(i=>(!cf||i.category===cf)&&(!sf||i.status===sf)&&(!q||libAdminMatchesSearch(i,q)));
   const cnt=document.getElementById('libCount');if(cnt)cnt.textContent=filt.length;
   const tb=document.getElementById('libTbl');if(!tb)return;
   if(!filt.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No items found</td></tr>';return;}
@@ -3753,6 +3768,34 @@ async function renderLibTbl(){
     </tr>`;
   }).join('');
 }
+
+function libAdminMatchesSearch(item,query){
+  const haystack=buildLibAdminSearchText(item);
+  return getLibAdminQueryTerms(query).every(term=>haystack.includes(term));
+}
+
+function buildLibAdminSearchText(item){
+  const base=normalizeLibAdminText([item.title,item.desc,item.tag,item.notes,item.category,item.status,CAT_NAMES[item.category]].filter(Boolean).join(' '));
+  const expanded=new Set(base.split(/\s+/).filter(Boolean));
+  LIB_SEARCH_GROUPS_ADMIN.forEach(group=>{
+    if(group.some(term=>base.includes(normalizeLibAdminText(term)))){
+      group.forEach(term=>normalizeLibAdminText(term).split(/\s+/).forEach(t=>expanded.add(t)));
+    }
+  });
+  return Array.from(expanded).join(' ');
+}
+
+function getLibAdminQueryTerms(query){
+  const raw=normalizeLibAdminText(query).split(/\s+/).filter(Boolean);
+  const expanded=new Set(raw);
+  LIB_SEARCH_GROUPS_ADMIN.forEach(group=>{
+    const normalized=group.flatMap(term=>normalizeLibAdminText(term).split(/\s+/).filter(Boolean));
+    if(raw.some(term=>normalized.includes(term)))normalized.forEach(term=>expanded.add(term));
+  });
+  return Array.from(expanded);
+}
+
+function normalizeLibAdminText(value){return String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
 
 function newLibItem(){
   nav('lib-editor');

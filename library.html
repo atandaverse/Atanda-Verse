@@ -901,8 +901,8 @@ img.loaded{opacity:1;}
           <strong style="color:var(--text-primary);font-size:.88rem">Search the library</strong>
           <button type="button" onclick="toggleLibSearch(false)" aria-label="Close search" style="border:none;background:transparent;color:var(--text-muted);font-size:1.1rem;cursor:pointer">x</button>
         </div>
-        <input id="libSearchInput" type="search" placeholder="Try anxiety, career, habits..." oninput="searchLib(this.value)" style="width:100%;border:1px solid var(--border-color);border-radius:12px;padding:.8rem .9rem;font-size:.95rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
-        <div id="libSearchHint" style="margin-top:.65rem;color:var(--text-muted);font-size:.78rem;line-height:1.5">Search by feeling, topic, title, author, or need.</div>
+        <input id="libSearchInput" type="search" placeholder="Try stuck, anxious, career, habits..." oninput="searchLib(this.value)" style="width:100%;border:1px solid var(--border-color);border-radius:12px;padding:.8rem .9rem;font-size:.95rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
+        <div id="libSearchHint" style="margin-top:.65rem;color:var(--text-muted);font-size:.78rem;line-height:1.5">Search by feeling, topic, format, title, author, or need.</div>
       </div>
       <div class="rv" style="background:linear-gradient(135deg,#1a365d,rgba(15,23,42,.9));color:white;border-radius:24px;padding:4rem;text-align:center;position:relative;overflow:hidden;margin-top:4rem">
         <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(220,53,69,.2),transparent 60%)"></div>
@@ -995,6 +995,22 @@ const CAT_META = {
 let activeLibCat = 'all';
 let activeLibSearch = '';
 let lastLibItems = [];
+
+const LIB_SEARCH_GROUPS = [
+  ['clarity','clear','mental','mind','fog','foggy','lost','stuck','confused','unclear','overthinking','noise','focus','directionless','decision','decisions'],
+  ['anxiety','anxious','overwhelmed','overwhelm','stress','stressed','panic','worried','calm','breathing','grounding','release'],
+  ['career','work','job','graduate','graduates','skill','skills','employment','business','next phase','direction'],
+  ['purpose','mission','why','meaning','vision','values','calling','identity','self','understand','understanding'],
+  ['relationship','relationships','love','friendship','connection','connections','boundaries','patterns'],
+  ['habit','habits','routine','discipline','consistency','consistent','change','progress','motivation'],
+  ['money','financial','finance','responsibility','adult','adulting','saving','spending'],
+  ['guide','guides','framework','reading','read','book','books','author','deep dive','deeper'],
+  ['audio','listen','meditation','practice','exercise','breathing'],
+  ['workbook','workbooks','worksheet','worksheets','journal','journaling','reflection','mapping'],
+  ['video','watch','workshop','talk','orientation'],
+  ['free','signup','access','available','open'],
+  ['soon','coming','upcoming','later']
+];
 
 async function renderLibrary() {
   let allItems = null;
@@ -1138,14 +1154,45 @@ function filterLib(cat, btn) {
 }
 
 function matchesLibSearch(item, query){
-  const haystack = normalizeLibText([item.title, item.author, item.desc, item.tag, item.notes, item.category]
-    .filter(Boolean)
-    .join(' '));
+  const haystack = buildLibSearchText(item);
   if (!query) return true;
   if (query.includes('|')) {
-    return query.split('|').map(normalizeLibText).filter(Boolean).some(phrase => haystack.includes(phrase));
+    return query.split('|').map(getLibQueryTerms).some(group => group.length && group.every(term => haystack.includes(term)));
   }
-  return normalizeLibText(query).split(/\s+/).filter(Boolean).every(term => haystack.includes(term));
+  return getLibQueryTerms(query).every(term => haystack.includes(term));
+}
+
+function buildLibSearchText(item){
+  const base = normalizeLibText([
+    item.title,
+    item.author,
+    item.desc,
+    item.tag,
+    item.notes,
+    item.category,
+    CAT_META[item.category]?.label,
+    CAT_META[item.category]?.desc,
+    item.status
+  ].filter(Boolean).join(' '));
+  const expanded = new Set(base.split(/\s+/).filter(Boolean));
+  LIB_SEARCH_GROUPS.forEach(group => {
+    if (group.some(term => base.includes(normalizeLibText(term)))) {
+      group.forEach(term => normalizeLibText(term).split(/\s+/).forEach(t => expanded.add(t)));
+    }
+  });
+  return Array.from(expanded).join(' ');
+}
+
+function getLibQueryTerms(query){
+  const raw = normalizeLibText(query).split(/\s+/).filter(Boolean);
+  const expanded = new Set(raw);
+  LIB_SEARCH_GROUPS.forEach(group => {
+    const normalizedGroup = group.flatMap(term => normalizeLibText(term).split(/\s+/).filter(Boolean));
+    if (raw.some(term => normalizedGroup.includes(term))) {
+      normalizedGroup.forEach(term => expanded.add(term));
+    }
+  });
+  return Array.from(expanded);
 }
 
 function normalizeLibText(value){
