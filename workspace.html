@@ -1463,6 +1463,19 @@ const _sbUrl=()=>_cleanSbUrl(localStorage.getItem(SB_URL_KEY)||'');
 const _sbKey=()=>String(localStorage.getItem(SB_KEY_KEY)||'').trim();
 const _useSb=()=>_validSbUrl(_sbUrl())&&!!_sbKey();
 let _sbState='idle',_sbStateMsg='';
+function applyAdminTheme(theme){
+  const next=theme==='evolutionary'?'evolutionary':'inceptive';
+  document.body.setAttribute('data-admin-theme',next);
+  document.getElementById('themeCardInceptive')?.classList.toggle('on',next==='inceptive');
+  document.getElementById('themeCardEvolutionary')?.classList.toggle('on',next==='evolutionary');
+  const meta=document.getElementById('adminThemeMeta');
+  if(meta)meta.textContent='Current theme: '+(next==='evolutionary'?'Evolutionary':'Inceptive');
+}
+async function sha256Text(text){
+  const data=new TextEncoder().encode(String(text||''));
+  const hash=await crypto.subtle.digest('SHA-256',data);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 function _setSbState(state,msg=''){_sbState=state;_sbStateMsg=msg||'';upDbBadge();}
 function _sbLooksPaused(msg='',status=0){
   const text=String(msg||'').toLowerCase();
@@ -5157,7 +5170,7 @@ openSupabaseSetup=function(){
   if(keyIn)keyIn.value=_sbKey()||(defaults&&defaults.key)||'';
   if(res){res.className='test-res';res.style.display='none';res.textContent='';}
   document.getElementById('setupScreen')?.classList.remove('gone');
-}
+};
 clearSupabaseConnection=function(){
   localStorage.removeItem(SB_URL_KEY);
   localStorage.removeItem(SB_KEY_KEY);
@@ -5174,7 +5187,7 @@ clearSupabaseConnection=function(){
   }
   upDbBadge();
   toast('Supabase connection cleared. Admin is now using local storage.','ok');
-}
+};
 
 (function(){
   if(!_useSb())_restoreDefaultSupabaseCreds();
