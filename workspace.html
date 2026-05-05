@@ -412,6 +412,22 @@ create table if not exists vault_activity_logs (
   user_agent text,
   created_at timestamptz default now()
 );
+create table if not exists vault_resources (
+  id text primary key,
+  title text not null,
+  module text,
+  format text,
+  summary text,
+  access_level text default 'approved',
+  file_url text,
+  cover_url text,
+  duration text,
+  sort_order int default 0,
+  status text default 'published',
+  tags text,
+  notes text,
+  updated_at timestamptz default now()
+);
 alter table posts enable row level security;
 alter table settings enable row level security;
 alter table testimonials enable row level security;
@@ -419,6 +435,7 @@ alter table library enable row level security;
 alter table library_access_logs enable row level security;
 alter table vault_access_requests enable row level security;
 alter table vault_activity_logs enable row level security;
+alter table vault_resources enable row level security;
 create table if not exists comments (
   id text primary key,
   post_id text not null,
@@ -442,6 +459,8 @@ drop policy if exists "public_read_vault_access_requests" on vault_access_reques
 drop policy if exists "public_write_vault_access_requests" on vault_access_requests;
 drop policy if exists "public_read_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_write_vault_activity_logs" on vault_activity_logs;
+drop policy if exists "public_read_vault_resources" on vault_resources;
+drop policy if exists "public_write_vault_resources" on vault_resources;
 drop policy if exists "public_read_comments" on comments;
 drop policy if exists "public_write_comments" on comments;
 drop policy if exists "public_read_posts" on posts;
@@ -458,6 +477,8 @@ drop policy if exists "public_read_vault_access_requests" on vault_access_reques
 drop policy if exists "public_write_vault_access_requests" on vault_access_requests;
 drop policy if exists "public_read_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_write_vault_activity_logs" on vault_activity_logs;
+drop policy if exists "public_read_vault_resources" on vault_resources;
+drop policy if exists "public_write_vault_resources" on vault_resources;
 drop policy if exists "public_read_comments" on comments;
 drop policy if exists "public_write_comments" on comments;
 create policy "public_read_posts" on posts for select using (true);
@@ -474,6 +495,8 @@ create policy "public_read_vault_access_requests" on vault_access_requests for s
 create policy "public_write_vault_access_requests" on vault_access_requests for all using (true);
 create policy "public_read_vault_activity_logs" on vault_activity_logs for select using (true);
 create policy "public_write_vault_activity_logs" on vault_activity_logs for all using (true);
+create policy "public_read_vault_resources" on vault_resources for select using (true);
+create policy "public_write_vault_resources" on vault_resources for all using (true);
 create policy "public_read_comments" on comments for select using (true);
 create policy "public_write_comments" on comments for all using (true);
 create table if not exists registrations (
@@ -922,8 +945,38 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="tw"><table><thead><tr><th>Applicant</th><th>Request</th><th>Application</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
         <tbody id="vaultReqTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading…</td></tr></tbody>
       </table></div>
-    </div>
 
+      <div class="sec-hdr" style="margin-top:2rem">
+        <div>
+          <div class="sl">Vault Materials (<span id="vaultMatTotal">0</span>)</div>
+          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Advanced private resources shown only inside vaultlibrary.html.</div>
+        </div>
+        <button class="tbb p" onclick="clearVaultMaterialForm()">+ New Material</button>
+      </div>
+      <div class="scc" style="margin-bottom:1rem">
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem">
+          <input type="hidden" id="vaultMatId">
+          <div class="fg"><label>Title *</label><input class="mn" id="vaultMatTitle" placeholder="e.g. Clarity Reset Workbook"></div>
+          <div class="fg"><label>Module / Pathway</label><input class="mn" id="vaultMatModule" placeholder="Start Here, Deep Work, Career"></div>
+          <div class="fg"><label>Format</label><select class="mn" id="vaultMatFormat"><option value="guide">Guide</option><option value="workbook">Workbook</option><option value="audio">Audio</option><option value="video">Video</option><option value="template">Template</option><option value="reading">Reading</option></select></div>
+          <div class="fg"><label>Status</label><select class="mn" id="vaultMatStatus"><option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option></select></div>
+          <div class="fg"><label>Duration / Effort</label><input class="mn" id="vaultMatDuration" placeholder="15 min, 3 pages, 45 min workshop"></div>
+          <div class="fg"><label>Tags</label><input class="mn" id="vaultMatTags" placeholder="fog, career, habits"></div>
+          <div class="fg" style="grid-column:1/-1"><label>Summary</label><textarea class="mn" id="vaultMatSummary" rows="3" placeholder="What does this unlock for the reader?"></textarea></div>
+          <div class="fg"><label>Material File</label><div style="display:flex;gap:.55rem;flex-wrap:wrap"><label class="btn s" style="cursor:pointer">Upload file<input type="file" id="vaultMatFile" style="display:none" onchange="handleVaultFilePick(event)"></label><input class="mn" id="vaultMatFileUrl" placeholder="or paste protected/public URL" style="flex:1;min-width:180px"></div><div id="vaultMatFileStatus" style="font-size:.7rem;color:var(--t3);margin-top:.35rem"></div></div>
+          <div class="fg"><label>Cover Image</label><div style="display:flex;gap:.55rem;flex-wrap:wrap"><label class="btn s" style="cursor:pointer">Upload cover<input type="file" accept="image/*" id="vaultMatCoverFile" style="display:none" onchange="handleVaultCoverPick(event)"></label><input class="mn" id="vaultMatCoverUrl" placeholder="or paste cover URL" style="flex:1;min-width:180px"></div><div id="vaultMatCoverStatus" style="font-size:.7rem;color:var(--t3);margin-top:.35rem"></div></div>
+          <div class="fg" style="grid-column:1/-1"><label>Internal Notes</label><textarea class="mn" id="vaultMatNotes" rows="2" placeholder="Not shown to readers"></textarea></div>
+        </div>
+        <div style="display:flex;gap:.55rem;flex-wrap:wrap;margin-top:1rem">
+          <button class="btn p" onclick="saveVaultMaterial()">Save Vault Material</button>
+          <button class="btn s" onclick="clearVaultMaterialForm()">Clear</button>
+          <button class="btn d" id="vaultMatDeleteBtn" style="display:none" onclick="deleteVaultMaterial(document.getElementById('vaultMatId').value)">Delete</button>
+        </div>
+      </div>
+      <div class="tw"><table><thead><tr><th>Material</th><th>Module</th><th>Format</th><th>Status</th><th>File</th><th>Actions</th></tr></thead>
+        <tbody id="vaultMatTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading materials...</td></tr></tbody>
+      </table></div>
+    </div>
     <!-- REGISTRATIONS -->
     <div class="panel" id="panel-registrations">
       <div class="sec-hdr">
@@ -4915,6 +4968,7 @@ async function loadVaultRequests(){
   }catch(e){
     tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Vault table is not ready. Run the latest setup SQL.</td></tr>';
   }
+  loadVaultMaterials();
 }
 async function approveVaultRequest(id){
   const row=_allVaultRequests.find(r=>r.id===id);
@@ -4940,6 +4994,80 @@ async function rejectVaultRequest(id){
 async function resendVaultEmail(id,status){
   await invokeVaultAccessEmail(id,status==='approved'?'approved':'rejected');
   toast('Vault email requested','ok');
+}
+
+let _vaultFilePending=null,_vaultCoverPending=null,_vaultMaterials=[];
+function handleVaultFilePick(e){_vaultFilePending=e.target.files&&e.target.files[0]||null;const el=document.getElementById('vaultMatFileStatus');if(el)el.textContent=_vaultFilePending?('Ready: '+_vaultFilePending.name):''}
+function handleVaultCoverPick(e){_vaultCoverPending=e.target.files&&e.target.files[0]||null;const el=document.getElementById('vaultMatCoverStatus');if(el)el.textContent=_vaultCoverPending?('Ready: '+_vaultCoverPending.name):''}
+function clearVaultMaterialForm(){
+  ['vaultMatId','vaultMatTitle','vaultMatModule','vaultMatSummary','vaultMatDuration','vaultMatTags','vaultMatFileUrl','vaultMatCoverUrl','vaultMatNotes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const fmt=document.getElementById('vaultMatFormat');if(fmt)fmt.value='guide';
+  const st=document.getElementById('vaultMatStatus');if(st)st.value='published';
+  const del=document.getElementById('vaultMatDeleteBtn');if(del)del.style.display='none';
+  ['vaultMatFile','vaultMatCoverFile'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['vaultMatFileStatus','vaultMatCoverStatus'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='';});
+  _vaultFilePending=null;_vaultCoverPending=null;
+}
+async function loadVaultMaterials(){
+  const tbl=document.getElementById('vaultMatTbl');
+  if(!tbl)return;
+  if(!_useSb()){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Connect Supabase to manage vault materials</td></tr>';return}
+  try{
+    const rows=await _sbReq('vault_resources?select=*&order=sort_order.asc,updated_at.desc')||[];
+    _vaultMaterials=rows;
+    const total=document.getElementById('vaultMatTotal');if(total)total.textContent=rows.length;
+    if(!rows.length){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No vault materials yet</td></tr>';return}
+    tbl.innerHTML=rows.map(r=>{
+      const pill=r.status==='published'?'published':r.status==='draft'?'draft':'coming-soon';
+      return `<tr>
+        <td class="tc2">${vaultClean(r.title)}<span>${vaultClean(r.summary||'')}</span></td>
+        <td>${vaultClean(r.module||'Vault')}</td>
+        <td>${vaultClean(r.format||'guide')}${r.duration?'<span style="display:block;font-size:.65rem;color:var(--t3)">'+vaultClean(r.duration)+'</span>':''}</td>
+        <td><span class="pill ${pill}" style="font-size:.7rem">${vaultClean(r.status||'published')}</span></td>
+        <td>${r.file_url?'<span style="color:var(--gr)">Attached</span>':'<span style="color:var(--t3)">No file</span>'}</td>
+        <td><div class="action-row"><button class="ab" onclick="editVaultMaterial('${r.id}')">Edit</button><button class="ab del" onclick="deleteVaultMaterial('${r.id}')">Delete</button></div></td>
+      </tr>`;
+    }).join('');
+  }catch(e){
+    tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Vault resources table is not ready. Run the latest setup SQL.</td></tr>';
+  }
+}
+function editVaultMaterial(id){
+  const r=_vaultMaterials.find(x=>x.id===id);
+  if(!r)return toast('Material not found','er');
+  document.getElementById('vaultMatId').value=r.id||'';
+  document.getElementById('vaultMatTitle').value=r.title||'';
+  document.getElementById('vaultMatModule').value=r.module||'';
+  document.getElementById('vaultMatFormat').value=r.format||'guide';
+  document.getElementById('vaultMatStatus').value=r.status||'published';
+  document.getElementById('vaultMatDuration').value=r.duration||'';
+  document.getElementById('vaultMatTags').value=r.tags||'';
+  document.getElementById('vaultMatSummary').value=r.summary||'';
+  document.getElementById('vaultMatFileUrl').value=r.file_url||'';
+  document.getElementById('vaultMatCoverUrl').value=r.cover_url||'';
+  document.getElementById('vaultMatNotes').value=r.notes||'';
+  document.getElementById('vaultMatDeleteBtn').style.display='inline-flex';
+  window.scrollTo({top:document.getElementById('panel-vault').offsetTop,behavior:'smooth'});
+}
+async function saveVaultMaterial(){
+  if(!_useSb())return toast('Connect Supabase first','er');
+  const title=document.getElementById('vaultMatTitle').value.trim();
+  if(!title)return toast('Vault material title is required','er');
+  const id=document.getElementById('vaultMatId').value||'vr-'+Date.now();
+  let fileUrl=document.getElementById('vaultMatFileUrl').value.trim();
+  let coverUrl=document.getElementById('vaultMatCoverUrl').value.trim();
+  try{
+    if(_vaultFilePending){document.getElementById('vaultMatFileStatus').textContent='Uploading file...';fileUrl=await uploadToStorage(_vaultFilePending,'vault');document.getElementById('vaultMatFileStatus').textContent='Uploaded';}
+    if(_vaultCoverPending){document.getElementById('vaultMatCoverStatus').textContent='Uploading cover...';coverUrl=await uploadToStorage(_vaultCoverPending,'vault-covers');document.getElementById('vaultMatCoverStatus').textContent='Uploaded';}
+    await _sbUpsert('vault_resources',{id,title,module:document.getElementById('vaultMatModule').value.trim(),format:document.getElementById('vaultMatFormat').value,summary:document.getElementById('vaultMatSummary').value.trim(),access_level:'approved',file_url:fileUrl,cover_url:coverUrl,duration:document.getElementById('vaultMatDuration').value.trim(),sort_order:0,status:document.getElementById('vaultMatStatus').value,tags:document.getElementById('vaultMatTags').value.trim(),notes:document.getElementById('vaultMatNotes').value.trim(),updated_at:new Date().toISOString()});
+    toast('Vault material saved','ok');
+    clearVaultMaterialForm();
+    loadVaultMaterials();
+  }catch(e){toast('Vault save failed: '+e.message,'er')}
+}
+async function deleteVaultMaterial(id){
+  if(!id||!confirm('Delete this vault material?'))return;
+  try{await _sbReq('vault_resources?id=eq.'+encodeURIComponent(id),'DELETE');toast('Vault material deleted','ok');clearVaultMaterialForm();loadVaultMaterials();}catch(e){toast('Delete failed: '+e.message,'er')}
 }
 
 function exportRegistrations(format) {

@@ -35,13 +35,33 @@ create table if not exists vault_activity_logs (
   created_at timestamptz default now()
 );
 
+create table if not exists vault_resources (
+  id text primary key,
+  title text not null,
+  module text,
+  format text,
+  summary text,
+  access_level text default 'approved',
+  file_url text,
+  cover_url text,
+  duration text,
+  sort_order int default 0,
+  status text default 'published',
+  tags text,
+  notes text,
+  updated_at timestamptz default now()
+);
+
 alter table vault_access_requests enable row level security;
 alter table vault_activity_logs enable row level security;
+alter table vault_resources enable row level security;
 
 drop policy if exists "public_read_vault_access_requests" on vault_access_requests;
 drop policy if exists "public_write_vault_access_requests" on vault_access_requests;
 drop policy if exists "public_read_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_write_vault_activity_logs" on vault_activity_logs;
+drop policy if exists "public_read_vault_resources" on vault_resources;
+drop policy if exists "public_write_vault_resources" on vault_resources;
 
 create policy "public_read_vault_access_requests"
 on vault_access_requests for select
@@ -57,6 +77,14 @@ using (true);
 
 create policy "public_write_vault_activity_logs"
 on vault_activity_logs for all
+using (true);
+
+create policy "public_read_vault_resources"
+on vault_resources for select
+using (true);
+
+create policy "public_write_vault_resources"
+on vault_resources for all
 using (true);
 ```
 
@@ -81,6 +109,7 @@ Flow:
 3. Approval generates a vault username and uses the application number as the login code.
 4. The user receives the vault link, username, and application number by email.
 5. Approved users log into `vaultlibrary.html`.
+6. Admin uploads advanced vault materials from `workspace.html -> Vault Access -> Vault Materials`.
 
 Security note:
 
