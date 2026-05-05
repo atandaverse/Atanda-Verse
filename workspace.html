@@ -382,11 +382,43 @@ create table if not exists library_access_logs (
   user_agent text,
   created_at timestamptz default now()
 );
+create table if not exists vault_access_requests (
+  id text primary key,
+  application_no text unique,
+  full_name text not null,
+  email text not null,
+  reason text,
+  requested_resource_id text,
+  requested_resource_title text,
+  status text default 'pending',
+  vault_username text,
+  access_code_hash text,
+  admin_note text,
+  source_page text,
+  page_url text,
+  created_at timestamptz default now(),
+  decided_at timestamptz,
+  emailed_at timestamptz
+);
+create table if not exists vault_activity_logs (
+  id bigserial primary key,
+  request_id text,
+  application_no text,
+  vault_username text,
+  event_type text,
+  resource_id text,
+  resource_title text,
+  page_url text,
+  user_agent text,
+  created_at timestamptz default now()
+);
 alter table posts enable row level security;
 alter table settings enable row level security;
 alter table testimonials enable row level security;
 alter table library enable row level security;
 alter table library_access_logs enable row level security;
+alter table vault_access_requests enable row level security;
+alter table vault_activity_logs enable row level security;
 create table if not exists comments (
   id text primary key,
   post_id text not null,
@@ -406,6 +438,10 @@ drop policy if exists "public_read_library" on library;
 drop policy if exists "public_write_library" on library;
 drop policy if exists "public_read_library_access_logs" on library_access_logs;
 drop policy if exists "public_write_library_access_logs" on library_access_logs;
+drop policy if exists "public_read_vault_access_requests" on vault_access_requests;
+drop policy if exists "public_write_vault_access_requests" on vault_access_requests;
+drop policy if exists "public_read_vault_activity_logs" on vault_activity_logs;
+drop policy if exists "public_write_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_read_comments" on comments;
 drop policy if exists "public_write_comments" on comments;
 drop policy if exists "public_read_posts" on posts;
@@ -418,6 +454,10 @@ drop policy if exists "public_read_library" on library;
 drop policy if exists "public_write_library" on library;
 drop policy if exists "public_read_library_access_logs" on library_access_logs;
 drop policy if exists "public_write_library_access_logs" on library_access_logs;
+drop policy if exists "public_read_vault_access_requests" on vault_access_requests;
+drop policy if exists "public_write_vault_access_requests" on vault_access_requests;
+drop policy if exists "public_read_vault_activity_logs" on vault_activity_logs;
+drop policy if exists "public_write_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_read_comments" on comments;
 drop policy if exists "public_write_comments" on comments;
 create policy "public_read_posts" on posts for select using (true);
@@ -430,6 +470,10 @@ create policy "public_read_library" on library for select using (true);
 create policy "public_write_library" on library for all using (true);
 create policy "public_read_library_access_logs" on library_access_logs for select using (true);
 create policy "public_write_library_access_logs" on library_access_logs for all using (true);
+create policy "public_read_vault_access_requests" on vault_access_requests for select using (true);
+create policy "public_write_vault_access_requests" on vault_access_requests for all using (true);
+create policy "public_read_vault_activity_logs" on vault_activity_logs for select using (true);
+create policy "public_write_vault_activity_logs" on vault_activity_logs for all using (true);
 create policy "public_read_comments" on comments for select using (true);
 create policy "public_write_comments" on comments for all using (true);
 create table if not exists registrations (
@@ -618,6 +662,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sb-sec">Audience</div>
       <div class="sb-lnk" onclick="nav('testimonials')">💬 Testimonials <span class="sb-badge" id="pendingCount">0</span></div>
       <div class="sb-lnk" onclick="nav('library')">📚 Library</div>
+      <div class="sb-lnk" onclick="nav('vault')">Vault Access <span class="sb-badge" id="vaultCount">0</span></div>
       <div class="sb-lnk" onclick="nav('comments')">🗨️ Comments <span class="sb-badge" id="cmtCount">0</span></div>
       <div class="sb-lnk" onclick="nav('registrations')">🎯 Registrations <span class="sb-badge" id="regCount">0</span></div>
       <div class="sb-lnk" onclick="nav('subscribers')">📧 Subscribers <span class="sb-badge" id="subCount">0</span></div>
@@ -855,6 +900,28 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div id="cmtPanelList" style="display:flex;flex-direction:column;gap:.75rem">
         <div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Loading comments…</div>
       </div>
+    </div>
+
+    <!-- VAULT ACCESS -->
+    <div class="panel" id="panel-vault">
+      <div class="sec-hdr">
+        <div>
+          <div class="sl">Vault Access Requests (<span id="vaultTotalLbl">0</span>)</div>
+          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Approve, reject, and monitor readers requesting the private vault library.</div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="tbb" onclick="loadVaultRequests()">↻ Refresh</button>
+          <button class="tbb s" onclick="window.open('vaultlibrary.html','_blank')">Open Vault Page</button>
+        </div>
+      </div>
+      <div class="ops-strip">
+        <div class="ops-card"><span>Pending</span><strong id="vaultOpsPending">0</strong><small>Waiting for admin decision.</small></div>
+        <div class="ops-card"><span>Approved</span><strong id="vaultOpsApproved">0</strong><small>Readers with vault credentials.</small></div>
+        <div class="ops-card"><span>Rejected</span><strong id="vaultOpsRejected">0</strong><small>Requests declined or deferred.</small></div>
+      </div>
+      <div class="tw"><table><thead><tr><th>Applicant</th><th>Request</th><th>Application</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+        <tbody id="vaultReqTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading…</td></tr></tbody>
+      </table></div>
     </div>
 
     <!-- REGISTRATIONS -->
@@ -3259,10 +3326,10 @@ function closeModal(id){document.getElementById(id).classList.remove('on');if(id
 function nav(panel){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.sb-lnk').forEach(l=>l.classList.remove('on'));
   const el=document.getElementById('panel-'+panel);if(el)el.classList.add('on');
-const lmap={dash:'Dashboard',analytics:'Analytics',posts:'Posts',editor:'Post',settings:'Settings',library:'Library',testimonials:'Testimonials','lib-editor':'Library Item',comments:'Comments',subscribers:'Subscribers',campaigns:'Campaigns',logins:'Admin Logins',registrations:'Registrations',faq:'FAQ'};
+const lmap={dash:'Dashboard',analytics:'Analytics',posts:'Posts',editor:'Post',settings:'Settings',library:'Library',vault:'Vault Access',testimonials:'Testimonials','lib-editor':'Library Item',comments:'Comments',subscribers:'Subscribers',campaigns:'Campaigns',logins:'Admin Logins',registrations:'Registrations',faq:'FAQ'};
   document.querySelectorAll('.sb-lnk').forEach(l=>{if(lmap[panel]&&l.textContent.includes(lmap[panel].split(' ')[0]))l.classList.add('on')});
-const tmap={dash:'DASHBOARD',analytics:'ANALYTICS',posts:'ALL POSTS',editor:'NEW POST',settings:'SETTINGS','lib-editor':'LIBRARY ITEM',library:'LIBRARY',testimonials:'TESTIMONIALS',comments:'COMMENTS',subscribers:'SUBSCRIBERS',campaigns:'CAMPAIGNS',logins:'ADMIN LOGINS',registrations:'REGISTRATIONS',faq:'FAQ'};
-const smap={dash:'See what needs attention, what is moving, and where to act next.',analytics:'Track momentum, post performance, and category signals.',posts:'Manage the full content queue from draft to published.',editor:'Write, preview, and prepare a post for publishing.',settings:'Control dashboard behavior, admin theme, and site-linked settings.',library:'Manage library resources, status, and presentation.',testimonials:'Review proof, approve stories, and add new testimonials.',comments:'Moderate discussion across the blog.',subscribers:'Review and export the people who asked to stay connected.',campaigns:'Refine newsletter drafts, send them, and manage history.',logins:'Review admin access activity.',registrations:'Track who asked for sessions and what they need.',faq:'Maintain the answers visitors rely on.'};
+const tmap={dash:'DASHBOARD',analytics:'ANALYTICS',posts:'ALL POSTS',editor:'NEW POST',settings:'SETTINGS','lib-editor':'LIBRARY ITEM',library:'LIBRARY',vault:'VAULT ACCESS',testimonials:'TESTIMONIALS',comments:'COMMENTS',subscribers:'SUBSCRIBERS',campaigns:'CAMPAIGNS',logins:'ADMIN LOGINS',registrations:'REGISTRATIONS',faq:'FAQ'};
+const smap={dash:'See what needs attention, what is moving, and where to act next.',analytics:'Track momentum, post performance, and category signals.',posts:'Manage the full content queue from draft to published.',editor:'Write, preview, and prepare a post for publishing.',settings:'Control dashboard behavior, admin theme, and site-linked settings.',library:'Manage library resources, status, and presentation.',vault:'Review vault access requests and issue approved reader credentials.',testimonials:'Review proof, approve stories, and add new testimonials.',comments:'Moderate discussion across the blog.',subscribers:'Review and export the people who asked to stay connected.',campaigns:'Refine newsletter drafts, send them, and manage history.',logins:'Review admin access activity.',registrations:'Track who asked for sessions and what they need.',faq:'Maintain the answers visitors rely on.'};
   document.getElementById('pageTit').textContent=tmap[panel]||panel.toUpperCase();
   const sub=document.getElementById('pageSub');if(sub)sub.textContent=smap[panel]||'';
   if(panel==='dash')initDash();if(panel==='analytics')initAnalytics();if(panel==='posts')renderPostsTbl();
@@ -3275,6 +3342,7 @@ if(panel==='campaigns')loadCampaignsPanel();
   if(panel==='registrations')loadRegistrationsPanel();
   if(panel==='logins')loadLoginsPanel();
   if(panel==='library')renderLibTbl();
+  if(panel==='vault')loadVaultRequests();
   if(panel==='lib-editor'){clearLibForm();setTimeout(()=>document.getElementById('libTitle').focus(),100);}
   if(panel==='faq')loadFaqPanel();
 }
@@ -3329,6 +3397,13 @@ async function initApp(){
       const regs = await _sbReq('registrations?select=id');
       const el = document.getElementById('regCount');
       if (el) el.textContent = (regs || []).length;
+    }
+  } catch {}
+  try {
+    if (_useSb()) {
+      const vault = await _sbReq('vault_access_requests?select=id&status=eq.pending');
+      const el = document.getElementById('vaultCount');
+      if (el) el.textContent = (vault || []).length;
     }
   } catch {}
 }
@@ -4765,6 +4840,93 @@ function clearRegFilters() {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   loadRegistrationsPanel();
+}
+
+// ── VAULT ACCESS PANEL ───────────────────────────────────────────────────
+let _allVaultRequests = [];
+
+function vaultClean(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function makeVaultUsername(row){
+  const base=String(row.full_name||row.email||'reader').toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,14)||'reader';
+  return base + '-' + String(row.application_no||Date.now()).slice(-4).toLowerCase();
+}
+async function invokeVaultAccessEmail(requestId, action){
+  if(!_useSb())return null;
+  try{
+    const r=await fetch(_functionsBaseUrl() + '/send-vault-access',{
+      method:'POST',
+      headers:{apikey:_sbKey(),Authorization:'Bearer '+_sbKey(),'Content-Type':'application/json'},
+      body:JSON.stringify({requestId,action})
+    });
+    if(!r.ok)throw new Error(await r.text());
+    return await r.json().catch(()=>null);
+  }catch(e){
+    console.warn('Vault email function unavailable',e);
+    return null;
+  }
+}
+async function loadVaultRequests(){
+  const tbl=document.getElementById('vaultReqTbl');
+  if(!tbl)return;
+  if(!_useSb()){
+    tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Connect Supabase to view vault requests</td></tr>';
+    return;
+  }
+  tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:1.5rem">Loading...</td></tr>';
+  try{
+    const rows=await _sbReq('vault_access_requests?select=*&order=created_at.desc')||[];
+    _allVaultRequests=rows;
+    const pending=rows.filter(r=>r.status==='pending').length;
+    const approved=rows.filter(r=>r.status==='approved').length;
+    const rejected=rows.filter(r=>r.status==='rejected').length;
+    const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
+    set('vaultTotalLbl',rows.length);set('vaultCount',pending);set('vaultOpsPending',pending);set('vaultOpsApproved',approved);set('vaultOpsRejected',rejected);
+    if(!rows.length){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No vault requests yet</td></tr>';return}
+    tbl.innerHTML=rows.map(r=>{
+      const dt=r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
+      const reason=String(r.reason||'').slice(0,90)+(String(r.reason||'').length>90?'...':'');
+      const pill=r.status==='approved'?'published':r.status==='rejected'?'draft':'coming-soon';
+      const creds=r.status==='approved'?`<span>${vaultClean(r.vault_username||'')}</span>`:'<span>Awaiting decision</span>';
+      const pendingActions=r.status==='pending'
+        ? `<button class="ab" onclick="approveVaultRequest('${r.id}')">Approve</button><button class="ab del" onclick="rejectVaultRequest('${r.id}')">Reject</button>`
+        : `<button class="ab" onclick="resendVaultEmail('${r.id}','${r.status}')">Resend Email</button>`;
+      return `<tr>
+        <td class="tc2">${vaultClean(r.full_name)}<span>${vaultClean(r.email)}</span></td>
+        <td style="font-size:.76rem;color:var(--t3);max-width:240px"><strong style="color:var(--t2)">${vaultClean(r.requested_resource_title||'Vault Library')}</strong><br>${vaultClean(reason)}</td>
+        <td class="tc2">${vaultClean(r.application_no)}${creds}</td>
+        <td><span class="pill ${pill}" style="font-size:.7rem">${vaultClean(r.status||'pending')}</span></td>
+        <td style="font-size:.74rem;color:var(--t3)">${dt}</td>
+        <td><div class="action-row">${pendingActions}</div></td>
+      </tr>`;
+    }).join('');
+  }catch(e){
+    tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Vault table is not ready. Run the latest setup SQL.</td></tr>';
+  }
+}
+async function approveVaultRequest(id){
+  const row=_allVaultRequests.find(r=>r.id===id);
+  if(!row)return toast('Request not found','er');
+  const username=prompt('Vault username', row.vault_username||makeVaultUsername(row));
+  if(!username)return;
+  const appNo=row.application_no||('AV-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,8).toUpperCase());
+  const hash=await sha256Text(appNo);
+  await _sbUpsert('vault_access_requests',{...row,application_no:appNo,vault_username:username,access_code_hash:hash,status:'approved',decided_at:new Date().toISOString()});
+  await invokeVaultAccessEmail(id,'approved');
+  toast('Vault request approved','ok');
+  loadVaultRequests();
+}
+async function rejectVaultRequest(id){
+  const row=_allVaultRequests.find(r=>r.id===id);
+  if(!row)return toast('Request not found','er');
+  const note=prompt('Optional rejection note','');
+  await _sbUpsert('vault_access_requests',{...row,status:'rejected',admin_note:note||'',decided_at:new Date().toISOString()});
+  await invokeVaultAccessEmail(id,'rejected');
+  toast('Vault request rejected','ok');
+  loadVaultRequests();
+}
+async function resendVaultEmail(id,status){
+  await invokeVaultAccessEmail(id,status==='approved'?'approved':'rejected');
+  toast('Vault email requested','ok');
 }
 
 function exportRegistrations(format) {

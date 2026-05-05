@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Vault Library | Atanda Verse</title>
+<meta name="description" content="Approved-reader vault library for Atanda Verse clarity resources.">
+<script src="config.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700;800&display=swap');
+:root{--ink:#17233f;--muted:#62708c;--soft:#f4f7fb;--card:rgba(255,255,255,.86);--line:rgba(23,35,63,.12);--red:#c7374a;--red2:#8f2430}
+*{box-sizing:border-box}body{margin:0;font-family:'DM Sans',sans-serif;background:radial-gradient(circle at 10% 10%,rgba(199,55,74,.15),transparent 32%),linear-gradient(135deg,#f8fafc,#eef3f8);color:var(--ink);min-height:100vh}
+.wrap{width:min(1120px,92vw);margin:0 auto}.top{padding:1.2rem 0;display:flex;justify-content:space-between;align-items:center}.brand{font-family:'Bebas Neue';font-size:2rem;letter-spacing:3px;text-decoration:none;color:var(--ink)}.brand span{color:var(--red)}.top a:not(.brand){color:var(--muted);font-weight:800;text-decoration:none}
+.hero{padding:5rem 0 2.4rem;text-align:center}.eyebrow{display:inline-flex;padding:.42rem .85rem;border-radius:999px;background:rgba(199,55,74,.09);color:var(--red);font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase}.hero h1{font-family:'Bebas Neue';font-size:clamp(3.2rem,9vw,6.5rem);letter-spacing:3px;line-height:.9;margin:1rem 0;color:var(--ink)}.hero p{max-width:680px;margin:0 auto;color:var(--muted);line-height:1.8;font-size:1.05rem}
+.login,.card{background:var(--card);border:1px solid var(--line);box-shadow:0 24px 70px rgba(23,35,63,.1);border-radius:26px}.login{width:min(520px,100%);margin:0 auto 3rem;padding:1.4rem}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.2rem;margin-bottom:4rem}.card{padding:1.35rem;display:flex;flex-direction:column;gap:.7rem}.card h3{margin:0;color:var(--ink);font-size:1.02rem}.tag{display:inline-flex;width:max-content;border-radius:999px;padding:.22rem .65rem;background:rgba(199,55,74,.08);color:var(--red);font-size:.68rem;font-weight:800;text-transform:uppercase}.desc{color:var(--muted);line-height:1.7;font-size:.88rem;flex:1}.btn{border:none;border-radius:14px;padding:.9rem 1.1rem;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;font:inherit;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center}.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}input{width:100%;border:1px solid var(--line);background:#fff;border-radius:16px;padding:1rem;font:inherit;color:var(--ink);outline:none}.row{display:grid;gap:.75rem}.status{min-height:1.5rem;color:var(--red);font-weight:800;font-size:.86rem;margin-top:.75rem}.hidden{display:none!important}
+@media(max-width:640px){.top{align-items:flex-start;gap:.7rem}.hero{padding-top:3.2rem}.login{padding:1rem;border-radius:20px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="wrap top"><a class="brand" href="index.html">ATANDA <span>VERSE</span></a><a href="library.html">Public Library</a></header>
+<main class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Approved Reader Vault</div>
+    <h1>VAULT LIBRARY</h1>
+    <p>Private clarity resources for approved readers. Use the vault username and application number sent to your email after admin approval.</p>
+  </section>
+  <section class="login" id="vaultLogin">
+    <div class="row">
+      <input id="vaultUsername" autocomplete="username" placeholder="Vault username">
+      <input id="vaultCode" autocomplete="one-time-code" placeholder="Application number e.g. AV-2026-ABC123">
+      <button class="btn" onclick="loginVault()">Enter Vault</button>
+      <a class="btn ghost" href="library.html">Request access from the public library</a>
+      <div class="status" id="vaultStatus"></div>
+    </div>
+  </section>
+  <section id="vaultContent" class="hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+      <div><div class="eyebrow">Unlocked</div><h2 style="font-family:'Bebas Neue';font-size:2.5rem;letter-spacing:2px;margin:.4rem 0 0">Your Vault Materials</h2></div>
+      <button class="btn ghost" onclick="logoutVault()">Logout</button>
+    </div>
+    <div class="grid" id="vaultGrid"></div>
+  </section>
+</main>
+<script>
+let vaultSession=null;
+let vaultItems=[];
+function creds(){return window.ivGetSupabaseCreds&&window.ivGetSupabaseCreds()}
+async function sha256Text(text){const data=new TextEncoder().encode(String(text||''));const hash=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+function clean(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function sb(path,opts){const c=creds();if(!c)throw new Error('Database unavailable');const r=await fetch(c.url+'/rest/v1/'+path,{method:opts?.method||'GET',headers:{apikey:c.key,Authorization:'Bearer '+c.key,'Content-Type':'application/json',...(opts?.headers||{})},body:opts?.body||null});if(!r.ok)throw new Error(await r.text());return r.status===204?null:r.json()}
+async function loginVault(){
+  const status=document.getElementById('vaultStatus');
+  const username=document.getElementById('vaultUsername').value.trim();
+  const code=document.getElementById('vaultCode').value.trim().toUpperCase();
+  if(!username||!code){status.textContent='Enter your vault username and application number.';return}
+  status.textContent='Checking access...';
+  try{
+    const rows=await sb('vault_access_requests?select=*&status=eq.approved&vault_username=eq.'+encodeURIComponent(username));
+    const hash=await sha256Text(code);
+    const match=(rows||[]).find(r=>r.access_code_hash===hash||String(r.application_no||'').toUpperCase()===code);
+    if(!match){status.textContent='These vault credentials were not approved.';return}
+    vaultSession={id:match.id,application_no:match.application_no,vault_username:match.vault_username};
+    sessionStorage.setItem('iv_vault_session',JSON.stringify(vaultSession));
+    await logVault('login');
+    await loadVault();
+  }catch(e){console.warn(e);status.textContent='Vault login failed. Please try again or contact support.'}
+}
+async function loadVault(){
+  document.getElementById('vaultLogin').classList.add('hidden');
+  document.getElementById('vaultContent').classList.remove('hidden');
+  const rows=await sb('library?select=*&status=neq.coming-soon&order=sort_order.asc,id.asc');
+  vaultItems=(rows||[]).filter(r=>r.free===false||r.status==='members'||r.url||r.embed);
+  const grid=document.getElementById('vaultGrid');
+  grid.innerHTML=vaultItems.length?vaultItems.map(item=>`<article class="card"><div class="tag">${clean(item.category||'Resource')}</div><h3>${clean(item.title)}</h3><div class="desc">${clean(item.description||item.tag||'Vault resource')}</div>${item.url?`<a class="btn" href="#" onclick="openVaultItem('${clean(item.id)}');return false">Open Resource</a>`:'<span class="tag">No file attached yet</span>'}</article>`).join(''):'<div class="card"><h3>No vault files yet</h3><div class="desc">Admin has not attached vault resources yet. Check back shortly.</div></div>';
+}
+async function openVaultItem(id){const item=vaultItems.find(x=>String(x.id)===String(id));if(!item)return;await logVault('open',item);window.open(item.url,'_blank','noopener')}
+async function logVault(eventType,item){try{await sb('vault_activity_logs',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({request_id:vaultSession?.id||'',application_no:vaultSession?.application_no||'',vault_username:vaultSession?.vault_username||'',event_type:eventType,resource_id:item?.id||'',resource_title:item?.title||'',page_url:location.href,user_agent:navigator.userAgent})})}catch(e){}}
+function logoutVault(){sessionStorage.removeItem('iv_vault_session');location.reload()}
+(async function(){try{vaultSession=JSON.parse(sessionStorage.getItem('iv_vault_session')||'null');if(vaultSession)await loadVault()}catch(e){}})();
+</script>
+</body>
+</html>

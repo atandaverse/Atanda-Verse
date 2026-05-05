@@ -908,26 +908,27 @@ img.loaded{opacity:1;}
       <div id="libraryAccessModal" role="dialog" aria-modal="true" aria-labelledby="libraryAccessTitle" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(8,13,24,.72);backdrop-filter:blur(14px);padding:1.25rem;align-items:center;justify-content:center">
         <div style="width:min(94vw,470px);background:var(--bg-card);border:1px solid var(--glass-border);border-radius:24px;box-shadow:0 30px 90px rgba(15,23,42,.35);padding:1.35rem;position:relative">
           <button type="button" onclick="closeLibraryAccessModal()" aria-label="Close library access" style="position:absolute;right:1rem;top:1rem;border:none;background:transparent;color:var(--text-muted);font-size:1.2rem;cursor:pointer">x</button>
-          <div style="font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem">Member Library</div>
-          <h3 id="libraryAccessTitle" style="font-family:'Bebas Neue',sans-serif;font-size:2.15rem;letter-spacing:1.5px;color:var(--text-primary);margin-bottom:.5rem">Unlock Full Access</h3>
-          <p id="libraryAccessCopy" style="color:var(--text-secondary);font-size:.94rem;line-height:1.7;margin-bottom:1rem">Enter your library username and password to open full resources. Snippets remain visible so you can decide what is useful first.</p>
+          <div style="font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem">Vault Library</div>
+          <h3 id="libraryAccessTitle" style="font-family:'Bebas Neue',sans-serif;font-size:2.15rem;letter-spacing:1.5px;color:var(--text-primary);margin-bottom:.5rem">Request Vault Access</h3>
+          <p id="libraryAccessCopy" style="color:var(--text-secondary);font-size:.94rem;line-height:1.7;margin-bottom:1rem">Tell us who you are and why you want the vault. Admin will review your request, then email approved credentials for the private vault library.</p>
           <div style="display:grid;gap:.75rem">
-            <input id="libAccessUsername" autocomplete="username" placeholder="Library username" style="width:100%;border:1px solid var(--border-color);border-radius:14px;padding:.88rem 1rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
-            <input id="libAccessPassword" autocomplete="current-password" type="password" placeholder="Library password" onkeydown="if(event.key==='Enter')submitLibraryAccess()" style="width:100%;border:1px solid var(--border-color);border-radius:14px;padding:.88rem 1rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
+            <input id="libAccessName" autocomplete="name" placeholder="Full name" style="width:100%;border:1px solid var(--border-color);border-radius:14px;padding:.88rem 1rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
+            <input id="libAccessEmail" autocomplete="email" type="email" placeholder="Email address" style="width:100%;border:1px solid var(--border-color);border-radius:14px;padding:.88rem 1rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
+            <textarea id="libAccessReason" placeholder="What do you want clarity around right now?" style="width:100%;min-height:112px;border:1px solid var(--border-color);border-radius:14px;padding:.88rem 1rem;background:var(--bg-secondary);color:var(--text-primary);outline:none;resize:vertical"></textarea>
           </div>
           <div id="libraryAccessStatus" style="min-height:1.3rem;margin:.7rem 0 0;color:var(--accent);font-size:.82rem;font-weight:700"></div>
           <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
-            <button type="button" onclick="submitLibraryAccess()" style="border:none;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;border-radius:12px;padding:.78rem 1.2rem;font-weight:800;cursor:pointer;letter-spacing:.3px">Unlock Library</button>
-            <a href="index.html#contact" onclick="closeLibraryAccessModal()" style="display:inline-flex;align-items:center;border:1px solid var(--glass-border);border-radius:12px;padding:.78rem 1.05rem;text-decoration:none;color:var(--text-primary);font-weight:800;background:var(--glass)">Request Access</a>
+            <button type="button" onclick="submitLibraryAccess()" style="border:none;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;border-radius:12px;padding:.78rem 1.2rem;font-weight:800;cursor:pointer;letter-spacing:.3px">Submit Request</button>
+            <a href="vaultlibrary.html" style="display:inline-flex;align-items:center;border:1px solid var(--glass-border);border-radius:12px;padding:.78rem 1.05rem;text-decoration:none;color:var(--text-primary);font-weight:800;background:var(--glass)">Already Approved?</a>
           </div>
         </div>
       </div>
       <div class="rv" style="background:linear-gradient(135deg,#1a365d,rgba(15,23,42,.9));color:white;border-radius:24px;padding:4rem;text-align:center;position:relative;overflow:hidden;margin-top:4rem">
         <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(220,53,69,.2),transparent 60%)"></div>
         <div style="position:relative;z-index:1">
-          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:2px;color:white;margin-bottom:.7rem">GET FULL LIBRARY ACCESS</h3>
-          <p style="color:rgba(255,255,255,.85);margin-bottom:2rem;line-height:1.7">Register for a free clarity session and unlock access to all current and upcoming resources.</p>
-          <a href="index.html#contact" class="cta-button" style="display:inline-block">Book Free Session</a>
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:2px;color:white;margin-bottom:.7rem">REQUEST VAULT LIBRARY ACCESS</h3>
+          <p style="color:rgba(255,255,255,.85);margin-bottom:2rem;line-height:1.7">The public library gives you snippets and direction. The vault is reviewed manually so approved readers get focused materials without turning the library into a dump.</p>
+          <button type="button" onclick="openLibraryAccessModal('vault')" class="cta-button" style="display:inline-block;border:none;cursor:pointer">Request Vault Access</button>
         </div>
       </div>
     </div>
@@ -1096,16 +1097,16 @@ function openLibraryAccessModal(itemId){
   const modal = document.getElementById('libraryAccessModal');
   const copy = document.getElementById('libraryAccessCopy');
   const status = document.getElementById('libraryAccessStatus');
-  const user = document.getElementById('libAccessUsername');
-  const pass = document.getElementById('libAccessPassword');
+  const name = document.getElementById('libAccessName');
   if (status) status.textContent = '';
   if (copy) {
-    copy.textContent = libraryAccessConfig.username && libraryAccessConfig.passwordHash
-      ? (libraryAccessConfig.note || 'Enter your library username and password to open full resources. Snippets remain visible so you can decide what is useful first.')
-      : 'Full library access is controlled by Atanda Verse. Request access and we will send your reader credentials.';
+    const item = findLibraryItem(itemId);
+    copy.textContent = item && item.title
+      ? 'Request access to the Vault Library for "' + item.title + '". Admin will review and email your vault username plus application number if approved.'
+      : 'Tell us who you are and why you want the vault. Admin will review your request, then email approved credentials for the private vault library.';
   }
   if (modal) modal.style.display = 'flex';
-  setTimeout(() => (libraryAccessConfig.username ? pass : user)?.focus(), 80);
+  setTimeout(() => name?.focus(), 80);
 }
 
 function closeLibraryAccessModal(){
@@ -1115,26 +1116,57 @@ function closeLibraryAccessModal(){
 
 async function submitLibraryAccess(){
   const status = document.getElementById('libraryAccessStatus');
-  const username = (document.getElementById('libAccessUsername')?.value || '').trim();
-  const password = document.getElementById('libAccessPassword')?.value || '';
-  if (!libraryAccessConfig.username || !libraryAccessConfig.passwordHash) {
-    if (status) status.textContent = 'Access credentials are not public yet. Please request access.';
-    await logLibraryAccessEvent('request_needed', findLibraryItem(pendingLibraryItemId));
+  const name = (document.getElementById('libAccessName')?.value || '').trim();
+  const email = (document.getElementById('libAccessEmail')?.value || '').trim().toLowerCase();
+  const reason = (document.getElementById('libAccessReason')?.value || '').trim();
+  const item = findLibraryItem(pendingLibraryItemId);
+  if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (status) status.textContent = 'Please add your name and a valid email.';
     return;
   }
-  const enteredHash = await sha256Text(password);
-  if (username === libraryAccessConfig.username && enteredHash === libraryAccessConfig.passwordHash) {
-    sessionStorage.setItem(LIB_ACCESS_SESSION_KEY, JSON.stringify({ ok: true, username, ts: Date.now() }));
-    if (status) status.textContent = 'Access unlocked.';
-    await logLibraryAccessEvent('login', findLibraryItem(pendingLibraryItemId));
-    closeLibraryAccessModal();
-    renderLibrary();
-    const item = findLibraryItem(pendingLibraryItemId);
-    if (item && item.url) setTimeout(() => accessLibraryItem(item.id), 150);
+  const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
+  const request = {
+    id: 'var-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7),
+    application_no: 'AV-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase(),
+    full_name: name,
+    email: email,
+    reason: reason,
+    requested_resource_id: item?.id || '',
+    requested_resource_title: item?.title || '',
+    status: 'pending',
+    source_page: location.pathname,
+    page_url: location.href,
+    created_at: new Date().toISOString()
+  };
+  if (!creds || !creds.url || !creds.key) {
+    if (status) status.textContent = 'Vault requests need the live database. Please try again shortly.';
     return;
   }
-  if (status) status.textContent = 'Those library credentials did not match.';
-  await logLibraryAccessEvent('denied', findLibraryItem(pendingLibraryItemId), username);
+  try {
+    if (status) status.textContent = 'Submitting request...';
+    const res = await fetch(creds.url + '/rest/v1/vault_access_requests', {
+      method: 'POST',
+      headers: {
+        'apikey': creds.key,
+        'Authorization': 'Bearer ' + creds.key,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(request)
+    });
+    if (!res.ok) throw new Error(await res.text());
+    try { await fetch(creds.url + '/functions/v1/send-vault-access', {
+      method: 'POST',
+      headers: {'apikey':creds.key,'Authorization':'Bearer '+creds.key,'Content-Type':'application/json'},
+      body: JSON.stringify({ requestId: request.id, action: 'requested' })
+    }); } catch(e) { console.warn('Vault email function unavailable', e); }
+    if (status) status.textContent = 'Request received. Your application number is ' + request.application_no + '. Admin will review it.';
+    ['libAccessName','libAccessEmail','libAccessReason'].forEach(id => { const el=document.getElementById(id); if(el)el.value=''; });
+    setTimeout(closeLibraryAccessModal, 1800);
+  } catch(e) {
+    console.warn(e);
+    if (status) status.textContent = 'Request could not be saved. Please contact hello@atanda.site.';
+  }
 }
 
 async function accessLibraryItem(id){
