@@ -124,6 +124,54 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (action === "terms") {
+      if (row.terms_emailed_at) {
+        return new Response(JSON.stringify({ ok: true, skipped: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+
+      await sendEmail(resendKey, {
+        from,
+        reply_to: "support@atanda.site",
+        to: [row.email],
+        subject: `Vault library terms | ${row.application_no}`,
+        html: `
+          <div style="margin:0;padding:24px 12px;background:#f3f6fb;font-family:Arial,sans-serif;color:#172033">
+            <div style="max-width:660px;margin:0 auto;background:#fff;border-radius:22px;overflow:hidden;border:1px solid rgba(15,23,42,.08)">
+              <div style="padding:22px 28px;background:#0f172a;color:#fff">
+                <div style="font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:#f8b4bc">Atanda Verse Vault</div>
+                <h1 style="font-size:24px;margin:10px 0 0">Vault terms and copyright notice</h1>
+              </div>
+              <div style="padding:28px;line-height:1.75">
+                <p>Hi ${name},</p>
+                <p>You have successfully logged into the Atanda Verse Vault Library.</p>
+                <p>Your vault access is personal to you. Materials in the vault are protected Atanda Verse resources and may not be copied, resold, reposted, uploaded elsewhere, forwarded, or distributed in group chats/classes without written permission.</p>
+                <div style="padding:16px;border-radius:14px;background:#f8fafc;border:1px solid rgba(15,23,42,.08)">
+                  <p><strong>Application number:</strong> ${appNo}</p>
+                  <p><strong>Vault username:</strong> ${escapeHtml(row.vault_username)}</p>
+                  <p><strong>Vault page:</strong> <a href="${vaultUrl}">${vaultUrl}</a></p>
+                </div>
+                <p>Viewing or saving a file does not transfer ownership, copyright, or reuse rights. Activity in the vault may be logged to protect the library and improve the reader experience.</p>
+                <p>If you need permission to use a material in a class, group, or public setting, reply to this email first.</p>
+              </div>
+            </div>
+          </div>
+        `,
+      });
+
+      await supabase
+        .from("vault_access_requests")
+        .update({ terms_emailed_at: new Date().toISOString() })
+        .eq("id", requestId);
+
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
     if (action === "rejected") {
       await sendEmail(resendKey, {
         from,

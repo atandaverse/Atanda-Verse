@@ -19,8 +19,12 @@ create table if not exists vault_access_requests (
   page_url text,
   created_at timestamptz default now(),
   decided_at timestamptz,
-  emailed_at timestamptz
+  emailed_at timestamptz,
+  terms_emailed_at timestamptz
 );
+
+alter table vault_access_requests
+add column if not exists terms_emailed_at timestamptz;
 
 create table if not exists vault_activity_logs (
   id bigserial primary key,

@@ -32,11 +32,19 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background-ima
 .module-title{font-family:'Bebas Neue';font-size:2rem;letter-spacing:2px;margin:0}
 .module-kicker{color:var(--muted);font-size:.92rem;margin:.25rem 0 1rem}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:1rem;margin-bottom:1rem}
-.material-card{border-radius:28px;overflow:hidden;display:grid;grid-template-columns:132px 1fr;min-height:204px;transition:transform .2s ease,box-shadow .2s ease}
+.terms-card,.material-card{background:var(--card);border:1px solid var(--line);box-shadow:0 24px 70px rgba(23,35,63,.1);backdrop-filter:blur(14px)}
+.terms-card{border-radius:28px;margin:0 0 2rem;padding:1.15rem 1.25rem}
+.terms-card h3{margin:.2rem 0 .55rem;font-size:1rem;color:var(--ink)}
+.terms-card p{margin:0;color:var(--muted);line-height:1.7;font-size:.92rem}
+.terms-list{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-top:1rem}
+.terms-list span{border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.64);padding:.72rem .8rem;color:var(--muted);font-size:.82rem;line-height:1.45}
+.material-card{border-radius:28px;overflow:hidden;display:grid;grid-template-columns:172px 1fr;min-height:214px;transition:transform .2s ease,box-shadow .2s ease}
 .material-card:hover{transform:translateY(-3px);box-shadow:0 30px 80px rgba(23,35,63,.14)}
-.cover{height:100%;min-height:204px;background:linear-gradient(145deg,#17233f,#c7374a);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Bebas Neue';font-size:1.45rem;letter-spacing:2px;text-align:center;padding:1rem;position:relative;overflow:hidden}
+.cover{height:100%;min-height:214px;background:linear-gradient(145deg,#17233f,#c7374a);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Bebas Neue';font-size:1.45rem;letter-spacing:2px;text-align:center;padding:1rem;position:relative;overflow:hidden}
 .cover:after{content:"";position:absolute;inset:auto -30% -35% -30%;height:70%;background:radial-gradient(circle,rgba(255,255,255,.32),transparent 58%)}
-.cover img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.cover.has-img{background:#f8fafc}
+.cover.has-img:after{display:none}
+.cover img{width:calc(100% - 18px);height:calc(100% - 18px);object-fit:contain;position:absolute;inset:9px;border-radius:18px}
 .material-body{padding:1.15rem 1.2rem;display:flex;flex-direction:column;gap:.6rem}
 .material-card h3{margin:0;color:var(--ink);font-size:1.06rem;line-height:1.25}
 .tag{padding:.24rem .62rem;background:rgba(199,55,74,.08);color:var(--red);font-size:.62rem;letter-spacing:.6px}
@@ -54,6 +62,7 @@ input{width:100%;border:1px solid var(--line);background:#fff;border-radius:16px
   .hero{padding-top:3rem}
   .login{padding:1rem;border-radius:22px}
   .vault-head{grid-template-columns:1fr}
+  .terms-list{grid-template-columns:1fr}
   .grid{grid-template-columns:1fr}
   .material-card{grid-template-columns:1fr;min-height:0;border-radius:24px}
   .cover{height:180px;min-height:180px}
@@ -93,6 +102,16 @@ input{width:100%;border:1px solid var(--line);background:#fff;border-radius:16px
       </div>
       <button class="btn ghost" onclick="logoutVault()">Logout</button>
     </div>
+    <section class="terms-card" aria-label="Vault terms and copyright notice">
+      <div class="eyebrow">Terms & Copyright</div>
+      <h3>Personal access only. These materials remain protected Atanda Verse resources.</h3>
+      <p>By using the vault, you agree to use each guide, workbook, audio, video, or PDF for your personal learning only. Access may be revoked if materials are copied, resold, uploaded elsewhere, shared in group chats, or distributed outside atanda.site.</p>
+      <div class="terms-list">
+        <span>No reposting, resale, forwarding, or public classroom distribution without written permission.</span>
+        <span>Viewing or saving a file does not transfer ownership, copyright, or reuse rights.</span>
+        <span>Each login and material open may be logged to protect the library and improve the reader experience.</span>
+      </div>
+    </section>
     <div id="vaultGrid"></div>
   </section>
 </main>
@@ -105,6 +124,16 @@ function clean(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'
 function plain(v){const d=document.createElement('div');d.innerHTML=String(v||'');return d.textContent||d.innerText||''}
 function excerpt(v,max=210){const text=plain(v).replace(/\s+/g,' ').trim();return text.length>max?text.slice(0,max).replace(/\s+\S*$/,'')+'...':text}
 async function sb(path,opts){const c=creds();if(!c)throw new Error('Database unavailable');const r=await fetch(c.url+'/rest/v1/'+path,{method:opts?.method||'GET',headers:{apikey:c.key,Authorization:'Bearer '+c.key,'Content-Type':'application/json',...(opts?.headers||{})},body:opts?.body||null});if(!r.ok)throw new Error(await r.text());return r.status===204?null:r.json()}
+async function sendVaultTermsEmail(){
+  try{
+    const c=creds();if(!c||!vaultSession?.id)return;
+    await fetch(c.url+'/functions/v1/send-vault-access',{
+      method:'POST',
+      headers:{apikey:c.key,Authorization:'Bearer '+c.key,'Content-Type':'application/json'},
+      body:JSON.stringify({requestId:vaultSession.id,action:'terms'})
+    });
+  }catch(e){console.warn('Vault terms email unavailable',e)}
+}
 async function loginVault(){
   const status=document.getElementById('vaultStatus');
   const username=document.getElementById('vaultUsername').value.trim();
@@ -119,6 +148,7 @@ async function loginVault(){
     vaultSession={id:match.id,application_no:match.application_no,vault_username:match.vault_username};
     sessionStorage.setItem('iv_vault_session',JSON.stringify(vaultSession));
     await logVault('login');
+    sendVaultTermsEmail();
     await loadVault();
   }catch(e){console.warn(e);status.textContent='Vault login failed. Please try again or contact support.'}
 }
@@ -137,14 +167,14 @@ async function loadVault(){
       <p class="module-kicker">${items.length} ${items.length===1?'material':'materials'} in this pathway</p>
       <div class="grid">${items.map(item=>`
         <article class="material-card">
-          <div class="cover">${item.cover_url?`<img src="${clean(item.cover_url)}" alt="${clean(item.title)}">`:clean(item.format||'Vault')}</div>
+          <div class="cover ${item.cover_url?'has-img':''}">${item.cover_url?`<img src="${clean(item.cover_url)}" alt="${clean(item.title)}">`:clean(item.format||'Vault')}</div>
           <div class="material-body">
             <div class="tag">${clean(item.format||'resource')}</div>
             <h3>${clean(item.title)}</h3>
             <div class="desc">${clean(excerpt(item.summary||item.tags||'Vault resource'))}</div>
             <div class="card-foot">
               <span class="duration">${clean(item.duration||'Self-paced')}</span>
-              ${item.file_url?`<a class="btn" href="#" onclick="openVaultItem('${clean(item.id)}');return false">Open</a>`:'<span class="tag">No file attached</span>'}
+              ${item.file_url?`<a class="btn" href="#" onclick="openVaultItem('${clean(item.id)}');return false">View Material</a>`:'<span class="tag">No file attached</span>'}
             </div>
           </div>
         </article>`).join('')}</div>
