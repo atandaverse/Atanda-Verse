@@ -4,7 +4,7 @@
 <script>!function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.style.colorScheme=t==="dark"?"dark":"light"}();</script>
 <script src="config.js"></script>
     <meta charset="UTF-8">
-<meta name="description" content="Atanda Verse helps Nigerians and the diaspora move from mental fog to clarity, direction, and intentional action through free virtual clarity sessions, guides, and reflective resources.">
+<meta name="description" content="Atanda Verse helps Nigerians and the diaspora move from mental fog to clarity, direction, and intentional action through a free single clarity session, guided plans, and reflective resources.">
 <meta name="keywords" content="clarity sessions Nigeria, virtual clarity coaching, personal development Nigeria, mental clarity, Nigerian graduates, career clarity Nigeria, life direction, purpose coaching, Atanda Verse">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Atanda Verse">
@@ -16,13 +16,13 @@
 <meta property="og:site_name" content="Atanda Verse">
 <meta property="og:locale" content="en_NG">
 <meta property="og:title" content="Atanda Verse - Clarity Sessions, Guides & Direction">
-<meta property="og:description" content="Free virtual clarity sessions and guided resources for Nigerians ready to move from confusion to direction.">
+<meta property="og:description" content="Start with a free single clarity session, then choose paid guided plans and resources when you are ready for deeper direction.">
 <meta property="og:url" content="https://verse.atanda.site/">
 <meta property="og:image" content="https://verse.atanda.site/images/headers.png">
 <meta property="og:image:alt" content="Atanda Verse clarity and personal direction resources">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Atanda Verse - Clarity Sessions, Guides & Direction">
-<meta name="twitter:description" content="Free virtual clarity sessions and guided resources for Nigerians ready to move from confusion to direction.">
+<meta name="twitter:description" content="Start with a free single clarity session, then choose paid guided plans and resources when you are ready for deeper direction.">
 <meta name="twitter:image" content="https://verse.atanda.site/images/headers.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://verse.atanda.site/#organization","name":"Atanda Verse","url":"https://verse.atanda.site/","logo":{"@type":"ImageObject","url":"https://verse.atanda.site/logo%20I.png"},"description":"Clarity sessions, reflective resources, and practical guidance for Nigerians and the diaspora."},{"@type":"WebSite","@id":"https://verse.atanda.site/#website","url":"https://verse.atanda.site/","name":"Atanda Verse","inLanguage":"en-NG","publisher":{"@id":"https://verse.atanda.site/#organization"}},{"@type":"WebPage","@id":"https://verse.atanda.site/#webpage","url":"https://verse.atanda.site/","name":"Atanda Verse - Clarity Sessions, Guides & Direction","isPartOf":{"@id":"https://verse.atanda.site/#website"},"about":{"@id":"https://verse.atanda.site/#organization"},"description":"Free virtual clarity sessions and guided resources for Nigerians ready to move from confusion to direction."},{"@type":"Service","name":"Atanda Verse Clarity Sessions","serviceType":"Virtual clarity coaching","provider":{"@id":"https://verse.atanda.site/#organization"},"areaServed":[{"@type":"Country","name":"Nigeria"},{"@type":"Place","name":"Nigerian diaspora"}],"offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"}}]}</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -608,7 +608,12 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
             body { cursor: auto; }
             .c-dot, .c-ring { display: none; }
             .theme-toggle { top: 100px; right: 14px; width: 46px; height: 46px; }
-            .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(28px); flex-direction: column; padding: 1.5rem 2rem; border-top: 1px solid var(--border-color); gap: 1.2rem; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(248,250,255,.98); backdrop-filter: blur(30px) saturate(170%); -webkit-backdrop-filter: blur(30px) saturate(170%); flex-direction: column; padding: 1.5rem 2rem; border-top: 1px solid rgba(15,35,68,.12); box-shadow: 0 24px 48px rgba(15,35,68,.18); gap: .85rem; }
+            .nav-links a { width: 100%; padding: .8rem 1rem; border-radius: 14px; background: rgba(255,255,255,.78); color: #132343; font-weight: 800; text-align: center; box-shadow: inset 0 0 0 1px rgba(15,35,68,.06); }
+            .nav-links a::after { display: none; }
+            .nav-links .nav-cta { color: #fff; background: linear-gradient(135deg,var(--accent),var(--accent-hover)); box-shadow: 0 14px 30px rgba(220,53,69,.24); }
+            [data-theme="dark"] .nav-links { background: rgba(10,18,34,.98); border-top-color: rgba(255,255,255,.1); box-shadow: 0 24px 48px rgba(0,0,0,.35); }
+            [data-theme="dark"] .nav-links a { background: rgba(255,255,255,.08); color: #f8fbff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
             .nav-links.active { display: flex; }
             .mobile-menu { display: flex; }
             .hero { padding: 7rem 0 4rem; }
@@ -1012,7 +1017,7 @@ img.loaded{opacity:1;}
         <div class="orb orb-3" data-p="0.15"></div>
         <canvas class="particles" id="pc"></canvas>
         <div class="container hero-inner">
-            <div class="hero-badge s1">🔑 Free During Launch Period</div>
+            <div class="hero-badge s1">🔑 Free Single Session During Launch</div>
             <h1 class="hero-title">
                 <span class="title-virtual s2">VIRTUAL</span>
                 <span class="title-clarity s3">CLARITY</span>
@@ -1038,33 +1043,33 @@ img.loaded{opacity:1;}
         <div class="container">
             <span class="section-tag rv">Choose Your Path</span>
             <h2 class="section-title rv">SESSIONS &amp; PLANS</h2>
-            <p class="section-subtitle rv">All sessions are currently FREE as we launch the Atanda Verse experience</p>
+            <p class="section-subtitle rv">Start with one free single session. Deeper packages are paid and confirmed after registration.</p>
             <div class="pricing-grid stg">
                 <div class="pricing-card iv-pop">
-                    <div class="pricing-badge">FREEMIUM</div>
+                    <div class="pricing-badge">FREE START</div>
                     <h3 class="pricing-title">Single Session</h3>
-                    <div class="pricing-price"><span class="price-original">$15</span><span class="price-current">FREE</span><div class="price-naira">₦0 · was ₦25,000</div></div>
+                    <div class="pricing-price"><span class="price-original">$15</span><span class="price-current">FREE</span><div class="price-naira">&#8358;0 &middot; single launch session</div></div>
                     <ul class="pricing-features"><li>90-minute clarity session</li><li>Personal breakthrough guidance</li><li>Action plan creation</li><li>24h follow-up support</li></ul>
                     <a href="register.html?session=single&label=Single%20Session&source=index-pricing" class="cta-button">Book Now</a>
                 </div>
                 <div class="pricing-card featured iv-pop">
                     <div class="pricing-badge">MOST POPULAR</div>
                     <h3 class="pricing-title">Three Session Package</h3>
-                    <div class="pricing-price"><span class="price-original">$40</span><span class="price-current">FREE</span><div class="price-naira">₦0 · was ₦65,000</div></div>
+                    <div class="pricing-price"><span class="price-current">$40</span><div class="price-naira">&#8358;65,000 &middot; paid package</div></div>
                     <ul class="pricing-features"><li>3× 90-minute sessions</li><li>Progressive clarity building</li><li>Comprehensive life mapping</li><li>Ongoing support between sessions</li><li>Digital library access</li></ul>
                     <a href="register.html?session=three-pack&label=Three%20Session%20Package&source=index-pricing" class="cta-button">Start Package</a>
                 </div>
                 <div class="pricing-card iv-pop">
-                    <div class="pricing-badge">FREEMIUM</div>
+                    <div class="pricing-badge">GROUP PATH</div>
                     <h3 class="pricing-title">Weekly Group</h3>
-                    <div class="pricing-price"><span class="price-original">$30</span><span class="price-current">FREE</span><div class="price-naira">₦0 · was ₦50,000</div></div>
+                    <div class="pricing-price"><span class="price-current">$30</span><div class="price-naira">&#8358;50,000 &middot; paid group access</div></div>
                     <ul class="pricing-features"><li>Weekly group sessions</li><li>Community support</li><li>Shared breakthrough experiences</li><li>Group accountability</li></ul>
                     <a href="register.html?session=group&label=Weekly%20Group%20Sessions&source=index-pricing" class="cta-button">Join Group</a>
                 </div>
                 <div class="pricing-card iv-pop">
                     <div class="pricing-badge">INTENSIVE</div>
                     <h3 class="pricing-title">Monthly Intensive</h3>
-                    <div class="pricing-price"><span class="price-original">$150</span><span class="price-current">FREE</span><div class="price-naira">₦0 · was ₦245,000</div></div>
+                    <div class="pricing-price"><span class="price-current">$150</span><div class="price-naira">&#8358;245,000 &middot; paid intensive</div></div>
                     <ul class="pricing-features"><li>4 weekly intensive sessions</li><li>Deep transformation program</li><li>Personal clarity roadmap</li><li>Unlimited support access</li><li>Exclusive resources</li></ul>
                     <a href="register.html?session=intensive&label=Monthly%20Intensive&source=index-pricing" class="cta-button">Go Intensive</a>
                 </div>
@@ -1099,8 +1104,8 @@ img.loaded{opacity:1;}
     <section class="contact" id="contact">
         <div class="container">
             <span class="section-tag rv">Take Action</span>
-            <h2 class="section-title rv">REGISTER FOR FREE SESSION</h2>
-            <p class="section-subtitle rv">Take the first step towards clarity. All sessions are currently FREE during our launch period.</p>
+            <h2 class="section-title rv">REGISTER FOR YOUR SESSION</h2>
+            <p class="section-subtitle rv">The single 90-minute session is free during launch. Packages and group plans are paid offers.</p>
             <form class="registration-form rv" id="registrationForm">
                 <div class="form-row">
                     <div class="form-group"><label for="fullName">Full Name *</label><input type="text" id="fullName" name="fullName" required placeholder="Your full name"></div>
@@ -1112,20 +1117,20 @@ img.loaded{opacity:1;}
                         <label for="sessionType">Preferred Session Type *</label>
                         <select id="sessionType" name="sessionType" required>
                             <option value="">Select Session Type</option>
-                            <option value="single">Single Session (90 minutes)</option>
-                            <option value="three-pack">Three Session Package</option>
-                            <option value="group">Weekly Group Sessions</option>
-                            <option value="intensive">Monthly Intensive</option>
+                            <option value="single">Single Session (Free launch)</option>
+                            <option value="three-pack">Three Session Package ($40 / N65,000)</option>
+                            <option value="group">Weekly Group Sessions ($30 / N50,000)</option>
+                            <option value="intensive">Monthly Intensive ($150 / N245,000)</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group"><label for="goals">What do you hope to achieve? (Optional)</label><textarea id="goals" name="goals" rows="3" placeholder="Tell us about your current challenges or what you're looking to gain clarity on..."></textarea></div>
-                <button type="submit" class="cta-button" style="margin:0">BOOK MY FREE SESSION</button>
+                <button type="submit" class="cta-button" style="margin:0">RESERVE MY SESSION</button>
             </form>
             <div class="contact-alternatives rv">
                 <p>Prefer to reach out directly?</p>
                 <div class="contact-buttons">
-                    <a href="https://wa.me/2348147732687?text=Hi! I'd like to book a free clarity session" class="contact-btn whatsapp" target="_blank">💬 WhatsApp Us</a>
+                    <a href="https://wa.me/2348147732687?text=Hi! I'd like help choosing an Atanda Verse clarity session" class="contact-btn whatsapp" target="_blank">💬 WhatsApp Us</a>
                     <a href="mailto:hello@atanda.site" class="contact-btn email">📧 Email Us</a>
                 </div>
             </div>
@@ -1158,7 +1163,7 @@ img.loaded{opacity:1;}
             <h2 class="section-title rv">FREQUENTLY ASKED</h2>
             <div class="faq-grid stg">
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>How do online sessions work?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Our virtual sessions are conducted via Zoom or your preferred video platform. You'll receive a private link and detailed preparation guide 24 hours before your session. All you need is a quiet space and stable internet connection.</p></div></div>
-                <div class="faq-item iv-pop"><div class="faq-question"><h4>Are the sessions really free?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Yes! We're offering completely free sessions during our launch period to build our community and gather testimonials. No hidden fees, no credit card required. This is our gift to you.</p></div></div>
+                <div class="faq-item iv-pop"><div class="faq-question"><h4>Is Atanda Verse free?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Your first single clarity session is free during launch. Three-session packages, weekly group access, and monthly intensives are paid guided offers, and payment details are confirmed after registration.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>What if I miss a scheduled session?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Life happens! Just give us 24 hours notice and we'll reschedule at no cost. We offer flexible timing to accommodate your schedule, including evening and weekend slots.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>What should I expect from my first session?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Your first session focuses on understanding your current situation, identifying mental blocks, and creating a clear vision for your path forward. You'll leave with actionable insights and a personalized clarity plan.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>Is this coaching, therapy, or counselling?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Clarity sessions are coaching-based, not therapy. We help you gain clarity, set direction, and take meaningful action. For clinical mental health needs, we recommend a licensed therapist.</p></div></div>
@@ -1490,6 +1495,13 @@ img.loaded{opacity:1;}
     });
 
     // ── FORM SUBMISSION ──
+    const SESSION_PRICE_MAP = {
+        single: { label: 'Single Session', price: 'FREE', note: 'single launch session' },
+        'three-pack': { label: 'Three Session Package', price: '$40 / N65,000', note: 'paid package' },
+        group: { label: 'Weekly Group Sessions', price: '$30 / N50,000', note: 'paid group access' },
+        intensive: { label: 'Monthly Intensive', price: '$150 / N245,000', note: 'paid intensive' }
+    };
+
     document.getElementById('registrationForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const d = Object.fromEntries(new FormData(this));
@@ -1514,9 +1526,10 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
                 tags: ['registration', 'sessions', d.sessionType || 'general']
             });
         }
-        const msg = `🌟 NEW CLARITY SESSION REGISTRATION\n\n📝 Details:\n• Name: ${d.fullName}\n• Email: ${d.email}\n• Phone: ${d.phone}\n• Session: ${d.sessionType}\n• Goals: ${d.goals || 'Not specified'}\n\n💫 Ready to begin their transformation journey!`;
+        const selectedSession = SESSION_PRICE_MAP[d.sessionType] || SESSION_PRICE_MAP.single;
+        const msg = `NEW CLARITY SESSION REGISTRATION\n\nDetails:\n- Name: ${d.fullName}\n- Email: ${d.email}\n- Phone: ${d.phone}\n- Session: ${selectedSession.label}\n- Price: ${selectedSession.price} (${selectedSession.note})\n- Goals: ${d.goals || 'Not specified'}\n\nReady to begin their transformation journey.`;
         window.open(`https://wa.me/2348147732687?text=${encodeURIComponent(msg)}`, '_blank');
-        alert("Thank you for registering! We'll contact you within 24 hours to schedule your free session.");
+        alert(d.sessionType === 'single' ? "Thank you for registering! We'll contact you within 24 hours to schedule your free single session." : "Thank you for registering! We'll contact you within 24 hours with confirmation and payment details for your selected plan.");
         this.reset();
     });
 

@@ -585,7 +585,12 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
             body { cursor: auto; }
             .c-dot, .c-ring { display: none; }
             .theme-toggle { top: 100px; right: 14px; width: 46px; height: 46px; }
-            .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(28px); flex-direction: column; padding: 1.5rem 2rem; border-top: 1px solid var(--border-color); gap: 1.2rem; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(248,250,255,.98); backdrop-filter: blur(30px) saturate(170%); -webkit-backdrop-filter: blur(30px) saturate(170%); flex-direction: column; padding: 1.5rem 2rem; border-top: 1px solid rgba(15,35,68,.12); box-shadow: 0 24px 48px rgba(15,35,68,.18); gap: .85rem; }
+            .nav-links a { width: 100%; padding: .8rem 1rem; border-radius: 14px; background: rgba(255,255,255,.78); color: #132343; font-weight: 800; text-align: center; box-shadow: inset 0 0 0 1px rgba(15,35,68,.06); }
+            .nav-links a::after { display: none; }
+            .nav-links .nav-cta { color: #fff; background: linear-gradient(135deg,var(--accent),var(--accent-hover)); box-shadow: 0 14px 30px rgba(220,53,69,.24); }
+            [data-theme="dark"] .nav-links { background: rgba(10,18,34,.98); border-top-color: rgba(255,255,255,.1); box-shadow: 0 24px 48px rgba(0,0,0,.35); }
+            [data-theme="dark"] .nav-links a { background: rgba(255,255,255,.08); color: #f8fbff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
             .nav-links.active { display: flex; }
             .mobile-menu { display: flex; }
             .hero { padding: 7rem 0 4rem; }
@@ -666,7 +671,12 @@ a,button,input,select,textarea,.faq-question,.mobile-menu,.contact-btn,.sticky-c
 
 @media(max-width:768px){
   .nav-container{padding:0 1rem}
-  .nav-links{display:none;position:absolute;top:100%;left:0;width:100%;background:var(--nav-bg,rgba(255,255,255,.95));backdrop-filter:blur(28px);flex-direction:column;padding:1.5rem 2rem;border-top:1px solid var(--border-color,rgba(0,0,0,.08));gap:1.2rem;z-index:999}
+  .nav-links{display:none;position:absolute;top:100%;left:0;width:100%;background:rgba(248,250,255,.98);backdrop-filter:blur(30px) saturate(170%);-webkit-backdrop-filter:blur(30px) saturate(170%);flex-direction:column;padding:1.5rem 2rem;border-top:1px solid rgba(15,35,68,.12);box-shadow:0 24px 48px rgba(15,35,68,.18);gap:.85rem;z-index:999}
+  .nav-links a{width:100%;padding:.8rem 1rem;border-radius:14px;background:rgba(255,255,255,.78);color:#132343!important;font-weight:800;text-align:center;box-shadow:inset 0 0 0 1px rgba(15,35,68,.06)}
+  .nav-links a::after{display:none}
+  .nav-links .nav-cta{color:#fff!important;background:linear-gradient(135deg,var(--accent,#dc3545),var(--accent-hover,#b02a37));box-shadow:0 14px 30px rgba(220,53,69,.24)}
+  [data-theme="dark"] .nav-links{background:rgba(10,18,34,.98);border-top-color:rgba(255,255,255,.1);box-shadow:0 24px 48px rgba(0,0,0,.35)}
+  [data-theme="dark"] .nav-links a{background:rgba(255,255,255,.08);color:#f8fbff!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
   .nav-links.active{display:flex}
   .mobile-menu{display:flex}
 }
@@ -996,7 +1006,7 @@ img.loaded{opacity:1;}
       <div class="breadcrumb"><a href="index.html">Home</a> › Sessions</div>
       <div class="page-tag">Choose Your Path</div>
       <h1 class="section-title" style="font-size:clamp(3rem,8vw,5.5rem);margin-bottom:1rem;animation:none">SESSIONS &amp; PLANS</h1>
-      <p class="section-subtitle" style="max-width:580px;margin:0 auto;animation:none">All sessions are completely free during our launch period. No credit card required.</p>
+      <p class="section-subtitle" style="max-width:580px;margin:0 auto;animation:none">Your first single session is free during launch. Packages and group plans are paid guided offers.</p>
     </div>
   </section>
 
@@ -1004,12 +1014,12 @@ img.loaded{opacity:1;}
     <div class="container">
       <span class="section-tag rv">Plans</span>
       <h2 class="section-title rv">PICK YOUR SESSION</h2>
-      <p class="section-subtitle rv">Currently FREE &mdash; register before the countdown ends</p>
+      <p class="section-subtitle rv">Single session is free. Choose a paid package when you want deeper support.</p>
       <div class="pricing-grid stg">
-        <div class="pricing-card iv-pop"><div class="pricing-badge">FREEMIUM</div><h3 class="pricing-title">Single Session</h3><div class="pricing-price"><span class="price-original">$15</span><span class="price-current">FREE</span><div class="price-naira">&#8358;0 &middot; was &#8358;25,000</div></div><ul class="pricing-features"><li>90-minute clarity session</li><li>Personal breakthrough guidance</li><li>Action plan creation</li><li>24h follow-up support</li></ul><a href="register.html?session=single&label=Single%20Session&source=sessions-pricing" class="cta-button">Book Now</a></div>
-        <div class="pricing-card featured iv-pop"><div class="pricing-badge">MOST POPULAR</div><h3 class="pricing-title">Three Session Package</h3><div class="pricing-price"><span class="price-original">$40</span><span class="price-current">FREE</span><div class="price-naira">&#8358;0 &middot; was &#8358;65,000</div></div><ul class="pricing-features"><li>3&times; 90-minute sessions</li><li>Progressive clarity building</li><li>Comprehensive life mapping</li><li>Ongoing support between sessions</li><li>Digital library access</li></ul><a href="register.html?session=three-pack&label=Three%20Session%20Package&source=sessions-pricing" class="cta-button">Start Package</a></div>
-        <div class="pricing-card iv-pop"><div class="pricing-badge">FREEMIUM</div><h3 class="pricing-title">Weekly Group</h3><div class="pricing-price"><span class="price-original">$30</span><span class="price-current">FREE</span><div class="price-naira">&#8358;0 &middot; was &#8358;50,000</div></div><ul class="pricing-features"><li>Weekly group sessions</li><li>Community support</li><li>Shared breakthrough experiences</li><li>Group accountability</li></ul><a href="register.html?session=group&label=Weekly%20Group%20Sessions&source=sessions-pricing" class="cta-button">Join Group</a></div>
-        <div class="pricing-card iv-pop"><div class="pricing-badge">INTENSIVE</div><h3 class="pricing-title">Monthly Intensive</h3><div class="pricing-price"><span class="price-original">$150</span><span class="price-current">FREE</span><div class="price-naira">&#8358;0 &middot; was &#8358;245,000</div></div><ul class="pricing-features"><li>4 weekly intensive sessions</li><li>Deep transformation program</li><li>Personal clarity roadmap</li><li>Unlimited support access</li><li>Exclusive resources</li></ul><a href="register.html?session=intensive&label=Monthly%20Intensive&source=sessions-pricing" class="cta-button">Go Intensive</a></div>
+        <div class="pricing-card iv-pop"><div class="pricing-badge">FREE START</div><h3 class="pricing-title">Single Session</h3><div class="pricing-price"><span class="price-original">$15</span><span class="price-current">FREE</span><div class="price-naira">&#8358;0 &middot; single launch session</div></div><ul class="pricing-features"><li>90-minute clarity session</li><li>Personal breakthrough guidance</li><li>Action plan creation</li><li>24h follow-up support</li></ul><a href="register.html?session=single&label=Single%20Session&source=sessions-pricing" class="cta-button">Book Free Session</a></div>
+        <div class="pricing-card featured iv-pop"><div class="pricing-badge">MOST POPULAR</div><h3 class="pricing-title">Three Session Package</h3><div class="pricing-price"><span class="price-current">$40</span><div class="price-naira">&#8358;65,000 &middot; paid package</div></div><ul class="pricing-features"><li>3&times; 90-minute sessions</li><li>Progressive clarity building</li><li>Comprehensive life mapping</li><li>Ongoing support between sessions</li><li>Digital library access</li></ul><a href="register.html?session=three-pack&label=Three%20Session%20Package&source=sessions-pricing" class="cta-button">Start Package</a></div>
+        <div class="pricing-card iv-pop"><div class="pricing-badge">GROUP PATH</div><h3 class="pricing-title">Weekly Group</h3><div class="pricing-price"><span class="price-current">$30</span><div class="price-naira">&#8358;50,000 &middot; paid group access</div></div><ul class="pricing-features"><li>Weekly group sessions</li><li>Community support</li><li>Shared breakthrough experiences</li><li>Group accountability</li></ul><a href="register.html?session=group&label=Weekly%20Group%20Sessions&source=sessions-pricing" class="cta-button">Join Group</a></div>
+        <div class="pricing-card iv-pop"><div class="pricing-badge">INTENSIVE</div><h3 class="pricing-title">Monthly Intensive</h3><div class="pricing-price"><span class="price-current">$150</span><div class="price-naira">&#8358;245,000 &middot; paid intensive</div></div><ul class="pricing-features"><li>4 weekly intensive sessions</li><li>Deep transformation program</li><li>Personal clarity roadmap</li><li>Unlimited support access</li><li>Exclusive resources</li></ul><a href="register.html?session=intensive&label=Monthly%20Intensive&source=sessions-pricing" class="cta-button">Go Intensive</a></div>
       </div>
     </div>
   </section>
@@ -1048,7 +1058,7 @@ img.loaded{opacity:1;}
       <h2 class="section-title rv">HOW IT WORKS</h2>
       <p class="section-subtitle rv">Four simple steps from where you are to where you want to be</p>
       <div class="iv-stagger" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-top:2.5rem;text-align:center">
-        <div><div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;box-shadow:0 8px 24px rgba(220,53,69,.3)">1</div><div style="font-weight:700;color:var(--text-primary);margin-bottom:.5rem">Register</div><p style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Fill the form. No credit card needed.</p></div>
+        <div><div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;box-shadow:0 8px 24px rgba(220,53,69,.3)">1</div><div style="font-weight:700;color:var(--text-primary);margin-bottom:.5rem">Register</div><p style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Fill the form. Single sessions are free; paid plans get payment details after review.</p></div>
         <div><div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;box-shadow:0 8px 24px rgba(220,53,69,.3)">2</div><div style="font-weight:700;color:var(--text-primary);margin-bottom:.5rem">Get Confirmed</div><p style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">We WhatsApp you within 24 hours with your link and prep guide.</p></div>
         <div><div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;box-shadow:0 8px 24px rgba(220,53,69,.3)">3</div><div style="font-weight:700;color:var(--text-primary);margin-bottom:.5rem">Show Up</div><p style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Join with an open mind. Quiet space and stable internet is all you need.</p></div>
         <div><div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#dc3545,#b02a37);color:white;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;box-shadow:0 8px 24px rgba(220,53,69,.3)">4</div><div style="font-weight:700;color:var(--text-primary);margin-bottom:.5rem">Transform</div><p style="color:var(--text-secondary);font-size:.88rem;line-height:1.65">Walk away with a personalized clarity plan and tools to create the life you want.</p></div>
@@ -1059,16 +1069,16 @@ img.loaded{opacity:1;}
   <section class="contact" id="contact">
     <div class="container">
       <span class="section-tag rv">Take Action</span>
-      <h2 class="section-title rv">REGISTER FOR FREE SESSION</h2>
-      <p class="section-subtitle rv">All sessions are completely FREE during our launch period.</p>
+      <h2 class="section-title rv">REGISTER FOR YOUR SESSION</h2>
+      <p class="section-subtitle rv">The single 90-minute session is free during launch. Packages and group plans are paid offers.</p>
       <form class="registration-form rv" id="registrationForm">
         <div class="form-row"><div class="form-group"><label for="fullName">Full Name *</label><input type="text" id="fullName" name="fullName" required placeholder="Your full name"></div><div class="form-group"><label for="email">Email *</label><input type="email" id="email" name="email" required placeholder="you@example.com"></div></div>
-        <div class="form-row"><div class="form-group"><label for="phone">WhatsApp / Phone *</label><input type="tel" id="phone" name="phone" required placeholder="+234 xxx xxx xxxx"></div><div class="form-group"><label for="sessionType">Session Type *</label><select id="sessionType" name="sessionType" required><option value="">Select</option><option value="single">Single Session (90 min)</option><option value="three-pack">Three Session Package</option><option value="group">Weekly Group Sessions</option><option value="intensive">Monthly Intensive</option></select></div></div>
+        <div class="form-row"><div class="form-group"><label for="phone">WhatsApp / Phone *</label><input type="tel" id="phone" name="phone" required placeholder="+234 xxx xxx xxxx"></div><div class="form-group"><label for="sessionType">Session Type *</label><select id="sessionType" name="sessionType" required><option value="">Select</option><option value="single">Single Session (Free launch)</option><option value="three-pack">Three Session Package ($40 / N65,000)</option><option value="group">Weekly Group Sessions ($30 / N50,000)</option><option value="intensive">Monthly Intensive ($150 / N245,000)</option></select></div></div>
         <div class="form-group"><label for="goals">What do you hope to achieve? (Optional)</label><textarea id="goals" name="goals" rows="3" placeholder="Tell us about your challenges..."></textarea></div>
-        <button type="submit" class="cta-button" style="margin:0">BOOK MY FREE SESSION</button>
+        <button type="submit" class="cta-button" style="margin:0">RESERVE MY SESSION</button>
         <p style="font-size:.76rem;color:var(--text-muted);margin-top:1.1rem;line-height:1.65;text-align:center">⚠️ Clarity sessions are <strong>coaching-based</strong>, not therapy or counselling. They are not a substitute for professional mental health care. <a href="legal.html#disclaimer" style="color:var(--accent);text-decoration:none;font-weight:600">Read full disclaimer →</a></p>
       </form>
-      <div class="contact-alternatives rv"><p>Prefer to reach out directly?</p><div class="contact-buttons"><a href="https://wa.me/2348147732687?text=Hi! I'd like to book a free clarity session" class="contact-btn whatsapp" target="_blank">&#128172; WhatsApp Us</a><a href="mailto:sessions@atanda.site" class="contact-btn email">&#128231; Email Sessions</a></div><p style="font-size:.82rem;color:var(--text-muted);margin-top:1rem;line-height:1.7">Payment trouble, bugs, or anything that feels off? Contact <a href="mailto:support@atanda.site" style="color:var(--accent);font-weight:700;text-decoration:none">support@atanda.site</a>.</p></div>
+      <div class="contact-alternatives rv"><p>Prefer to reach out directly?</p><div class="contact-buttons"><a href="https://wa.me/2348147732687?text=Hi! I'd like help choosing an Atanda Verse clarity session" class="contact-btn whatsapp" target="_blank">&#128172; WhatsApp Us</a><a href="mailto:sessions@atanda.site" class="contact-btn email">&#128231; Email Sessions</a></div><p style="font-size:.82rem;color:var(--text-muted);margin-top:1rem;line-height:1.7">Payment trouble, bugs, or anything that feels off? Contact <a href="mailto:support@atanda.site" style="color:var(--accent);font-weight:700;text-decoration:none">support@atanda.site</a>.</p></div>
     </div>
   </section>
 </main>
@@ -1098,6 +1108,13 @@ const _mm=document.getElementById('mobileMenu'),_nl=document.getElementById('nav
 if(_mm)_mm.addEventListener('click',()=>{_nl.classList.toggle('active');_mm.classList.toggle('open')});
 document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}}));
 
+const SESSION_PRICE_MAP = {
+  single: { label: 'Single Session', price: 'FREE', note: 'single launch session' },
+  'three-pack': { label: 'Three Session Package', price: '$40 / N65,000', note: 'paid package' },
+  group: { label: 'Weekly Group Sessions', price: '$30 / N50,000', note: 'paid group access' },
+  intensive: { label: 'Monthly Intensive', price: '$150 / N245,000', note: 'paid intensive' }
+};
+
 document.getElementById('registrationForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   var d = Object.fromEntries(new FormData(this));
@@ -1120,9 +1137,10 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
       tags: ['registration', 'sessions', d.sessionType || 'general']
     });
   }
-  var msg = 'NEW CLARITY SESSION\n\nName: ' + d.fullName + '\nEmail: ' + d.email + '\nPhone: ' + d.phone + '\nSession: ' + d.sessionType + '\nGoals: ' + (d.goals || 'Not specified');
+  var selectedSession = SESSION_PRICE_MAP[d.sessionType] || SESSION_PRICE_MAP.single;
+  var msg = 'NEW CLARITY SESSION\n\nName: ' + d.fullName + '\nEmail: ' + d.email + '\nPhone: ' + d.phone + '\nSession: ' + selectedSession.label + '\nPrice: ' + selectedSession.price + ' (' + selectedSession.note + ')' + '\nGoals: ' + (d.goals || 'Not specified');
   window.open('https://wa.me/2348147732687?text=' + encodeURIComponent(msg), '_blank');
-  alert("Thank you for registering! We'll contact you within 24 hours to schedule your free session.");
+  alert(d.sessionType === 'single' ? "Thank you for registering! We'll contact you within 24 hours to schedule your free single session." : "Thank you for registering! We'll contact you within 24 hours with confirmation and payment details for your selected plan.");
   this.reset();
 });
 </script>

@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register for a Free Clarity Session | Atanda Verse</title>
-    <meta name="description" content="Register for a free Atanda Verse clarity session. Choose your session type, share what you need help with, and reserve a guided conversation for direction and next steps.">
+    <title>Register for an Atanda Verse Clarity Session</title>
+    <meta name="description" content="Register for an Atanda Verse clarity session. Start with the free single session or choose a paid group, package, or intensive clarity plan.">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="theme-color" content="#1a365d">
     <link rel="canonical" href="https://verse.atanda.site/register">
     <link rel="alternate" hreflang="en-ng" href="https://verse.atanda.site/register">
-    <meta property="og:title" content="Register for a Free Clarity Session | Atanda Verse">
-    <meta property="og:description" content="Reserve a guided clarity conversation for direction, purpose, and next steps.">
+    <meta property="og:title" content="Register for an Atanda Verse Clarity Session">
+    <meta property="og:description" content="Start with a free single session or choose a paid guided plan for deeper clarity support.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://verse.atanda.site/register">
     <meta property="og:image" content="https://verse.atanda.site/images/headers.png">
-    <meta property="og:image:alt" content="Atanda Verse free clarity session registration">
+    <meta property="og:image:alt" content="Atanda Verse clarity session registration">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Register for a Free Clarity Session | Atanda Verse">
-    <meta name="twitter:description" content="Reserve a guided clarity conversation for direction, purpose, and next steps.">
+    <meta name="twitter:title" content="Register for an Atanda Verse Clarity Session">
+    <meta name="twitter:description" content="Start with a free single session or choose a paid guided plan for deeper clarity support.">
     <meta name="twitter:image" content="https://verse.atanda.site/images/headers.png">
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"RegisterAction","name":"Register for an Atanda Verse clarity session","target":"https://verse.atanda.site/register","object":{"@type":"Service","name":"Atanda Verse Clarity Session","provider":{"@type":"Organization","name":"Atanda Verse","url":"https://verse.atanda.site/"}}}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -173,8 +173,10 @@
         @media (max-width: 768px){
             .wrap,.container{padding-left:1rem!important;padding-right:1rem!important}
             .hero-grid,.layout{gap:1.15rem!important}
-            .nav-links{justify-content:flex-start!important;gap:.85rem!important}
-            .nav-links .nav-cta{width:100%;text-align:center}
+            nav{background:rgba(248,250,255,.98);box-shadow:0 18px 42px rgba(18,33,67,.12)}
+            .nav-links{width:100%;justify-content:flex-start!important;gap:.65rem!important;padding:.65rem;background:rgba(255,255,255,.64);border:1px solid rgba(19,35,67,.08);border-radius:18px}
+            .nav-links a{padding:.72rem .85rem;border-radius:12px;background:rgba(255,255,255,.82);color:#16233f;font-weight:800;box-shadow:inset 0 0 0 1px rgba(19,35,67,.06)}
+            .nav-links .nav-cta{width:100%;text-align:center;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-deep));box-shadow:0 14px 30px rgba(199,55,74,.22)}
         }
         @media (max-width: 480px){
             .hero-copy,.summary-card,.registration-card,.note-card{padding:1.15rem!important;border-radius:18px!important}
@@ -208,10 +210,11 @@
                 <h1>Register with the right path already selected</h1>
                 <p>
                     Choose a session, arrive with the right package prefilled, and complete one focused registration flow.
-                    This page is built for conversion, not guesswork.
+                    The first single session is free; paid plans are clearly marked before you submit.
                 </p>
                 <div class="mini-points">
-                    <span>No payment required during launch</span>
+                    <span>Single session is free during launch</span>
+                    <span>Paid plans are confirmed before scheduling</span>
                     <span>WhatsApp confirmation within 24 hours</span>
                     <span>Built for future in-app payment</span>
                 </div>
@@ -251,10 +254,10 @@
                             <label for="sessionType">Selected Path *</label>
                             <select id="sessionType" name="sessionType" required>
                                 <option value="">Select Session Type</option>
-                                <option value="single">Single Session (90 minutes)</option>
-                                <option value="three-pack">Three Session Package</option>
-                                <option value="group">Weekly Group Sessions</option>
-                                <option value="intensive">Monthly Intensive</option>
+                                <option value="single">Single Session (Free launch)</option>
+                                <option value="three-pack">Three Session Package ($40 / N65,000)</option>
+                                <option value="group">Weekly Group Sessions ($30 / N50,000)</option>
+                                <option value="intensive">Monthly Intensive ($150 / N245,000)</option>
                             </select>
                         </div>
                     </div>
@@ -264,7 +267,7 @@
                     </div>
                     <button type="submit" class="cta-button" id="registerButton">Book my free session</button>
                     <div class="microcopy" id="registerMicrocopy">
-                        During launch, registration is free. When paid plans go live, payment should happen inside the app, not in WhatsApp DMs. Session questions belong at <a href="mailto:sessions@atanda.site" style="color:var(--accent);font-weight:700;text-decoration:none">sessions@atanda.site</a>.
+                        Single session registration is free during launch. Paid plans are reviewed and confirmed before payment details are sent. Session questions belong at <a href="mailto:sessions@atanda.site" style="color:var(--accent);font-weight:700;text-decoration:none">sessions@atanda.site</a>.
                     </div>
                 </form>
             </div>
@@ -307,7 +310,8 @@
                 tag: 'Fast clarity',
                 title: 'Single Session',
                 oldPrice: '$15',
-                note: 'N0 · was N25,000',
+                currentPrice: 'FREE',
+                note: 'N0 - single launch session',
                 button: 'Book my free session',
                 features: [
                     '90-minute clarity session',
@@ -320,7 +324,8 @@
                 tag: 'Most popular',
                 title: 'Three Session Package',
                 oldPrice: '$40',
-                note: 'N0 · was N65,000',
+                currentPrice: '$40',
+                note: 'N65,000 - paid package',
                 button: 'Start my package',
                 features: [
                     '3x 90-minute sessions',
@@ -334,7 +339,8 @@
                 tag: 'Community path',
                 title: 'Weekly Group Sessions',
                 oldPrice: '$30',
-                note: 'N0 · was N50,000',
+                currentPrice: '$30',
+                note: 'N50,000 - paid group access',
                 button: 'Join the group',
                 features: [
                     'Weekly group sessions',
@@ -347,7 +353,8 @@
                 tag: 'Deep work',
                 title: 'Monthly Intensive',
                 oldPrice: '$150',
-                note: 'N0 · was N245,000',
+                currentPrice: '$150',
+                note: 'N245,000 - paid intensive',
                 button: 'Go intensive',
                 features: [
                     '4 weekly intensive sessions',
@@ -368,8 +375,10 @@
             const data = PACKAGE_MAP[sessionKey] || PACKAGE_MAP.single;
             document.getElementById('summaryTag').textContent = data.tag;
             document.getElementById('summaryTitle').textContent = data.title;
-            document.getElementById('summaryWas').textContent = data.oldPrice;
-            document.getElementById('summaryNow').textContent = 'FREE';
+            const wasEl = document.getElementById('summaryWas');
+            wasEl.textContent = data.oldPrice;
+            wasEl.style.display = sessionKey === 'single' ? '' : 'none';
+            document.getElementById('summaryNow').textContent = data.currentPrice || 'FREE';
             document.getElementById('summaryNote').textContent = data.note;
             document.getElementById('registerButton').textContent = data.button;
             document.getElementById('summaryFeatures').innerHTML = data.features.map(function(item){
@@ -436,16 +445,18 @@
             }
 
             const selected = PACKAGE_MAP[d.sessionType] || PACKAGE_MAP.single;
+            const priceLine = (selected.currentPrice || 'FREE') + ' (' + selected.note + ')';
             const msg =
                 'NEW CLARITY SESSION REGISTRATION\n\n' +
                 'Name: ' + d.fullName + '\n' +
                 'Email: ' + d.email + '\n' +
                 'Phone: ' + d.phone + '\n' +
                 'Session: ' + selected.title + '\n' +
+                'Price: ' + priceLine + '\n' +
                 'Source: ' + source + '\n' +
                 'Goals: ' + (d.goals || 'Not specified');
             window.open('https://wa.me/2348147732687?text=' + encodeURIComponent(msg), '_blank');
-            alert("Thank you for registering! We'll contact you within 24 hours to confirm your session.");
+            alert(d.sessionType === 'single' ? "Thank you for registering! We'll contact you within 24 hours to confirm your free single session." : "Thank you for registering! We'll contact you within 24 hours with confirmation and payment details for your selected plan.");
             this.reset();
             applyPackage(getSelectedPackage());
         });
