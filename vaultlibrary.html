@@ -223,7 +223,31 @@ async function loadVault(){
     </section>`;
   }).join('');
 }
-async function openVaultItem(id){const item=vaultItems.find(x=>String(x.id)===String(id));if(!item)return;await logVault('open',item);window.open(item.file_url,'_blank','noopener')}
+async function openVaultItem(id){
+  const item=vaultItems.find(x=>String(x.id)===String(id));
+  if(!item)return;
+  await logVault('open',item);
+  if(String(item.file_url||'').startsWith('vault-private:')){
+    try{
+      const c=creds();if(!c)throw new Error('Database unavailable');
+      const res=await fetch(c.url+'/functions/v1/serve-vault-file',{
+        method:'POST',
+        headers:{apikey:c.key,Authorization:'Bearer '+c.key,'Content-Type':'application/json'},
+        body:JSON.stringify({requestId:vaultSession?.id||'',applicationNo:vaultSession?.application_no||'',resourceId:item.id})
+      });
+      if(!res.ok)throw new Error(await res.text());
+      const blob=await res.blob();
+      const url=URL.createObjectURL(blob);
+      window.open(url,'_blank','noopener');
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+    }catch(e){
+      console.warn(e);
+      alert('This vault file could not be opened. Please contact support if this continues.');
+    }
+    return;
+  }
+  window.open(item.file_url,'_blank','noopener');
+}
 async function logVault(eventType,item){try{await sb('vault_activity_logs',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({request_id:vaultSession?.id||'',application_no:vaultSession?.application_no||'',vault_username:vaultSession?.vault_username||'',event_type:eventType,resource_id:item?.id||'',resource_title:item?.title||'',page_url:location.href,user_agent:navigator.userAgent})})}catch(e){}}
 function logoutVault(){showVaultLogin('You have been logged out.')}
 (async function(){try{vaultSession=JSON.parse(sessionStorage.getItem('iv_vault_session')||'null');if(vaultSession)await loadVault()}catch(e){showVaultLogin('Please log in again.')}})();

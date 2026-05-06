@@ -109,10 +109,18 @@ on conflict (id) do update
 set public = true,
     file_size_limit = 52428800;
 
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('atanda-vault-private', 'atanda-vault-private', false, 52428800)
+on conflict (id) do update
+set public = false,
+    file_size_limit = 52428800;
+
 drop policy if exists "public_read_innerverse_media" on storage.objects;
 drop policy if exists "public_insert_innerverse_media" on storage.objects;
 drop policy if exists "public_update_innerverse_media" on storage.objects;
 drop policy if exists "public_delete_innerverse_media" on storage.objects;
+drop policy if exists "admin_insert_atanda_vault_private" on storage.objects;
+drop policy if exists "admin_update_atanda_vault_private" on storage.objects;
 
 create policy "public_read_innerverse_media"
 on storage.objects for select
@@ -130,14 +138,31 @@ with check (bucket_id = 'innerverse-media');
 create policy "public_delete_innerverse_media"
 on storage.objects for delete
 using (bucket_id = 'innerverse-media');
+
+create policy "admin_insert_atanda_vault_private"
+on storage.objects for insert
+with check (bucket_id = 'atanda-vault-private');
+
+create policy "admin_update_atanda_vault_private"
+on storage.objects for update
+using (bucket_id = 'atanda-vault-private')
+with check (bucket_id = 'atanda-vault-private');
 ```
 
 The Storage policies above are what allow Workspace uploads for vault files, cover images, blog covers, testimonials, and library images. If uploads fail with `new row violates row-level security policy`, this Storage section is the missing part.
+
+Vault material files should be uploaded into `atanda-vault-private`. Covers can remain in `innerverse-media` because they are preview images, not protected materials. New private vault files are stored as `vault-private:path/to/file.pdf` and opened through the `serve-vault-file` Edge Function after validating the reader.
 
 Deploy `send-vault-access.example.ts` as the Supabase Edge Function named:
 
 ```text
 send-vault-access
+```
+
+Deploy `serve-vault-file.example.ts` as:
+
+```text
+serve-vault-file
 ```
 
 Required Edge Function secrets:

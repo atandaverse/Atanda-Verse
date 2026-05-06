@@ -510,14 +510,23 @@ values ('innerverse-media', 'innerverse-media', true, 52428800)
 on conflict (id) do update
 set public = true,
     file_size_limit = 52428800;
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('atanda-vault-private', 'atanda-vault-private', false, 52428800)
+on conflict (id) do update
+set public = false,
+    file_size_limit = 52428800;
 drop policy if exists "public_read_innerverse_media" on storage.objects;
 drop policy if exists "public_insert_innerverse_media" on storage.objects;
 drop policy if exists "public_update_innerverse_media" on storage.objects;
 drop policy if exists "public_delete_innerverse_media" on storage.objects;
+drop policy if exists "admin_insert_atanda_vault_private" on storage.objects;
+drop policy if exists "admin_update_atanda_vault_private" on storage.objects;
 create policy "public_read_innerverse_media" on storage.objects for select using (bucket_id = 'innerverse-media');
 create policy "public_insert_innerverse_media" on storage.objects for insert with check (bucket_id = 'innerverse-media');
 create policy "public_update_innerverse_media" on storage.objects for update using (bucket_id = 'innerverse-media') with check (bucket_id = 'innerverse-media');
 create policy "public_delete_innerverse_media" on storage.objects for delete using (bucket_id = 'innerverse-media');
+create policy "admin_insert_atanda_vault_private" on storage.objects for insert with check (bucket_id = 'atanda-vault-private');
+create policy "admin_update_atanda_vault_private" on storage.objects for update using (bucket_id = 'atanda-vault-private') with check (bucket_id = 'atanda-vault-private');
 create policy "public_read_comments" on comments for select using (true);
 create policy "public_write_comments" on comments for all using (true);
 create table if not exists registrations (
@@ -1612,6 +1621,7 @@ function _localSettings(){try{return JSON.parse(localStorage.getItem(SETTINGS_KE
 
 // ── SUPABASE STORAGE UPLOAD ────────────────────────────────────────────────
 const STORAGE_BUCKET='innerverse-media';
+const VAULT_PRIVATE_BUCKET='atanda-vault-private';
 async function uploadToStorage(file, folder='uploads'){
   if(!_useSb()) throw new Error('Supabase not connected');
   const ext=file.name.split('.').pop();
@@ -1629,6 +1639,24 @@ async function uploadToStorage(file, folder='uploads'){
     throw new Error('Upload failed: '+t+hint);
   }
   return `${_sbUrl()}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
+}
+async function uploadVaultPrivateFile(file){
+  if(!_useSb()) throw new Error('Supabase not connected');
+  const ext=(file.name.split('.').pop()||'bin').toLowerCase();
+  const path='vault/'+Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+ext;
+  const res=await fetch(`${_sbUrl()}/storage/v1/object/${VAULT_PRIVATE_BUCKET}/${path}`,{
+    method:'POST',
+    headers:{'apikey':_sbKey(),'Authorization':'Bearer '+_sbKey(),'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},
+    body:file
+  });
+  if(!res.ok){
+    const t=await res.text();
+    const hint=/row-level security|Unauthorized/i.test(t)
+      ? ' Run the atanda-vault-private Storage policy SQL in VAULT_ACCESS_SETUP.md, then try again.'
+      : '';
+    throw new Error('Private vault upload failed: '+t+hint);
+  }
+  return 'vault-private:'+path;
 }
 
 // ── TESTIMONIALS SUPABASE SYNC ─────────────────────────────────────────────
@@ -5106,7 +5134,7 @@ async function saveVaultMaterial(){
   let fileUrl=document.getElementById('vaultMatFileUrl').value.trim();
   let coverUrl=document.getElementById('vaultMatCoverUrl').value.trim();
   try{
-    if(_vaultFilePending){document.getElementById('vaultMatFileStatus').textContent='Uploading file...';fileUrl=await uploadToStorage(_vaultFilePending,'vault');document.getElementById('vaultMatFileStatus').textContent='Uploaded';}
+    if(_vaultFilePending){document.getElementById('vaultMatFileStatus').textContent='Uploading private vault file...';fileUrl=await uploadVaultPrivateFile(_vaultFilePending);document.getElementById('vaultMatFileStatus').textContent='Uploaded privately';}
     if(_vaultCoverPending){document.getElementById('vaultMatCoverStatus').textContent='Uploading cover...';coverUrl=await uploadToStorage(_vaultCoverPending,'vault-covers');document.getElementById('vaultMatCoverStatus').textContent='Uploaded';}
     await _sbUpsert('vault_resources',{id,title,module:document.getElementById('vaultMatModule').value.trim(),format:document.getElementById('vaultMatFormat').value,summary:document.getElementById('vaultMatSummary').value.trim(),access_level:'approved',file_url:fileUrl,cover_url:coverUrl,duration:document.getElementById('vaultMatDuration').value.trim(),sort_order:0,status:document.getElementById('vaultMatStatus').value,tags:document.getElementById('vaultMatTags').value.trim(),notes:document.getElementById('vaultMatNotes').value.trim(),updated_at:new Date().toISOString()});
     toast('Vault material saved','ok');

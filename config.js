@@ -107,7 +107,10 @@
     });
     if (!response.ok) throw new Error(await response.text());
     if (response.status === 204) return null;
-    return response.json();
+    var text = await response.text();
+    if (!text) return null;
+    try { return JSON.parse(text); }
+    catch (_err) { return text; }
   }
 
   window.ivSupabaseDefaults = defaultCreds;
