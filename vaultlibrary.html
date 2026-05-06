@@ -9,16 +9,66 @@
 <script src="config.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700;800&display=swap');
-:root{--ink:#17233f;--muted:#62708c;--soft:#f4f7fb;--card:rgba(255,255,255,.86);--line:rgba(23,35,63,.12);--red:#c7374a;--red2:#8f2430}
-*{box-sizing:border-box}body{margin:0;font-family:'DM Sans',sans-serif;background:radial-gradient(circle at 10% 10%,rgba(199,55,74,.15),transparent 32%),linear-gradient(135deg,#f8fafc,#eef3f8);color:var(--ink);min-height:100vh}
-.wrap{width:min(1120px,92vw);margin:0 auto}.top{padding:1.2rem 0;display:flex;justify-content:space-between;align-items:center}.brand{font-family:'Bebas Neue';font-size:2rem;letter-spacing:3px;text-decoration:none;color:var(--ink)}.brand span{color:var(--red)}.top a:not(.brand){color:var(--muted);font-weight:800;text-decoration:none}
-.hero{padding:5rem 0 2.4rem;text-align:center}.eyebrow{display:inline-flex;padding:.42rem .85rem;border-radius:999px;background:rgba(199,55,74,.09);color:var(--red);font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase}.hero h1{font-family:'Bebas Neue';font-size:clamp(3.2rem,9vw,6.5rem);letter-spacing:3px;line-height:.9;margin:1rem 0;color:var(--ink)}.hero p{max-width:680px;margin:0 auto;color:var(--muted);line-height:1.8;font-size:1.05rem}
-.login,.card{background:var(--card);border:1px solid var(--line);box-shadow:0 24px 70px rgba(23,35,63,.1);border-radius:26px}.login{width:min(520px,100%);margin:0 auto 3rem;padding:1.4rem}.module{margin-bottom:3rem}.module-title{font-family:'Bebas Neue';font-size:2rem;letter-spacing:2px;margin:0 0 1rem}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.2rem;margin-bottom:1rem}.card{padding:1.35rem;display:flex;flex-direction:column;gap:.7rem}.cover{width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#17233f,#c7374a);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Bebas Neue';font-size:1.7rem;letter-spacing:2px}.cover img{width:100%;height:100%;object-fit:cover}.card h3{margin:0;color:var(--ink);font-size:1.02rem}.tag{display:inline-flex;width:max-content;border-radius:999px;padding:.22rem .65rem;background:rgba(199,55,74,.08);color:var(--red);font-size:.68rem;font-weight:800;text-transform:uppercase}.desc{color:var(--muted);line-height:1.7;font-size:.88rem;flex:1}.btn{border:none;border-radius:14px;padding:.9rem 1.1rem;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;font:inherit;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center}.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}input{width:100%;border:1px solid var(--line);background:#fff;border-radius:16px;padding:1rem;font:inherit;color:var(--ink);outline:none}.row{display:grid;gap:.75rem}.status{min-height:1.5rem;color:var(--red);font-weight:800;font-size:.86rem;margin-top:.75rem}.hidden{display:none!important}
-@media(max-width:640px){.top{align-items:flex-start;gap:.7rem}.hero{padding-top:3.2rem}.login{padding:1rem;border-radius:20px}.grid{grid-template-columns:1fr}}
+:root{--ink:#17233f;--muted:#62708c;--soft:#f4f7fb;--card:rgba(255,255,255,.88);--line:rgba(23,35,63,.12);--red:#c7374a;--red2:#8f2430;--gold:#c99a44}
+*{box-sizing:border-box}
+body{margin:0;font-family:'DM Sans',sans-serif;background:radial-gradient(circle at 8% 12%,rgba(199,55,74,.12),transparent 28%),radial-gradient(circle at 86% 4%,rgba(201,154,68,.16),transparent 26%),linear-gradient(135deg,#f8fafc,#eef3f8);color:var(--ink);min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(23,35,63,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(23,35,63,.035) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(to bottom,black,transparent 75%)}
+.wrap{width:min(1160px,92vw);margin:0 auto}
+.top{padding:1.1rem 0;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+.brand{font-family:'Bebas Neue';font-size:2rem;letter-spacing:3px;text-decoration:none;color:var(--ink)}
+.brand span{color:var(--red)}
+.top a:not(.brand){color:var(--muted);font-weight:800;text-decoration:none}
+.hero{padding:4.6rem 0 2rem;text-align:center;position:relative;z-index:1}
+.eyebrow,.tag{display:inline-flex;width:max-content;border-radius:999px;text-transform:uppercase;font-weight:900}
+.eyebrow{padding:.42rem .85rem;background:rgba(199,55,74,.09);color:var(--red);font-size:.72rem;letter-spacing:2px}
+.hero h1{font-family:'Bebas Neue';font-size:clamp(3.4rem,9vw,7rem);letter-spacing:3px;line-height:.88;margin:1rem 0;color:var(--ink)}
+.hero p{max-width:700px;margin:0 auto;color:var(--muted);line-height:1.8;font-size:1.05rem}
+.login,.material-card{background:var(--card);border:1px solid var(--line);box-shadow:0 24px 70px rgba(23,35,63,.1);backdrop-filter:blur(14px)}
+.login{width:min(520px,100%);margin:0 auto 3rem;padding:1.4rem;border-radius:28px}
+.vault-head{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:end;margin:0 0 1.4rem}
+.vault-head h2{font-family:'Bebas Neue';font-size:clamp(2.4rem,6vw,4rem);letter-spacing:2px;margin:.35rem 0 0}
+.vault-head p{margin:.3rem 0 0;color:var(--muted);line-height:1.7}
+.module{margin:0 0 2.4rem}
+.module-title{font-family:'Bebas Neue';font-size:2rem;letter-spacing:2px;margin:0}
+.module-kicker{color:var(--muted);font-size:.92rem;margin:.25rem 0 1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:1rem;margin-bottom:1rem}
+.material-card{border-radius:28px;overflow:hidden;display:grid;grid-template-columns:132px 1fr;min-height:204px;transition:transform .2s ease,box-shadow .2s ease}
+.material-card:hover{transform:translateY(-3px);box-shadow:0 30px 80px rgba(23,35,63,.14)}
+.cover{height:100%;min-height:204px;background:linear-gradient(145deg,#17233f,#c7374a);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Bebas Neue';font-size:1.45rem;letter-spacing:2px;text-align:center;padding:1rem;position:relative;overflow:hidden}
+.cover:after{content:"";position:absolute;inset:auto -30% -35% -30%;height:70%;background:radial-gradient(circle,rgba(255,255,255,.32),transparent 58%)}
+.cover img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.material-body{padding:1.15rem 1.2rem;display:flex;flex-direction:column;gap:.6rem}
+.material-card h3{margin:0;color:var(--ink);font-size:1.06rem;line-height:1.25}
+.tag{padding:.24rem .62rem;background:rgba(199,55,74,.08);color:var(--red);font-size:.62rem;letter-spacing:.6px}
+.desc{color:var(--muted);line-height:1.65;font-size:.9rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-foot{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-top:auto}
+.duration{font-size:.78rem;color:var(--muted);font-weight:800}
+.btn{border:none;border-radius:999px;padding:.82rem 1.05rem;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;font:inherit;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;box-shadow:0 14px 34px rgba(199,55,74,.2)}
+.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+input{width:100%;border:1px solid var(--line);background:#fff;border-radius:16px;padding:1rem;font:inherit;color:var(--ink);outline:none}
+.row{display:grid;gap:.75rem}
+.status{min-height:1.5rem;color:var(--red);font-weight:800;font-size:.86rem;margin-top:.75rem}
+.hidden{display:none!important}
+@media(max-width:760px){
+  .top{align-items:flex-start;gap:.7rem}
+  .hero{padding-top:3rem}
+  .login{padding:1rem;border-radius:22px}
+  .vault-head{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  .material-card{grid-template-columns:1fr;min-height:0;border-radius:24px}
+  .cover{height:180px;min-height:180px}
+  .material-body{padding:1rem}
+  .desc{-webkit-line-clamp:4}
+  .card-foot{align-items:stretch;flex-direction:column}
+  .btn{width:100%}
+}
 </style>
 </head>
 <body>
-<header class="wrap top"><a class="brand" href="index.html">ATANDA <span>VERSE</span></a><a href="library.html">Public Library</a></header>
+<header class="wrap top">
+  <a class="brand" href="index.html">ATANDA <span>VERSE</span></a>
+  <a href="library.html">Public Library</a>
+</header>
 <main class="wrap">
   <section class="hero">
     <div class="eyebrow">Approved Reader Vault</div>
@@ -35,8 +85,12 @@
     </div>
   </section>
   <section id="vaultContent" class="hidden">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
-      <div><div class="eyebrow">Unlocked</div><h2 style="font-family:'Bebas Neue';font-size:2.5rem;letter-spacing:2px;margin:.4rem 0 0">Your Vault Materials</h2></div>
+    <div class="vault-head">
+      <div>
+        <div class="eyebrow">Unlocked</div>
+        <h2>Your Vault Materials</h2>
+        <p>Move through the vault by pathway. Each material is kept focused so you can choose quickly, open what matters, and continue without the page shouting at you.</p>
+      </div>
       <button class="btn ghost" onclick="logoutVault()">Logout</button>
     </div>
     <div id="vaultGrid"></div>
@@ -48,6 +102,8 @@ let vaultItems=[];
 function creds(){return window.ivGetSupabaseCreds&&window.ivGetSupabaseCreds()}
 async function sha256Text(text){const data=new TextEncoder().encode(String(text||''));const hash=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('')}
 function clean(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function plain(v){const d=document.createElement('div');d.innerHTML=String(v||'');return d.textContent||d.innerText||''}
+function excerpt(v,max=210){const text=plain(v).replace(/\s+/g,' ').trim();return text.length>max?text.slice(0,max).replace(/\s+\S*$/,'')+'...':text}
 async function sb(path,opts){const c=creds();if(!c)throw new Error('Database unavailable');const r=await fetch(c.url+'/rest/v1/'+path,{method:opts?.method||'GET',headers:{apikey:c.key,Authorization:'Bearer '+c.key,'Content-Type':'application/json',...(opts?.headers||{})},body:opts?.body||null});if(!r.ok)throw new Error(await r.text());return r.status===204?null:r.json()}
 async function loginVault(){
   const status=document.getElementById('vaultStatus');
@@ -72,11 +128,27 @@ async function loadVault(){
   const rows=await sb('vault_resources?select=*&status=eq.published&order=sort_order.asc,updated_at.desc');
   vaultItems=(rows||[]);
   const grid=document.getElementById('vaultGrid');
-  if(!vaultItems.length){grid.innerHTML='<div class="card"><h3>No vault files yet</h3><div class="desc">Admin has not attached vault resources yet. Check back shortly.</div></div>';return}
+  if(!vaultItems.length){grid.innerHTML='<div class="material-card"><div class="cover">Vault</div><div class="material-body"><h3>No vault files yet</h3><div class="desc">Admin has not attached vault resources yet. Check back shortly.</div></div></div>';return}
   const modules=[...new Set(vaultItems.map(i=>i.module||'Vault Pathway'))];
   grid.innerHTML=modules.map(module=>{
     const items=vaultItems.filter(i=>(i.module||'Vault Pathway')===module);
-    return `<section class="module"><h3 class="module-title">${clean(module)}</h3><div class="grid">${items.map(item=>`<article class="card">${item.cover_url?`<div class="cover"><img src="${clean(item.cover_url)}" alt="${clean(item.title)}"></div>`:'<div class="cover">'+clean(item.format||'Vault')+'</div>'}<div class="tag">${clean(item.format||'resource')}${item.duration?' · '+clean(item.duration):''}</div><h3>${clean(item.title)}</h3><div class="desc">${clean(item.summary||item.tags||'Vault resource')}</div>${item.file_url?`<a class="btn" href="#" onclick="openVaultItem('${clean(item.id)}');return false">Open Material</a>`:'<span class="tag">No file attached yet</span>'}</article>`).join('')}</div></section>`;
+    return `<section class="module">
+      <h3 class="module-title">${clean(module)}</h3>
+      <p class="module-kicker">${items.length} ${items.length===1?'material':'materials'} in this pathway</p>
+      <div class="grid">${items.map(item=>`
+        <article class="material-card">
+          <div class="cover">${item.cover_url?`<img src="${clean(item.cover_url)}" alt="${clean(item.title)}">`:clean(item.format||'Vault')}</div>
+          <div class="material-body">
+            <div class="tag">${clean(item.format||'resource')}</div>
+            <h3>${clean(item.title)}</h3>
+            <div class="desc">${clean(excerpt(item.summary||item.tags||'Vault resource'))}</div>
+            <div class="card-foot">
+              <span class="duration">${clean(item.duration||'Self-paced')}</span>
+              ${item.file_url?`<a class="btn" href="#" onclick="openVaultItem('${clean(item.id)}');return false">Open</a>`:'<span class="tag">No file attached</span>'}
+            </div>
+          </div>
+        </article>`).join('')}</div>
+    </section>`;
   }).join('');
 }
 async function openVaultItem(id){const item=vaultItems.find(x=>String(x.id)===String(id));if(!item)return;await logVault('open',item);window.open(item.file_url,'_blank','noopener')}
