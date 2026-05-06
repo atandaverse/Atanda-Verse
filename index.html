@@ -578,10 +578,19 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         .newsletter-form button:hover { background: linear-gradient(135deg,var(--accent),#972430); transform: translateY(-3px); box-shadow: 0 16px 36px rgba(220,53,69,.34), inset 0 1px 0 rgba(255,255,255,.34); }
 
         /* ── STICKY CTA ── */
-.sticky-cta { position: fixed; bottom: 22px; left: 22px; z-index: 1000; background: linear-gradient(135deg,var(--accent),var(--accent-hover)); color: white; padding: 1rem 1.6rem; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: .88rem; box-shadow: 0 10px 30px rgba(220,53,69,.4), inset 0 1px 0 rgba(255,255,255,.3); transition: all .4s cubic-bezier(.34,1.56,.64,1); cursor: pointer; animation: sca 1s ease 3s both; }
+.sticky-cta { position: fixed; bottom: 22px; right: 22px; z-index: 1000; display: inline-flex; align-items: center; gap: .62rem; max-width: calc(100vw - 32px); background: linear-gradient(135deg,var(--accent),var(--accent-hover)); color: white; padding: .88rem 1.2rem .88rem .92rem; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: .88rem; box-shadow: 0 16px 36px rgba(220,53,69,.36), inset 0 1px 0 rgba(255,255,255,.3); transition: max-width .38s cubic-bezier(.34,1.56,.64,1), padding .38s cubic-bezier(.34,1.56,.64,1), transform .32s ease, box-shadow .32s ease, opacity .32s ease; cursor: pointer; animation: sca 1s ease 3s both; overflow: hidden; white-space: nowrap; }
         @keyframes sca { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .sticky-cta:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 20px 50px rgba(220,53,69,.5), inset 0 1px 0 rgba(255,255,255,.36); }
         .sticky-cta.hidden { transform: translateY(100px) !important; opacity: 0 !important; }
+        .sticky-cta-icon { width: 2.35rem; height: 2.35rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.28); flex: 0 0 auto; }
+        .sticky-cta-copy { display: inline-flex; flex-direction: column; line-height: 1.05; overflow: hidden; transition: max-width .38s cubic-bezier(.34,1.56,.64,1), opacity .28s ease; max-width: 12rem; }
+        .sticky-cta-label { letter-spacing: .01em; }
+        .sticky-cta-detail { font-size: .68rem; opacity: .78; font-weight: 700; margin-top: .2rem; }
+        .sticky-cta.compact { padding: .62rem .82rem .62rem .62rem; gap: .45rem; }
+        .sticky-cta.compact .sticky-cta-copy { max-width: 3.2rem; }
+        .sticky-cta.compact .sticky-cta-label { font-size: .82rem; }
+        .sticky-cta.compact .sticky-cta-detail { display: none; }
+        .sticky-cta.peek { transform: translateY(-3px) scale(1.03); box-shadow: 0 22px 52px rgba(220,53,69,.46), inset 0 1px 0 rgba(255,255,255,.36); }
         .sc-pulse { position: absolute; inset: -4px; border-radius: 50px; border: 2px solid var(--accent); animation: scp 2s ease-in-out infinite; pointer-events: none; }
         @keyframes scp { 0%,100% { opacity: .4; transform: scale(1); } 50% { opacity: 0; transform: scale(1.1); } }
 
@@ -621,7 +630,7 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
             .countdown-item { min-width: 64px; padding: .7rem; }
             .form-row { grid-template-columns: 1fr; gap: 0; }
             .registration-form { margin: 1rem; padding: 2rem 1.5rem; }
-            .sticky-cta { bottom: 14px; left: 14px; padding: .75rem 1.1rem; font-size: .82rem; }
+            .sticky-cta { bottom: 14px; right: 14px; left: auto; padding: .74rem 1rem .74rem .76rem; font-size: .82rem; }
             .newsletter-form { flex-direction: column; align-items: stretch; }
             .newsletter-form input { min-width: auto; }
             .contact-buttons { flex-direction: column; align-items: center; }
@@ -844,7 +853,7 @@ img.loaded{opacity:1;}
   #latestPostsGrid{grid-template-columns:1fr!important;gap:1.2rem!important;}
   .newsletter-form{width:100%!important;max-width:none!important;}
   .newsletter-form input,.newsletter-form button{width:100%!important;}
-  .sticky-cta{left:12px!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom,0))!important;width:auto!important;max-width:none!important;justify-content:center!important;}
+  .sticky-cta{left:auto!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom,0))!important;width:auto!important;max-width:calc(100vw - 24px)!important;justify-content:flex-start!important;}
 }
 @media(max-width:480px){
   .container{padding:0 .9rem!important;}
@@ -1241,7 +1250,11 @@ img.loaded{opacity:1;}
 <!-- Sticky CTA -->
 <a href="register.html?session=single&label=Single%20Session&source=sticky" class="sticky-cta" id="stickyCta">
     <div class="sc-pulse"></div>
-    🚀 Book Free Session
+    <span class="sticky-cta-icon" aria-hidden="true">↗</span>
+    <span class="sticky-cta-copy">
+        <span class="sticky-cta-label">Book Free Session</span>
+        <span class="sticky-cta-detail">Single launch slot</span>
+    </span>
 </a>
 
 <footer class="site-footer">
@@ -1486,12 +1499,30 @@ img.loaded{opacity:1;}
     });
 
     // ── STICKY CTA ──
-    let lastST = 0;
     const sc = document.getElementById('stickyCta');
-    window.addEventListener('scroll', () => {
-        const st = window.scrollY;
-        sc.classList.toggle('hidden', st > lastST && st > 600);
-        lastST = st <= 0 ? 0 : st;
+    let stickyPeekTimer = null;
+    let stickyCycleTimer = null;
+    function setStickyMode(forceFull) {
+        if (!sc) return;
+        const compact = window.scrollY > 120 && !forceFull;
+        sc.classList.toggle('compact', compact);
+        sc.classList.toggle('peek', !!forceFull && window.scrollY > 120);
+        const label = sc.querySelector('.sticky-cta-label');
+        if (label) label.textContent = compact ? 'Book' : 'Book Free Session';
+        sc.setAttribute('aria-label', compact ? 'Book free single session' : 'Book free single clarity session');
+    }
+    function pulseStickyFull() {
+        if (!sc || window.scrollY <= 120) return;
+        setStickyMode(true);
+        clearTimeout(stickyPeekTimer);
+        stickyPeekTimer = setTimeout(function () { setStickyMode(false); }, 3200);
+    }
+    setStickyMode(true);
+    window.addEventListener('scroll', function () { setStickyMode(false); }, { passive: true });
+    stickyCycleTimer = setInterval(pulseStickyFull, 11000);
+    window.addEventListener('beforeunload', function () {
+        clearInterval(stickyCycleTimer);
+        clearTimeout(stickyPeekTimer);
     });
 
     // ── FORM SUBMISSION ──
@@ -1515,6 +1546,14 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
                     method: 'POST',
                     headers: { 'apikey': creds.key, 'Authorization': 'Bearer ' + creds.key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
                     body: JSON.stringify({ id: 'reg-' + Date.now(), full_name: d.fullName, email: d.email, phone: d.phone, session_type: d.sessionType, goals: d.goals || '', source: 'index', registered_at: new Date().toISOString() })
+                });
+                if (window.ivNotifyAdmin) window.ivNotifyAdmin('registration.created', {
+                    name: d.fullName,
+                    email: d.email,
+                    phone: d.phone,
+                    sessionType: d.sessionType,
+                    source: 'index',
+                    goals: d.goals || ''
                 });
             } catch(e) {}
         }
@@ -1760,6 +1799,13 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
                         'Prefer': 'return=minimal'
                     },
                     body: JSON.stringify({ id: t.id, name: t.name, role: t.role || '', text: t.text, avatar: t.avatar || '', approved: false, source: 'public', submitted_at: t.submittedAt })
+                });
+                if (window.ivNotifyAdmin) window.ivNotifyAdmin('testimonial.created', {
+                    id: t.id,
+                    name: t.name,
+                    role: t.role || '',
+                    text: t.text,
+                    hasAvatar: !!t.avatar
                 });
             } catch(e) { /* localStorage fallback already saved */ }
         }

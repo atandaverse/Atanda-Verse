@@ -1434,6 +1434,7 @@ async function saveCmt(id,cmt){
       headers:{'apikey':_sbKey(),'Authorization':'Bearer '+_sbKey(),'Content-Type':'application/json','Prefer':'return=minimal'},
       body:JSON.stringify({id:'cmt-'+Date.now()+'-'+Math.random().toString(36).slice(2),post_id:id,name:cmt.name,email:cmt.email||'',text:cmt.text,ts:cmt.ts})
     });
+    if(window.ivNotifyAdmin) window.ivNotifyAdmin('comment.created',{postId:id,name:cmt.name,email:cmt.email||'',text:cmt.text});
   }catch(e){}}
 }
 

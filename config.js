@@ -159,6 +159,20 @@
     return response.json().catch(function () { return null; });
   }
 
+  async function notifyAdmin(eventType, payload) {
+    try {
+      return await sbInvoke('send-admin-notification', {
+        eventType: eventType,
+        payload: payload || {},
+        pageUrl: location.href,
+        createdAt: new Date().toISOString()
+      });
+    } catch (err) {
+      console.warn('Admin notification function unavailable', err);
+      return { ok: false, reason: err && err.message ? err.message : 'notify-failed' };
+    }
+  }
+
   async function captureSubscriber(payload) {
     var email = normalizeEmail(payload && payload.email);
     if (!email) return { ok: false, reason: 'missing-email' };
@@ -217,6 +231,15 @@
       } catch (welcomeErr) {
         console.warn('Subscriber welcome guide function unavailable', welcomeErr);
       }
+    }
+
+    if (tags.indexOf('registration') === -1 && tags.indexOf('comment') === -1) {
+      notifyAdmin('subscriber.created', {
+        email: email,
+        name: name,
+        source: source,
+        tags: tags
+      });
     }
 
     return { ok: true, email: email };
@@ -751,6 +774,7 @@
 
   window.ivGetSupabaseCreds = getCreds;
   window.ivCaptureSubscriber = captureSubscriber;
+  window.ivNotifyAdmin = notifyAdmin;
   window.ivCaptureContactRequest = captureContactRequest;
   window.ivOpenContactModal = openContactModal;
   window.ivGetPostViews = getPostViews;

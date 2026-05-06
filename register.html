@@ -430,6 +430,14 @@
                             registered_at: new Date().toISOString()
                         })
                     });
+                    if (window.ivNotifyAdmin) window.ivNotifyAdmin('registration.created', {
+                        name: d.fullName,
+                        email: d.email,
+                        phone: d.phone,
+                        sessionType: d.sessionType,
+                        source: 'register:' + source,
+                        goals: d.goals || ''
+                    });
                 } catch (err) {
                     console.warn('Registration save failed', err);
                 }

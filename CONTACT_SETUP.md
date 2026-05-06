@@ -50,6 +50,35 @@ Supabase already provides:
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 
+### 3b. General admin notifications
+
+Create another Supabase Edge Function named:
+
+`send-admin-notification`
+
+Paste in:
+
+`send-admin-notification.example.ts`
+
+This is the lightweight alert function for admin/workspace events that do not already have their own email function.
+
+It currently sends internal notifications for:
+
+- new newsletter subscribers
+- new session registrations
+- new testimonials awaiting review
+- new blog comments
+
+Optional secrets:
+
+- `ADMIN_NOTIFY_EMAIL` defaults to `hello@atanda.site`
+- `ADMIN_NOTIFY_FROM` defaults to `Atanda Verse Admin <hello@atanda.site>`
+
+Existing specialized functions still handle their own notification logic:
+
+- `send-contact-request` handles structured contact messages and acknowledgements
+- `send-vault-access` handles vault request, approval, rejection, warning, and restriction emails
+
 ### 4. Sender routing
 
 - general contact -> `Atanda <hello@atanda.site>`
