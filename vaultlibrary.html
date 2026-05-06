@@ -147,6 +147,31 @@ async function sendVaultTermsEmail(){
     });
   }catch(e){console.warn('Vault terms email unavailable',e)}
 }
+function showVaultLogin(message){
+  sessionStorage.removeItem('iv_vault_session');
+  vaultSession=null;
+  document.getElementById('vaultContent').classList.add('hidden');
+  document.getElementById('vaultLogin').classList.remove('hidden');
+  const status=document.getElementById('vaultStatus');
+  if(status)status.textContent=message||'Please log in again.';
+}
+async function validateVaultSession(){
+  if(!vaultSession?.id)return false;
+  const rows=await sb('vault_access_requests?select=*&id=eq.'+encodeURIComponent(vaultSession.id));
+  const row=(rows||[])[0];
+  if(!row)return false;
+  if(row.status==='restricted'){
+    showVaultLogin('This vault access has been restricted. Please contact support with your application number.');
+    return false;
+  }
+  if(row.status!=='approved'){
+    showVaultLogin('This vault access is no longer active.');
+    return false;
+  }
+  vaultSession={id:row.id,application_no:row.application_no,vault_username:row.vault_username};
+  sessionStorage.setItem('iv_vault_session',JSON.stringify(vaultSession));
+  return true;
+}
 async function loginVault(){
   const status=document.getElementById('vaultStatus');
   const username=document.getElementById('vaultUsername').value.trim();
@@ -169,6 +194,7 @@ async function loginVault(){
   }catch(e){console.warn(e);status.textContent='Vault login failed. Please try again or contact support.'}
 }
 async function loadVault(){
+  if(!await validateVaultSession())return;
   document.getElementById('vaultLogin').classList.add('hidden');
   document.getElementById('vaultContent').classList.remove('hidden');
   const rows=await sb('vault_resources?select=*&status=eq.published&order=sort_order.asc,updated_at.desc');
@@ -199,8 +225,8 @@ async function loadVault(){
 }
 async function openVaultItem(id){const item=vaultItems.find(x=>String(x.id)===String(id));if(!item)return;await logVault('open',item);window.open(item.file_url,'_blank','noopener')}
 async function logVault(eventType,item){try{await sb('vault_activity_logs',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({request_id:vaultSession?.id||'',application_no:vaultSession?.application_no||'',vault_username:vaultSession?.vault_username||'',event_type:eventType,resource_id:item?.id||'',resource_title:item?.title||'',page_url:location.href,user_agent:navigator.userAgent})})}catch(e){}}
-function logoutVault(){sessionStorage.removeItem('iv_vault_session');location.reload()}
-(async function(){try{vaultSession=JSON.parse(sessionStorage.getItem('iv_vault_session')||'null');if(vaultSession)await loadVault()}catch(e){}})();
+function logoutVault(){showVaultLogin('You have been logged out.')}
+(async function(){try{vaultSession=JSON.parse(sessionStorage.getItem('iv_vault_session')||'null');if(vaultSession)await loadVault()}catch(e){showVaultLogin('Please log in again.')}})();
 </script>
 </body>
 </html>
