@@ -394,13 +394,19 @@ create table if not exists vault_access_requests (
   vault_username text,
   access_code_hash text,
   admin_note text,
+  warning_note text,
   source_page text,
   page_url text,
   created_at timestamptz default now(),
   decided_at timestamptz,
+  warned_at timestamptz,
+  restricted_at timestamptz,
   emailed_at timestamptz,
   terms_emailed_at timestamptz
 );
+alter table vault_access_requests add column if not exists warning_note text;
+alter table vault_access_requests add column if not exists warned_at timestamptz;
+alter table vault_access_requests add column if not exists restricted_at timestamptz;
 alter table vault_access_requests add column if not exists terms_emailed_at timestamptz;
 create table if not exists vault_activity_logs (
   id bigserial primary key,
@@ -4972,14 +4978,16 @@ async function loadVaultRequests(){
     tbl.innerHTML=rows.map(r=>{
       const dt=r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
       const reason=String(r.reason||'').slice(0,90)+(String(r.reason||'').length>90?'...':'');
-      const pill=r.status==='approved'?'published':r.status==='rejected'?'draft':'coming-soon';
+      const pill=r.status==='approved'?'published':r.status==='rejected'||r.status==='restricted'?'draft':'coming-soon';
       const creds=r.status==='approved'?`<span>${vaultClean(r.vault_username||'')}</span>`:'<span>Awaiting decision</span>';
-      const pendingActions=r.status==='pending'
-        ? `<button class="ab" onclick="approveVaultRequest('${r.id}')">Approve</button><button class="ab del" onclick="rejectVaultRequest('${r.id}')">Reject</button>`
-        : `<button class="ab" onclick="resendVaultEmail('${r.id}','${r.status}')">Resend Email</button>`;
+      let pendingActions='';
+      if(r.status==='pending') pendingActions=`<button class="ab" onclick="approveVaultRequest('${r.id}')">Approve</button><button class="ab del" onclick="rejectVaultRequest('${r.id}')">Reject</button>`;
+      else if(r.status==='approved') pendingActions=`<button class="ab" onclick="warnVaultReader('${r.id}')">Warn</button><button class="ab del" onclick="restrictVaultReader('${r.id}')">Restrict</button><button class="ab" onclick="resendVaultEmail('${r.id}','approved')">Resend</button>`;
+      else if(r.status==='restricted') pendingActions=`<button class="ab" onclick="approveVaultRequest('${r.id}')">Restore</button><button class="ab" onclick="resendVaultEmail('${r.id}','restricted')">Resend</button>`;
+      else pendingActions=`<button class="ab" onclick="resendVaultEmail('${r.id}','${r.status}')">Resend Email</button>`;
       return `<tr>
         <td class="tc2">${vaultClean(r.full_name)}<span>${vaultClean(r.email)}</span></td>
-        <td style="font-size:.76rem;color:var(--t3);max-width:240px"><strong style="color:var(--t2)">${vaultClean(r.requested_resource_title||'Vault Library')}</strong><br>${vaultClean(reason)}</td>
+        <td style="font-size:.76rem;color:var(--t3);max-width:240px"><strong style="color:var(--t2)">${vaultClean(r.requested_resource_title||'Vault Library')}</strong><br>${vaultClean(reason)}${r.warning_note?`<br><span style="color:#f4b860">Warning: ${vaultClean(String(r.warning_note).slice(0,70))}</span>`:''}</td>
         <td class="tc2">${vaultClean(r.application_no)}${creds}</td>
         <td><span class="pill ${pill}" style="font-size:.7rem">${vaultClean(r.status||'pending')}</span></td>
         <td style="font-size:.74rem;color:var(--t3)">${dt}</td>
@@ -5012,8 +5020,28 @@ async function rejectVaultRequest(id){
   toast('Vault request rejected','ok');
   loadVaultRequests();
 }
+async function warnVaultReader(id){
+  const row=_allVaultRequests.find(r=>r.id===id);
+  if(!row)return toast('Reader not found','er');
+  const note=prompt('Warning message to send and store','Please do not share, forward, repost, or distribute Atanda Verse vault materials. Continued misuse may lead to restricted access.');
+  if(!note)return;
+  await _sbUpsert('vault_access_requests',{...row,warning_note:note,warned_at:new Date().toISOString()});
+  await invokeVaultAccessEmail(id,'warning');
+  toast('Vault warning saved','ok');
+  loadVaultRequests();
+}
+async function restrictVaultReader(id){
+  const row=_allVaultRequests.find(r=>r.id===id);
+  if(!row)return toast('Reader not found','er');
+  const note=prompt('Restriction reason / note','Vault access restricted for violating or risking material-sharing terms.');
+  if(note===null)return;
+  await _sbUpsert('vault_access_requests',{...row,status:'restricted',admin_note:note||row.admin_note||'',restricted_at:new Date().toISOString(),decided_at:new Date().toISOString()});
+  await invokeVaultAccessEmail(id,'restricted');
+  toast('Vault access restricted','ok');
+  loadVaultRequests();
+}
 async function resendVaultEmail(id,status){
-  await invokeVaultAccessEmail(id,status==='approved'?'approved':'rejected');
+  await invokeVaultAccessEmail(id,status==='approved'?'approved':status==='restricted'?'restricted':'rejected');
   toast('Vault email requested','ok');
 }
 

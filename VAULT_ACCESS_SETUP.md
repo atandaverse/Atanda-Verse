@@ -15,13 +15,25 @@ create table if not exists vault_access_requests (
   vault_username text,
   access_code_hash text,
   admin_note text,
+  warning_note text,
   source_page text,
   page_url text,
   created_at timestamptz default now(),
   decided_at timestamptz,
+  warned_at timestamptz,
+  restricted_at timestamptz,
   emailed_at timestamptz,
   terms_emailed_at timestamptz
 );
+
+alter table vault_access_requests
+add column if not exists warning_note text;
+
+alter table vault_access_requests
+add column if not exists warned_at timestamptz;
+
+alter table vault_access_requests
+add column if not exists restricted_at timestamptz;
 
 alter table vault_access_requests
 add column if not exists terms_emailed_at timestamptz;

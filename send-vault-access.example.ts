@@ -172,6 +172,44 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (action === "warning") {
+      await sendEmail(resendKey, {
+        from,
+        reply_to: "support@atanda.site",
+        to: [row.email],
+        subject: `Important vault library notice | ${row.application_no}`,
+        html: `
+          <div style="font-family:Arial,sans-serif;color:#172033;line-height:1.7">
+            <h2>Atanda Verse Vault notice</h2>
+            <p>Hi ${name},</p>
+            <p>This is a reminder that Atanda Verse vault materials are for your personal use only.</p>
+            <div style="padding:16px;border-radius:14px;background:#fff7ed;border:1px solid rgba(194,65,12,.18)">
+              ${escapeHtml(row.warning_note || "Please do not share, forward, repost, resell, upload, or distribute vault materials.").replaceAll("\n", "<br>")}
+            </div>
+            <p>Continued misuse may lead to restricted access.</p>
+          </div>
+        `,
+      });
+    }
+
+    if (action === "restricted") {
+      await sendEmail(resendKey, {
+        from,
+        reply_to: "support@atanda.site",
+        to: [row.email],
+        subject: `Vault access restricted | ${row.application_no}`,
+        html: `
+          <div style="font-family:Arial,sans-serif;color:#172033;line-height:1.7">
+            <h2>Your vault access has been restricted</h2>
+            <p>Hi ${name},</p>
+            <p>Your Atanda Verse Vault Library access has been restricted. This usually happens when material-sharing, copyright, or access terms need review.</p>
+            ${row.admin_note ? `<div style="padding:16px;border-radius:14px;background:#f8fafc;border:1px solid rgba(15,23,42,.08)">${escapeHtml(row.admin_note).replaceAll("\n", "<br>")}</div>` : ""}
+            <p>If you believe this was a mistake, reply to this email and include your application number: <strong>${appNo}</strong>.</p>
+          </div>
+        `,
+      });
+    }
+
     if (action === "rejected") {
       await sendEmail(resendKey, {
         from,

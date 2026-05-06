@@ -49,10 +49,10 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background-ima
 .material-card h3{margin:0;color:var(--ink);font-size:1.06rem;line-height:1.25}
 .tag{padding:.24rem .62rem;background:rgba(199,55,74,.08);color:var(--red);font-size:.62rem;letter-spacing:.6px}
 .desc{color:var(--muted);line-height:1.65;font-size:.9rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.card-foot{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-top:auto}
+.card-foot{display:flex;align-items:flex-start;flex-direction:column;gap:.65rem;margin-top:auto}
 .duration{font-size:.78rem;color:var(--muted);font-weight:800}
 .btn{border:none;border-radius:999px;padding:.82rem 1.05rem;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;font:inherit;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;box-shadow:0 14px 34px rgba(199,55,74,.2)}
-.material-action{gap:.48rem;padding:.72rem .95rem;background:#fff;color:var(--ink);border:1px solid rgba(199,55,74,.22);box-shadow:0 12px 28px rgba(23,35,63,.08)}
+.material-action{width:min(100%,210px);justify-content:space-between;gap:.7rem;padding:.74rem 1rem;background:#fff;color:var(--ink);border:1px solid rgba(199,55,74,.22);box-shadow:0 12px 28px rgba(23,35,63,.08);white-space:nowrap;line-height:1}
 .material-action:after{content:"->";color:var(--red);font-weight:900;transition:transform .18s ease}
 .material-action:hover{border-color:rgba(199,55,74,.42);color:var(--red)}
 .material-action:hover:after{transform:translateX(3px)}
@@ -72,7 +72,8 @@ input{width:100%;border:1px solid var(--line);background:#fff;border-radius:16px
   .cover{height:180px;min-height:180px}
   .material-body{padding:1rem}
   .desc{-webkit-line-clamp:4}
-  .card-foot{align-items:stretch;flex-direction:column}
+  .card-foot{align-items:stretch}
+  .material-action{width:100%}
   .btn{width:100%}
 }
 </style>
@@ -153,9 +154,12 @@ async function loginVault(){
   if(!username||!code){status.textContent='Enter your vault username and application number.';return}
   status.textContent='Checking access...';
   try{
-    const rows=await sb('vault_access_requests?select=*&status=eq.approved&vault_username=eq.'+encodeURIComponent(username));
+    const rows=await sb('vault_access_requests?select=*&vault_username=eq.'+encodeURIComponent(username));
+    const restricted=(rows||[]).find(r=>r.status==='restricted');
+    if(restricted){status.textContent='This vault access has been restricted. Please contact support with your application number.';return}
+    const approved=(rows||[]).filter(r=>r.status==='approved');
     const hash=await sha256Text(code);
-    const match=(rows||[]).find(r=>r.access_code_hash===hash||String(r.application_no||'').toUpperCase()===code);
+    const match=approved.find(r=>r.access_code_hash===hash||String(r.application_no||'').toUpperCase()===code);
     if(!match){status.textContent='These vault credentials were not approved.';return}
     vaultSession={id:match.id,application_no:match.application_no,vault_username:match.vault_username};
     sessionStorage.setItem('iv_vault_session',JSON.stringify(vaultSession));
