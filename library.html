@@ -915,6 +915,7 @@ img.loaded{opacity:1;}
             <input id="libAccessName" autocomplete="name" placeholder="Full name" style="width:100%;border:1px solid var(--border-color);border-radius:14px;padding:.88rem 1rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
             <input id="libAccessEmail" autocomplete="email" type="email" placeholder="Email address" style="width:100%;border:1px solid var(--border-color);border-radius:14px;padding:.88rem 1rem;background:var(--bg-secondary);color:var(--text-primary);outline:none">
             <textarea id="libAccessReason" placeholder="What do you want clarity around right now?" style="width:100%;min-height:112px;border:1px solid var(--border-color);border-radius:14px;padding:.88rem 1rem;background:var(--bg-secondary);color:var(--text-primary);outline:none;resize:vertical"></textarea>
+            <label style="display:flex;gap:.55rem;align-items:flex-start;color:var(--text-secondary);font-size:.82rem;line-height:1.55"><input id="libAccessNewsletterOptIn" type="checkbox" style="width:auto;margin-top:.2rem;accent-color:var(--accent)"> <span>Also send me Atanda Verse clarity letters and the free 5-Day Clarity Challenge access.</span></label>
           </div>
           <div id="libraryAccessStatus" style="min-height:1.3rem;margin:.7rem 0 0;color:var(--accent);font-size:.82rem;font-weight:700"></div>
           <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
@@ -1160,8 +1161,19 @@ async function submitLibraryAccess(){
       headers: {'apikey':creds.key,'Authorization':'Bearer '+creds.key,'Content-Type':'application/json'},
       body: JSON.stringify({ requestId: request.id, action: 'requested' })
     }); } catch(e) { console.warn('Vault email function unavailable', e); }
+    if (document.getElementById('libAccessNewsletterOptIn')?.checked && window.ivCaptureSubscriber) {
+      await window.ivCaptureSubscriber({
+        email: email,
+        name: name,
+        source: 'vault-access-opt-in',
+        tags: ['newsletter', 'vault-access', 'library-request', item?.id || 'vault'],
+        sendGuide: true,
+        meta: { vaultRequestId: request.id, requestedResourceId: item?.id || '' }
+      });
+    }
     if (status) status.textContent = 'Request received. Your application number is ' + request.application_no + '. Admin will review it.';
     ['libAccessName','libAccessEmail','libAccessReason'].forEach(id => { const el=document.getElementById(id); if(el)el.value=''; });
+    const opt=document.getElementById('libAccessNewsletterOptIn'); if(opt) opt.checked=false;
     setTimeout(closeLibraryAccessModal, 1800);
   } catch(e) {
     console.warn(e);

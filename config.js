@@ -84,6 +84,13 @@
     return deduped.join(', ');
   }
 
+  function shouldSendWelcomeGuide(payload, source, tags) {
+    if (payload && payload.sendGuide === false) return false;
+    if (payload && payload.sendGuide === true) return true;
+    var haystack = [source, tags].join(',').toLowerCase();
+    return /newsletter|clarity-guide|registration|sessions|vault-access|contact-opt-in/.test(haystack);
+  }
+
   async function sbFetch(path, options) {
     var creds = getCreds();
     if (!creds) throw new Error('Supabase credentials missing');
@@ -194,6 +201,19 @@
       });
     } catch (err) {
       console.warn('Subscriber event capture skipped', err);
+    }
+
+    if (shouldSendWelcomeGuide(payload || {}, source, tags)) {
+      try {
+        await sbInvoke('send-subscriber-welcome', {
+          email: email,
+          name: name,
+          source: source,
+          tags: tags
+        });
+      } catch (welcomeErr) {
+        console.warn('Subscriber welcome guide function unavailable', welcomeErr);
+      }
     }
 
     return { ok: true, email: email };
@@ -508,6 +528,8 @@
       + '.iv-contact-secondary{font-size:.84rem;color:#61708f;line-height:1.7}'
       + '.iv-contact-status{margin-top:.9rem;font-size:.88rem;font-weight:700;color:#1f7c67;display:none}'
       + '.iv-contact-status.on{display:block}'
+      + '.iv-contact-optin{display:flex;gap:.55rem;align-items:flex-start;font-size:.82rem;line-height:1.55;color:#61708f;margin:.15rem 0 .2rem}'
+      + '.iv-contact-optin input{width:auto;margin-top:.22rem;accent-color:#c7374a}'
       + '@media (max-width:640px){.iv-contact-grid{grid-template-columns:1fr}.iv-contact-sheet{padding:1rem;border-radius:20px}.iv-contact-title{font-size:1.55rem}}';
     document.head.appendChild(style);
 
@@ -532,6 +554,7 @@
       + '      <div class="iv-contact-group full"><label for="ivContactSubject" id="ivContactSubjectLabel">Subject</label><input id="ivContactSubject" name="subject" type="text" required placeholder="What is this about?"></div>'
       + '      <div class="iv-contact-group full"><label for="ivContactMessage" id="ivContactMessageLabel">Message</label><textarea id="ivContactMessage" name="message" required placeholder="Tell us what you need."></textarea></div>'
       + '    </div>'
+      + '    <label class="iv-contact-optin"><input id="ivContactNewsletterOptIn" name="newsletter_opt_in" type="checkbox"> <span>Also send me Atanda Verse clarity letters and the free 5-Day Clarity Challenge access.</span></label>'
       + '    <div class="iv-contact-actions">'
       + '      <button type="submit" class="iv-contact-submit" id="ivContactSubmit">Send request</button>'
       + '      <div class="iv-contact-secondary" id="ivContactSecondary">We will route this request to the right Atanda inbox.</div>'
@@ -660,6 +683,16 @@
         meta: { trigger: opts.trigger || 'modal', source: opts.source || location.pathname }
       };
       var result = await captureContactRequest(payload);
+      if (fd.get('newsletter_opt_in') === 'on') {
+        await captureSubscriber({
+          email: payload.email,
+          name: payload.name,
+          source: 'contact-opt-in-' + type,
+          tags: ['newsletter', 'contact-opt-in', type],
+          sendGuide: true,
+          meta: { contactRequestId: result && result.request ? result.request.id : '', route_to: config.route }
+        });
+      }
       submit.disabled = false;
       submit.textContent = opts.submitLabel || 'Send request';
       if (result.ok) {
