@@ -582,7 +582,8 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         @keyframes sca { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .sticky-cta:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 20px 50px rgba(220,53,69,.5), inset 0 1px 0 rgba(255,255,255,.36); }
         .sticky-cta.hidden { transform: translateY(100px) !important; opacity: 0 !important; }
-        .sticky-cta-icon { width: 2.35rem; height: 2.35rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.28); flex: 0 0 auto; }
+        .sticky-cta-icon { width: 2.35rem; height: 2.35rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.94); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 10px 22px rgba(15,23,42,.18); flex: 0 0 auto; border: 1px solid rgba(255,255,255,.55); overflow: hidden; }
+        .sticky-cta-icon img { width: 1.55rem; height: 1.55rem; object-fit: contain; display: block; }
         .sticky-cta-copy { display: inline-flex; flex-direction: column; line-height: 1.05; overflow: hidden; transition: max-width .38s cubic-bezier(.34,1.56,.64,1), opacity .28s ease; max-width: 12rem; }
         .sticky-cta-label { letter-spacing: .01em; }
         .sticky-cta-detail { font-size: .68rem; opacity: .78; font-weight: 700; margin-top: .2rem; }
@@ -1054,31 +1055,31 @@ img.loaded{opacity:1;}
             <h2 class="section-title rv">SESSIONS &amp; PLANS</h2>
             <p class="section-subtitle rv">Start with one free single session. Deeper packages are paid and confirmed after registration.</p>
             <div class="pricing-grid stg">
-                <div class="pricing-card iv-pop">
-                    <div class="pricing-badge">FREE START</div>
+                <div class="pricing-card iv-pop" data-price-plan="single">
+                    <div class="pricing-badge" data-price-badge>FREE START</div>
                     <h3 class="pricing-title">Single Session</h3>
-                    <div class="pricing-price"><span class="price-original">$15</span><span class="price-current">FREE</span><div class="price-naira">&#8358;0 &middot; single launch session</div></div>
+                    <div class="pricing-price"><span class="price-original">$15</span><span class="price-current" data-price-current>FREE</span><div class="price-naira" data-price-naira>N0 · single launch session</div></div>
                     <ul class="pricing-features"><li>90-minute clarity session</li><li>Personal breakthrough guidance</li><li>Action plan creation</li><li>24h follow-up support</li></ul>
                     <a href="register.html?session=single&label=Single%20Session&source=index-pricing" class="cta-button">Book Now</a>
                 </div>
-                <div class="pricing-card featured iv-pop">
-                    <div class="pricing-badge">MOST POPULAR</div>
+                <div class="pricing-card featured iv-pop" data-price-plan="three-pack">
+                    <div class="pricing-badge" data-price-badge>MOST POPULAR</div>
                     <h3 class="pricing-title">Three Session Package</h3>
-                    <div class="pricing-price"><span class="price-current">$40</span><div class="price-naira">&#8358;65,000 &middot; paid package</div></div>
+                    <div class="pricing-price"><span class="price-current" data-price-current>$40</span><div class="price-naira" data-price-naira>N60,000 · paid package</div></div>
                     <ul class="pricing-features"><li>3× 90-minute sessions</li><li>Progressive clarity building</li><li>Comprehensive life mapping</li><li>Ongoing support between sessions</li><li>Digital library access</li></ul>
                     <a href="register.html?session=three-pack&label=Three%20Session%20Package&source=index-pricing" class="cta-button">Start Package</a>
                 </div>
-                <div class="pricing-card iv-pop">
-                    <div class="pricing-badge">GROUP PATH</div>
+                <div class="pricing-card iv-pop" data-price-plan="group">
+                    <div class="pricing-badge" data-price-badge>GROUP PATH</div>
                     <h3 class="pricing-title">Weekly Group</h3>
-                    <div class="pricing-price"><span class="price-current">$30</span><div class="price-naira">&#8358;50,000 &middot; paid group access</div></div>
+                    <div class="pricing-price"><span class="price-current" data-price-current>$30</span><div class="price-naira" data-price-naira>N45,000 · paid group access</div></div>
                     <ul class="pricing-features"><li>Weekly group sessions</li><li>Community support</li><li>Shared breakthrough experiences</li><li>Group accountability</li></ul>
                     <a href="register.html?session=group&label=Weekly%20Group%20Sessions&source=index-pricing" class="cta-button">Join Group</a>
                 </div>
-                <div class="pricing-card iv-pop">
-                    <div class="pricing-badge">INTENSIVE</div>
+                <div class="pricing-card iv-pop" data-price-plan="intensive">
+                    <div class="pricing-badge" data-price-badge>INTENSIVE</div>
                     <h3 class="pricing-title">Monthly Intensive</h3>
-                    <div class="pricing-price"><span class="price-current">$150</span><div class="price-naira">&#8358;245,000 &middot; paid intensive</div></div>
+                    <div class="pricing-price"><span class="price-current" data-price-current>$150</span><div class="price-naira" data-price-naira>N225,000 · paid intensive</div></div>
                     <ul class="pricing-features"><li>4 weekly intensive sessions</li><li>Deep transformation program</li><li>Personal clarity roadmap</li><li>Unlimited support access</li><li>Exclusive resources</li></ul>
                     <a href="register.html?session=intensive&label=Monthly%20Intensive&source=index-pricing" class="cta-button">Go Intensive</a>
                 </div>
@@ -1126,10 +1127,10 @@ img.loaded{opacity:1;}
                         <label for="sessionType">Preferred Session Type *</label>
                         <select id="sessionType" name="sessionType" required>
                             <option value="">Select Session Type</option>
-                            <option value="single">Single Session (Free launch)</option>
-                            <option value="three-pack">Three Session Package ($40 / N65,000)</option>
-                            <option value="group">Weekly Group Sessions ($30 / N50,000)</option>
-                            <option value="intensive">Monthly Intensive ($150 / N245,000)</option>
+                            <option value="single" data-price-option="single">Single Session (Free launch)</option>
+                            <option value="three-pack" data-price-option="three-pack">Three Session Package ($40 / N60,000)</option>
+                            <option value="group" data-price-option="group">Weekly Group Sessions ($30 / N45,000)</option>
+                            <option value="intensive" data-price-option="intensive">Monthly Intensive ($150 / N225,000)</option>
                         </select>
                     </div>
                 </div>
@@ -1178,7 +1179,7 @@ img.loaded{opacity:1;}
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>Is this coaching, therapy, or counselling?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Clarity sessions are coaching-based, not therapy. We help you gain clarity, set direction, and take meaningful action. For clinical mental health needs, we recommend a licensed therapist.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>Can I do sessions in Yoruba, Igbo, or Pidgin?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Absolutely. Some things are best expressed in the language you think and feel in. Sessions can be conducted in English, Pidgin, Yoruba, or Igbo — whatever helps you express yourself most authentically.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>Do I need to prepare anything beforehand?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>You'll receive a short guide 24 hours before your session with 3 reflection questions. All you need is a quiet space, stable internet, and an open mind. Come as you are.</p></div></div>
-                <div class="faq-item iv-pop"><div class="faq-question"><h4>What if the session doesn't help me?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>During the free period there's zero financial risk. If you feel it didn't add value, tell us honestly — your feedback helps us improve. Our goal is genuine transformation, not just a session completed.</p></div></div>
+                <div class="faq-item iv-pop"><div class="faq-question"><h4>What if the session doesn't help me?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Your first single session has no payment risk during launch. If it does not add value, tell us honestly — your feedback helps us improve. Our goal is genuine transformation, not just a completed session.</p></div></div>
             </div>
             <div style="text-align:center;margin-top:2rem"><a href="faq.html" style="color:var(--accent);font-weight:600;font-size:.9rem;text-decoration:none">See all FAQs →</a></div>
         </div>
@@ -1250,7 +1251,7 @@ img.loaded{opacity:1;}
 <!-- Sticky CTA -->
 <a href="register.html?session=single&label=Single%20Session&source=sticky" class="sticky-cta" id="stickyCta">
     <div class="sc-pulse"></div>
-    <span class="sticky-cta-icon" aria-hidden="true">↗</span>
+    <span class="sticky-cta-icon" aria-hidden="true"><img src="atanda-logo.svg" alt=""></span>
     <span class="sticky-cta-copy">
         <span class="sticky-cta-label">Book Free Session</span>
         <span class="sticky-cta-detail">Single launch slot</span>
@@ -1526,11 +1527,15 @@ img.loaded{opacity:1;}
     });
 
     // ── FORM SUBMISSION ──
+    if (window.ivSyncSessionPricing) {
+        window.ivSyncSessionPricing().catch(function (err) { console.warn('Pricing sync failed', err); });
+    }
+
     const SESSION_PRICE_MAP = {
         single: { label: 'Single Session', price: 'FREE', note: 'single launch session' },
-        'three-pack': { label: 'Three Session Package', price: '$40 / N65,000', note: 'paid package' },
-        group: { label: 'Weekly Group Sessions', price: '$30 / N50,000', note: 'paid group access' },
-        intensive: { label: 'Monthly Intensive', price: '$150 / N245,000', note: 'paid intensive' }
+        'three-pack': { label: 'Three Session Package', price: '$40 / N60,000', note: 'paid package' },
+        group: { label: 'Weekly Group Sessions', price: '$30 / N45,000', note: 'paid group access' },
+        intensive: { label: 'Monthly Intensive', price: '$150 / N225,000', note: 'paid intensive' }
     };
 
     document.getElementById('registrationForm').addEventListener('submit', async function(e) {
@@ -1565,7 +1570,7 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
                 tags: ['registration', 'sessions', d.sessionType || 'general']
             });
         }
-        const selectedSession = SESSION_PRICE_MAP[d.sessionType] || SESSION_PRICE_MAP.single;
+        const selectedSession = (window.ivSessionPricing && window.ivSessionPricing[d.sessionType]) || SESSION_PRICE_MAP[d.sessionType] || SESSION_PRICE_MAP.single;
         const msg = `NEW CLARITY SESSION REGISTRATION\n\nDetails:\n- Name: ${d.fullName}\n- Email: ${d.email}\n- Phone: ${d.phone}\n- Session: ${selectedSession.label}\n- Price: ${selectedSession.price} (${selectedSession.note})\n- Goals: ${d.goals || 'Not specified'}\n\nReady to begin their transformation journey.`;
         window.open(`https://wa.me/2348147732687?text=${encodeURIComponent(msg)}`, '_blank');
         alert(d.sessionType === 'single' ? "Thank you for registering! We'll contact you within 24 hours to schedule your free single session." : "Thank you for registering! We'll contact you within 24 hours with confirmation and payment details for your selected plan.");

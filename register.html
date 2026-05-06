@@ -254,10 +254,10 @@
                             <label for="sessionType">Selected Path *</label>
                             <select id="sessionType" name="sessionType" required>
                                 <option value="">Select Session Type</option>
-                                <option value="single">Single Session (Free launch)</option>
-                                <option value="three-pack">Three Session Package ($40 / N65,000)</option>
-                                <option value="group">Weekly Group Sessions ($30 / N50,000)</option>
-                                <option value="intensive">Monthly Intensive ($150 / N245,000)</option>
+                                <option value="single" data-price-option="single">Single Session (Free launch)</option>
+                                <option value="three-pack" data-price-option="three-pack">Three Session Package ($40 / N60,000)</option>
+                                <option value="group" data-price-option="group">Weekly Group Sessions ($30 / N45,000)</option>
+                                <option value="intensive" data-price-option="intensive">Monthly Intensive ($150 / N225,000)</option>
                             </select>
                         </div>
                     </div>
@@ -325,7 +325,7 @@
                 title: 'Three Session Package',
                 oldPrice: '$40',
                 currentPrice: '$40',
-                note: 'N65,000 - paid package',
+                note: 'N60,000 - paid package',
                 button: 'Start my package',
                 features: [
                     '3x 90-minute sessions',
@@ -340,7 +340,7 @@
                 title: 'Weekly Group Sessions',
                 oldPrice: '$30',
                 currentPrice: '$30',
-                note: 'N50,000 - paid group access',
+                note: 'N45,000 - paid group access',
                 button: 'Join the group',
                 features: [
                     'Weekly group sessions',
@@ -354,7 +354,7 @@
                 title: 'Monthly Intensive',
                 oldPrice: '$150',
                 currentPrice: '$150',
-                note: 'N245,000 - paid intensive',
+                note: 'N225,000 - paid intensive',
                 button: 'Go intensive',
                 features: [
                     '4 weekly intensive sessions',
@@ -372,7 +372,14 @@
         }
 
         function applyPackage(sessionKey) {
-            const data = PACKAGE_MAP[sessionKey] || PACKAGE_MAP.single;
+            const live = window.ivSessionPricing && window.ivSessionPricing[sessionKey];
+            const data = Object.assign({}, PACKAGE_MAP[sessionKey] || PACKAGE_MAP.single);
+            if (live) {
+                data.title = live.label || data.title;
+                data.currentPrice = live.usd || data.currentPrice;
+                data.note = (live.ngn || '') + (live.note ? ' - ' + live.note : '');
+                data.tag = live.badge || data.tag;
+            }
             document.getElementById('summaryTag').textContent = data.tag;
             document.getElementById('summaryTitle').textContent = data.title;
             const wasEl = document.getElementById('summaryWas');
@@ -388,6 +395,11 @@
         }
 
         applyPackage(getSelectedPackage());
+        if (window.ivSyncSessionPricing) {
+            window.ivSyncSessionPricing().then(function(){
+                applyPackage(document.getElementById('sessionType').value || getSelectedPackage());
+            }).catch(function(err){ console.warn('Pricing sync failed', err); });
+        }
 
         document.getElementById('sessionType').addEventListener('change', function() {
             if (this.value) applyPackage(this.value);
@@ -452,7 +464,13 @@
                 });
             }
 
-            const selected = PACKAGE_MAP[d.sessionType] || PACKAGE_MAP.single;
+            const liveSelected = window.ivSessionPricing && window.ivSessionPricing[d.sessionType];
+            const selected = Object.assign({}, PACKAGE_MAP[d.sessionType] || PACKAGE_MAP.single);
+            if (liveSelected) {
+                selected.title = liveSelected.label || selected.title;
+                selected.currentPrice = liveSelected.usd || selected.currentPrice;
+                selected.note = (liveSelected.ngn || '') + (liveSelected.note ? ' - ' + liveSelected.note : '');
+            }
             const priceLine = (selected.currentPrice || 'FREE') + ' (' + selected.note + ')';
             const msg =
                 'NEW CLARITY SESSION REGISTRATION\n\n' +

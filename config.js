@@ -143,6 +143,90 @@
 
   window.ivGetPublicSettings = getPublicSettings;
 
+  var DEFAULT_SESSION_PRICING = {
+    single: {
+      label: 'Single Session',
+      badge: 'FREE START',
+      usd: 'FREE',
+      ngn: 'N0',
+      note: 'single launch session',
+      free: true
+    },
+    'three-pack': {
+      label: 'Three Session Package',
+      badge: 'MOST POPULAR',
+      usd: '$40',
+      ngn: 'N60,000',
+      note: 'paid package',
+      free: false
+    },
+    group: {
+      label: 'Weekly Group Sessions',
+      badge: 'GROUP PATH',
+      usd: '$30',
+      ngn: 'N45,000',
+      note: 'paid group access',
+      free: false
+    },
+    intensive: {
+      label: 'Monthly Intensive',
+      badge: 'INTENSIVE',
+      usd: '$150',
+      ngn: 'N225,000',
+      note: 'paid intensive',
+      free: false
+    }
+  };
+
+  function normalizePricing(raw) {
+    var source = raw && typeof raw === 'object' ? raw : {};
+    var pricing = {};
+    Object.keys(DEFAULT_SESSION_PRICING).forEach(function (key) {
+      pricing[key] = Object.assign({}, DEFAULT_SESSION_PRICING[key], source[key] || {});
+      pricing[key].free = key === 'single' ? pricing[key].free !== false : !!pricing[key].free;
+      pricing[key].price = pricing[key].free ? 'FREE' : [pricing[key].usd, pricing[key].ngn].filter(Boolean).join(' / ');
+    });
+    return pricing;
+  }
+
+  async function getSessionPricing() {
+    try {
+      var settings = await getPublicSettings();
+      return normalizePricing(settings && settings.sessionPricing);
+    } catch (_err) {
+      return normalizePricing();
+    }
+  }
+
+  function applySessionPricing(pricing) {
+    var data = normalizePricing(pricing);
+    Object.keys(data).forEach(function (key) {
+      var item = data[key];
+      document.querySelectorAll('[data-price-plan="' + key + '"]').forEach(function (card) {
+        var badge = card.querySelector('[data-price-badge]');
+        var current = card.querySelector('[data-price-current]');
+        var naira = card.querySelector('[data-price-naira]');
+        if (badge) badge.textContent = item.badge || DEFAULT_SESSION_PRICING[key].badge;
+        if (current) current.textContent = item.usd || '';
+        if (naira) naira.textContent = (item.ngn || '') + (item.note ? ' \u00b7 ' + item.note : '');
+      });
+      document.querySelectorAll('option[data-price-option="' + key + '"]').forEach(function (opt) {
+        opt.textContent = item.free ? item.label + ' (Free launch)' : item.label + ' (' + item.usd + ' / ' + item.ngn + ')';
+      });
+    });
+    window.ivSessionPricing = data;
+    return data;
+  }
+
+  async function syncSessionPricing() {
+    return applySessionPricing(await getSessionPricing());
+  }
+
+  window.ivDefaultSessionPricing = DEFAULT_SESSION_PRICING;
+  window.ivGetSessionPricing = getSessionPricing;
+  window.ivApplySessionPricing = applySessionPricing;
+  window.ivSyncSessionPricing = syncSessionPricing;
+
   async function sbInvoke(fnName, payload) {
     var creds = getCreds();
     if (!creds) throw new Error('Supabase credentials missing');
