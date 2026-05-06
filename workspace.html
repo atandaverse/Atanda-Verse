@@ -1203,7 +1203,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <button class="btn p" onclick="saveSessionPricing()">Save Pricing</button>
             <button class="btn s" onclick="resetSessionPricing()">Reset Balanced Defaults</button>
           </div>
-          <div class="fn" style="margin-top:.75rem">Balanced default uses roughly ₦1,500 per dollar: $40 → ₦60,000, $30 → ₦45,000, $150 → ₦225,000.</div>
+          <div class="fn" style="margin-top:.75rem">Default keeps Naira accessible and sets USD about 20% higher for international clients: $48 → ₦60,000, $36 → ₦45,000, $180 → ₦225,000.</div>
         </div>
         <div class="scc"><div class="sct">🎨 Editor Color Palette</div><div class="scd">Brand + extended colors available in the editor toolbar. Add custom hex colors below.</div>
           <div class="pg" id="palGrid"></div>
@@ -1422,7 +1422,16 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <div id="libUploadStatus" style="font-size:.7rem;color:var(--t3);margin-bottom:.4rem"></div>
           </div>
           <div id="libImgPreview" style="display:none;border-radius:var(--rs);overflow:hidden;aspect-ratio:16/9;background:var(--s)"><img id="libImgEl" src="" style="width:100%;height:100%;object-fit:cover"></div>
-          <div class="fg"><label>Download / Access URL <span style="color:var(--t3);font-weight:400">(direct link to file or page)</span></label><input class="mn" type="text" id="libUrl" placeholder="https://drive.google.com/… or Gumroad, etc."></div>
+          <div class="fg"><label>Download / Access File <span style="color:var(--t3);font-weight:400">(upload directly or paste URL)</span></label>
+            <div style="display:flex;gap:.6rem;margin-bottom:.5rem;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:.5rem;background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);padding:.55rem .9rem;cursor:pointer;font-size:.78rem;color:var(--t2);transition:border-color .2s;white-space:nowrap" onmouseenter="this.style.borderColor='var(--ac)'" onmouseleave="this.style.borderColor='var(--b)'">
+                Upload file
+                <input type="file" id="libAccessFile" style="display:none" onchange="handleLibFileUpload(event)">
+              </label>
+              <input class="mn" type="text" id="libUrl" placeholder="or paste PDF, audio, video, Drive, Gumroad URL..." style="flex:1;min-width:160px">
+            </div>
+            <div id="libFileUploadStatus" style="font-size:.7rem;color:var(--t3);margin-bottom:.4rem"></div>
+          </div>
           <div class="fg" id="libEmbedWrap"><label>Embed Code / Video URL <span style="color:var(--t3);font-weight:400">(YouTube, Vimeo, etc.)</span></label><textarea class="mn" id="libEmbed" rows="3" placeholder="Paste YouTube embed URL or iframe code..."></textarea></div>
           <div class="fg"><label>Preview / Trailer URL <span style="color:var(--t3);font-weight:400">(short preview before full access)</span></label><input class="mn" type="text" id="libPreview" placeholder="https://…"></div>
           <div class="fg"><label>Sort Order <span style="color:var(--t3);font-weight:400">(lower = shown first)</span></label><input class="mn" type="number" id="libOrder" placeholder="0" value="0" min="0"></div>
@@ -3825,7 +3834,7 @@ const FAQ_DEFAULTS_ADMIN=[
   {id:'faq-d5',question:'Do I need to prepare anything?',answer:'You will receive a short guide 24 hours before with reflection questions. All you need is a quiet space, stable internet, and an open mind.',category:'sessions',order:4},
   {id:'faq-d6',question:'Is Atanda Verse free?',answer:'Your first single clarity session is free during launch. Three-session packages, weekly group access, and monthly intensives are paid guided offers, and payment details are confirmed after registration.',category:'pricing',order:0},
   {id:'faq-d7',question:'How long is the free single-session offer?',answer:'The countdown timer on the homepage shows how much time remains for the free single-session launch offer. Paid plans stay available for deeper support.',category:'pricing',order:1},
-  {id:'faq-d8',question:'What are the current paid prices?',answer:'The default paid pricing is $40 / N60,000 for the three-session package, $30 / N45,000 for weekly group access, and $150 / N225,000 for the monthly intensive. Admin can update these prices when needed.',category:'pricing',order:2},
+  {id:'faq-d8',question:'What are the current paid prices?',answer:'The default paid pricing is $48 / N60,000 for the three-session package, $36 / N45,000 for weekly group access, and $180 / N225,000 for the monthly intensive. Dollar pricing intentionally carries about a 20% international client margin. Admin can update these prices when needed.',category:'pricing',order:2},
   {id:'faq-d9',question:'What if the session does not help me?',answer:'Your first single session has no payment risk during launch. If it does not add value, tell us honestly. The goal is genuine clarity, not just a completed session.',category:'pricing',order:3},
   {id:'faq-d10',question:'How do online sessions work?',answer:'Sessions are held via Zoom or your preferred platform. You will receive a private link and a preparation guide before the session.',category:'logistics',order:0},
   {id:'faq-d11',question:'What if I miss a scheduled session?',answer:'Give us 24 hours notice and we will reschedule at no cost where possible.',category:'logistics',order:1},
@@ -3870,14 +3879,19 @@ function toast(msg,type='inf'){const wrap=document.getElementById('toasts');cons
 // ── COUNTDOWN ADMIN ──────────────────────────────────────────────────────
 const DEFAULT_SESSION_PRICING={
   single:{label:'Single Session',badge:'FREE START',usd:'FREE',ngn:'N0',note:'single launch session',free:true},
-  'three-pack':{label:'Three Session Package',badge:'MOST POPULAR',usd:'$40',ngn:'N60,000',note:'paid package',free:false},
-  group:{label:'Weekly Group Sessions',badge:'GROUP PATH',usd:'$30',ngn:'N45,000',note:'paid group access',free:false},
-  intensive:{label:'Monthly Intensive',badge:'INTENSIVE',usd:'$150',ngn:'N225,000',note:'paid intensive',free:false}
+  'three-pack':{label:'Three Session Package',badge:'MOST POPULAR',usd:'$48',ngn:'N60,000',note:'paid package',free:false},
+  group:{label:'Weekly Group Sessions',badge:'GROUP PATH',usd:'$36',ngn:'N45,000',note:'paid group access',free:false},
+  intensive:{label:'Monthly Intensive',badge:'INTENSIVE',usd:'$180',ngn:'N225,000',note:'paid intensive',free:false}
 };
 function getSessionPricingSettings(){
   const saved=_localSettings().sessionPricing||{};
   const out={};
-  Object.keys(DEFAULT_SESSION_PRICING).forEach(k=>out[k]={...DEFAULT_SESSION_PRICING[k],...(saved[k]||{})});
+  Object.keys(DEFAULT_SESSION_PRICING).forEach(k=>{
+    out[k]={...DEFAULT_SESSION_PRICING[k],...(saved[k]||{})};
+    if(k==='three-pack'&&out[k].ngn==='N60,000'&&out[k].usd==='$40')out[k].usd='$48';
+    if(k==='group'&&out[k].ngn==='N45,000'&&out[k].usd==='$30')out[k].usd='$36';
+    if(k==='intensive'&&out[k].ngn==='N225,000'&&out[k].usd==='$150')out[k].usd='$180';
+  });
   return out;
 }
 function loadSessionPricingSettings(){
@@ -4053,6 +4067,7 @@ const LIB_SEARCH_GROUPS_ADMIN=[
 
 // ── Image upload for library cover ────────────────────────────────────────
 let _libImgFile = null; // pending File object
+let _libAccessFile = null;
 async function handleLibImageUpload(e){
   const f=e.target.files[0];if(!f)return;
   _libImgFile=f;
@@ -4065,6 +4080,12 @@ async function handleLibImageUpload(e){
     document.getElementById('libImage').value=''; // clear URL field
   };
   r.readAsDataURL(f);
+}
+function handleLibFileUpload(e){
+  const f=e.target.files&&e.target.files[0];if(!f)return;
+  _libAccessFile=f;
+  const st=document.getElementById('libFileUploadStatus');
+  if(st)st.textContent=_useSb()?('Selected: '+f.name+' — will upload on save'):('Selected: '+f.name+' — connect Supabase to upload files');
 }
 function previewLibImg(src){
   const ip=document.getElementById('libImgPreview'),img=document.getElementById('libImgEl');
@@ -4134,9 +4155,12 @@ function normalizeLibAdminText(value){return String(value||'').toLowerCase().rep
 function newLibItem(){
   nav('lib-editor');
   _libImgFile=null;
+  _libAccessFile=null;
   ['libTitle','libDesc','libTag','libUrl','libImage','libEmbed','libPreview','libDuration','libNotes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const fi=document.getElementById('libImageFile');if(fi)fi.value='';
+  const af=document.getElementById('libAccessFile');if(af)af.value='';
   const st=document.getElementById('libUploadStatus');if(st)st.textContent='';
+  const fst=document.getElementById('libFileUploadStatus');if(fst)fst.textContent='';
   document.getElementById('libEid').value='';
   document.getElementById('libOrder').value='0';
   document.getElementById('libEmoji').value='📚';
@@ -4167,6 +4191,7 @@ async function editLibItem(id){
   if(!item){toast('Item not found','er');return;}
   nav('lib-editor');
   _libImgFile=null;
+  _libAccessFile=null;
   document.getElementById('libEid').value=id;
   document.getElementById('libTitle').value=item.title||'';
   document.getElementById('libDesc').value=item.desc||'';
@@ -4187,6 +4212,8 @@ async function editLibItem(id){
   document.getElementById('libEditorTitle').textContent='EDIT: '+item.title.substring(0,35);
   const st=document.getElementById('libUploadStatus');if(st)st.textContent='';
   const fi=document.getElementById('libImageFile');if(fi)fi.value='';
+  const af=document.getElementById('libAccessFile');if(af)af.value='';
+  const fst=document.getElementById('libFileUploadStatus');if(fst)fst.textContent='';
   previewLibImg(item.image||'');
   updateLibTypeHints();
 }
@@ -4199,6 +4226,7 @@ async function saveLibItem(){
   if(btn){btn.textContent='Saving…';btn.disabled=true;}
   try{
     let image=document.getElementById('libImage').value.trim();
+    let accessUrl=document.getElementById('libUrl').value.trim();
     // Upload file if one was selected
     if(_libImgFile instanceof File){
       const st=document.getElementById('libUploadStatus');
@@ -4212,12 +4240,19 @@ async function saveLibItem(){
         if(st)st.textContent='Stored as base64 (connect Supabase for cloud hosting)';
       }
     }
+    if(_libAccessFile instanceof File){
+      if(!_useSb())throw new Error('Connect Supabase before uploading library files');
+      const st=document.getElementById('libFileUploadStatus');
+      if(st)st.textContent='Uploading file...';
+      accessUrl=await uploadToStorage(_libAccessFile,'library-files');
+      if(st)st.textContent='File uploaded';
+    }
     const item={
       id,title,
       desc:document.getElementById('libDesc').value.trim(),
       emoji:document.getElementById('libEmoji').value.trim()||'📚',
       tag:document.getElementById('libTag').value.trim(),
-      url:document.getElementById('libUrl').value.trim(),
+      url:accessUrl,
       image,
       embed:document.getElementById('libEmbed').value.trim(),
       preview:document.getElementById('libPreview').value.trim(),
@@ -4231,6 +4266,7 @@ async function saveLibItem(){
     };
     await dbSaveLibItem(item);
     _libImgFile=null;
+    _libAccessFile=null;
     toast('Library item saved ✓','ok');
     nav('library');
   }catch(e){toast('Save failed: '+e.message,'er');}

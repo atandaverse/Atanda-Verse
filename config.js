@@ -155,7 +155,7 @@
     'three-pack': {
       label: 'Three Session Package',
       badge: 'MOST POPULAR',
-      usd: '$40',
+      usd: '$48',
       ngn: 'N60,000',
       note: 'paid package',
       free: false
@@ -163,7 +163,7 @@
     group: {
       label: 'Weekly Group Sessions',
       badge: 'GROUP PATH',
-      usd: '$30',
+      usd: '$36',
       ngn: 'N45,000',
       note: 'paid group access',
       free: false
@@ -171,7 +171,7 @@
     intensive: {
       label: 'Monthly Intensive',
       badge: 'INTENSIVE',
-      usd: '$150',
+      usd: '$180',
       ngn: 'N225,000',
       note: 'paid intensive',
       free: false
@@ -183,6 +183,9 @@
     var pricing = {};
     Object.keys(DEFAULT_SESSION_PRICING).forEach(function (key) {
       pricing[key] = Object.assign({}, DEFAULT_SESSION_PRICING[key], source[key] || {});
+      if (key === 'three-pack' && pricing[key].ngn === 'N60,000' && pricing[key].usd === '$40') pricing[key].usd = '$48';
+      if (key === 'group' && pricing[key].ngn === 'N45,000' && pricing[key].usd === '$30') pricing[key].usd = '$36';
+      if (key === 'intensive' && pricing[key].ngn === 'N225,000' && pricing[key].usd === '$150') pricing[key].usd = '$180';
       pricing[key].free = key === 'single' ? pricing[key].free !== false : !!pricing[key].free;
       pricing[key].price = pricing[key].free ? 'FREE' : [pricing[key].usd, pricing[key].ngn].filter(Boolean).join(' / ');
     });
