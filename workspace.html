@@ -497,6 +497,19 @@ create policy "public_read_vault_activity_logs" on vault_activity_logs for selec
 create policy "public_write_vault_activity_logs" on vault_activity_logs for all using (true);
 create policy "public_read_vault_resources" on vault_resources for select using (true);
 create policy "public_write_vault_resources" on vault_resources for all using (true);
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('innerverse-media', 'innerverse-media', true, 52428800)
+on conflict (id) do update
+set public = true,
+    file_size_limit = 52428800;
+drop policy if exists "public_read_innerverse_media" on storage.objects;
+drop policy if exists "public_insert_innerverse_media" on storage.objects;
+drop policy if exists "public_update_innerverse_media" on storage.objects;
+drop policy if exists "public_delete_innerverse_media" on storage.objects;
+create policy "public_read_innerverse_media" on storage.objects for select using (bucket_id = 'innerverse-media');
+create policy "public_insert_innerverse_media" on storage.objects for insert with check (bucket_id = 'innerverse-media');
+create policy "public_update_innerverse_media" on storage.objects for update using (bucket_id = 'innerverse-media') with check (bucket_id = 'innerverse-media');
+create policy "public_delete_innerverse_media" on storage.objects for delete using (bucket_id = 'innerverse-media');
 create policy "public_read_comments" on comments for select using (true);
 create policy "public_write_comments" on comments for all using (true);
 create table if not exists registrations (
@@ -1600,7 +1613,13 @@ async function uploadToStorage(file, folder='uploads'){
     headers:{'apikey':_sbKey(),'Authorization':'Bearer '+_sbKey(),'Content-Type':file.type,'x-upsert':'true'},
     body:file
   });
-  if(!res.ok){const t=await res.text();throw new Error('Upload failed: '+t);}
+  if(!res.ok){
+    const t=await res.text();
+    const hint=/row-level security|Unauthorized/i.test(t)
+      ? ' Run the innerverse-media Storage policy SQL in VAULT_ACCESS_SETUP.md, then try again.'
+      : '';
+    throw new Error('Upload failed: '+t+hint);
+  }
   return `${_sbUrl()}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
 }
 

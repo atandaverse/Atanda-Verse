@@ -86,7 +86,37 @@ using (true);
 create policy "public_write_vault_resources"
 on vault_resources for all
 using (true);
+
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('innerverse-media', 'innerverse-media', true, 52428800)
+on conflict (id) do update
+set public = true,
+    file_size_limit = 52428800;
+
+drop policy if exists "public_read_innerverse_media" on storage.objects;
+drop policy if exists "public_insert_innerverse_media" on storage.objects;
+drop policy if exists "public_update_innerverse_media" on storage.objects;
+drop policy if exists "public_delete_innerverse_media" on storage.objects;
+
+create policy "public_read_innerverse_media"
+on storage.objects for select
+using (bucket_id = 'innerverse-media');
+
+create policy "public_insert_innerverse_media"
+on storage.objects for insert
+with check (bucket_id = 'innerverse-media');
+
+create policy "public_update_innerverse_media"
+on storage.objects for update
+using (bucket_id = 'innerverse-media')
+with check (bucket_id = 'innerverse-media');
+
+create policy "public_delete_innerverse_media"
+on storage.objects for delete
+using (bucket_id = 'innerverse-media');
 ```
+
+The Storage policies above are what allow Workspace uploads for vault files, cover images, blog covers, testimonials, and library images. If uploads fail with `new row violates row-level security policy`, this Storage section is the missing part.
 
 Deploy `send-vault-access.example.ts` as the Supabase Edge Function named:
 
