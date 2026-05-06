@@ -52,6 +52,10 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background-ima
 .card-foot{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-top:auto}
 .duration{font-size:.78rem;color:var(--muted);font-weight:800}
 .btn{border:none;border-radius:999px;padding:.82rem 1.05rem;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;font:inherit;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;box-shadow:0 14px 34px rgba(199,55,74,.2)}
+.material-action{gap:.48rem;padding:.72rem .95rem;background:#fff;color:var(--ink);border:1px solid rgba(199,55,74,.22);box-shadow:0 12px 28px rgba(23,35,63,.08)}
+.material-action:after{content:"->";color:var(--red);font-weight:900;transition:transform .18s ease}
+.material-action:hover{border-color:rgba(199,55,74,.42);color:var(--red)}
+.material-action:hover:after{transform:translateX(3px)}
 .ghost{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
 input{width:100%;border:1px solid var(--line);background:#fff;border-radius:16px;padding:1rem;font:inherit;color:var(--ink);outline:none}
 .row{display:grid;gap:.75rem}
@@ -123,6 +127,14 @@ async function sha256Text(text){const data=new TextEncoder().encode(String(text|
 function clean(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function plain(v){const d=document.createElement('div');d.innerHTML=String(v||'');return d.textContent||d.innerText||''}
 function excerpt(v,max=210){const text=plain(v).replace(/\s+/g,' ').trim();return text.length>max?text.slice(0,max).replace(/\s+\S*$/,'')+'...':text}
+function materialCta(item){
+  const format=String(item?.format||'').toLowerCase();
+  if(format.includes('audio')||format.includes('meditation'))return 'Start Listening';
+  if(format.includes('video'))return 'Watch Session';
+  if(format.includes('workbook'))return 'Open Workbook';
+  if(format.includes('guide')||format.includes('reading')||format.includes('book'))return 'Begin Reading';
+  return 'Enter Resource';
+}
 async function sb(path,opts){const c=creds();if(!c)throw new Error('Database unavailable');const r=await fetch(c.url+'/rest/v1/'+path,{method:opts?.method||'GET',headers:{apikey:c.key,Authorization:'Bearer '+c.key,'Content-Type':'application/json',...(opts?.headers||{})},body:opts?.body||null});if(!r.ok)throw new Error(await r.text());return r.status===204?null:r.json()}
 async function sendVaultTermsEmail(){
   try{
@@ -174,7 +186,7 @@ async function loadVault(){
             <div class="desc">${clean(excerpt(item.summary||item.tags||'Vault resource'))}</div>
             <div class="card-foot">
               <span class="duration">${clean(item.duration||'Self-paced')}</span>
-              ${item.file_url?`<a class="btn" href="#" onclick="openVaultItem('${clean(item.id)}');return false">View Material</a>`:'<span class="tag">No file attached</span>'}
+              ${item.file_url?`<a class="btn material-action" href="#" onclick="openVaultItem('${clean(item.id)}');return false">${clean(materialCta(item))}</a>`:'<span class="tag">No file attached</span>'}
             </div>
           </div>
         </article>`).join('')}</div>
