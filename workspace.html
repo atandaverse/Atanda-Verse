@@ -128,6 +128,14 @@ td{padding:.76rem .95rem;font-size:.78rem;color:var(--t2);vertical-align:middle}
 .table-note{display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:.72rem .85rem;margin-bottom:1rem}
 .table-note strong{font-size:.78rem;color:var(--t)}
 .table-note span{font-size:.72rem;color:var(--t3);line-height:1.5}
+.source-note{display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;background:rgba(255,255,255,.035);border:1px solid var(--b);border-radius:14px;padding:.58rem .78rem;margin:.75rem 0 1rem;color:var(--t2);font-size:.72rem}
+.source-note strong{display:inline-flex;align-items:center;gap:.42rem;color:var(--t);font-size:.72rem;text-transform:uppercase;letter-spacing:1px}
+.source-dot{width:8px;height:8px;border-radius:50%;background:var(--t3);box-shadow:0 0 0 3px rgba(255,255,255,.04)}
+.source-note[data-kind="database"] .source-dot{background:var(--gr);box-shadow:0 0 0 3px rgba(16,185,129,.14)}
+.source-note[data-kind="storage"] .source-dot{background:var(--bl);box-shadow:0 0 0 3px rgba(59,130,246,.14)}
+.source-note[data-kind="local"] .source-dot{background:var(--yl);box-shadow:0 0 0 3px rgba(245,158,11,.14)}
+.source-note[data-kind="fallback"],.source-note[data-kind="error"]{border-color:rgba(239,68,68,.32)}
+.source-note[data-kind="fallback"] .source-dot,.source-note[data-kind="error"] .source-dot{background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.14)}
 .action-row{display:flex;gap:.35rem;flex-wrap:wrap}
 
 /* EDITOR */
@@ -807,6 +815,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
     <!-- ALL POSTS -->
     <div class="panel" id="panel-posts">
       <div class="queue-note">Use this view as your content queue. Drafts need finishing, Coming Soon needs timing, and Published posts are ready for campaign review.</div>
+      <div class="source-note" id="postsSourceNote" data-kind="local"><strong><span class="source-dot"></span>Source</strong><span>Checking active content source...</span></div>
       <div class="ops-strip" id="postOpsStrip">
         <div class="ops-card"><span>Queue</span><strong id="postOpsTotal">0</strong><small>Posts currently in the content system.</small></div>
         <div class="ops-card"><span>Needs Work</span><strong id="postOpsDrafts">0</strong><small>Drafts and Coming Soon entries waiting for a decision.</small></div>
@@ -946,6 +955,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         </div>
         <button class="tbb" onclick="loadCommentsPanel()">↻ Refresh</button>
       </div>
+      <div class="source-note" id="commentsSourceNote" data-kind="database"><strong><span class="source-dot"></span>Source</strong><span>Comments read from Supabase DB.</span></div>
       <div class="ops-strip" id="commentOpsStrip">
         <div class="ops-card"><span>Total</span><strong id="cmtOpsTotal">0</strong><small>Reader comments currently stored in Supabase.</small></div>
         <div class="ops-card"><span>Posts Active</span><strong id="cmtOpsPosts">0</strong><small>How many post pages have recent discussion attached.</small></div>
@@ -968,6 +978,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <button class="tbb s" onclick="window.open('vaultlibrary.html','_blank')">Open Vault Page</button>
         </div>
       </div>
+      <div class="source-note" id="vaultSourceNote" data-kind="database"><strong><span class="source-dot"></span>Source</strong><span>Requests read from Supabase DB. Vault files are served through private Storage when configured.</span></div>
       <div class="ops-strip">
         <div class="ops-card"><span>Pending</span><strong id="vaultOpsPending">0</strong><small>Waiting for admin decision.</small></div>
         <div class="ops-card"><span>Approved</span><strong id="vaultOpsApproved">0</strong><small>Readers with vault credentials.</small></div>
@@ -984,6 +995,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         </div>
         <button class="tbb p" onclick="clearVaultMaterialForm()">+ New Material</button>
       </div>
+      <div class="source-note" id="vaultMaterialsSourceNote" data-kind="storage"><strong><span class="source-dot"></span>Storage</strong><span>Material records live in Supabase DB. Private files upload to atanda-vault-private; covers upload to public media Storage.</span></div>
       <div class="scc" style="margin-bottom:1rem">
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem">
           <input type="hidden" id="vaultMatId">
@@ -1021,6 +1033,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <button class="tbb s" onclick="exportRegistrations('json')">⬇ Export JSON</button>
         </div>
       </div>
+      <div class="source-note" id="registrationsSourceNote" data-kind="database"><strong><span class="source-dot"></span>Source</strong><span>Registrations read from Supabase DB.</span></div>
       <div class="ops-strip" id="regOpsStrip">
         <div class="ops-card"><span>Total</span><strong id="regOpsTotal">0</strong><small>Session requests captured across the site.</small></div>
         <div class="ops-card"><span>Homepage</span><strong id="regOpsIndex">0</strong><small>Registrations that came through the main landing flow.</small></div>
@@ -1062,6 +1075,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <button class="tbb s" onclick="exportSubscribers('json','all')">⬇ Export JSON</button>
         </div>
       </div>
+      <div class="source-note" id="subscribersSourceNote" data-kind="database"><strong><span class="source-dot"></span>Source</strong><span>Subscribers and newsletter opt-ins read from Supabase DB.</span></div>
       <div class="ops-strip" id="subOpsStrip">
         <div class="ops-card"><span>Total</span><strong id="subOpsTotal">0</strong><small>People who asked to hear from Atanda Verse.</small></div>
         <div class="ops-card"><span>Homepage</span><strong id="subOpsIndex">0</strong><small>Captured from homepage newsletter and registration entry points.</small></div>
@@ -1110,6 +1124,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <button class="tbb" onclick="loadCampaignsPanel()">Refresh</button>
         </div>
       </div>
+      <div class="source-note" id="campaignsSourceNote" data-kind="database"><strong><span class="source-dot"></span>Source</strong><span>Campaigns and delivery rows read from Supabase DB. Sending uses the Edge Function.</span></div>
       <div style="background:linear-gradient(135deg,rgba(15,23,42,.34),rgba(199,55,74,.1));border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:1rem 1.05rem;margin-bottom:1rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-start">
         <div style="display:grid;gap:.28rem">
           <div style="font-size:.72rem;color:#f0b4bc;text-transform:uppercase;letter-spacing:1.6px;font-weight:700">Campaign Workflow</div>
@@ -1287,6 +1302,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <button class="tbb p" onclick="showAddTestimonial()">+ Add Manually</button>
         </div>
       </div>
+      <div class="source-note" id="testimonialsSourceNote" data-kind="database"><strong><span class="source-dot"></span>Source</strong><span>Testimonials read from Supabase DB when connected, then cached locally for emergency fallback.</span></div>
       <div class="ops-strip" id="testiOpsStrip">
         <div class="ops-card"><span>Pending</span><strong id="testiOpsPending">0</strong><small>Stories waiting for approval before they go live.</small></div>
         <div class="ops-card"><span>Approved</span><strong id="testiOpsApproved">0</strong><small>Testimonials already visible on the homepage.</small></div>
@@ -1342,6 +1358,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         </div>
         <button class="tbb p" onclick="newLibItem()">+ Add Item</button>
       </div>
+      <div class="source-note" id="librarySourceNote" data-kind="database"><strong><span class="source-dot"></span>Source</strong><span>Library cards read from Supabase DB. Uploaded files use Supabase Storage URLs.</span></div>
       <div style="display:flex;gap:.55rem;flex-wrap:wrap;margin-bottom:1rem">
         <select id="libCatFilt" class="mn" style="width:auto;padding:.38rem .72rem;font-size:.78rem" onchange="renderLibTbl()">
           <option value="">All Types</option>
@@ -1583,6 +1600,24 @@ function _sbLooksPaused(msg='',status=0){
   return status===540||text.includes('project paused')||text.includes('paused')||text.includes('http 540');
 }
 function _sbIsUnavailable(){return _sbState==='paused'||_sbState==='offline';}
+function setSourceNote(id,kind,title,detail){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.dataset.kind=kind||'database';
+  el.innerHTML=`<strong><span class="source-dot"></span>${title||'Source'}</strong><span>${detail||''}</span>`;
+}
+function noteForDb(id,label,count){
+  setSourceNote(id,'database','Supabase DB',`${label||'Rows'} loaded from Supabase${Number.isFinite(count)?': '+count:''}.`);
+}
+function noteForLocal(id,label,count){
+  setSourceNote(id,'local','Local cache',`${label||'Rows'} shown from this browser cache${Number.isFinite(count)?': '+count:''}.`);
+}
+function noteForFallback(id,label,count){
+  setSourceNote(id,'fallback','Fallback',`${label||'Rows'} shown from built-in fallback content${Number.isFinite(count)?': '+count:''}.`);
+}
+function noteForUnavailable(id,label){
+  setSourceNote(id,'error','Unavailable',`${label||'This surface'} needs Supabase. Current state: ${_sbState||'not connected'}.`);
+}
 
 async function _sbReq(path,method='GET',body=null){
   const h={'apikey':_sbKey(),'Authorization':'Bearer '+_sbKey(),'Content-Type':'application/json'};
@@ -1679,6 +1714,7 @@ async function uploadVaultPrivateFile(file){
 
 // ── TESTIMONIALS SUPABASE SYNC ─────────────────────────────────────────────
 const TPEND_KEY='iv_testimonials_pending', TAPPR_KEY='iv_testimonials_approved';
+let __testimonialAuthority='local';
 async function dbGetTestimonials(){
   if(_useSb()){try{
     const rows=await _sbReq('testimonials?select=*&order=submitted_at.desc');
@@ -1687,9 +1723,11 @@ async function dbGetTestimonials(){
       const appr=rows.filter(r=>r.approved).map(r=>({id:r.id,name:r.name,role:r.role||'',text:r.text,avatar:r.avatar||'',submittedAt:r.submitted_at,source:r.source||'public'}));
       localStorage.setItem(TPEND_KEY,JSON.stringify(pend));
       localStorage.setItem(TAPPR_KEY,JSON.stringify(appr));
+      __testimonialAuthority='database';
       return{pend,appr};
     }
   }catch(e){console.warn('Testimonials SB read failed',e);}}
+  __testimonialAuthority=_useSb()?'local-fallback':'local';
   return{pend:JSON.parse(localStorage.getItem(TPEND_KEY)||'[]'),appr:JSON.parse(localStorage.getItem(TAPPR_KEY)||'[]')};
 }
 async function dbSaveTestimonial(t,approved){
@@ -1707,14 +1745,17 @@ async function dbDeleteTestimonial(id){
 }
 
 // ── LIBRARY SUPABASE SYNC ──────────────────────────────────────────────────
+let __libraryAuthority='local';
 async function dbGetLibrary(){
   if(_useSb()){try{
     const rows=await _sbReq('library?select=*&order=sort_order.asc,id.asc');
     if(Array.isArray(rows)){
       const items=rows.map(r=>({id:r.id,title:r.title,category:r.category,desc:r.description||'',emoji:r.emoji||'📄',tag:r.tag||'',status:r.status,url:r.url||'',image:r.image||'',embed:r.embed||'',preview:r.preview||'',duration:r.duration||'',order:r.sort_order||0,featured:!!r.featured,free:r.free!==false,notes:r.notes||''}));
+      __libraryAuthority='database';
       localStorage.setItem(LIB_KEY,JSON.stringify(items));return items;
     }
   }catch(e){console.warn('Library SB read failed',e);}}
+  __libraryAuthority=_useSb()?'local-fallback':'local';
   return getLibItems();
 }
 async function dbSaveLibItem(item){
@@ -3828,6 +3869,9 @@ renderPostsTbl = async function(){
   try{
     const resolved=await resolvePostsSource();
     const posts=Array.isArray(resolved.items)?resolved.items:[];
+    if(resolved.source==='database')noteForDb('postsSourceNote','Posts',posts.length);
+    else if(resolved.source==='local cache')noteForLocal('postsSourceNote','Posts',posts.length);
+    else noteForFallback('postsSourceNote','Posts',posts.length);
     const srch=(document.getElementById('psrch')?.value||'').trim().toLowerCase();
     const sf=document.getElementById('pfstt')?.value||'';
     const filt=posts.filter(p=>{
@@ -3862,6 +3906,7 @@ renderPostsTbl = async function(){
     }).join('');
   }catch(e){
     console.warn('Posts table failed',e);
+    noteForUnavailable('postsSourceNote','Posts');
     if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">Posts could not load. Refresh the workspace or check Supabase connection.</td></tr>';
   }
 }
@@ -4050,6 +4095,9 @@ async function saveManualTestimonial(){
 }
 async function loadTestimonialsPanel(){
   const{pend,appr}=await dbGetTestimonials();
+  if(__testimonialAuthority==='database')noteForDb('testimonialsSourceNote','Testimonials',pend.length+appr.length);
+  else if(__testimonialAuthority==='local-fallback')noteForFallback('testimonialsSourceNote','Testimonials',pend.length+appr.length);
+  else noteForLocal('testimonialsSourceNote','Testimonials',pend.length+appr.length);
   const pLbl=document.getElementById('pendingCountLbl'),pBdg=document.getElementById('pendingCount');
   if(pLbl)pLbl.textContent=pend.length;if(pBdg)pBdg.textContent=pend.length;
   const aLbl=document.getElementById('approvedCountLbl');if(aLbl)aLbl.textContent=appr.length;
@@ -4149,6 +4197,9 @@ function previewLibImg(src){
 async function renderLibTbl(){
   // Hydrate from Supabase first if connected
   const items=(await dbGetLibrary()).sort((a,b)=>(a.order||0)-(b.order||0));
+  if(__libraryAuthority==='database')noteForDb('librarySourceNote','Library items',items.length);
+  else if(__libraryAuthority==='local-fallback')noteForFallback('librarySourceNote','Library items',items.length);
+  else noteForLocal('librarySourceNote','Library items',items.length);
   const cf=document.getElementById('libCatFilt')?.value||'';
   const sf=document.getElementById('libStatusFilt')?.value||'';
   const q=(document.getElementById('libSearchFilt')?.value||'').trim().toLowerCase();
@@ -4363,6 +4414,7 @@ async function loadCommentsPanel() {
   const badge = document.getElementById('cmtCount');
   if (!list) return;
   if (!_useSb()) {
+    noteForUnavailable('commentsSourceNote','Comments');
     const totalOps = document.getElementById('cmtOpsTotal'); if (totalOps) totalOps.textContent = '0';
     const postOps = document.getElementById('cmtOpsPosts'); if (postOps) postOps.textContent = '0';
     const latestOps = document.getElementById('cmtOpsLatest'); if (latestOps) latestOps.textContent = '—';
@@ -4384,6 +4436,7 @@ async function loadCommentsPanel() {
     const latestOps = document.getElementById('cmtOpsLatest'); if (latestOps) latestOps.textContent = latest;
     if (totalLbl) totalLbl.textContent = total;
     if (badge) badge.textContent = total;
+    noteForDb('commentsSourceNote','Comments',total);
     if (!total) {
       list.innerHTML = '<div class="table-note"><strong>No comments yet</strong><span>When readers respond on blog posts, this moderation queue will populate here.</span></div>';
       return;
@@ -4404,6 +4457,7 @@ async function loadCommentsPanel() {
       </div>`;
     }).join('');
   } catch(e) {
+    noteForUnavailable('commentsSourceNote','Comments');
     list.innerHTML = `<div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Error: ${e.message}</div>`;
   }
 }
@@ -4463,6 +4517,7 @@ async function loadSubscribersPanel() {
   const badge = document.getElementById('subCount');
   if (!tbl) return;
   if (!_useSb()) {
+    noteForUnavailable('subscribersSourceNote','Subscribers');
     const subOpsTotal = document.getElementById('subOpsTotal'); if (subOpsTotal) subOpsTotal.textContent = '0';
     const subOpsIndex = document.getElementById('subOpsIndex'); if (subOpsIndex) subOpsIndex.textContent = '0';
     const subOpsContent = document.getElementById('subOpsContent'); if (subOpsContent) subOpsContent.textContent = '0';
@@ -4479,6 +4534,7 @@ async function loadSubscribersPanel() {
     const subOpsContent = document.getElementById('subOpsContent'); if (subOpsContent) subOpsContent.textContent = rows.filter(s => ['blog','post'].includes(s.source)).length;
     if (totalLbl) totalLbl.textContent = filtered.length;
     if (badge) badge.textContent = rows.length;
+    noteForDb('subscribersSourceNote','Subscribers',rows.length);
     if (!filtered.length) {
       tbl.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No subscribers match filters</td></tr>';
       return;
@@ -4501,6 +4557,7 @@ async function loadSubscribersPanel() {
       </tr>`;
     }).join('');
   } catch(e) {
+    noteForUnavailable('subscribersSourceNote','Subscribers');
     tbl.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Error: ${e.message}</td></tr>`;
   }
 }
@@ -4655,6 +4712,7 @@ async function loadCampaignsPanel() {
   const sentCountEl = document.getElementById('campSentCount');
   if (!tbl) return;
   if (!_useSb()) {
+    noteForUnavailable('campaignsSourceNote','Campaigns');
     tbl.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:2rem">Connect Supabase to manage campaigns</td></tr>';
     return;
   }
@@ -4676,6 +4734,7 @@ async function loadCampaignsPanel() {
     if (draftCountEl) draftCountEl.textContent = rows.filter(r => r.status === 'draft').length;
     if (queuedCountEl) queuedCountEl.textContent = rows.filter(r => ['queued','sending'].includes(r.status)).length;
     if (sentCountEl) sentCountEl.textContent = rows.filter(r => r.status === 'sent').length;
+    setSourceNote('campaignsSourceNote','database','Supabase DB',`Campaigns loaded: ${rows.length}. Delivery rows loaded: ${deliveries.length}. Sender: Edge Function.`);
     if (!filtered.length) {
       tbl.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:2rem">No campaigns yet. Publish a post to create the first draft, then refine it here before sending.</td></tr>';
       return;
@@ -4703,6 +4762,7 @@ async function loadCampaignsPanel() {
       </tr>`;
     }).join('');
   } catch (e) {
+    noteForUnavailable('campaignsSourceNote','Campaigns');
     tbl.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:2rem">Error: ${e.message}</td></tr>`;
   }
 }
@@ -5034,6 +5094,7 @@ async function loadRegistrationsPanel() {
   const badge = document.getElementById('regCount');
   if (!tbl) return;
   if (!_useSb()) {
+    noteForUnavailable('registrationsSourceNote','Registrations');
     const ro=document.getElementById('regOpsTotal'); if (ro) ro.textContent = '0';
     const ri=document.getElementById('regOpsIndex'); if (ri) ri.textContent = '0';
     const rs=document.getElementById('regOpsSessions'); if (rs) rs.textContent = '0';
@@ -5061,6 +5122,7 @@ async function loadRegistrationsPanel() {
     });
     if (totalLbl) totalLbl.textContent = filtered.length;
     if (badge) badge.textContent = rows.length;
+    noteForDb('registrationsSourceNote','Registrations',rows.length);
     if (!filtered.length) {
       tbl.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--t3);padding:2rem">No registrations match filters</td></tr>';
       return;
@@ -5082,6 +5144,7 @@ async function loadRegistrationsPanel() {
       </tr>`;
     }).join('');
   } catch(e) {
+    noteForUnavailable('registrationsSourceNote','Registrations');
     tbl.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--t3);padding:2rem">Error: ${e.message}</td></tr>`;
   }
 }
@@ -5129,6 +5192,7 @@ async function loadVaultRequests(){
   const tbl=document.getElementById('vaultReqTbl');
   if(!tbl)return;
   if(!_useSb()){
+    noteForUnavailable('vaultSourceNote','Vault access');
     tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Connect Supabase to view vault requests</td></tr>';
     return;
   }
@@ -5141,7 +5205,8 @@ async function loadVaultRequests(){
     const rejected=rows.filter(r=>r.status==='rejected').length;
     const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
     set('vaultTotalLbl',rows.length);set('vaultCount',pending);set('vaultOpsPending',pending);set('vaultOpsApproved',approved);set('vaultOpsRejected',rejected);
-    if(!rows.length){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No vault requests yet</td></tr>';return}
+    setSourceNote('vaultSourceNote','database','Supabase DB',`Vault requests loaded: ${rows.length}. Credentials, warnings, restrictions, and approval status are database-backed.`);
+    if(!rows.length){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No vault requests yet</td></tr>';loadVaultMaterials();return}
     tbl.innerHTML=rows.map(r=>{
       const dt=r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
       const reason=String(r.reason||'').slice(0,90)+(String(r.reason||'').length>90?'...':'');
@@ -5162,6 +5227,7 @@ async function loadVaultRequests(){
       </tr>`;
     }).join('');
   }catch(e){
+    noteForUnavailable('vaultSourceNote','Vault access');
     tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Vault table is not ready. Run the latest setup SQL.</td></tr>';
   }
   loadVaultMaterials();
@@ -5227,11 +5293,12 @@ function clearVaultMaterialForm(){
 async function loadVaultMaterials(){
   const tbl=document.getElementById('vaultMatTbl');
   if(!tbl)return;
-  if(!_useSb()){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Connect Supabase to manage vault materials</td></tr>';return}
+  if(!_useSb()){noteForUnavailable('vaultMaterialsSourceNote','Vault materials');tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Connect Supabase to manage vault materials</td></tr>';return}
   try{
     const rows=await _sbReq('vault_resources?select=*&order=sort_order.asc,updated_at.desc')||[];
     _vaultMaterials=rows;
     const total=document.getElementById('vaultMatTotal');if(total)total.textContent=rows.length;
+    setSourceNote('vaultMaterialsSourceNote','storage','Supabase DB + Storage',`Material records loaded: ${rows.length}. Private file paths use atanda-vault-private; cover images use public media Storage.`);
     if(!rows.length){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No vault materials yet</td></tr>';return}
     tbl.innerHTML=rows.map(r=>{
       const pill=r.status==='published'?'published':r.status==='draft'?'draft':'coming-soon';
@@ -5245,6 +5312,7 @@ async function loadVaultMaterials(){
       </tr>`;
     }).join('');
   }catch(e){
+    noteForUnavailable('vaultMaterialsSourceNote','Vault materials');
     tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Vault resources table is not ready. Run the latest setup SQL.</td></tr>';
   }
 }
