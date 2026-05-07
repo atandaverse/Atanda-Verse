@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
       .from("vault_access_requests")
       .select("*")
       .eq("email", cleanEmail)
-      .eq("requested_resource_id", resourceId)
+      .in("requested_resource_id", [resourceId, "lib-1"])
       .order("created_at", { ascending: true })
       .limit(1)
       .maybeSingle();

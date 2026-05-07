@@ -3057,7 +3057,7 @@ function getAuth(){try{const auth=JSON.parse(localStorage.getItem(AUTH_K));if(au
 ['lu','lp'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin()}));
 function logout(){document.getElementById('appShell').style.display='none';document.getElementById('lockScreen').classList.remove('gone')}
 function updateLockHint(){const hint=document.getElementById('lockHint');if(!hint)return;hint.textContent=getAuth()?'Change workspace access in Settings after login':'First use: enter a workspace ID and access key to create this browser workspace passkey.'}
-async function completeLogin(username){document.getElementById('lockScreen').classList.add('gone');document.getElementById('appShell').style.display='grid';document.getElementById('sbUn').textContent=username;if(_useSb()){try{await _sbReq('admin_logins','POST',{id:'login-'+Date.now(),username:username,logged_in_at:new Date().toISOString(),user_agent:navigator.userAgent.slice(0,200)});}catch(e){}}initApp()}
+async function completeLogin(username){document.getElementById('lockScreen').classList.add('gone');document.getElementById('appShell').style.display='grid';document.getElementById('sbUn').textContent=username;if(_useSb()){try{await _sbReq('admin_logins','POST',{id:'login-'+Date.now(),username:username,logged_in_at:new Date().toISOString(),user_agent:navigator.userAgent.slice(0,200)});}catch(e){}}await initApp();routeWorkspaceHash()}
 tryLogin = async function(){const u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value,a=getAuth();const err=document.getElementById('lerr');if(!u||!p){err.textContent='✕ Enter workspace ID and access key';setTimeout(()=>err.textContent='',2500);return}if(!a){localStorage.setItem(AUTH_K,JSON.stringify({u,p}));updateLockHint();toast('Workspace passkey created for this browser','ok');return completeLogin(u)}if(u===a.u&&p===a.p)return completeLogin(u);err.textContent='✕ Invalid workspace access';setTimeout(()=>err.textContent='',2500)}
 
 // ── SETUP ─────────────────────────────────────────────────────────────────
@@ -3484,6 +3484,13 @@ if(panel==='campaigns')loadCampaignsPanel();
   if(panel==='lib-editor'){clearLibForm();setTimeout(()=>document.getElementById('libTitle').focus(),100);}
   if(panel==='faq')loadFaqPanel();
 }
+
+function routeWorkspaceHash(){
+  const key=String(location.hash||'').replace(/^#/,'').toLowerCase();
+  const map={'vault':'vault','vault-access':'vault','subscribers':'subscribers','registrations':'registrations','comments':'comments','library':'library','posts':'posts','campaigns':'campaigns','testimonials':'testimonials','faq':'faq'};
+  if(map[key])nav(map[key]);
+}
+window.addEventListener('hashchange',routeWorkspaceHash);
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 async function initApp(){

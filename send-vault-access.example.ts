@@ -9,6 +9,10 @@ function siteUrl(path = "") {
   return `https://verse.atanda.site/${String(path).replace(/^\/+/, "")}`;
 }
 
+function workspaceVaultUrl() {
+  return Deno.env.get("ADMIN_WORKSPACE_URL") || siteUrl("workspace.html#vault");
+}
+
 function escapeHtml(value: unknown) {
   return String(value || "")
     .replaceAll("&", "&amp;")
@@ -59,6 +63,7 @@ Deno.serve(async (req) => {
     const from = "Atanda Support <support@atanda.site>";
 
     if (action === "requested") {
+      const adminVaultUrl = workspaceVaultUrl();
       await sendEmail(resendKey, {
         from,
         reply_to: "support@atanda.site",
@@ -73,6 +78,9 @@ Deno.serve(async (req) => {
             <p><strong>Requested resource:</strong> ${escapeHtml(row.requested_resource_title || "Vault Library")}</p>
             <p><strong>Reason:</strong></p>
             <div style="padding:14px;border-radius:12px;background:#f8fafc;border:1px solid rgba(15,23,42,.08)">${escapeHtml(row.reason).replaceAll("\n", "<br>")}</div>
+            <p style="margin-top:20px">
+              <a href="${adminVaultUrl}" style="display:inline-block;background:#c7374a;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:12px;font-weight:800">Open Workspace Vault Access</a>
+            </p>
           </div>
         `,
       });
@@ -227,10 +235,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    await supabase
-      .from("vault_access_requests")
-      .update({ emailed_at: new Date().toISOString() })
-      .eq("id", requestId);
+    if (["approved", "rejected", "warning", "restricted"].includes(String(action))) {
+      await supabase
+        .from("vault_access_requests")
+        .update({ emailed_at: new Date().toISOString() })
+        .eq("id", requestId);
+    }
 
     return new Response(JSON.stringify({ ok: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

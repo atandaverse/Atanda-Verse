@@ -1098,6 +1098,13 @@ function findLibraryItem(id){
   return lastLibItems.find(item => String(item.id) === String(id));
 }
 
+function canonicalVaultResourceId(item){
+  const rawId = String(item?.id || '').trim();
+  const title = String(item?.title || '').toLowerCase();
+  if (rawId === 'lib-1' || title.includes('5-day clarity challenge')) return '5-day-clarity-challenge';
+  return rawId || 'vault-library';
+}
+
 function openLibraryAccessModal(itemId){
   pendingLibraryItemId = itemId || '';
   const modal = document.getElementById('libraryAccessModal');
@@ -1126,6 +1133,8 @@ async function submitLibraryAccess(){
   const email = (document.getElementById('libAccessEmail')?.value || '').trim().toLowerCase();
   const reason = (document.getElementById('libAccessReason')?.value || '').trim();
   const item = findLibraryItem(pendingLibraryItemId);
+  const resourceId = canonicalVaultResourceId(item);
+  const resourceTitle = item?.title || 'Vault Library';
   if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     if (status) status.textContent = 'Please add your name and a valid email.';
     return;
@@ -1137,8 +1146,8 @@ async function submitLibraryAccess(){
     full_name: name,
     email: email,
     reason: reason,
-    requested_resource_id: item?.id || '',
-    requested_resource_title: item?.title || '',
+    requested_resource_id: resourceId,
+    requested_resource_title: resourceTitle,
     status: 'pending',
     source_page: location.pathname,
     page_url: location.href,
@@ -1149,6 +1158,35 @@ async function submitLibraryAccess(){
     return;
   }
   try {
+    if (status) status.textContent = 'Checking existing access...';
+    const resourceFilter = resourceId === '5-day-clarity-challenge'
+      ? '&requested_resource_id=in.(5-day-clarity-challenge,lib-1)'
+      : '&requested_resource_id=eq.' + encodeURIComponent(resourceId);
+    const existingRes = await fetch(creds.url + '/rest/v1/vault_access_requests?select=*&email=eq.' + encodeURIComponent(email) + resourceFilter + '&order=created_at.asc&limit=1', {
+      headers: {
+        'apikey': creds.key,
+        'Authorization': 'Bearer ' + creds.key
+      }
+    });
+    if (existingRes.ok) {
+      const existingRows = await existingRes.json();
+      const existing = Array.isArray(existingRows) ? existingRows[0] : null;
+      if (existing) {
+        const app = existing.application_no ? ' Application number: ' + existing.application_no + '.' : '';
+        const state = String(existing.status || 'pending').toLowerCase();
+        if (state === 'approved') {
+          if (status) status.textContent = 'You already have approved access for this resource.' + app + ' Use the Already Approved link.';
+        } else if (state === 'pending') {
+          if (status) status.textContent = 'You already have a pending request for this resource.' + app + ' Admin will review it.';
+        } else if (state === 'restricted') {
+          if (status) status.textContent = 'This vault access is currently restricted.' + app + ' Please contact support@atanda.site if you need review.';
+        } else {
+          if (status) status.textContent = 'A previous request already exists for this resource.' + app + ' Please contact support@atanda.site if you need a review.';
+        }
+        return;
+      }
+    }
+
     if (status) status.textContent = 'Submitting request...';
     const res = await fetch(creds.url + '/rest/v1/vault_access_requests', {
       method: 'POST',
@@ -1171,9 +1209,9 @@ async function submitLibraryAccess(){
         email: email,
         name: name,
         source: 'vault-access-opt-in',
-        tags: ['newsletter', 'vault-access', 'library-request', item?.id || 'vault'],
-        sendGuide: true,
-        meta: { vaultRequestId: request.id, requestedResourceId: item?.id || '' }
+        tags: ['newsletter', 'vault-access', 'library-request', resourceId],
+        sendGuide: resourceId === '5-day-clarity-challenge',
+        meta: { vaultRequestId: request.id, requestedResourceId: resourceId }
       });
     }
     if (status) status.textContent = 'Request received. Your application number is ' + request.application_no + '. Admin will review it.';

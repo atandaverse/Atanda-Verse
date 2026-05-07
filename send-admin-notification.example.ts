@@ -18,8 +18,22 @@ function titleForEvent(eventType: string) {
     "registration.created": "New session registration",
     "testimonial.created": "New testimonial awaiting review",
     "comment.created": "New blog comment",
+    "vault.access.requested": "New vault access request",
   };
   return map[eventType] || "New Atanda Verse admin event";
+}
+
+function workspaceAction(eventType: string, payload: Record<string, unknown>) {
+  const base = Deno.env.get("ADMIN_WORKSPACE_URL") || "https://verse.atanda.site/workspace.html";
+  const isVault =
+    /vault/i.test(eventType) ||
+    Boolean(payload?.application_no) ||
+    Boolean(payload?.vaultRequestId) ||
+    Boolean(payload?.requestId);
+  return {
+    href: isVault ? `${base.replace(/#.*$/, "")}#vault` : base,
+    label: isVault ? "Open Workspace Vault Access" : "Open Admin Workspace",
+  };
 }
 
 function rows(payload: Record<string, unknown>) {
@@ -49,6 +63,7 @@ Deno.serve(async (req) => {
     const from = Deno.env.get("ADMIN_NOTIFY_FROM") || "Atanda Verse Admin <hello@atanda.site>";
     const title = titleForEvent(String(eventType));
     const bodyRows = rows(payload);
+    const action = workspaceAction(String(eventType), payload);
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -77,7 +92,10 @@ Deno.serve(async (req) => {
                     ${createdAt ? `<tr><td style="padding:10px 12px;color:#64748b;font-weight:700">Time</td><td style="padding:10px 12px">${escapeHtml(createdAt)}</td></tr>` : ""}
                   </tbody>
                 </table>
-                <p style="margin:18px 0 0;line-height:1.75;color:#64748b">Open the admin workspace to review, approve, reply, or follow up.</p>
+                <p style="margin:20px 0 0">
+                  <a href="${escapeHtml(action.href)}" style="display:inline-block;background:#c7374a;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:12px;font-weight:800">${escapeHtml(action.label)}</a>
+                </p>
+                <p style="margin:14px 0 0;line-height:1.75;color:#64748b">Open the admin workspace to review, approve, reply, or follow up.</p>
               </div>
             </div>
           </div>
