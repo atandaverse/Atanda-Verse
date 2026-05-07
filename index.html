@@ -578,20 +578,22 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         .newsletter-form button:hover { background: linear-gradient(135deg,var(--accent),#972430); transform: translateY(-3px); box-shadow: 0 16px 36px rgba(220,53,69,.34), inset 0 1px 0 rgba(255,255,255,.34); }
 
         /* ── STICKY CTA ── */
-.sticky-cta { position: fixed; bottom: 22px; right: 22px; z-index: 1000; display: inline-flex; align-items: center; gap: .62rem; max-width: calc(100vw - 32px); background: linear-gradient(135deg,var(--accent),var(--accent-hover)); color: white; padding: .88rem 1.2rem .88rem .92rem; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: .88rem; box-shadow: 0 18px 42px rgba(220,53,69,.42), 0 0 0 1px rgba(255,255,255,.14), inset 0 1px 0 rgba(255,255,255,.3); transition: max-width .38s cubic-bezier(.34,1.56,.64,1), padding .38s cubic-bezier(.34,1.56,.64,1), transform .32s ease, box-shadow .32s ease, opacity .32s ease; cursor: pointer; animation: sca 1s ease 3s both; overflow: visible; white-space: nowrap; isolation: isolate; }
-        .sticky-cta::after { content: ''; position: absolute; inset: -18px -24px; border-radius: inherit; background: radial-gradient(circle at 30% 40%, rgba(255,255,255,.34), transparent 30%), radial-gradient(circle, rgba(220,53,69,.42), rgba(220,53,69,.18) 48%, transparent 72%); filter: blur(14px); opacity: .92; z-index: -1; animation: scg 2.8s ease-in-out infinite; pointer-events: none; }
+.sticky-cta { position: fixed; bottom: 22px; right: 22px; z-index: 1000; display: inline-flex; align-items: center; gap: .62rem; max-width: calc(100vw - 32px); background: linear-gradient(135deg,#e63b51 0%,#be2637 52%,#951b2a 100%); color: white; padding: .88rem 1.2rem .88rem .92rem; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: .88rem; box-shadow: 0 18px 42px rgba(220,53,69,.46), 0 0 0 1px rgba(255,255,255,.14), inset 0 1px 0 rgba(255,255,255,.34); transition: max-width .42s cubic-bezier(.34,1.56,.64,1), padding .42s cubic-bezier(.34,1.56,.64,1), gap .42s cubic-bezier(.34,1.56,.64,1), transform .32s ease, box-shadow .32s ease, opacity .32s ease; cursor: pointer; animation: sca 1s ease 3s both; overflow: visible; white-space: nowrap; isolation: isolate; }
+        .sticky-cta::after { content: ''; position: absolute; inset: -28px -34px; border-radius: inherit; background: radial-gradient(circle at 22% 36%, rgba(255,255,255,.38), transparent 24%), radial-gradient(circle at 56% 50%, rgba(255,92,116,.62), rgba(220,53,69,.28) 42%, rgba(220,53,69,.12) 62%, transparent 78%); filter: blur(18px); opacity: .98; z-index: -1; animation: scg 2.65s ease-in-out infinite; pointer-events: none; }
         .sticky-cta > * { position: relative; z-index: 1; }
         @keyframes sca { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes scg { 0%,100% { opacity: .72; transform: scale(.96); } 50% { opacity: 1; transform: scale(1.04); } }
-        .sticky-cta:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 24px 58px rgba(220,53,69,.58), 0 0 0 1px rgba(255,255,255,.18), inset 0 1px 0 rgba(255,255,255,.36); }
+        @keyframes scg { 0%,100% { opacity: .72; transform: scale(.94); } 45% { opacity: 1; transform: scale(1.08); } 70% { opacity: .86; transform: scale(1.02); } }
+        .sticky-cta:hover,.sticky-cta.typing,.sticky-cta.peek { transform: translateY(-4px) scale(1.05); box-shadow: 0 26px 64px rgba(220,53,69,.62), 0 0 0 1px rgba(255,255,255,.2), inset 0 1px 0 rgba(255,255,255,.38); }
         .sticky-cta.hidden { transform: translateY(100px) !important; opacity: 0 !important; }
         .sticky-cta-icon { width: 2.65rem; height: 2.65rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.94); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 10px 22px rgba(15,23,42,.18); flex: 0 0 auto; border: 1px solid rgba(255,255,255,.55); overflow: hidden; }
         .sticky-cta-icon img { width: 2.08rem; height: 2.08rem; object-fit: contain; display: block; }
-        .sticky-cta-copy { display: inline-flex; flex-direction: column; line-height: 1.05; overflow: hidden; transition: max-width .38s cubic-bezier(.34,1.56,.64,1), opacity .28s ease; max-width: 12rem; }
-        .sticky-cta-label { letter-spacing: .01em; }
+        .sticky-cta-copy { display: inline-flex; flex-direction: column; line-height: 1.05; overflow: hidden; transition: max-width .42s cubic-bezier(.34,1.56,.64,1), opacity .28s ease; max-width: 13.6rem; }
+        .sticky-cta-label { letter-spacing: .01em; min-width: 2.35rem; }
+        .sticky-cta.typing .sticky-cta-label::after { content: ''; display: inline-block; width: 2px; height: .95em; margin-left: 3px; vertical-align: -1px; background: rgba(255,255,255,.88); animation: ctablink .72s steps(1,end) infinite; }
+        @keyframes ctablink { 50% { opacity: 0; } }
         .sticky-cta-detail { font-size: .68rem; opacity: .78; font-weight: 700; margin-top: .2rem; }
         .sticky-cta.compact { padding: .62rem .82rem .62rem .62rem; gap: .45rem; }
-        .sticky-cta.compact .sticky-cta-copy { max-width: 3.2rem; }
+        .sticky-cta.compact .sticky-cta-copy { max-width: 3.25rem; }
         .sticky-cta.compact .sticky-cta-label { font-size: .82rem; }
         .sticky-cta.compact .sticky-cta-detail { display: none; }
         .sticky-cta.peek { transform: translateY(-3px) scale(1.03); box-shadow: 0 22px 52px rgba(220,53,69,.46), inset 0 1px 0 rgba(255,255,255,.36); }
@@ -1506,27 +1508,76 @@ img.loaded{opacity:1;}
     const sc = document.getElementById('stickyCta');
     let stickyPeekTimer = null;
     let stickyCycleTimer = null;
-    function setStickyMode(forceFull) {
-        if (!sc) return;
-        const compact = window.scrollY > 120 && !forceFull;
-        sc.classList.toggle('compact', compact);
-        sc.classList.toggle('peek', !!forceFull && window.scrollY > 120);
-        const label = sc.querySelector('.sticky-cta-label');
-        if (label) label.textContent = compact ? 'Book' : 'Book Free Session';
-        sc.setAttribute('aria-label', compact ? 'Book free single session' : 'Book free single clarity session');
+    let stickyTypeTimer = null;
+    let stickyTypeToken = 0;
+    const stickyLabel = sc ? sc.querySelector('.sticky-cta-label') : null;
+    const stickyFullText = 'Book Your Free Session';
+    const stickyCompactText = 'Book';
+    const stickyReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function stopStickyTyping() {
+        stickyTypeToken++;
+        clearTimeout(stickyTypeTimer);
+        if (sc) sc.classList.remove('typing');
+    }
+    function setStickyCompact() {
+        if (!sc || !stickyLabel) return;
+        stopStickyTyping();
+        sc.classList.add('compact');
+        sc.classList.remove('peek');
+        stickyLabel.textContent = stickyCompactText;
+        sc.setAttribute('aria-label', 'Book free single session');
+    }
+    function typeStickyText(text, token, i) {
+        if (!stickyLabel || token !== stickyTypeToken) return;
+        stickyLabel.textContent = text.slice(0, i);
+        if (i <= text.length) {
+            stickyTypeTimer = setTimeout(function () { typeStickyText(text, token, i + 1); }, i < 5 ? 34 : 24);
+        } else {
+            sc.classList.remove('typing');
+        }
+    }
+    function showStickyFull(shouldType) {
+        if (!sc || !stickyLabel) return;
+        stopStickyTyping();
+        sc.classList.remove('compact');
+        sc.classList.add('peek');
+        sc.setAttribute('aria-label', 'Book your free single clarity session');
+        if (shouldType && !stickyReducedMotion) {
+            sc.classList.add('typing');
+            const token = ++stickyTypeToken;
+            stickyLabel.textContent = '';
+            typeStickyText(stickyFullText, token, 1);
+        } else {
+            stickyLabel.textContent = stickyFullText;
+        }
     }
     function pulseStickyFull() {
         if (!sc || window.scrollY <= 120) return;
-        setStickyMode(true);
+        showStickyFull(true);
         clearTimeout(stickyPeekTimer);
-        stickyPeekTimer = setTimeout(function () { setStickyMode(false); }, 3200);
+        stickyPeekTimer = setTimeout(setStickyCompact, 4300);
     }
-    setStickyMode(true);
-    window.addEventListener('scroll', function () { setStickyMode(false); }, { passive: true });
-    stickyCycleTimer = setInterval(pulseStickyFull, 11000);
+    showStickyFull(true);
+    stickyPeekTimer = setTimeout(function () {
+        if (window.scrollY > 120) setStickyCompact();
+    }, 4700);
+    window.addEventListener('scroll', function () {
+        if (window.scrollY > 120 && !sc.matches(':hover')) setStickyCompact();
+        else if (window.scrollY <= 120) showStickyFull(false);
+    }, { passive: true });
+    sc.addEventListener('mouseenter', function () { showStickyFull(true); });
+    sc.addEventListener('focus', function () { showStickyFull(true); });
+    sc.addEventListener('mouseleave', function () {
+        if (window.scrollY > 120) {
+            clearTimeout(stickyPeekTimer);
+            stickyPeekTimer = setTimeout(setStickyCompact, 1200);
+        }
+    });
+    stickyCycleTimer = setInterval(pulseStickyFull, 10500);
     window.addEventListener('beforeunload', function () {
         clearInterval(stickyCycleTimer);
         clearTimeout(stickyPeekTimer);
+        clearTimeout(stickyTypeTimer);
     });
 
     // ── FORM SUBMISSION ──
