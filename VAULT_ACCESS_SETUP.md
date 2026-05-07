@@ -36,6 +36,9 @@ alter table vault_access_requests
 add column if not exists restricted_at timestamptz;
 
 alter table vault_access_requests
+add column if not exists emailed_at timestamptz;
+
+alter table vault_access_requests
 add column if not exists terms_emailed_at timestamptz;
 
 create table if not exists vault_activity_logs (
