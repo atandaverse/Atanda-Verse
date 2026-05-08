@@ -519,10 +519,8 @@ create policy "public_write_vault_access_requests" on vault_access_requests for 
 create policy "public_read_vault_activity_logs" on vault_activity_logs for select using (true);
 create policy "public_write_vault_activity_logs" on vault_activity_logs for all using (true);
 -- Vault cards are listed through the list-vault-resources Edge Function.
--- Do not add public SELECT for vault_resources in production.
-create policy "anon_insert_vault_resources" on vault_resources for insert to anon with check (true);
-create policy "anon_update_vault_resources" on vault_resources for update to anon using (true) with check (true);
-create policy "anon_delete_vault_resources" on vault_resources for delete to anon using (true);
+-- Workspace material admin uses manage-vault-resources with ADMIN_API_TOKEN.
+-- Do not add public SELECT/INSERT/UPDATE/DELETE for vault_resources in production.
 insert into storage.buckets (id, name, public, file_size_limit)
 values ('innerverse-media', 'innerverse-media', true, 52428800)
 on conflict (id) do update
@@ -1279,6 +1277,14 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <button class="btn p" style="align-self:flex-start;margin-top:.18rem" onclick="changeCredentials()">Update</button>
           </div>
         </div>
+        <div class="scc"><div class="sct">Vault Admin Token</div><div class="scd">Required for managing private vault materials after vault metadata is locked behind Edge Functions.</div>
+          <div style="display:flex;flex-direction:column;gap:.55rem">
+            <input class="mn" type="password" id="vaultAdminTokenInput" placeholder="Paste ADMIN_API_TOKEN once for this browser" autocomplete="new-password">
+            <button class="btn s" style="align-self:flex-start" onclick="saveVaultAdminToken()">Save Vault Token</button>
+            <button class="btn d" style="align-self:flex-start" onclick="clearVaultAdminToken()">Clear Vault Token</button>
+            <div id="vaultAdminTokenStatus" style="font-size:.7rem;color:var(--t3)">Not checked yet.</div>
+          </div>
+        </div>
         <div class="scc" style="grid-column:1/-1">
           <div class="sct">⏰ Countdown Timer</div>
           <div class="scd">Set the deadline shown on the homepage. Timer auto-updates on every visitor's page.</div>
@@ -1583,7 +1589,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
 
 
 // ── SUPABASE CREDENTIALS (hardcoded for admin) ────────────────────────────
-const SB_URL_KEY='iv_sb_url', SB_KEY_KEY='iv_sb_key', LOCAL_KEY='iv_posts', SETTINGS_KEY='iv_settings';
+const SB_URL_KEY='iv_sb_url', SB_KEY_KEY='iv_sb_key', LOCAL_KEY='iv_posts', SETTINGS_KEY='iv_settings', VAULT_ADMIN_TOKEN_KEY='iv_vault_admin_token';
 const _cleanSbUrl=url=>String(url||'').trim().replace(/\/+$/,'');
 const _validSbUrl=url=>/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(_cleanSbUrl(url));
 const _sbUrl=()=>_cleanSbUrl(localStorage.getItem(SB_URL_KEY)||'');
@@ -3783,7 +3789,7 @@ async function loadLibraryAccessLogs(){
   }
 }
 function loadSettings(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');refreshContentHealth()}
-loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');loadLibraryAccessSettings();loadLibraryAccessLogs();if(typeof loadSessionPricingSettings==='function')loadSessionPricingSettings();updateLockHint();refreshContentHealth()}
+loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');loadLibraryAccessSettings();loadLibraryAccessLogs();if(typeof loadSessionPricingSettings==='function')loadSessionPricingSettings();if(typeof updateVaultAdminTokenStatus==='function')updateVaultAdminTokenStatus();updateLockHint();refreshContentHealth()}
 changeCredentials = function(){const u=document.getElementById('nu').value.trim(),p=document.getElementById('np').value,c=document.getElementById('cp').value;if(!u||!p)return toast('Fill all fields','er');if(p!==c)return toast('Access keys do not match','er');localStorage.setItem(AUTH_K,JSON.stringify({u,p}));updateLockHint();document.getElementById('sbUn').textContent=u;['nu','np','cp'].forEach(id=>document.getElementById(id).value='');toast('Workspace access updated','ok')}
 restoreLibraryToSupabase = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('Restore the library collection into the current Supabase project?'))return;toast('Restoring library...','inf');const source=getLibItems();let ok=0;for(const item of source){try{await dbSaveLibItem(item);ok++;}catch(e){console.warn('Library restore failed for',item&&item.id,e);}}toast(ok+' library item'+(ok===1?'':'s')+' restored ✓','ok');try{renderLibTbl();}catch(_e){}refreshContentHealth()}
 async function saveSetting(k,v){await dbSaveSetting(k,v);toast('Saved ✓','ok')}
@@ -5342,6 +5348,39 @@ async function resendVaultEmail(id,status){
 let _vaultFilePending=null,_vaultCoverPending=null,_vaultMaterials=[];
 function handleVaultFilePick(e){_vaultFilePending=e.target.files&&e.target.files[0]||null;const el=document.getElementById('vaultMatFileStatus');if(el)el.textContent=_vaultFilePending?('Ready: '+_vaultFilePending.name):''}
 function handleVaultCoverPick(e){_vaultCoverPending=e.target.files&&e.target.files[0]||null;const el=document.getElementById('vaultMatCoverStatus');if(el)el.textContent=_vaultCoverPending?('Ready: '+_vaultCoverPending.name):''}
+function getVaultAdminToken(){return String(localStorage.getItem(VAULT_ADMIN_TOKEN_KEY)||'').trim()}
+function updateVaultAdminTokenStatus(){
+  const el=document.getElementById('vaultAdminTokenStatus');
+  if(el)el.textContent=getVaultAdminToken()?'Vault admin token saved on this browser.':'No vault admin token saved on this browser.';
+}
+function saveVaultAdminToken(){
+  const input=document.getElementById('vaultAdminTokenInput');
+  const token=String(input&&input.value||'').trim();
+  if(!token)return toast('Paste the vault admin token first','er');
+  localStorage.setItem(VAULT_ADMIN_TOKEN_KEY,token);
+  if(input)input.value='';
+  updateVaultAdminTokenStatus();
+  toast('Vault admin token saved','ok');
+  loadVaultMaterials();
+}
+function clearVaultAdminToken(){
+  localStorage.removeItem(VAULT_ADMIN_TOKEN_KEY);
+  updateVaultAdminTokenStatus();
+  toast('Vault admin token cleared','ok');
+}
+async function callVaultAdmin(action,payload={}){
+  if(!_useSb())throw new Error('Supabase is not configured');
+  const token=getVaultAdminToken();
+  if(!token)throw new Error('Vault admin token is missing. Save it in Settings first.');
+  const res=await fetch(_sbUrl()+'/functions/v1/manage-vault-resources',{
+    method:'POST',
+    headers:{apikey:_sbKey(),Authorization:'Bearer '+_sbKey(),'Content-Type':'application/json','x-admin-token':token},
+    body:JSON.stringify({action,...payload})
+  });
+  const json=await res.json().catch(()=>({}));
+  if(!res.ok||json.ok===false)throw new Error(json.error||'Vault admin request failed');
+  return json;
+}
 function clearVaultMaterialForm(){
   ['vaultMatId','vaultMatTitle','vaultMatModule','vaultMatSummary','vaultMatDuration','vaultMatTags','vaultMatFileUrl','vaultMatCoverUrl','vaultMatNotes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const fmt=document.getElementById('vaultMatFormat');if(fmt)fmt.value='guide';
@@ -5356,10 +5395,10 @@ async function loadVaultMaterials(){
   if(!tbl)return;
   if(!_useSb()){noteForUnavailable('vaultMaterialsSourceNote','Vault materials');tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Connect Supabase to manage vault materials</td></tr>';return}
   try{
-    const rows=await _sbReq('vault_resources?select=*&order=sort_order.asc,updated_at.desc')||[];
+    const rows=(await callVaultAdmin('list')).resources||[];
     _vaultMaterials=rows;
     const total=document.getElementById('vaultMatTotal');if(total)total.textContent=rows.length;
-    setSourceNote('vaultMaterialsSourceNote','storage','Supabase DB + Storage',`Material records loaded: ${rows.length}. Private file paths use atanda-vault-private; cover images use public media Storage.`);
+    setSourceNote('vaultMaterialsSourceNote','storage','Edge Function + Storage',`Material records loaded: ${rows.length}. Admin listing is token-gated; private file paths use atanda-vault-private.`);
     if(!rows.length){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No vault materials yet</td></tr>';return}
     tbl.innerHTML=rows.map(r=>{
       const pill=r.status==='published'?'published':r.status==='draft'?'draft':'coming-soon';
@@ -5374,7 +5413,7 @@ async function loadVaultMaterials(){
     }).join('');
   }catch(e){
     noteForUnavailable('vaultMaterialsSourceNote','Vault materials');
-    tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Vault resources table is not ready. Run the latest setup SQL.</td></tr>';
+    tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Vault materials could not load. Save the vault admin token in Settings or check the Edge Function.</td></tr>';
   }
 }
 function editVaultMaterial(id){
@@ -5404,7 +5443,7 @@ async function saveVaultMaterial(){
   try{
     if(_vaultFilePending){document.getElementById('vaultMatFileStatus').textContent='Uploading private vault file...';fileUrl=await uploadVaultPrivateFile(_vaultFilePending);document.getElementById('vaultMatFileStatus').textContent='Uploaded privately';}
     if(_vaultCoverPending){document.getElementById('vaultMatCoverStatus').textContent='Uploading cover...';coverUrl=await uploadToStorage(_vaultCoverPending,'vault-covers');document.getElementById('vaultMatCoverStatus').textContent='Uploaded';}
-    await _sbUpsert('vault_resources',{id,title,module:document.getElementById('vaultMatModule').value.trim(),format:document.getElementById('vaultMatFormat').value,summary:document.getElementById('vaultMatSummary').value.trim(),access_level:'approved',file_url:fileUrl,cover_url:coverUrl,duration:document.getElementById('vaultMatDuration').value.trim(),sort_order:0,status:document.getElementById('vaultMatStatus').value,tags:document.getElementById('vaultMatTags').value.trim(),notes:document.getElementById('vaultMatNotes').value.trim(),updated_at:new Date().toISOString()});
+    await callVaultAdmin('upsert',{resource:{id,title,module:document.getElementById('vaultMatModule').value.trim(),format:document.getElementById('vaultMatFormat').value,summary:document.getElementById('vaultMatSummary').value.trim(),access_level:'approved',file_url:fileUrl,cover_url:coverUrl,duration:document.getElementById('vaultMatDuration').value.trim(),sort_order:0,status:document.getElementById('vaultMatStatus').value,tags:document.getElementById('vaultMatTags').value.trim(),notes:document.getElementById('vaultMatNotes').value.trim()}});
     toast('Vault material saved','ok');
     clearVaultMaterialForm();
     loadVaultMaterials();
@@ -5412,7 +5451,7 @@ async function saveVaultMaterial(){
 }
 async function deleteVaultMaterial(id){
   if(!id||!confirm('Delete this vault material?'))return;
-  try{await _sbReq('vault_resources?id=eq.'+encodeURIComponent(id),'DELETE');toast('Vault material deleted','ok');clearVaultMaterialForm();loadVaultMaterials();}catch(e){toast('Delete failed: '+e.message,'er')}
+  try{await callVaultAdmin('delete',{id});toast('Vault material deleted','ok');clearVaultMaterialForm();loadVaultMaterials();}catch(e){toast('Delete failed: '+e.message,'er')}
 }
 
 function exportRegistrations(format) {
