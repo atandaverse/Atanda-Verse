@@ -147,6 +147,17 @@ async function sendVaultTermsEmail(){
     });
   }catch(e){console.warn('Vault terms email unavailable',e)}
 }
+async function listVaultResources(){
+  const c=creds();if(!c||!vaultSession?.id||!vaultSession?.application_no)throw new Error('Vault session unavailable');
+  const res=await fetch(c.url+'/functions/v1/list-vault-resources',{
+    method:'POST',
+    headers:{apikey:c.key,Authorization:'Bearer '+c.key,'Content-Type':'application/json'},
+    body:JSON.stringify({requestId:vaultSession.id,applicationNo:vaultSession.application_no})
+  });
+  const json=await res.json().catch(()=>({}));
+  if(!res.ok||json.ok===false)throw new Error(json.error||'Vault materials could not load');
+  return Array.isArray(json.resources)?json.resources:[];
+}
 function showVaultLogin(message){
   sessionStorage.removeItem('iv_vault_session');
   vaultSession=null;
@@ -197,7 +208,7 @@ async function loadVault(){
   if(!await validateVaultSession())return;
   document.getElementById('vaultLogin').classList.add('hidden');
   document.getElementById('vaultContent').classList.remove('hidden');
-  const rows=await sb('vault_resources?select=*&status=eq.published&order=sort_order.asc,updated_at.desc');
+  const rows=await listVaultResources();
   vaultItems=(rows||[]);
   const grid=document.getElementById('vaultGrid');
   if(!vaultItems.length){grid.innerHTML='<div class="material-card"><div class="cover">Vault</div><div class="material-body"><h3>No vault files yet</h3><div class="desc">Admin has not attached vault resources yet. Check back shortly.</div></div></div>';return}
@@ -216,7 +227,7 @@ async function loadVault(){
             <div class="desc">${clean(excerpt(item.summary||item.tags||'Vault resource'))}</div>
             <div class="card-foot">
               <span class="duration">${clean(item.duration||'Self-paced')}</span>
-              ${item.file_url?`<a class="btn material-action" href="#" onclick="openVaultItem('${clean(item.id)}');return false">${clean(materialCta(item))}</a>`:'<span class="tag">No file attached</span>'}
+              ${item.has_file?`<a class="btn material-action" href="#" onclick="openVaultItem('${clean(item.id)}');return false">${clean(materialCta(item))}</a>`:'<span class="tag">No file attached</span>'}
             </div>
           </div>
         </article>`).join('')}</div>
@@ -227,26 +238,22 @@ async function openVaultItem(id){
   const item=vaultItems.find(x=>String(x.id)===String(id));
   if(!item)return;
   await logVault('open',item);
-  if(String(item.file_url||'').startsWith('vault-private:')){
-    try{
-      const c=creds();if(!c)throw new Error('Database unavailable');
-      const res=await fetch(c.url+'/functions/v1/serve-vault-file',{
-        method:'POST',
-        headers:{apikey:c.key,Authorization:'Bearer '+c.key,'Content-Type':'application/json'},
-        body:JSON.stringify({requestId:vaultSession?.id||'',applicationNo:vaultSession?.application_no||'',resourceId:item.id})
-      });
-      if(!res.ok)throw new Error(await res.text());
-      const blob=await res.blob();
-      const url=URL.createObjectURL(blob);
-      window.open(url,'_blank','noopener');
-      setTimeout(()=>URL.revokeObjectURL(url),60000);
-    }catch(e){
-      console.warn(e);
-      alert('This vault file could not be opened. Please contact support if this continues.');
-    }
-    return;
+  try{
+    const c=creds();if(!c)throw new Error('Database unavailable');
+    const res=await fetch(c.url+'/functions/v1/serve-vault-file',{
+      method:'POST',
+      headers:{apikey:c.key,Authorization:'Bearer '+c.key,'Content-Type':'application/json'},
+      body:JSON.stringify({requestId:vaultSession?.id||'',applicationNo:vaultSession?.application_no||'',resourceId:item.id})
+    });
+    if(!res.ok)throw new Error(await res.text());
+    const blob=await res.blob();
+    const url=URL.createObjectURL(blob);
+    window.open(url,'_blank','noopener');
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }catch(e){
+    console.warn(e);
+    alert('This vault file could not be opened. Please contact support if this continues.');
   }
-  window.open(item.file_url,'_blank','noopener');
 }
 async function logVault(eventType,item){try{await sb('vault_activity_logs',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({request_id:vaultSession?.id||'',application_no:vaultSession?.application_no||'',vault_username:vaultSession?.vault_username||'',event_type:eventType,resource_id:item?.id||'',resource_title:item?.title||'',page_url:location.href,user_agent:navigator.userAgent})})}catch(e){}}
 function logoutVault(){showVaultLogin('You have been logged out.')}

@@ -81,6 +81,9 @@ drop policy if exists "public_read_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_write_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_read_vault_resources" on vault_resources;
 drop policy if exists "public_write_vault_resources" on vault_resources;
+drop policy if exists "anon_insert_vault_resources" on vault_resources;
+drop policy if exists "anon_update_vault_resources" on vault_resources;
+drop policy if exists "anon_delete_vault_resources" on vault_resources;
 
 create policy "public_read_vault_access_requests"
 on vault_access_requests for select
@@ -98,12 +101,24 @@ create policy "public_write_vault_activity_logs"
 on vault_activity_logs for all
 using (true);
 
-create policy "public_read_vault_resources"
-on vault_resources for select
-using (true);
+-- Vault resources are listed through the list-vault-resources Edge Function.
+-- Do not add an anon SELECT policy for vault_resources in production.
+-- Temporary direct Workspace editing still needs these anon write policies until
+-- vault material admin actions are moved behind a service-role Edge Function.
+create policy "anon_insert_vault_resources"
+on vault_resources for insert
+to anon
+with check (true);
 
-create policy "public_write_vault_resources"
-on vault_resources for all
+create policy "anon_update_vault_resources"
+on vault_resources for update
+to anon
+using (true)
+with check (true);
+
+create policy "anon_delete_vault_resources"
+on vault_resources for delete
+to anon
 using (true);
 
 insert into storage.buckets (id, name, public, file_size_limit)
@@ -168,6 +183,12 @@ Deploy `serve-vault-file.example.ts` as:
 serve-vault-file
 ```
 
+Deploy `list-vault-resources.example.ts` as:
+
+```text
+list-vault-resources
+```
+
 Required Edge Function secrets:
 
 ```text
@@ -183,8 +204,14 @@ Flow:
 3. Approval generates a vault username and uses the application number as the login code.
 4. The user receives the vault link, username, and application number by email.
 5. Approved users log into `vaultlibrary.html`.
-6. Admin uploads advanced vault materials from `workspace.html -> Vault Access -> Vault Materials`.
+6. `vaultlibrary.html` asks `list-vault-resources` for material cards after validating the session.
+7. Opening a material asks `serve-vault-file` to stream the private file after validating the same session.
+8. Admin uploads advanced vault materials from `workspace.html -> Vault Access -> Vault Materials`.
 
 Security note:
 
-This is a controlled static-site access flow. For hard file privacy, keep actual vault files in private Supabase Storage and deliver them through an Edge Function after validating the application number server-side.
+This is a controlled static-site access flow. For hard file privacy, keep actual vault files in private Supabase Storage and deliver them through an Edge Function after validating the application number server-side. Vault material metadata should be listed through `list-vault-resources`, not direct public table reads.
+
+Next hardening step:
+
+Move Workspace vault material create/update/delete actions behind an admin-only Edge Function too. Until then, the browser Workspace can edit vault metadata through anon write policies, so keep the Workspace URL private and protected.

@@ -478,6 +478,9 @@ drop policy if exists "public_read_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_write_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_read_vault_resources" on vault_resources;
 drop policy if exists "public_write_vault_resources" on vault_resources;
+drop policy if exists "anon_insert_vault_resources" on vault_resources;
+drop policy if exists "anon_update_vault_resources" on vault_resources;
+drop policy if exists "anon_delete_vault_resources" on vault_resources;
 drop policy if exists "public_read_comments" on comments;
 drop policy if exists "public_write_comments" on comments;
 drop policy if exists "public_read_posts" on posts;
@@ -496,6 +499,9 @@ drop policy if exists "public_read_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_write_vault_activity_logs" on vault_activity_logs;
 drop policy if exists "public_read_vault_resources" on vault_resources;
 drop policy if exists "public_write_vault_resources" on vault_resources;
+drop policy if exists "anon_insert_vault_resources" on vault_resources;
+drop policy if exists "anon_update_vault_resources" on vault_resources;
+drop policy if exists "anon_delete_vault_resources" on vault_resources;
 drop policy if exists "public_read_comments" on comments;
 drop policy if exists "public_write_comments" on comments;
 create policy "public_read_posts" on posts for select using (true);
@@ -512,8 +518,11 @@ create policy "public_read_vault_access_requests" on vault_access_requests for s
 create policy "public_write_vault_access_requests" on vault_access_requests for all using (true);
 create policy "public_read_vault_activity_logs" on vault_activity_logs for select using (true);
 create policy "public_write_vault_activity_logs" on vault_activity_logs for all using (true);
-create policy "public_read_vault_resources" on vault_resources for select using (true);
-create policy "public_write_vault_resources" on vault_resources for all using (true);
+-- Vault cards are listed through the list-vault-resources Edge Function.
+-- Do not add public SELECT for vault_resources in production.
+create policy "anon_insert_vault_resources" on vault_resources for insert to anon with check (true);
+create policy "anon_update_vault_resources" on vault_resources for update to anon using (true) with check (true);
+create policy "anon_delete_vault_resources" on vault_resources for delete to anon using (true);
 insert into storage.buckets (id, name, public, file_size_limit)
 values ('innerverse-media', 'innerverse-media', true, 52428800)
 on conflict (id) do update
