@@ -1623,7 +1623,6 @@ async function _sbReq(path,method='GET',body=null){
   const h={'apikey':_sbKey(),'Authorization':'Bearer '+_sbKey(),'Content-Type':'application/json'};
   if(method==='POST'||method==='PATCH') h['Prefer']='return=representation';
   if(method==='POST'&&(path==='posts'||path==='settings')) h['Prefer']='resolution=merge-duplicates,return=representation';
-  if(method==='DELETE'&&(path.startsWith('posts?id=eq.')||path.startsWith('settings?key=eq.'))) return null;
   if(!_useSb()) throw new Error('Supabase is not configured correctly');
   try{
     const r=await fetch(_sbUrl()+'/rest/v1/'+path,{method,headers:h,body:body?JSON.stringify(body):null});
@@ -4738,7 +4737,7 @@ function _applyCampaignFilters(rows) {
 function _functionsBaseUrl() {
   const url = _sbUrl();
   if (!url) return '';
-  return url.replace('https://', 'https://').replace('.supabase.co', '.functions.supabase.co');
+  return url + '/functions/v1';
 }
 
 async function invokeNewsletterSend(campaignId, overrides) {
