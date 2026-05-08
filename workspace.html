@@ -3910,6 +3910,59 @@ renderPostsTbl = async function(){
     if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">Posts could not load. Refresh the workspace or check Supabase connection.</td></tr>';
   }
 }
+renderPostsTbl = async function(){
+  const tb=document.getElementById('allTbl');
+  const htmlSafe=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const jsArg=v=>JSON.stringify(String(v??'')).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026').replace(/'/g,'&#39;');
+  if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">Loading posts...</td></tr>';
+  try{
+    const resolved=await resolvePostsSource();
+    const posts=Array.isArray(resolved.items)?resolved.items:[];
+    if(resolved.source==='database')noteForDb('postsSourceNote','Posts',posts.length);
+    else if(resolved.source==='local cache')noteForLocal('postsSourceNote','Posts',posts.length);
+    else noteForFallback('postsSourceNote','Posts',posts.length);
+    const srch=(document.getElementById('psrch')?.value||'').trim().toLowerCase();
+    const sf=document.getElementById('pfstt')?.value||'';
+    const filt=posts.filter(p=>{
+      const title=String(p.title||'').toLowerCase();
+      const category=String(p.category||'').toLowerCase();
+      return(!srch||title.includes(srch)||category.includes(srch))&&(!sf||p.status===sf);
+    });
+    const lbl=document.getElementById('pclbl');if(lbl)lbl.textContent=filt.length;
+    upPostCount();
+    const drafts=posts.filter(p=>p.status==='draft').length;
+    const coming=posts.filter(p=>p.status==='coming-soon').length;
+    const published=posts.filter(p=>p.status==='published').length;
+    const totalEl=document.getElementById('postOpsTotal');if(totalEl)totalEl.textContent=posts.length;
+    const draftEl=document.getElementById('postOpsDrafts');if(draftEl)draftEl.textContent=drafts+coming;
+    const pubEl=document.getElementById('postOpsPublished');if(pubEl)pubEl.textContent=published;
+    if(!tb)return;
+    if(!filt.length){
+      const filterNote=posts.length?'Clear the queue filters to see the existing posts.':'No posts were returned from the active content source.';
+      tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">No posts found. ${htmlSafe(filterNote)}</td></tr>`;
+      return;
+    }
+    let vm={};
+    try{vm=await getAllViews(posts)||{};}catch(viewError){console.warn('Post view counts unavailable for posts table',viewError);vm={};}
+    tb.innerHTML=filt.map(p=>{
+      const id=String(p.id||'');
+      const title=String(p.title||'Untitled post');
+      const category=String(p.category||'Uncategorized');
+      const status=String(p.status||'draft');
+      const safeStatus=['published','draft','coming-soon'].includes(status)?status:'draft';
+      const nextAction=status==='published'?'Move to Coming Soon':status==='coming-soon'?'Publish now':'Publish';
+      const statusMeta=status==='published'?'Live and visible on the blog.':status==='coming-soon'?'Visible only as a timed placeholder.':'Still private inside admin.';
+      const actionStyle=status==='published'?'border-color:rgba(245,158,11,.5);color:var(--yl)':status==='draft'?'border-color:rgba(59,130,246,.5);color:var(--bl)':'border-color:rgba(16,185,129,.5);color:var(--gr)';
+      const viewCount=Number(vm[id]||0);
+      const postUrl='post.html?id='+encodeURIComponent(id);
+      return`<tr><td class="tc2">${htmlSafe(title)}<span>${htmlSafe(postUrl)}</span><span style="font-family:inherit;font-size:.69rem;color:var(--t3);margin-top:.28rem">${htmlSafe(statusMeta)}</span></td><td><div style="display:grid;gap:.25rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${htmlSafe(category)}</strong><span class="mini-tag">${status==='published'?'Campaign ready':status==='draft'?'Needs finishing':'Schedule carefully'}</span></div></td><td><span class="pill ${safeStatus}">${htmlSafe(status)}</span></td><td class="vc">${viewCount.toLocaleString()}</td><td>${htmlSafe(p.readTime||'--')}</td><td>${htmlSafe(p.date||'--')}</td><td><div class="action-row"><button class="ab" onclick='editPost(${jsArg(id)})'>Edit</button><button class="ab" onclick='quickToggleStatus(${jsArg(id)},${jsArg(status)})' title="Toggle status" style="${actionStyle}">${htmlSafe(nextAction)}</button><button class="ab" onclick='window.open(${jsArg(postUrl)},"_blank")'>View</button><button class="ab del" onclick='prepDel(${jsArg(id)})'>Delete</button></div></td></tr>`;
+    }).join('');
+  }catch(e){
+    console.warn('Posts table failed',e);
+    noteForUnavailable('postsSourceNote','Posts');
+    if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">Posts could not load. Refresh the workspace or check Supabase connection.</td></tr>';
+  }
+}
 initAnalytics = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const vm=await getAllViews(posts);const snapshot=window.ivGetAnalyticsSnapshot?await window.ivGetAnalyticsSnapshot(posts.map(p=>p.id)):null;const sorted=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0));const lead=sorted[0];const coverage=[...new Set(posts.map(p=>p.category))].length;const drafts=posts.filter(p=>p.status==='draft').length;const published=posts.filter(p=>p.status==='published').length;const views24h=snapshot?Number(snapshot.views24h||0):0;const visitors24h=snapshot?Number(snapshot.visitors24h||0):0;const sessions24h=snapshot?Number(snapshot.sessions24h||0):0;const leadTitle=document.getElementById('analyticsLeadTitle');if(leadTitle)leadTitle.textContent=lead?lead.title.split(' ').slice(0,3).join(' '):'—';const leadMeta=document.getElementById('analyticsLeadMeta');if(leadMeta)leadMeta.textContent=lead?`${(vm[lead.id]||0).toLocaleString()} total views · ${lead.category}`:'Publish more posts to unlock leaderboard signals.';const vis=document.getElementById('analyticsVisitors24h');if(vis)vis.textContent=visitors24h.toLocaleString();const visMeta=document.getElementById('analyticsVisitors24hMeta');if(visMeta)visMeta.textContent=visitors24h?`${sessions24h.toLocaleString()} tracked session${sessions24h===1?'':'s'} contributed during the last 24 hours.`:'No tracked visitors in the last 24 hours yet.';const v24=document.getElementById('analyticsViews24h');if(v24)v24.textContent=views24h.toLocaleString();const v24Meta=document.getElementById('analyticsViews24hMeta');if(v24Meta)v24Meta.textContent=views24h?'Fresh event rows are flowing into your first-party analytics layer.':'Open live posts in the browser to start generating real activity.';const cov=document.getElementById('analyticsCoverage');if(cov)cov.textContent=coverage;const covMeta=document.getElementById('analyticsCoverageMeta');if(covMeta)covMeta.textContent=coverage?`${coverage} topic area${coverage===1?'':'s'} are represented right now.`:'No category coverage yet.';const mom=document.getElementById('analyticsMomentum');if(mom)mom.textContent=views24h>24?'Rising':views24h>0?'Active':drafts?'Building':published?'Live':'Quiet';const momMeta=document.getElementById('analyticsMomentumMeta');if(momMeta)momMeta.textContent=views24h>24?'Audience activity is meaningfully above idle and the analytics layer is catching it in near real time.':views24h>0?'You have live traffic now, even if it is still early.':drafts?'You still have draft energy waiting to be turned into published reach.':published?'Published posts are carrying attention across the blog.':'The analytics layer will come alive once posts start moving.';document.getElementById('toprank').innerHTML=sorted.slice(0,8).map((p,i)=>`<div class="ri"><div class="rn">#${i+1}</div><div class="rif"><div class="rt2">${p.title}</div><div class="rc">${p.category} · ${p.status}${snapshot?` · ${Number(snapshot.perPostVisitors24h[p.id]||0).toLocaleString()} visitors in 24h`:''}</div></div><div class="rv2">👁 ${(vm[p.id]||0).toLocaleString()}</div></div>`).join('');const cm={};const total=posts.length||1;posts.forEach(p=>{cm[p.category]=(cm[p.category]||0)+1});document.getElementById('catbrk').innerHTML=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([cat,count])=>`<div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px"><span style="color:var(--t2)">${cat}</span><span style="color:var(--t3)">${count}</span></div><div style="height:5px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(count/total*100)}%;background:var(--ac);border-radius:3px;transition:width .8s"></div></div></div>`).join('');renderAnalyticsSparklines(sorted,vm,snapshot)}
 loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');loadLibraryAccessSettings();loadLibraryAccessLogs();if(typeof loadSessionPricingSettings==='function')loadSessionPricingSettings();updateLockHint();refreshContentHealth()}
 changeCredentials = function(){const u=document.getElementById('nu').value.trim(),p=document.getElementById('np').value,c=document.getElementById('cp').value;if(!u||!p)return toast('Fill all fields','er');if(p!==c)return toast('Access keys do not match','er');localStorage.setItem(AUTH_K,JSON.stringify({u,p}));updateLockHint();document.getElementById('sbUn').textContent=u;['nu','np','cp'].forEach(id=>document.getElementById(id).value='');toast('Workspace access updated','ok')}
