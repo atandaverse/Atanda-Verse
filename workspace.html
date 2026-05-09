@@ -740,11 +740,11 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sb-lnk" onclick="nav('editor')">✏️ New Post</div>
       <div class="sb-sec">Workspace</div>
       <div class="sb-lnk" onclick="nav('settings')">⚙️ Settings</div>
-      <div class="sb-lnk" onclick="nav('pricing')">Pricing</div>
+      <div class="sb-lnk" onclick="nav('pricing')">💳 Pricing</div>
       <div class="sb-sec">Audience</div>
       <div class="sb-lnk" onclick="nav('testimonials')">💬 Testimonials <span class="sb-badge" id="pendingCount">0</span></div>
       <div class="sb-lnk" onclick="nav('library')">📚 Library</div>
-      <div class="sb-lnk" onclick="nav('vault')">Vault Access <span class="sb-badge" id="vaultCount">0</span></div>
+      <div class="sb-lnk" onclick="nav('vault')">🗝️ Vault Access <span class="sb-badge" id="vaultCount">0</span></div>
       <div class="sb-lnk" onclick="nav('comments')">🗨️ Comments <span class="sb-badge" id="cmtCount">0</span></div>
       <div class="sb-lnk" onclick="nav('registrations')">🎯 Registrations <span class="sb-badge" id="regCount">0</span></div>
       <div class="sb-lnk" onclick="nav('subscribers')">📧 Subscribers <span class="sb-badge" id="subCount">0</span></div>
@@ -4144,7 +4144,7 @@ function persistLocalSessionPricing(pricing){
 }
 function pricingHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function pricingSlug(v){return String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);}
-function pricingJsArg(v){return JSON.stringify(String(v??'')).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026').replace(/'/g,'&#39;');}
+function pricingAttr(v){return String(v??'').replace(/&/g,'&amp;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function pricingPriceText(p){return p.free?'FREE':[p.usd,p.ngn].filter(Boolean).join(' / ')||'No price set';}
 function renderSessionPricingCards(){
   const wrap=document.getElementById('pricingRows');if(!wrap)return;
@@ -4158,10 +4158,12 @@ function renderSessionPricingCards(){
     <div><div class="pricing-admin-price">${pricingHtml(pricingPriceText(p))}</div><div class="pricing-admin-meta">${pricingHtml(p.note||'')}</div></div>
     <div class="pricing-admin-meta">${DEFAULT_SESSION_PRICING[key]?'Core public plan. Editable, not removable.':'Custom offer. Editable and removable.'}</div>
     <div class="pricing-admin-actions">
-      <button class="btn s" onclick="openPricingModal(${pricingJsArg(key)})">Edit</button>
-      ${DEFAULT_SESSION_PRICING[key]?'':`<button class="btn d" onclick="deleteSessionPricingPlan(${pricingJsArg(key)})">Delete</button>`}
+      <button class="btn s" data-pricing-action="edit" data-pricing-key="${pricingAttr(key)}">Edit</button>
+      ${DEFAULT_SESSION_PRICING[key]?'':`<button class="btn d" data-pricing-action="delete" data-pricing-key="${pricingAttr(key)}">Delete</button>`}
     </div>
   </article>`).join(''):'<div class="scc">No pricing offers found. Add one to begin.</div>';
+  wrap.querySelectorAll('[data-pricing-action="edit"]').forEach(btn=>btn.addEventListener('click',()=>openPricingModal(btn.dataset.pricingKey||'')));
+  wrap.querySelectorAll('[data-pricing-action="delete"]').forEach(btn=>btn.addEventListener('click',()=>deleteSessionPricingPlan(btn.dataset.pricingKey||'')));
 }
 async function loadSessionPricingSettings(opts={}){
   const wrap=document.getElementById('pricingRows');if(!wrap)return;
