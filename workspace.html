@@ -194,6 +194,17 @@ td{padding:.76rem .95rem;font-size:.78rem;color:var(--t2);vertical-align:middle}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
 .scc{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:1.45rem}
 .sct{font-size:.83rem;font-weight:700;margin-bottom:.28rem}.scd{font-size:.7rem;color:var(--t3);margin-bottom:1rem;line-height:1.5}
+.pricing-grid-admin{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+.pricing-admin-card{background:linear-gradient(145deg,var(--bg2),var(--bg3));border:1px solid var(--b);border-radius:18px;padding:1.05rem;display:grid;gap:.85rem;box-shadow:0 16px 35px rgba(0,0,0,.12)}
+.pricing-admin-top{display:flex;justify-content:space-between;gap:.8rem;align-items:flex-start}
+.pricing-admin-key{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);word-break:break-all}
+.pricing-admin-title{font-size:1rem;font-weight:800;color:var(--t);line-height:1.2}
+.pricing-admin-badge{display:inline-flex;align-items:center;width:max-content;padding:.24rem .52rem;border-radius:999px;background:rgba(220,53,69,.13);border:1px solid rgba(220,53,69,.22);color:#ff8a98;font-size:.62rem;font-weight:800;letter-spacing:.7px;text-transform:uppercase}
+.pricing-admin-price{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;letter-spacing:1px;color:var(--t)}
+.pricing-admin-meta{font-size:.78rem;color:var(--t2);line-height:1.5}
+.pricing-admin-actions{display:flex;gap:.5rem;flex-wrap:wrap;border-top:1px solid var(--b);padding-top:.8rem}
+.pricing-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+.pricing-form-grid .full{grid-column:1/-1}
 .tr{display:flex;align-items:center;justify-content:space-between;padding:.68rem 0;border-bottom:1px solid var(--b)}.tr:last-child{border-bottom:none;padding-bottom:0}
 .tl{font-size:.79rem;color:var(--t2)}.ts{font-size:.65rem;color:var(--t3);margin-top:2px}
 .tog{position:relative;width:39px;height:21px;cursor:pointer;flex-shrink:0}.tog input{opacity:0;width:0;height:0}
@@ -311,6 +322,7 @@ body[data-admin-theme="evolutionary"] .panel{animation:finevo .34s ease}
   .topbar{padding:.85rem 1rem!important}
   .panel{padding:1rem!important}
   .srow,.ops-strip,.theme-grid,.fr,.fr3,.sg,.attention-grid{grid-template-columns:1fr!important}
+  .pricing-form-grid{grid-template-columns:1fr}
   .tw{border-radius:16px!important}
   table{min-width:760px}
   .md2{width:min(92vw,450px)!important;padding:1.25rem!important}
@@ -1326,6 +1338,35 @@ create policy "public_write_logins" on admin_logins for all using (true);
       </div>
       <div class="fn" style="margin-top:.75rem">Default keeps Naira accessible and sets USD about 20% higher for international clients: $48 → ₦60,000, $36 → ₦45,000, $180 → ₦225,000.</div>
     </div>
+
+<div class="mo" id="pricingEditModal">
+  <div class="md2" style="width:min(720px,94vw);max-height:90vh;overflow-y:auto;padding:0">
+    <div style="padding:1rem 1.1rem;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap">
+      <div>
+        <h3 id="pricingModalTitle" style="margin:0">Edit Offer</h3>
+        <p style="margin:.25rem 0 0;color:var(--t3);font-size:.8rem">Changes are saved to live Supabase pricing when you submit this form.</p>
+      </div>
+      <button class="tbb" onclick="closeModal('pricingEditModal')">Close</button>
+    </div>
+    <div style="padding:1rem 1.1rem;display:grid;gap:.85rem">
+      <input type="hidden" id="pricingEditKey">
+      <div class="pricing-form-grid">
+        <div class="full"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Offer Name</label><input class="mn" id="pricingEditLabel" placeholder="Three Session Package"></div>
+        <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">URL/Admin Key</label><input class="mn" id="pricingEditSlug" placeholder="custom-accountability-circle"></div>
+        <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Badge</label><input class="mn" id="pricingEditBadge" placeholder="MOST POPULAR"></div>
+        <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">USD Price</label><input class="mn" id="pricingEditUsd" placeholder="$48"></div>
+        <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Naira Price</label><input class="mn" id="pricingEditNgn" placeholder="N60,000"></div>
+        <div class="full"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Short Note</label><textarea class="mn" id="pricingEditNote" placeholder="paid package" style="min-height:92px;resize:vertical"></textarea></div>
+      </div>
+      <label style="display:flex;gap:.55rem;align-items:center;color:var(--t2);font-size:.82rem"><input type="checkbox" id="pricingEditFree"> Mark this offer as free</label>
+      <div class="fn" id="pricingModalHint">Core offers can be edited but not deleted. Custom offers can be removed from the pricing page.</div>
+      <div style="display:flex;gap:.55rem;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid var(--b);padding-top:.9rem">
+        <button class="btn s" onclick="closeModal('pricingEditModal')">Cancel</button>
+        <button class="btn p" onclick="savePricingModalPlan()">Save Offer</button>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- TESTIMONIALS PANEL -->
     <div class="panel" id="panel-testimonials">
@@ -4101,8 +4142,30 @@ function persistLocalSessionPricing(pricing){
   s.sessionPricing=pricing;
   localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
 }
+function pricingHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function pricingSlug(v){return String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);}
+function pricingJsArg(v){return JSON.stringify(String(v??'')).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026').replace(/'/g,'&#39;');}
+function pricingPriceText(p){return p.free?'FREE':[p.usd,p.ngn].filter(Boolean).join(' / ')||'No price set';}
+function renderSessionPricingCards(){
+  const wrap=document.getElementById('pricingRows');if(!wrap)return;
+  const entries=Object.entries(getSessionPricingSettings());
+  wrap.className='pricing-grid-admin';
+  wrap.innerHTML=entries.length?entries.map(([key,p])=>`<article class="pricing-admin-card">
+    <div class="pricing-admin-top">
+      <div><div class="pricing-admin-key">${pricingHtml(key)}</div><div class="pricing-admin-title">${pricingHtml(p.label)}</div></div>
+      <span class="pricing-admin-badge">${pricingHtml(p.badge||'OFFER')}</span>
+    </div>
+    <div><div class="pricing-admin-price">${pricingHtml(pricingPriceText(p))}</div><div class="pricing-admin-meta">${pricingHtml(p.note||'')}</div></div>
+    <div class="pricing-admin-meta">${DEFAULT_SESSION_PRICING[key]?'Core public plan. Editable, not removable.':'Custom offer. Editable and removable.'}</div>
+    <div class="pricing-admin-actions">
+      <button class="btn s" onclick="openPricingModal(${pricingJsArg(key)})">Edit</button>
+      ${DEFAULT_SESSION_PRICING[key]?'':`<button class="btn d" onclick="deleteSessionPricingPlan(${pricingJsArg(key)})">Delete</button>`}
+    </div>
+  </article>`).join(''):'<div class="scc">No pricing offers found. Add one to begin.</div>';
+}
 async function loadSessionPricingSettings(opts={}){
   const wrap=document.getElementById('pricingRows');if(!wrap)return;
+  renderSessionPricingCards();
   if(opts.forceLive)setPricingSourceStatus('Refreshing live Supabase pricing...');
   if(_useSb()){
     try{
@@ -4120,51 +4183,57 @@ async function loadSessionPricingSettings(opts={}){
   }else{
     setPricingSourceStatus('Supabase is not connected in this browser. Pricing edits will stay local until credentials are active.','er');
   }
-  const pricing=getSessionPricingSettings();
-  wrap.innerHTML=Object.entries(pricing).map(([key,p])=>`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.55rem;align-items:end;background:var(--bg3);border:1px solid var(--b);border-radius:14px;padding:.8rem">
-    <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Key</label><input class="mn" value="${escAttr(key)}" disabled></div>
-    <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Plan</label><input class="mn" id="price_${key}_label" value="${escAttr(p.label)}"></div>
-    <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">USD</label><input class="mn" id="price_${key}_usd" value="${escAttr(p.usd)}"></div>
-    <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Naira</label><input class="mn" id="price_${key}_ngn" value="${escAttr(p.ngn)}"></div>
-    <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Badge</label><input class="mn" id="price_${key}_badge" value="${escAttr(p.badge)}"></div>
-    <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Note</label><input class="mn" id="price_${key}_note" value="${escAttr(p.note)}"></div>
-    ${DEFAULT_SESSION_PRICING[key]?'<div class="fn">Core public plan</div>':`<button class="btn d" onclick="deleteSessionPricingPlan('${escAttr(key)}')">Delete</button>`}
-  </div>`).join('');
+  renderSessionPricingCards();
 }
-function addSessionPricingPlan(){
-  const name=prompt('New offer name, e.g. Accountability Circle');
-  if(!name)return;
-  const key=('custom-'+name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')).slice(0,46);
-  if(!/^custom-[a-z0-9-]+$/.test(key))return toast('Use a clearer offer name','er');
+function openPricingModal(key){
   const pricing=getSessionPricingSettings();
-  if(pricing[key])return toast('That offer already exists','er');
-  pricing[key]={label:name.trim(),badge:'CUSTOM',usd:'$0',ngn:'N0',note:'custom offer',free:false};
+  const p=pricing[key]||{};
+  document.getElementById('pricingModalTitle').textContent=key?'Edit Offer':'Add Custom Offer';
+  document.getElementById('pricingEditKey').value=key||'';
+  document.getElementById('pricingEditLabel').value=p.label||'';
+  document.getElementById('pricingEditSlug').value=key||'';
+  document.getElementById('pricingEditSlug').disabled=!!DEFAULT_SESSION_PRICING[key];
+  document.getElementById('pricingEditBadge').value=p.badge||'CUSTOM';
+  document.getElementById('pricingEditUsd').value=p.usd||'';
+  document.getElementById('pricingEditNgn').value=p.ngn||'';
+  document.getElementById('pricingEditNote').value=p.note||'';
+  document.getElementById('pricingEditFree').checked=!!p.free;
+  document.getElementById('pricingEditFree').disabled=key==='single';
+  document.getElementById('pricingModalHint').textContent=DEFAULT_SESSION_PRICING[key]?'Core offers can be edited but not deleted.':'Custom offers can be renamed, priced, saved, or deleted from the pricing page.';
+  document.getElementById('pricingEditModal').classList.add('on');
+}
+function addSessionPricingPlan(){openPricingModal('');}
+async function savePricingModalPlan(){
+  const oldKey=document.getElementById('pricingEditKey').value.trim();
+  const label=document.getElementById('pricingEditLabel').value.trim();
+  if(!label)return toast('Offer name is required','er');
+  const key=oldKey||('custom-'+pricingSlug(document.getElementById('pricingEditSlug').value||label));
+  if(!/^custom-[a-z0-9-]+$/.test(key)&&!DEFAULT_SESSION_PRICING[key])return toast('Use a clean custom key, like custom-accountability-circle','er');
+  const pricing=getSessionPricingSettings();
+  if(!oldKey&&pricing[key])return toast('That offer already exists','er');
+  pricing[key]={
+    label,
+    badge:document.getElementById('pricingEditBadge').value.trim()||'CUSTOM',
+    usd:document.getElementById('pricingEditUsd').value.trim(),
+    ngn:document.getElementById('pricingEditNgn').value.trim(),
+    note:document.getElementById('pricingEditNote').value.trim(),
+    free:key==='single'||document.getElementById('pricingEditFree').checked
+  };
   persistLocalSessionPricing(pricing);
-  loadSessionPricingSettings();
-  toast('Custom offer added. Edit the prices, then Save Pricing.','ok');
+  await saveSessionPricing();
+  closeModal('pricingEditModal');
 }
-function deleteSessionPricingPlan(key){
+async function deleteSessionPricingPlan(key){
   if(DEFAULT_SESSION_PRICING[key])return toast('Core plans cannot be deleted','er');
-  if(!confirm('Delete this custom pricing offer?'))return;
+  if(!confirm('Delete this custom pricing offer from live pricing?'))return;
   const pricing=getSessionPricingSettings();
   delete pricing[key];
   persistLocalSessionPricing(pricing);
-  loadSessionPricingSettings();
-  toast('Custom offer removed locally. Save Pricing to publish.','ok');
+  await saveSessionPricing();
+  toast('Custom offer deleted','ok');
 }
 async function saveSessionPricing(){
-  const current=getSessionPricingSettings();
-  const next={};
-  Object.keys(current).forEach(k=>{
-    next[k]={
-      label:document.getElementById(`price_${k}_label`)?.value.trim()||current[k].label,
-      usd:document.getElementById(`price_${k}_usd`)?.value.trim()||current[k].usd,
-      ngn:document.getElementById(`price_${k}_ngn`)?.value.trim()||current[k].ngn,
-      badge:document.getElementById(`price_${k}_badge`)?.value.trim()||current[k].badge,
-      note:document.getElementById(`price_${k}_note`)?.value.trim()||current[k].note,
-      free:k==='single'
-    };
-  });
+  const next=getSessionPricingSettings();
   await saveSetting('sessionPricing',next);
   try{
     const live=await fetchLiveSessionPricingSetting();
