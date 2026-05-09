@@ -189,6 +189,18 @@
       pricing[key].free = key === 'single' ? pricing[key].free !== false : !!pricing[key].free;
       pricing[key].price = pricing[key].free ? 'FREE' : [pricing[key].usd, pricing[key].ngn].filter(Boolean).join(' / ');
     });
+    Object.keys(source).forEach(function (key) {
+      if (pricing[key] || !source[key]) return;
+      pricing[key] = Object.assign({
+        label: key.replace(/-/g, ' ').replace(/\b\w/g, function (m) { return m.toUpperCase(); }),
+        badge: 'CUSTOM',
+        usd: '',
+        ngn: '',
+        note: 'custom offer',
+        free: false
+      }, source[key]);
+      pricing[key].price = pricing[key].free ? 'FREE' : [pricing[key].usd, pricing[key].ngn].filter(Boolean).join(' / ');
+    });
     return pricing;
   }
 
@@ -203,6 +215,7 @@
 
   function applySessionPricing(pricing) {
     var data = normalizePricing(pricing);
+    document.querySelectorAll('[data-price-generated="true"]').forEach(function (el) { el.remove(); });
     Object.keys(data).forEach(function (key) {
       var item = data[key];
       document.querySelectorAll('[data-price-plan="' + key + '"]').forEach(function (card) {
@@ -218,6 +231,31 @@
       document.querySelectorAll('option[data-price-option="' + key + '"]').forEach(function (opt) {
         opt.textContent = item.free ? item.label + ' (Free launch)' : item.label + ' (' + item.usd + ' / ' + item.ngn + ')';
       });
+      if (!DEFAULT_SESSION_PRICING[key]) {
+        document.querySelectorAll('select#sessionType').forEach(function (sel) {
+          if (!sel.querySelector('option[value="' + key + '"]')) {
+            var opt = document.createElement('option');
+            opt.value = key;
+            opt.dataset.priceOption = key;
+            opt.dataset.priceGenerated = 'true';
+            opt.textContent = item.free ? item.label + ' (Free launch)' : item.label + ' (' + item.price + ')';
+            sel.appendChild(opt);
+          }
+        });
+        document.querySelectorAll('.pricing-grid').forEach(function (grid) {
+          if (grid.querySelector('[data-price-plan="' + key + '"]')) return;
+          var card = document.createElement('div');
+          card.className = 'pricing-card iv-pop';
+          card.dataset.pricePlan = key;
+          card.dataset.priceGenerated = 'true';
+          card.innerHTML = '<div class="pricing-badge" data-price-badge></div><h3 class="pricing-title" data-price-title></h3><div class="pricing-price"><span class="price-current" data-price-current></span><div class="price-naira" data-price-naira></div></div><ul class="pricing-features"><li>Custom Atanda Verse support offer</li><li>Details confirmed after registration</li></ul><a class="cta-button" href="register.html?session=' + encodeURIComponent(key) + '&label=' + encodeURIComponent(item.label || key) + '&source=sessions-pricing">Choose Offer</a>';
+          grid.appendChild(card);
+          card.querySelector('[data-price-badge]').textContent = item.badge || 'CUSTOM';
+          card.querySelector('[data-price-title]').textContent = item.label || key;
+          card.querySelector('[data-price-current]').textContent = item.usd || '';
+          card.querySelector('[data-price-naira]').textContent = (item.ngn || '') + (item.note ? ' \u00b7 ' + item.note : '');
+        });
+      }
     });
     window.ivSessionPricing = data;
     return data;

@@ -728,6 +728,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sb-lnk" onclick="nav('editor')">✏️ New Post</div>
       <div class="sb-sec">Workspace</div>
       <div class="sb-lnk" onclick="nav('settings')">⚙️ Settings</div>
+      <div class="sb-lnk" onclick="nav('pricing')">Pricing</div>
       <div class="sb-sec">Audience</div>
       <div class="sb-lnk" onclick="nav('testimonials')">💬 Testimonials <span class="sb-badge" id="pendingCount">0</span></div>
       <div class="sb-lnk" onclick="nav('library')">📚 Library</div>
@@ -1220,15 +1221,8 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <div class="tr"><div><div class="tl">Show Read Time</div><div class="ts">Estimated read time on cards</div></div><label class="tog"><input type="checkbox" id="tgrt" onchange="saveSetting('showReadTime',this.checked)" checked><span class="tog-t"></span><span class="tog-k"></span></label></div>
           <div class="tr"><div><div class="tl">Newsletter CTA</div><div class="ts">Newsletter block on blog page</div></div><label class="tog"><input type="checkbox" id="tgnl" onchange="saveSetting('showNewsletter',this.checked)" checked><span class="tog-t"></span><span class="tog-k"></span></label></div>
         </div>
-        <div class="scc" style="grid-column:1/-1"><div class="sct">💳 Session Pricing</div><div class="scd">Control the public session cards, register dropdowns, and WhatsApp/admin handoff prices. Single session should stay free unless you intentionally change the launch strategy.</div>
-          <div id="pricingSourceStatus" class="fn" style="margin:.65rem 0 1rem;padding:.7rem .85rem;border:1px solid var(--b);border-radius:12px;background:var(--bg3);color:var(--t3)">Checking live pricing source...</div>
-          <div id="pricingRows" style="display:grid;gap:.8rem"></div>
-          <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem">
-            <button class="btn p" onclick="saveSessionPricing()">Save Pricing</button>
-            <button class="btn s" onclick="resetSessionPricing()">Reset Balanced Defaults</button>
-            <button class="btn s" onclick="loadSessionPricingSettings({forceLive:true})">Refresh Live Pricing</button>
-          </div>
-          <div class="fn" style="margin-top:.75rem">Default keeps Naira accessible and sets USD about 20% higher for international clients: $48 → ₦60,000, $36 → ₦45,000, $180 → ₦225,000.</div>
+        <div class="scc" style="grid-column:1/-1"><div class="sct">Session Pricing</div><div class="scd">Pricing now has its own editor page so it is not buried inside general settings.</div>
+          <button class="btn p" style="margin-top:.8rem" onclick="nav('pricing')">Open Pricing Editor</button>
         </div>
         <div class="scc"><div class="sct">🎨 Editor Color Palette</div><div class="scd">Brand + extended colors available in the editor toolbar. Add custom hex colors below.</div>
           <div class="pg" id="palGrid"></div>
@@ -1305,6 +1299,32 @@ create policy "public_write_logins" on admin_logins for all using (true);
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- PRICING PANEL -->
+    <div class="panel" id="panel-pricing">
+      <div class="sec-hdr">
+        <div>
+          <div class="sl">Live Session Pricing</div>
+          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Edit public pricing cards, register dropdowns, and WhatsApp/admin handoff prices from one place.</div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="tbb" onclick="loadSessionPricingSettings({forceLive:true})">Refresh Live</button>
+          <button class="tbb" onclick="window.open('sessions.html','_blank')">Open Sessions Page</button>
+        </div>
+      </div>
+      <div class="scc" style="margin-bottom:1rem">
+        <div class="sct">Pricing Source</div>
+        <div class="scd">This panel saves to the live Supabase <strong>settings.sessionPricing</strong> row. The single session stays free unless you intentionally change launch strategy in code.</div>
+        <div id="pricingSourceStatus" class="fn" style="margin:.8rem 0 0;padding:.7rem .85rem;border:1px solid var(--b);border-radius:12px;background:var(--bg3);color:var(--t3)">Checking live pricing source...</div>
+      </div>
+      <div id="pricingRows" style="display:grid;gap:.85rem"></div>
+      <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem">
+        <button class="btn p" onclick="saveSessionPricing()">Save Pricing</button>
+        <button class="btn s" onclick="addSessionPricingPlan()">Add Custom Offer</button>
+        <button class="btn s" onclick="resetSessionPricing()">Reset Balanced Defaults</button>
+      </div>
+      <div class="fn" style="margin-top:.75rem">Default keeps Naira accessible and sets USD about 20% higher for international clients: $48 → ₦60,000, $36 → ₦45,000, $180 → ₦225,000.</div>
     </div>
 
     <!-- TESTIMONIALS PANEL -->
@@ -3522,14 +3542,15 @@ function closeModal(id){document.getElementById(id).classList.remove('on');if(id
 function nav(panel){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.sb-lnk').forEach(l=>l.classList.remove('on'));
   const el=document.getElementById('panel-'+panel);if(el)el.classList.add('on');
-const lmap={dash:'Dashboard',analytics:'Analytics',posts:'Posts',editor:'Post',settings:'Settings',library:'Library',vault:'Vault Access',testimonials:'Testimonials','lib-editor':'Library Item',comments:'Comments',subscribers:'Subscribers',campaigns:'Campaigns',logins:'Admin Logins',registrations:'Registrations',faq:'FAQ'};
+const lmap={dash:'Dashboard',analytics:'Analytics',posts:'Posts',editor:'Post',settings:'Settings',pricing:'Pricing',library:'Library',vault:'Vault Access',testimonials:'Testimonials','lib-editor':'Library Item',comments:'Comments',subscribers:'Subscribers',campaigns:'Campaigns',logins:'Admin Logins',registrations:'Registrations',faq:'FAQ'};
   document.querySelectorAll('.sb-lnk').forEach(l=>{if(lmap[panel]&&l.textContent.includes(lmap[panel].split(' ')[0]))l.classList.add('on')});
-const tmap={dash:'DASHBOARD',analytics:'ANALYTICS',posts:'ALL POSTS',editor:'NEW POST',settings:'SETTINGS','lib-editor':'LIBRARY ITEM',library:'LIBRARY',vault:'VAULT ACCESS',testimonials:'TESTIMONIALS',comments:'COMMENTS',subscribers:'SUBSCRIBERS',campaigns:'CAMPAIGNS',logins:'ADMIN LOGINS',registrations:'REGISTRATIONS',faq:'FAQ'};
-const smap={dash:'See what needs attention, what is moving, and where to act next.',analytics:'Track momentum, post performance, and category signals.',posts:'Manage the full content queue from draft to published.',editor:'Write, preview, and prepare a post for publishing.',settings:'Control dashboard behavior, admin theme, and site-linked settings.',library:'Manage library resources, status, and presentation.',vault:'Review vault access requests and issue approved reader credentials.',testimonials:'Review proof, approve stories, and add new testimonials.',comments:'Moderate discussion across the blog.',subscribers:'Review and export the people who asked to stay connected.',campaigns:'Refine newsletter drafts, send them, and manage history.',logins:'Review admin access activity.',registrations:'Track who asked for sessions and what they need.',faq:'Maintain the answers visitors rely on.'};
+const tmap={dash:'DASHBOARD',analytics:'ANALYTICS',posts:'ALL POSTS',editor:'NEW POST',settings:'SETTINGS',pricing:'PRICING','lib-editor':'LIBRARY ITEM',library:'LIBRARY',vault:'VAULT ACCESS',testimonials:'TESTIMONIALS',comments:'COMMENTS',subscribers:'SUBSCRIBERS',campaigns:'CAMPAIGNS',logins:'ADMIN LOGINS',registrations:'REGISTRATIONS',faq:'FAQ'};
+const smap={dash:'See what needs attention, what is moving, and where to act next.',analytics:'Track momentum, post performance, and category signals.',posts:'Manage the full content queue from draft to published.',editor:'Write, preview, and prepare a post for publishing.',settings:'Control dashboard behavior, admin theme, and site-linked settings.',pricing:'Edit session offers, public card prices, and registration dropdown labels.',library:'Manage library resources, status, and presentation.',vault:'Review vault access requests and issue approved reader credentials.',testimonials:'Review proof, approve stories, and add new testimonials.',comments:'Moderate discussion across the blog.',subscribers:'Review and export the people who asked to stay connected.',campaigns:'Refine newsletter drafts, send them, and manage history.',logins:'Review admin access activity.',registrations:'Track who asked for sessions and what they need.',faq:'Maintain the answers visitors rely on.'};
   document.getElementById('pageTit').textContent=tmap[panel]||panel.toUpperCase();
   const sub=document.getElementById('pageSub');if(sub)sub.textContent=smap[panel]||'';
   if(panel==='dash')initDash();if(panel==='analytics')initAnalytics();if(panel==='posts')renderPostsTbl();
   if(panel==='settings'){loadSettings();renderPalGrid();loadCountdownSettings();loadFeaturedPostSelector()}
+  if(panel==='pricing')loadSessionPricingSettings({forceLive:true});
   if(panel==='editor')setTimeout(()=>{initQuill();buildColTb();syncStatusHint();syncExcerptMeta();upPrev()},50);
   if(panel==='testimonials')loadTestimonialsPanel();
   if(panel==='comments')loadCommentsPanel();
@@ -4057,6 +4078,9 @@ function getSessionPricingSettings(){
     if(k==='group'&&out[k].ngn==='N45,000'&&out[k].usd==='$30')out[k].usd='$36';
     if(k==='intensive'&&out[k].ngn==='N225,000'&&out[k].usd==='$150')out[k].usd='$180';
   });
+  Object.keys(saved).forEach(k=>{
+    if(!out[k]&&saved[k])out[k]={label:k.replace(/-/g,' ').replace(/\b\w/g,m=>m.toUpperCase()),badge:'CUSTOM',usd:'',ngn:'',note:'custom offer',free:false,...saved[k]};
+  });
   return out;
 }
 function setPricingSourceStatus(msg,type='inf'){
@@ -4098,12 +4122,35 @@ async function loadSessionPricingSettings(opts={}){
   }
   const pricing=getSessionPricingSettings();
   wrap.innerHTML=Object.entries(pricing).map(([key,p])=>`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.55rem;align-items:end;background:var(--bg3);border:1px solid var(--b);border-radius:14px;padding:.8rem">
+    <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Key</label><input class="mn" value="${escAttr(key)}" disabled></div>
     <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Plan</label><input class="mn" id="price_${key}_label" value="${escAttr(p.label)}"></div>
     <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">USD</label><input class="mn" id="price_${key}_usd" value="${escAttr(p.usd)}"></div>
     <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Naira</label><input class="mn" id="price_${key}_ngn" value="${escAttr(p.ngn)}"></div>
     <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Badge</label><input class="mn" id="price_${key}_badge" value="${escAttr(p.badge)}"></div>
     <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Note</label><input class="mn" id="price_${key}_note" value="${escAttr(p.note)}"></div>
+    ${DEFAULT_SESSION_PRICING[key]?'<div class="fn">Core public plan</div>':`<button class="btn d" onclick="deleteSessionPricingPlan('${escAttr(key)}')">Delete</button>`}
   </div>`).join('');
+}
+function addSessionPricingPlan(){
+  const name=prompt('New offer name, e.g. Accountability Circle');
+  if(!name)return;
+  const key=('custom-'+name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')).slice(0,46);
+  if(!/^custom-[a-z0-9-]+$/.test(key))return toast('Use a clearer offer name','er');
+  const pricing=getSessionPricingSettings();
+  if(pricing[key])return toast('That offer already exists','er');
+  pricing[key]={label:name.trim(),badge:'CUSTOM',usd:'$0',ngn:'N0',note:'custom offer',free:false};
+  persistLocalSessionPricing(pricing);
+  loadSessionPricingSettings();
+  toast('Custom offer added. Edit the prices, then Save Pricing.','ok');
+}
+function deleteSessionPricingPlan(key){
+  if(DEFAULT_SESSION_PRICING[key])return toast('Core plans cannot be deleted','er');
+  if(!confirm('Delete this custom pricing offer?'))return;
+  const pricing=getSessionPricingSettings();
+  delete pricing[key];
+  persistLocalSessionPricing(pricing);
+  loadSessionPricingSettings();
+  toast('Custom offer removed locally. Save Pricing to publish.','ok');
 }
 async function saveSessionPricing(){
   const current=getSessionPricingSettings();
