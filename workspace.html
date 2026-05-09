@@ -1221,10 +1221,12 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <div class="tr"><div><div class="tl">Newsletter CTA</div><div class="ts">Newsletter block on blog page</div></div><label class="tog"><input type="checkbox" id="tgnl" onchange="saveSetting('showNewsletter',this.checked)" checked><span class="tog-t"></span><span class="tog-k"></span></label></div>
         </div>
         <div class="scc" style="grid-column:1/-1"><div class="sct">💳 Session Pricing</div><div class="scd">Control the public session cards, register dropdowns, and WhatsApp/admin handoff prices. Single session should stay free unless you intentionally change the launch strategy.</div>
+          <div id="pricingSourceStatus" class="fn" style="margin:.65rem 0 1rem;padding:.7rem .85rem;border:1px solid var(--b);border-radius:12px;background:var(--bg3);color:var(--t3)">Checking live pricing source...</div>
           <div id="pricingRows" style="display:grid;gap:.8rem"></div>
           <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem">
             <button class="btn p" onclick="saveSessionPricing()">Save Pricing</button>
             <button class="btn s" onclick="resetSessionPricing()">Reset Balanced Defaults</button>
+            <button class="btn s" onclick="loadSessionPricingSettings({forceLive:true})">Refresh Live Pricing</button>
           </div>
           <div class="fn" style="margin-top:.75rem">Default keeps Naira accessible and sets USD about 20% higher for international clients: $48 → ₦60,000, $36 → ₦45,000, $180 → ₦225,000.</div>
         </div>
@@ -4057,8 +4059,43 @@ function getSessionPricingSettings(){
   });
   return out;
 }
-function loadSessionPricingSettings(){
+function setPricingSourceStatus(msg,type='inf'){
+  const el=document.getElementById('pricingSourceStatus');if(!el)return;
+  const colors={ok:'var(--ok)',er:'var(--er)',inf:'var(--t3)'};
+  el.style.color=colors[type]||colors.inf;
+  el.textContent=msg;
+}
+async function fetchLiveSessionPricingSetting(){
+  if(!_useSb())return null;
+  const rows=await _sbReq('settings?select=key,value&key=eq.sessionPricing');
+  const raw=Array.isArray(rows)&&rows[0]?rows[0].value:null;
+  if(!raw)return null;
+  return typeof raw==='string'?JSON.parse(raw):raw;
+}
+function persistLocalSessionPricing(pricing){
+  const s=_localSettings();
+  s.sessionPricing=pricing;
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+}
+async function loadSessionPricingSettings(opts={}){
   const wrap=document.getElementById('pricingRows');if(!wrap)return;
+  if(opts.forceLive)setPricingSourceStatus('Refreshing live Supabase pricing...');
+  if(_useSb()){
+    try{
+      const live=await fetchLiveSessionPricingSetting();
+      if(live){
+        persistLocalSessionPricing(live);
+        setPricingSourceStatus('Live Supabase pricing loaded. Changes here publish to sessions and register pages.','ok');
+      }else{
+        setPricingSourceStatus('No live pricing row exists yet. Save Pricing will publish these defaults to Supabase.','inf');
+      }
+    }catch(e){
+      console.warn('Live pricing fetch failed',e);
+      setPricingSourceStatus('Could not read live Supabase pricing. Editing local fallback until connection recovers.','er');
+    }
+  }else{
+    setPricingSourceStatus('Supabase is not connected in this browser. Pricing edits will stay local until credentials are active.','er');
+  }
   const pricing=getSessionPricingSettings();
   wrap.innerHTML=Object.entries(pricing).map(([key,p])=>`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.55rem;align-items:end;background:var(--bg3);border:1px solid var(--b);border-radius:14px;padding:.8rem">
     <div><label style="font-size:.62rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.8px">Plan</label><input class="mn" id="price_${key}_label" value="${escAttr(p.label)}"></div>
@@ -4082,11 +4119,22 @@ async function saveSessionPricing(){
     };
   });
   await saveSetting('sessionPricing',next);
+  try{
+    const live=await fetchLiveSessionPricingSetting();
+    if(live){
+      persistLocalSessionPricing(live);
+      setPricingSourceStatus('Pricing saved and verified from live Supabase. Public pages will use this row.','ok');
+    }
+  }catch(e){
+    console.warn('Pricing verification failed',e);
+    setPricingSourceStatus('Pricing saved locally, but live Supabase verification failed. Check connection before trusting public pages.','er');
+  }
+  await loadSessionPricingSettings();
   toast('Pricing updated ✓','ok');
 }
 async function resetSessionPricing(){
   await saveSetting('sessionPricing',DEFAULT_SESSION_PRICING);
-  loadSessionPricingSettings();
+  await loadSessionPricingSettings({forceLive:true});
   toast('Balanced pricing restored ✓','ok');
 }
 function loadCountdownSettings(){

@@ -207,9 +207,11 @@
       var item = data[key];
       document.querySelectorAll('[data-price-plan="' + key + '"]').forEach(function (card) {
         var badge = card.querySelector('[data-price-badge]');
+        var title = card.querySelector('[data-price-title]');
         var current = card.querySelector('[data-price-current]');
         var naira = card.querySelector('[data-price-naira]');
         if (badge) badge.textContent = item.badge || DEFAULT_SESSION_PRICING[key].badge;
+        if (title) title.textContent = item.label || DEFAULT_SESSION_PRICING[key].label;
         if (current) current.textContent = item.usd || '';
         if (naira) naira.textContent = (item.ngn || '') + (item.note ? ' \u00b7 ' + item.note : '');
       });
