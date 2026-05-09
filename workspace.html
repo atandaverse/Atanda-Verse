@@ -4051,6 +4051,143 @@ initDash=async function(){await _baseInitDashUnavailableAware();if(!_sbIsUnavail
 const _baseInitAnalyticsUnavailableAware=initAnalytics;
 initAnalytics=async function(){await _baseInitAnalyticsUnavailableAware();if(!_sbIsUnavailable())return;['analyticsVisitors24h','analyticsViews24h'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});const visMeta=document.getElementById('analyticsVisitors24hMeta');if(visMeta)visMeta.textContent=_sbState==='paused'?'This Supabase project is paused, so recent visitor data cannot be queried right now.':'Supabase is currently unavailable, so recent visitor data cannot be queried right now.';const vMeta=document.getElementById('analyticsViews24hMeta');if(vMeta)vMeta.textContent='Live analytics will return once the shared database connection is healthy again.';const mom=document.getElementById('analyticsMomentum');if(mom)mom.textContent='Unavailable';const momMeta=document.getElementById('analyticsMomentumMeta');if(momMeta)momMeta.textContent='Momentum is temporarily hidden because first-party analytics data is not currently reachable.';}
 forceResync = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('This will overwrite ALL posts in Supabase with the full seed content (ep1-ep4). Continue?'))return;toast('Resyncing posts to Supabase...','inf');const seed=getSeedPosts();let ok=0;for(const p of seed){try{await _sbReq('posts?id=eq.'+p.id,'DELETE');await _sbReq('posts','POST',{id:p.id,title:p.title,subtitle:p.subtitle||'',category:p.category,status:p.status,read_time:p.readTime||'5 min read',date:p.date,excerpt:p.excerpt||'',image:p.image||'',emoji:p.emoji||'📝',content:p.content||''});ok++;}catch(e){toast('Failed on '+p.id+': '+e.message,'er');}}toast(ok+' posts resynced to Supabase ✓','ok');initDash();renderPostsTbl();refreshContentHealth()}
+// Final admin dashboard/analytics pass. Keep this after legacy overrides.
+function avAdminEsc(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function avAdminText(id,value){const el=document.getElementById(id);if(el)el.textContent=value;}
+function avAdminNum(value){return Number(value||0).toLocaleString();}
+function avAdminStatusCounts(posts){return{total:posts.length,published:posts.filter(p=>p.status==='published').length,draft:posts.filter(p=>p.status==='draft').length,coming:posts.filter(p=>p.status==='coming-soon').length,categories:[...new Set(posts.map(p=>p.category).filter(Boolean))].length};}
+async function avAdminQueryCount(path){try{const rows=await _sbReq(path);return Array.isArray(rows)?rows.length:0;}catch(e){return null;}}
+getAllViews = async function(posts=[]){
+  const map={};
+  (posts||[]).forEach(p=>{map[p.id]=Number(p.views||p.view_count||0)||0;});
+  try{
+    if(window.ivGetPostViews){
+      const live=await window.ivGetPostViews((posts||[]).map(p=>p.id).filter(Boolean));
+      Object.entries(live||{}).forEach(([id,count])=>{map[id]=Number(count||0)||0;});
+      return map;
+    }
+  }catch(e){console.warn('Shared view helper unavailable',e);}
+  if(_useSb()){
+    try{
+      const rows=await _sbReq('post_views?select=post_id,views');
+      (rows||[]).forEach(row=>{if(row.post_id)map[row.post_id]=Number(row.views||0)||0;});
+    }catch(e){console.warn('Post view totals unavailable',e);}
+  }
+  return map;
+}
+async function avAdminAnalyticsSnapshot(posts=[]){
+  if(window.ivGetAnalyticsSnapshot){
+    try{return await window.ivGetAnalyticsSnapshot(posts.map(p=>p.id).filter(Boolean));}catch(e){console.warn('Shared analytics snapshot unavailable',e);}
+  }
+  const out={views24h:0,visitors24h:0,sessions24h:0,perPostViews24h:{},perPostVisitors24h:{},perPostSeries7d:{}};
+  if(!_useSb())return out;
+  try{
+    const since24=new Date(Date.now()-24*60*60*1000).toISOString();
+    const rows=await _sbReq('post_view_events?select=post_id,visitor_key,session_id,created_at&created_at=gte.'+encodeURIComponent(since24));
+    const visitors=new Set(),sessions=new Set(),perPostVisitorSets={};
+    (rows||[]).forEach(row=>{
+      const id=row.post_id||'';
+      out.views24h+=1;
+      if(row.visitor_key)visitors.add(row.visitor_key);
+      if(row.session_id)sessions.add(row.session_id);
+      out.perPostViews24h[id]=(out.perPostViews24h[id]||0)+1;
+      if(row.visitor_key){perPostVisitorSets[id]=perPostVisitorSets[id]||new Set();perPostVisitorSets[id].add(row.visitor_key);}
+    });
+    out.visitors24h=visitors.size;
+    out.sessions24h=sessions.size||visitors.size;
+    Object.keys(perPostVisitorSets).forEach(id=>{out.perPostVisitors24h[id]=perPostVisitorSets[id].size;});
+  }catch(e){console.warn('Analytics event snapshot unavailable',e);}
+  return out;
+}
+if(typeof getDailySeriesForPost!=='function'){
+  var getDailySeriesForPost=function(snapshot,postId){
+    if(snapshot&&snapshot.perPostSeries7d&&snapshot.perPostSeries7d[postId])return snapshot.perPostSeries7d[postId];
+    return [0,0,0,0,0,0,0];
+  }
+}
+function avAdminAttentionItem(item){return`<div class="attention-item"><div class="attention-copy"><strong>${avAdminEsc(item.title)}</strong><span>${avAdminEsc(item.meta)}</span></div><button class="ab" onclick="${item.action}">${avAdminEsc(item.label)}</button></div>`;}
+function avAdminCategoryBreakdown(posts=[]){
+  const host=document.getElementById('catbrk');if(!host)return;
+  const counts={};posts.forEach(p=>{const key=p.category||'Uncategorized';counts[key]=(counts[key]||0)+1;});
+  const total=posts.length||1;
+  host.innerHTML=Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([cat,count])=>`<div style="margin-bottom:.72rem"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:5px"><span style="color:var(--t2)">${avAdminEsc(cat)}</span><span style="color:var(--t3)">${count}</span></div><div style="height:7px;background:var(--s2);border-radius:999px;overflow:hidden"><div style="height:100%;width:${Math.round(count/total*100)}%;background:linear-gradient(90deg,var(--ac),#f59e0b);border-radius:999px;transition:width .8s"></div></div></div>`).join('')||'<div style="color:var(--t3);font-size:.8rem;padding:.8rem 0">No category data yet.</div>';
+}
+renderAnalyticsSparklines = function(posts=[],vm={},snapshot){
+  const host=document.getElementById('spklines');if(!host)return;
+  host.innerHTML=posts.slice(0,6).map(p=>{
+    const bars=getDailySeriesForPost(snapshot,p.id);
+    const bmax=Math.max(...bars,1);
+    const recentViews=snapshot&&snapshot.perPostViews24h?Number(snapshot.perPostViews24h[p.id]||0):0;
+    const recentVisitors=snapshot&&snapshot.perPostVisitors24h?Number(snapshot.perPostVisitors24h[p.id]||0):0;
+    return`<div style="display:flex;align-items:center;gap:.8rem;padding:.72rem;background:var(--s);border:1px solid var(--b);border-radius:var(--rs)"><div style="flex:1;min-width:0"><div style="font-size:.78rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t)">${avAdminEsc(p.title||'Untitled post')}</div><div style="font-size:.64rem;color:var(--t3);margin-top:3px">${avAdminEsc(p.category||'Uncategorized')} - ${recentViews.toLocaleString()} views in 24h - ${recentVisitors.toLocaleString()} visitors</div></div><div class="spk" style="width:74px">${bars.map(b=>`<div class="sb2" style="height:${Math.max(3,Math.round(b/bmax*28))}px"></div>`).join('')}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--bl);width:52px;text-align:right">${(vm[p.id]||0).toLocaleString()}</div></div>`;
+  }).join('')||'<div style="color:var(--t3);font-size:.82rem;padding:1rem;text-align:center">Open live posts to generate sparkline activity.</div>';
+}
+renderRecTbl = function(posts=[],vm={}){
+  const tb=document.getElementById('recTbl');if(!tb)return;
+  const recent=[...posts].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,5);
+  if(!recent.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:1.8rem">No posts yet</td></tr>';return;}
+  tb.innerHTML=recent.map(p=>`<tr><td class="tc2">${avAdminEsc(p.title||'Untitled post')}<span>post.html?id=${avAdminEsc(p.id||'')}</span></td><td><div style="display:grid;gap:.22rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${avAdminEsc(p.category||'Uncategorized')}</strong><span class="mini-tag">${p.status==='published'?'Live post':p.status==='draft'?'Draft item':'Coming soon'}</span></div></td><td><span class="pill ${avAdminEsc(p.status||'draft')}">${avAdminEsc(p.status||'draft')}</span></td><td class="vc">${(vm[p.id]||0).toLocaleString()}</td><td>${avAdminEsc(p.date||'--')}</td><td><div class="action-row"><button class="ab" onclick='editPost(${JSON.stringify(String(p.id||''))})'>Edit</button><button class="ab del" onclick='prepDel(${JSON.stringify(String(p.id||''))})'>Delete</button></div></td></tr>`).join('');
+}
+initDash = async function(){
+  const resolved=await resolvePostsSource();
+  const posts=Array.isArray(resolved.items)?resolved.items:[];
+  const counts=avAdminStatusCounts(posts);
+  const vm=await getAllViews(posts);
+  const totalViews=Object.values(vm).reduce((a,b)=>a+Number(b||0),0);
+  const topPost=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0))[0];
+  avAdminText('st1',counts.total);avAdminText('st1s',counts.published+' published');
+  avAdminText('st2',avAdminNum(totalViews));avAdminText('st3',counts.categories);avAdminText('st4',counts.draft);
+  renderBarChart(posts,vm);renderDonut(posts);renderRecTbl(posts,vm);
+  const attention=[];
+  if(resolved.source!=='database')attention.push({title:'Workspace is not using live database authority',meta:'The current render source is '+resolved.source+'. Check Supabase before trusting public content status.',action:"nav('settings')",label:'Check source'});
+  if(counts.draft)attention.push({title:counts.draft+' draft'+(counts.draft===1?'':'s')+' waiting',meta:'Finish these before they become invisible work sitting in the queue.',action:"nav('posts')",label:'Open posts'});
+  if(counts.coming)attention.push({title:counts.coming+' coming soon item'+(counts.coming===1?'':'s'),meta:'These need either publishing, scheduling, or removal before launch traffic grows.',action:"nav('posts')",label:'Review queue'});
+  if(_useSb()){
+    const regs=await avAdminQueryCount('registrations?select=id');if(regs!==null){avAdminText('st5',regs);avAdminText('st5s',regs===1?'1 booking':regs+' bookings');if(regs)attention.push({title:regs+' registration'+(regs===1?'':'s')+' captured',meta:'Session interest exists. Follow up before it goes cold.',action:"nav('registrations')",label:'Follow up'});}
+    const subs=await avAdminQueryCount('subscribers?select=id');if(subs!==null){avAdminText('st6',subs);avAdminText('subCount',subs);}
+    const pend=await avAdminQueryCount('testimonials?select=id&approved=eq.false');if(pend!==null){avAdminText('st7',pend);avAdminText('st7s',pend+' pending review');avAdminText('pendingCount',pend);if(pend)attention.push({title:pend+' testimonial'+(pend===1?'':'s')+' pending',meta:'Approve strong proof while the story is still fresh.',action:"nav('testimonials')",label:'Review proof'});}
+    const cmts=await avAdminQueryCount('comments?select=id');if(cmts!==null){avAdminText('st8',cmts);avAdminText('cmtCount',cmts);}
+    try{const camps=await _sbReq('newsletter_campaigns?select=id,status');const active=(camps||[]).filter(c=>['draft','queued','sending'].includes(c.status));const badge=document.getElementById('campCount');if(badge)badge.textContent=(camps||[]).filter(c=>c.status==='draft').length;if(active.length)attention.push({title:active.length+' campaign'+(active.length===1?'':'s')+' in progress',meta:'Draft, queued, or sending campaigns still need review or monitoring.',action:"nav('campaigns')",label:'Open campaigns'});}catch(e){}
+  }else{
+    ['st5','st6','st7','st8','subCount','pendingCount','cmtCount'].forEach(id=>avAdminText(id,'--'));
+  }
+  if(_sbIsUnavailable())attention.unshift({title:_sbState==='paused'?'Supabase is paused':'Supabase is unavailable',meta:'Live community, campaign, and analytics counters are hidden until the shared database returns.',action:"nav('settings')",label:'Open settings'});
+  avAdminText('dashTopTitle',topPost?topPost.title:'--');
+  avAdminText('dashTopMeta',topPost?avAdminNum(vm[topPost.id]||0)+' all-time views - '+(topPost.category||'Uncategorized'):'Publish something to start measuring momentum.');
+  const pulseTitle=_sbIsUnavailable()?(_sbState==='paused'?'Supabase paused':'Supabase unavailable'):(counts.draft?'Needs attention':counts.coming?'Almost live':counts.published?'Publishing well':'Quiet');
+  const pulseMeta=_sbIsUnavailable()?'Live counters are temporarily unavailable. Content still renders from the active fallback source.':counts.draft?'Draft work is waiting, so the next admin move is editorial.':counts.coming?'Some posts are parked as Coming Soon and need a decision.':counts.published?'Published posts are carrying the public blog right now.':'Nothing is live yet, so create or publish the first post.';
+  avAdminText('dashPulseTitle',pulseTitle);avAdminText('dashPulseMeta',pulseMeta);
+  avAdminText('dashNextMove',counts.draft?'Finish drafts':counts.coming?'Review timing':counts.published?'Review campaigns':'Create post');
+  avAdminText('dashNextMeta',counts.draft?'Open All Posts and move the strongest draft forward.':counts.coming?'Decide what should go live and what should stay hidden.':counts.published?'Turn live posts into newsletter or social moments.':'Start a new article draft and publish it when ready.');
+  const box=document.getElementById('attentionList');
+  if(box)box.innerHTML=attention.slice(0,5).map(avAdminAttentionItem).join('')||'<div class="attention-item"><div class="attention-copy"><strong>Everything looks calm right now.</strong><span>The content queue, community surfaces, and campaigns are in a manageable state.</span></div><button class="ab" onclick="nav(\'editor\')">Create post</button></div>';
+}
+initAnalytics = async function(){
+  const resolved=await resolvePostsSource();
+  const posts=Array.isArray(resolved.items)?resolved.items:[];
+  const vm=await getAllViews(posts);
+  const snapshot=await avAdminAnalyticsSnapshot(posts);
+  const sorted=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0));
+  const lead=sorted[0];
+  const counts=avAdminStatusCounts(posts);
+  const views24h=Number(snapshot.views24h||0),visitors24h=Number(snapshot.visitors24h||0),sessions24h=Number(snapshot.sessions24h||0);
+  avAdminText('analyticsLeadTitle',lead?lead.title:'--');
+  avAdminText('analyticsLeadMeta',lead?avAdminNum(vm[lead.id]||0)+' total views - '+(lead.category||'Uncategorized'):'Publish more posts to unlock leaderboard signals.');
+  avAdminText('analyticsVisitors24h',_sbIsUnavailable()?'--':avAdminNum(visitors24h));
+  avAdminText('analyticsVisitors24hMeta',_sbIsUnavailable()?'Supabase is unavailable, so recent visitor data cannot be queried right now.':visitors24h?sessions24h+' tracked session'+(sessions24h===1?'':'s')+' contributed during the last 24 hours.':'No tracked visitors in the last 24 hours yet.');
+  avAdminText('analyticsViews24h',_sbIsUnavailable()?'--':avAdminNum(views24h));
+  avAdminText('analyticsViews24hMeta',_sbIsUnavailable()?'Live analytics will return once the shared database connection is healthy again.':views24h?'Fresh event rows are flowing into your first-party analytics layer.':'Open live posts in the browser to start generating real activity.');
+  avAdminText('analyticsCoverage',counts.categories);
+  avAdminText('analyticsCoverageMeta',counts.categories?counts.categories+' topic area'+(counts.categories===1?'':'s')+' represented across your posts.':'No category coverage yet.');
+  const momentum=_sbIsUnavailable()?'Unavailable':views24h>24?'Rising':views24h>0?'Active':counts.draft?'Building':counts.published?'Live':'Quiet';
+  avAdminText('analyticsMomentum',momentum);
+  avAdminText('analyticsMomentumMeta',_sbIsUnavailable()?'Momentum is hidden until Supabase responds again.':views24h>24?'Audience activity is above idle and the analytics layer is catching it.':views24h>0?'You have live traffic now, even if it is still early.':counts.draft?'Draft energy is waiting to become published reach.':counts.published?'Published posts are available; reader activity will appear as visits come in.':'The analytics layer will come alive once posts start moving.');
+  const top=document.getElementById('toprank');
+  if(top)top.innerHTML=sorted.slice(0,8).map((p,i)=>`<div class="ri"><div class="rn">#${i+1}</div><div class="rif"><div class="rt2">${avAdminEsc(p.title||'Untitled post')}</div><div class="rc">${avAdminEsc(p.category||'Uncategorized')} - ${avAdminEsc(p.status||'draft')} - ${Number((snapshot.perPostVisitors24h||{})[p.id]||0).toLocaleString()} visitors in 24h</div></div><div class="rv2">${(vm[p.id]||0).toLocaleString()}</div></div>`).join('')||'<div style="color:var(--t3);font-size:.82rem;padding:1rem;text-align:center">No posts available for ranking.</div>';
+  avAdminCategoryBreakdown(posts);
+  renderAnalyticsSparklines(sorted,vm,snapshot);
+}
+
 restoreLibraryToSupabase = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('Restore the library collection into the current Supabase project?'))return;toast('Restoring library...','inf');const source=(getLibItems()||[]).length?getLibItems():LIB_DEFAULTS;let ok=0;for(const item of source){try{await dbSaveLibItem(item);ok++;}catch(e){console.warn('Library restore failed for',item&&item.id,e);}}toast(ok+' library item'+(ok===1?'':'s')+' restored ✓','ok');try{renderLibTbl();}catch(_e){}refreshContentHealth()}
 
 const FAQ_DEFAULTS_ADMIN=[
