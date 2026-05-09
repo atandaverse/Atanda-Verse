@@ -5787,6 +5787,58 @@ async function dbSaveSetting(k,v){
   }
 }
 
+// Final interactive-control safety pass.
+applyAdminTheme = function(theme){
+  const next=theme==='evolutionary'?'evolutionary':'inceptive';
+  document.body.setAttribute('data-admin-theme',next);
+  document.getElementById('themeCardInceptive')?.classList.toggle('on',next==='inceptive');
+  document.getElementById('themeCardEvolutionary')?.classList.toggle('on',next==='evolutionary');
+  const meta=document.getElementById('adminThemeMeta');
+  if(meta)meta.textContent='Current theme: '+(next==='evolutionary'?'Evolutionary':'Inceptive');
+}
+saveSetting = async function(k,v){
+  const s=_localSettings();
+  s[k]=v;
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+  try{await dbSaveSetting(k,v);toast('Saved','ok');}
+  catch(e){console.warn('Setting save failed',e);toast('Saved locally. Live sync needs Supabase.','inf');}
+}
+saveAdminTheme = async function(theme){
+  const next=theme==='evolutionary'?'evolutionary':'inceptive';
+  applyAdminTheme(next);
+  const s=_localSettings();
+  s.adminTheme=next;
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+  try{
+    if(_useSb())await _sbUpsert('settings',{key:'adminTheme',value:JSON.stringify(next)});
+    toast((next==='evolutionary'?'Evolutionary':'Inceptive')+' theme active','ok');
+  }catch(e){
+    console.warn('Theme live sync failed',e);
+    toast('Theme changed locally. Supabase sync can catch up later.','inf');
+  }
+}
+loadSettings = function(){
+  const s=_localSettings();
+  const bind=(id,value)=>{const el=document.getElementById(id);if(el)el.checked=value;};
+  bind('tgv',!!s.showViews);
+  bind('tgcs',s.showComingSoon!==false);
+  bind('tgrt',s.showReadTime!==false);
+  bind('tgnl',s.showNewsletter!==false);
+  applyAdminTheme(s.adminTheme||'inceptive');
+  if(typeof renderPalGrid==='function')renderPalGrid();
+  if(typeof loadCountdownSettings==='function')loadCountdownSettings();
+  if(typeof loadFeaturedPostSelector==='function')loadFeaturedPostSelector();
+  if(typeof loadLibraryAccessSettings==='function')loadLibraryAccessSettings();
+  if(typeof loadLibraryAccessLogs==='function')loadLibraryAccessLogs();
+  if(typeof loadSessionPricingSettings==='function')loadSessionPricingSettings();
+  if(typeof updateVaultAdminTokenStatus==='function')updateVaultAdminTokenStatus();
+  if(typeof updateLockHint==='function')updateLockHint();
+  if(typeof refreshContentHealth==='function')refreshContentHealth();
+}
+function subscribeToNewsletter(){document.querySelector('input[type="email"],#newsletterEmail,#email')?.focus();toast('Use the newsletter form to subscribe.','inf');}
+function shareArticle(){if(navigator.share){navigator.share({title:document.title,url:location.href}).catch(()=>{});return;}navigator.clipboard?.writeText(location.href);toast('Article link copied','ok');}
+function scrollToComments(){const el=document.getElementById('comments')||document.getElementById('commentsList')||document.querySelector('[data-comments]');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});else toast('Comments are managed in the Comments panel.','inf');}
+
 async function testAndSaveLegacyPreDefaults(){
   const url=_cleanSbUrl(document.getElementById('sbUrlIn').value),key=document.getElementById('sbKeyIn').value.trim();
   const res=document.getElementById('testRes');
