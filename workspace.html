@@ -6056,6 +6056,99 @@ clearSupabaseConnection=function(){
   toast('Supabase connection cleared. Admin is now using local storage.','ok');
 };
 
+// Final Posts + Editor reliability pass.
+function safeMarkedParse(input){
+  const text=String(input||'');
+  if(window.marked&&typeof marked.parse==='function'){
+    try{return marked.parse(text);}catch(e){console.warn('Markdown parse failed',e);}
+  }
+  return text.split(/\n{2,}/).map(p=>'<p>'+avAdminEsc(p).replace(/\n/g,'<br>')+'</p>').join('');
+}
+initQuill=function(){
+  if(quill)return;
+  if(window.Quill){
+    quill=new Quill('#quillEl',{theme:'snow',placeholder:'Write your article here...',modules:{toolbar:[[{header:[1,2,3,false]}],['bold','italic','underline','strike'],['blockquote','code-block'],[{list:'ordered'},{list:'bullet'}],['link','image'],['clean']]}});
+    quill.on('text-change',()=>{upWc();upPrev();});
+  }else{
+    const host=document.getElementById('quillEl');
+    if(host){host.contentEditable='true';host.classList.add('ql-editor');host.style.minHeight='260px';host.innerHTML='';host.addEventListener('input',()=>{upWc();upPrev();});}
+    quill={root:host,getText:()=>host?host.textContent||'':''};
+    toast('Rich editor fallback active. Quill CDN did not load.','inf');
+  }
+  buildColTb();
+}
+upMdPrev=function(){const md=document.getElementById('mdt')?.value||'';const box=document.getElementById('mdp');if(box)box.innerHTML=md?safeMarkedParse(md):'<em style="color:var(--t3)">Preview...</em>';}
+getContent=function(){
+  if(activeTab==='rich')return quill&&quill.root?quill.root.innerHTML:'';
+  if(activeTab==='md')return safeMarkedParse(document.getElementById('mdt')?.value||'');
+  return quill&&quill.root?quill.root.innerHTML:'';
+}
+setContent=function(html){
+  initQuill();
+  if(quill&&quill.root)quill.root.innerHTML=html||'';
+  const md=document.getElementById('mdt');if(md)md.value='';
+  upMdPrev();upWc();upPrev();
+}
+function setPostButtonsBusy(isBusy,label){
+  ['savePostBtn','publishPostBtn','draftPostBtn'].forEach(id=>{const btn=document.getElementById(id);if(btn)btn.disabled=!!isBusy;});
+  const save=document.getElementById('savePostBtn');
+  if(save){if(isBusy){save.dataset.prevText=save.textContent;save.textContent=label||'Saving...';}else if(save.dataset.prevText){save.textContent=save.dataset.prevText;delete save.dataset.prevText;}}
+}
+savePost=async function(statusOverride){
+  initQuill();
+  const id=document.getElementById('eid').value||'post-'+Date.now();
+  const title=document.getElementById('ft').value.trim();
+  if(!title)return toast('Title is required','er');
+  const selectedStatus=document.getElementById('fst')?.value||'published';
+  const status=statusOverride||selectedStatus;
+  document.getElementById('eid').value=id;
+  document.getElementById('fst').value=status;
+  syncStatusHint();
+  const content=getContent();
+  if(status==='published'&&(!content||content==='<p><br></p>')){
+    if(!confirm('Content is empty. Publish anyway?'))return;
+  }
+  const excerpt=document.getElementById('fex').value.trim()||buildExcerptFromContent(content);
+  if(!document.getElementById('fex').value.trim()&&excerpt)document.getElementById('fex').value=excerpt;
+  syncExcerptMeta();
+  const post={id,title,subtitle:document.getElementById('fsu').value.trim(),category:document.getElementById('fcat').value,status,readTime:document.getElementById('frt').value.trim()||autoRt(content),date:document.getElementById('fdt').value||new Date().toISOString().split('T')[0],excerpt,content,image:curImg,emoji:document.getElementById('femo').value.trim()||'📝'};
+  let prevStatus='';
+  try{const posts=await getPosts();prevStatus=(posts.find(p=>p.id===id)||{}).status||'';}catch(e){}
+  setPostButtonsBusy(true,status==='published'?'Publishing...':'Saving...');
+  try{
+    await dbSavePost(post);
+    resetPostsAuthority(_useSb()?'database':'local cache');
+    upPostCount();
+    if(status==='published'&&prevStatus!=='published'){
+      const result=await ensureNewsletterDraftForPost(post);
+      if(result.created)toast('Newsletter draft created for this post','ok');
+    }
+    toast(status==='published'?`Published - post.html?id=${id}`:'Saved as draft','ok');
+    nav('posts');
+  }catch(e){
+    toast('Save failed: '+(e&&e.message?e.message:e),'er');
+  }finally{
+    setPostButtonsBusy(false);
+  }
+}
+quickToggleStatus=async function(id,currentStatus){
+  const posts=await getPosts();
+  const post=posts.find(p=>p.id===id);
+  if(!post)return toast('Post not found','er');
+  const next=currentStatus==='published'?'coming-soon':'published';
+  post.status=next;
+  try{
+    await dbSavePost(post);
+    resetPostsAuthority(_useSb()?'database':'local cache');
+    if(next==='published'){
+      const result=await ensureNewsletterDraftForPost(post);
+      if(result.created)toast('Newsletter draft created for '+post.title.substring(0,24),'ok');
+    }
+    toast((next==='published'?'Published':'Set to Coming Soon')+' - '+post.title.substring(0,30),'ok');
+    renderPostsTbl();upPostCount();initDash();
+  }catch(e){toast('Failed: '+(e&&e.message?e.message:e),'er');}
+}
+
 (function(){
   if(!_useSb())_restoreDefaultSupabaseCreds();
   document.getElementById('setupScreen')?.classList.add('gone');
