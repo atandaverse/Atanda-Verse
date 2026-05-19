@@ -1763,10 +1763,12 @@ async function uploadToStorage(file, folder='uploads'){
   });
   if(!res.ok){
     const t=await res.text();
-    const hint=/row-level security|Unauthorized/i.test(t)
-      ? ' Run the innerverse-media Storage policy SQL in VAULT_ACCESS_SETUP.md, then try again.'
-      : '';
-    throw new Error('Upload failed: '+t+hint);
+    const hint=/row-level security|Unauthorized|permission/i.test(t)
+      ? ' Storage RLS blocked this upload. Run the innerverse-media Storage policy SQL in VAULT_ACCESS_SETUP.md, then try again.'
+      : /bucket|not found/i.test(t)
+        ? ' The innerverse-media bucket is missing or unavailable in this Supabase project.'
+        : '';
+    throw new Error('Upload to innerverse-media failed: '+(t||('HTTP '+res.status))+hint);
   }
   return `${_sbUrl()}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
 }
@@ -1781,10 +1783,12 @@ async function uploadVaultPrivateFile(file){
   });
   if(!res.ok){
     const t=await res.text();
-    const hint=/row-level security|Unauthorized/i.test(t)
-      ? ' Run the atanda-vault-private Storage policy SQL in VAULT_ACCESS_SETUP.md, then try again.'
-      : '';
-    throw new Error('Private vault upload failed: '+t+hint);
+    const hint=/row-level security|Unauthorized|permission/i.test(t)
+      ? ' Storage RLS blocked this private upload. Run the atanda-vault-private Storage policy SQL in VAULT_ACCESS_SETUP.md, then try again.'
+      : /bucket|not found/i.test(t)
+        ? ' The atanda-vault-private bucket is missing or unavailable in this Supabase project.'
+        : '';
+    throw new Error('Private vault upload to atanda-vault-private failed: '+(t||('HTTP '+res.status))+hint);
   }
   return 'vault-private:'+path;
 }
@@ -1845,6 +1849,19 @@ async function dbDeleteLibItem(id){
   saveLibItems(getLibItems().filter(i=>i.id!==id));
   if(_useSb()){try{await _sbReq('library?id=eq.'+id,'DELETE');}catch(e){console.warn(e);}}
 }
+dbSaveLibItem = async function(item){
+  if(_useSb()){
+    await _sbReq('library?id=eq.'+encodeURIComponent(item.id),'DELETE');
+    await _sbReq('library','POST',{id:item.id,title:item.title,category:item.category,description:item.desc||'',emoji:item.emoji||'',tag:item.tag||'',status:item.status,url:item.url||'',image:item.image||'',embed:item.embed||'',preview:item.preview||'',duration:item.duration||'',sort_order:item.order||0,featured:!!item.featured,free:item.free!==false,notes:item.notes||''});
+  }
+  const items=getLibItems();const idx=items.findIndex(i=>i.id===item.id);
+  if(idx>=0)items[idx]=item;else items.push(item);
+  saveLibItems(items);
+};
+dbDeleteLibItem = async function(id){
+  if(_useSb())await _sbReq('library?id=eq.'+encodeURIComponent(id),'DELETE');
+  saveLibItems(getLibItems().filter(i=>i.id!==id));
+};
 const SEED_POSTS=[
   {id:'ep1',title:'Beyond "School Na Scam" Episode 1',subtitle:'The New Reality of Education in Nigeria',category:'Education & Career',status:'published',readTime:'5 min read',date:'2025-10-01',excerpt:'The new reality of education in Nigeria. We\'re decoding the new rules of the game and revealing the strategy that actually works...',image:'images/headers.png',emoji:'📚',content:`<p><strong>Welcome to "Beyond School Na Scam" - a 12-part series that will transform how you think about education and success in Nigeria. Every Tuesday for the next 3 months, we're decoding the new rules of the game.</strong></p>
 
@@ -5544,19 +5561,28 @@ function makeVaultUsername(row){
   return base + '-' + String(row.application_no||Date.now()).slice(-4).toLowerCase();
 }
 async function invokeVaultAccessEmail(requestId, action){
-  if(!_useSb())return null;
+  if(!_useSb())return {ok:false,error:'Supabase is not configured, so the vault email function cannot run.'};
   try{
     const r=await fetch(_functionsBaseUrl() + '/send-vault-access',{
       method:'POST',
       headers:{apikey:_sbKey(),Authorization:'Bearer '+_sbKey(),'Content-Type':'application/json'},
       body:JSON.stringify({requestId,action})
     });
-    if(!r.ok)throw new Error(await r.text());
-    return await r.json().catch(()=>null);
+    const body=await r.text();
+    if(!r.ok){
+      const missing=r.status===404?'send-vault-access Edge Function is not deployed. ':'';
+      throw new Error(missing+(body||('HTTP '+r.status)));
+    }
+    try{return body?JSON.parse(body):{ok:true};}
+    catch(_e){return {ok:true};}
   }catch(e){
     console.warn('Vault email function unavailable',e);
-    return null;
+    return {ok:false,error:e&&e.message?e.message:'send-vault-access Edge Function is unavailable'};
   }
+}
+function toastVaultEmailResult(result, successText){
+  if(result&&result.ok===false)toast(successText+', but email failed: '+result.error,'er');
+  else toast(successText,'ok');
 }
 async function loadVaultRequests(){
   const tbl=document.getElementById('vaultReqTbl');
@@ -5609,43 +5635,52 @@ async function approveVaultRequest(id){
   if(!username)return;
   const appNo=row.application_no||('AV-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,8).toUpperCase());
   const hash=await sha256Text(appNo);
-  await _sbUpsert('vault_access_requests',{...row,application_no:appNo,vault_username:username,access_code_hash:hash,status:'approved',decided_at:new Date().toISOString()});
-  await invokeVaultAccessEmail(id,'approved');
-  toast('Vault request approved','ok');
-  loadVaultRequests();
+  try{
+    await _sbUpsert('vault_access_requests',{...row,application_no:appNo,vault_username:username,access_code_hash:hash,status:'approved',decided_at:new Date().toISOString()});
+    const emailResult=await invokeVaultAccessEmail(id,'approved');
+    toastVaultEmailResult(emailResult,'Vault request approved');
+    loadVaultRequests();
+  }catch(e){toast('Approve failed: '+(e.message||e),'er');}
 }
 async function rejectVaultRequest(id){
   const row=_allVaultRequests.find(r=>r.id===id);
   if(!row)return toast('Request not found','er');
   const note=prompt('Optional rejection note','');
-  await _sbUpsert('vault_access_requests',{...row,status:'rejected',admin_note:note||'',decided_at:new Date().toISOString()});
-  await invokeVaultAccessEmail(id,'rejected');
-  toast('Vault request rejected','ok');
-  loadVaultRequests();
+  try{
+    await _sbUpsert('vault_access_requests',{...row,status:'rejected',admin_note:note||'',decided_at:new Date().toISOString()});
+    const emailResult=await invokeVaultAccessEmail(id,'rejected');
+    toastVaultEmailResult(emailResult,'Vault request rejected');
+    loadVaultRequests();
+  }catch(e){toast('Reject failed: '+(e.message||e),'er');}
 }
 async function warnVaultReader(id){
   const row=_allVaultRequests.find(r=>r.id===id);
   if(!row)return toast('Reader not found','er');
   const note=prompt('Warning message to send and store','Please do not share, forward, repost, or distribute Atanda Verse vault materials. Continued misuse may lead to restricted access.');
   if(!note)return;
-  await _sbUpsert('vault_access_requests',{...row,warning_note:note,warned_at:new Date().toISOString()});
-  await invokeVaultAccessEmail(id,'warning');
-  toast('Vault warning saved','ok');
-  loadVaultRequests();
+  try{
+    await _sbUpsert('vault_access_requests',{...row,warning_note:note,warned_at:new Date().toISOString()});
+    const emailResult=await invokeVaultAccessEmail(id,'warning');
+    toastVaultEmailResult(emailResult,'Vault warning saved');
+    loadVaultRequests();
+  }catch(e){toast('Warning failed: '+(e.message||e),'er');}
 }
 async function restrictVaultReader(id){
   const row=_allVaultRequests.find(r=>r.id===id);
   if(!row)return toast('Reader not found','er');
   const note=prompt('Restriction reason / note','Vault access restricted for violating or risking material-sharing terms.');
   if(note===null)return;
-  await _sbUpsert('vault_access_requests',{...row,status:'restricted',admin_note:note||row.admin_note||'',restricted_at:new Date().toISOString(),decided_at:new Date().toISOString()});
-  await invokeVaultAccessEmail(id,'restricted');
-  toast('Vault access restricted','ok');
-  loadVaultRequests();
+  try{
+    await _sbUpsert('vault_access_requests',{...row,status:'restricted',admin_note:note||row.admin_note||'',restricted_at:new Date().toISOString(),decided_at:new Date().toISOString()});
+    const emailResult=await invokeVaultAccessEmail(id,'restricted');
+    toastVaultEmailResult(emailResult,'Vault access restricted');
+    loadVaultRequests();
+  }catch(e){toast('Restrict failed: '+(e.message||e),'er');}
 }
 async function resendVaultEmail(id,status){
-  await invokeVaultAccessEmail(id,status==='approved'?'approved':status==='restricted'?'restricted':'rejected');
-  toast('Vault email requested','ok');
+  const emailResult=await invokeVaultAccessEmail(id,status==='approved'?'approved':status==='restricted'?'restricted':'rejected');
+  if(emailResult&&emailResult.ok===false)toast('Vault email failed: '+emailResult.error,'er');
+  else toast('Vault email requested','ok');
 }
 
 let _vaultFilePending=null,_vaultCoverPending=null,_vaultMaterials=[];
@@ -5680,8 +5715,22 @@ async function callVaultAdmin(action,payload={}){
     headers:{apikey:_sbKey(),Authorization:'Bearer '+_sbKey(),'Content-Type':'application/json','x-admin-token':token},
     body:JSON.stringify({action,...payload})
   });
-  const json=await res.json().catch(()=>({}));
-  if(!res.ok||json.ok===false)throw new Error(json.error||'Vault admin request failed');
+  const raw=await res.text();
+  let json={};
+  try{json=raw?JSON.parse(raw):{};}catch(_e){json={error:raw};}
+  if(!res.ok||json.ok===false){
+    const detail=json.error||raw||('HTTP '+res.status);
+    const hint=res.status===404
+      ? 'manage-vault-resources Edge Function is not deployed.'
+      : /Admin authorization failed|authorization|token/i.test(detail)
+        ? 'Vault admin token was rejected. Confirm ADMIN_API_TOKEN and the saved token match.'
+        : /relation .*vault_resources|vault_resources|schema cache/i.test(detail)
+          ? 'vault_resources table is missing or not migrated. Run the vault setup SQL.'
+          : /SUPABASE_SERVICE_ROLE_KEY|service role|Invalid API key/i.test(detail)
+            ? 'manage-vault-resources is missing a valid SUPABASE_SERVICE_ROLE_KEY secret.'
+            : '';
+    throw new Error((hint?hint+' ':'')+detail);
+  }
   return json;
 }
 function clearVaultMaterialForm(){
@@ -5716,7 +5765,7 @@ async function loadVaultMaterials(){
     }).join('');
   }catch(e){
     noteForUnavailable('vaultMaterialsSourceNote','Vault materials');
-    tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Vault materials could not load. Save the vault admin token in Settings or check the Edge Function.</td></tr>';
+    tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">'+vaultClean(e.message||'Vault materials could not load. Save the vault admin token in Settings or check the Edge Function.')+'</td></tr>';
   }
 }
 function editVaultMaterial(id){
@@ -6147,14 +6196,12 @@ quickToggleStatus=async function(id,currentStatus){
     toast((next==='published'?'Published':'Set to Coming Soon')+' - '+post.title.substring(0,30),'ok');
     renderPostsTbl();upPostCount();initDash();
   }catch(e){toast('Failed: '+(e&&e.message?e.message:e),'er');}
-}
+};
 
-(function(){
-  if(!_useSb())_restoreDefaultSupabaseCreds();
-  document.getElementById('setupScreen')?.classList.add('gone');
-  upDbBadge();
-  probeSupabaseConnection();
-})();
+if(!_useSb())_restoreDefaultSupabaseCreds();
+document.getElementById('setupScreen')?.classList.add('gone');
+upDbBadge();
+probeSupabaseConnection();
 </script>
 </body>
 </html>
