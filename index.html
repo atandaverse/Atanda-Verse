@@ -909,9 +909,17 @@ img.loaded{opacity:1;}
   function ivProgress(){
     var pb=document.getElementById('progressBar')||document.getElementById('pb')||document.getElementById('pb2');
     if(!pb)return;
-    window.addEventListener('scroll',function(){
-      var pct=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)||0;
+    var queued=false;
+    function sync(){
+      queued=false;
+      var denom=document.documentElement.scrollHeight-window.innerHeight;
+      var pct=denom>0?window.scrollY/denom:0;
       pb.style.transform='scaleX('+Math.min(pct,1)+')';
+    }
+    window.addEventListener('scroll',function(){
+      if(queued)return;
+      queued=true;
+      requestAnimationFrame(sync);
     },{passive:true});
   }
 
