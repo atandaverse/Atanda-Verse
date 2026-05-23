@@ -464,24 +464,6 @@
                 });
             }
 
-            const liveSelected = window.ivSessionPricing && window.ivSessionPricing[d.sessionType];
-            const selected = Object.assign({}, PACKAGE_MAP[d.sessionType] || PACKAGE_MAP.single);
-            if (liveSelected) {
-                selected.title = liveSelected.label || selected.title;
-                selected.currentPrice = liveSelected.usd || selected.currentPrice;
-                selected.note = (liveSelected.ngn || '') + (liveSelected.note ? ' - ' + liveSelected.note : '');
-            }
-            const priceLine = (selected.currentPrice || 'FREE') + ' (' + selected.note + ')';
-            const msg =
-                'NEW CLARITY SESSION REGISTRATION\n\n' +
-                'Name: ' + d.fullName + '\n' +
-                'Email: ' + d.email + '\n' +
-                'Phone: ' + d.phone + '\n' +
-                'Session: ' + selected.title + '\n' +
-                'Price: ' + priceLine + '\n' +
-                'Source: ' + source + '\n' +
-                'Goals: ' + (d.goals || 'Not specified');
-            window.open('https://wa.me/2348147732687?text=' + encodeURIComponent(msg), '_blank');
             alert(d.sessionType === 'single' ? "Thank you for registering! We'll contact you within 24 hours to confirm your free single session." : "Thank you for registering! We'll contact you within 24 hours with confirmation and payment details for your selected plan.");
             this.reset();
             applyPackage(getSelectedPackage());

@@ -1149,9 +1149,6 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
       tags: ['registration', 'sessions', d.sessionType || 'general']
     });
   }
-  var selectedSession = (window.ivSessionPricing && window.ivSessionPricing[d.sessionType]) || SESSION_PRICE_MAP[d.sessionType] || SESSION_PRICE_MAP.single;
-  var msg = 'NEW CLARITY SESSION\n\nName: ' + d.fullName + '\nEmail: ' + d.email + '\nPhone: ' + d.phone + '\nSession: ' + selectedSession.label + '\nPrice: ' + selectedSession.price + ' (' + selectedSession.note + ')' + '\nGoals: ' + (d.goals || 'Not specified');
-  window.open('https://wa.me/2348147732687?text=' + encodeURIComponent(msg), '_blank');
   alert(d.sessionType === 'single' ? "Thank you for registering! We'll contact you within 24 hours to schedule your free single session." : "Thank you for registering! We'll contact you within 24 hours with confirmation and payment details for your selected plan.");
   this.reset();
 });

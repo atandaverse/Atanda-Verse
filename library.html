@@ -1246,6 +1246,15 @@ async function submitLibraryAccess(){
       headers: {'apikey':creds.key,'Authorization':'Bearer '+creds.key,'Content-Type':'application/json'},
       body: JSON.stringify({ requestId: request.id, action: 'requested' })
     }); } catch(e) { console.warn('Vault email function unavailable', e); }
+    if (window.ivNotifyAdmin) window.ivNotifyAdmin('vault.requested', {
+      requestId: request.id,
+      applicationNo: request.application_no,
+      name: name,
+      email: email,
+      requestedResourceId: resourceId,
+      requestedResourceTitle: resourceTitle,
+      source: 'library-vault-request'
+    });
     if (document.getElementById('libAccessNewsletterOptIn')?.checked && window.ivCaptureSubscriber) {
       await window.ivCaptureSubscriber({
         email: email,

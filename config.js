@@ -91,6 +91,34 @@
     return /newsletter|clarity-guide|registration|sessions|vault-access|contact-opt-in/.test(haystack);
   }
 
+  var WELCOME_EVENT_SOURCE = 'welcome-guide';
+
+  function welcomeLocalKey(email) {
+    return 'iv_welcome_sent_' + hashString(normalizeEmail(email));
+  }
+
+  async function hasSubscriberEvent(email, source) {
+    var rows = await sbFetch('subscriber_events?select=id&subscriber_email=eq.' + encodeURIComponent(email) + '&source=eq.' + encodeURIComponent(source) + '&limit=1');
+    return Array.isArray(rows) && rows.length > 0;
+  }
+
+  async function recordSubscriberEvent(email, source, name, tags, meta) {
+    var now = new Date().toISOString();
+    return sbFetch('subscriber_events', {
+      method: 'POST',
+      headers: { Prefer: 'return=minimal' },
+      body: JSON.stringify({
+        id: 'subevt-' + Date.now() + '-' + hashString(email + '-' + source + '-' + now),
+        subscriber_email: email,
+        source: source,
+        tag_snapshot: tags,
+        name_snapshot: name || '',
+        meta: JSON.stringify(meta || {}),
+        created_at: now
+      })
+    });
+  }
+
   async function sbFetch(path, options) {
     var creds = getCreds();
     if (!creds) throw new Error('Supabase credentials missing');
@@ -286,11 +314,36 @@
     return response.json().catch(function () { return null; });
   }
 
+  function workspaceUrl(panel) {
+    try { return new URL('workspace.html#' + encodeURIComponent(panel || 'dash'), location.href).href; }
+    catch (_err) { return 'workspace.html#' + (panel || 'dash'); }
+  }
+
+  function adminRouteFor(eventType, payload) {
+    var type = String(eventType || '').toLowerCase();
+    var source = String((payload && payload.source) || '').toLowerCase();
+    if (type.indexOf('vault') !== -1 || source.indexOf('vault') !== -1) return { panel: 'vault', label: 'Open vault requests' };
+    if (type.indexOf('registration') !== -1 || source.indexOf('sessions') !== -1 || source.indexOf('register') !== -1) return { panel: 'registrations', label: 'Open registrations' };
+    if (type.indexOf('subscriber') !== -1 || type.indexOf('newsletter') !== -1) return { panel: 'subscribers', label: 'Open subscribers' };
+    if (type.indexOf('contact') !== -1 || source.indexOf('contact') !== -1) return { panel: 'dash', label: 'Open workspace' };
+    if (type.indexOf('comment') !== -1) return { panel: 'comments', label: 'Open comments' };
+    return { panel: 'dash', label: 'Open workspace' };
+  }
+
   async function notifyAdmin(eventType, payload) {
     try {
+      var route = adminRouteFor(eventType, payload || {});
+      var adminUrl = workspaceUrl(route.panel);
       return await sbInvoke('send-admin-notification', {
         eventType: eventType,
-        payload: payload || {},
+        payload: Object.assign({}, payload || {}, {
+          adminPanel: route.panel,
+          adminUrl: adminUrl,
+          adminLabel: route.label
+        }),
+        adminPanel: route.panel,
+        adminUrl: adminUrl,
+        adminLabel: route.label,
         pageUrl: location.href,
         createdAt: new Date().toISOString()
       });
@@ -308,7 +361,6 @@
     var name = String((payload && payload.name) || '').trim();
     var tags = mergeTags((payload && payload.tags) || []);
     var subscriberId = 'sub-' + hashString(email);
-    var eventId = 'subevt-' + Date.now() + '-' + hashString(email + '-' + source + '-' + now);
     var subscriber = {
       id: subscriberId,
       email: email,
@@ -317,8 +369,15 @@
       tags: tags,
       subscribed_at: now
     };
+    var existingSubscriber = false;
 
     try {
+      try {
+        var existingRows = await sbFetch('subscribers?select=id&email=eq.' + encodeURIComponent(email) + '&limit=1');
+        existingSubscriber = Array.isArray(existingRows) && existingRows.length > 0;
+      } catch (lookupErr) {
+        console.warn('Subscriber dedupe lookup skipped', lookupErr);
+      }
       await sbFetch('subscribers?on_conflict=email', {
         method: 'POST',
         headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
@@ -330,37 +389,42 @@
     }
 
     try {
-      await sbFetch('subscriber_events', {
-        method: 'POST',
-        headers: { Prefer: 'return=minimal' },
-        body: JSON.stringify({
-          id: eventId,
-          subscriber_email: email,
-          source: source,
-          tag_snapshot: tags,
-          name_snapshot: name,
-          meta: JSON.stringify((payload && payload.meta) || {}),
-          created_at: now
-        })
-      });
+      await recordSubscriberEvent(email, source, name, tags, (payload && payload.meta) || {});
     } catch (err) {
       console.warn('Subscriber event capture skipped', err);
     }
 
     if (shouldSendWelcomeGuide(payload || {}, source, tags)) {
       try {
-        await sbInvoke('send-subscriber-welcome', {
-          email: email,
-          name: name,
-          source: source,
-          tags: tags
-        });
+        var welcomeKey = welcomeLocalKey(email);
+        var alreadyWelcomed = localStorage.getItem(welcomeKey) === '1';
+        if (!alreadyWelcomed) {
+          try {
+            alreadyWelcomed = await hasSubscriberEvent(email, WELCOME_EVENT_SOURCE);
+          } catch (lookupWelcomeErr) {
+            console.warn('Subscriber welcome dedupe lookup skipped', lookupWelcomeErr);
+          }
+        }
+        if (!alreadyWelcomed) {
+          await sbInvoke('send-subscriber-welcome', {
+            email: email,
+            name: name,
+            source: source,
+            tags: tags
+          });
+          try {
+            await recordSubscriberEvent(email, WELCOME_EVENT_SOURCE, name, tags, { originalSource: source });
+          } catch (markErr) {
+            console.warn('Subscriber welcome marker skipped', markErr);
+          }
+          localStorage.setItem(welcomeKey, '1');
+        }
       } catch (welcomeErr) {
         console.warn('Subscriber welcome guide function unavailable', welcomeErr);
       }
     }
 
-    if (tags.indexOf('registration') === -1 && tags.indexOf('comment') === -1) {
+    if (!existingSubscriber && tags.indexOf('registration') === -1 && tags.indexOf('comment') === -1) {
       notifyAdmin('subscriber.created', {
         email: email,
         name: name,
