@@ -578,25 +578,27 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         .newsletter-form button:hover { background: linear-gradient(135deg,var(--accent),#972430); transform: translateY(-3px); box-shadow: 0 16px 36px rgba(220,53,69,.34), inset 0 1px 0 rgba(255,255,255,.34); }
 
         /* ── STICKY CTA ── */
-.sticky-cta { position: fixed; bottom: 22px; right: 22px; z-index: 1000; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .78rem; width: min(330px, calc(100vw - 32px)); background: rgba(255,255,255,.94); color: #17233f; padding: .82rem .86rem .82rem .82rem; border-radius: 20px; text-decoration: none; border: 1px solid rgba(199,55,74,.18); box-shadow: 0 22px 54px rgba(23,35,63,.18), 0 10px 28px rgba(199,55,74,.16), inset 0 1px 0 rgba(255,255,255,.84); transition: transform .26s ease, box-shadow .26s ease, opacity .26s ease, background .26s ease, border-color .26s ease; cursor: pointer; animation: sca .45s ease .35s both; overflow: hidden; isolation: isolate; }
-        [data-theme="dark"] .sticky-cta { background: rgba(15,23,42,.92); color: #f8fafc; border-color: rgba(255,255,255,.12); box-shadow: 0 22px 54px rgba(0,0,0,.32), 0 10px 28px rgba(199,55,74,.2), inset 0 1px 0 rgba(255,255,255,.08); }
-        .sticky-cta::before { content: ''; position: absolute; inset: 0; width: 5px; background: linear-gradient(180deg,#e63b51,#c99a44); pointer-events: none; }
-        .sticky-cta::after { content: ''; position: absolute; inset: auto -18% -72% 38%; height: 120%; background: radial-gradient(circle, rgba(220,53,69,.16), transparent 62%); z-index: -1; pointer-events: none; }
+.sticky-cta { position: fixed; bottom: 22px; right: 22px; z-index: 1000; display: inline-flex; align-items: center; gap: .62rem; width: auto; max-width: calc(100vw - 32px); background: linear-gradient(135deg,#e63b51 0%,#be2637 52%,#951b2a 100%); color: white; padding: .88rem 1.2rem .88rem .92rem; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: .88rem; box-shadow: 0 18px 42px rgba(220,53,69,.46), 0 0 0 1px rgba(255,255,255,.14), inset 0 1px 0 rgba(255,255,255,.34); transition: transform .32s ease, box-shadow .32s ease, opacity .32s ease, padding .24s ease, gap .24s ease; cursor: pointer; animation: sca 1s ease 3s both; overflow: visible; white-space: nowrap; isolation: isolate; }
+        .sticky-cta::after { content: ''; position: absolute; inset: -28px -34px; border-radius: inherit; background: radial-gradient(circle at 22% 36%, rgba(255,255,255,.38), transparent 24%), radial-gradient(circle at 56% 50%, rgba(255,92,116,.62), rgba(220,53,69,.28) 42%, rgba(220,53,69,.12) 62%, transparent 78%); filter: blur(18px); opacity: .98; z-index: -1; animation: scg 2.65s ease-in-out infinite; pointer-events: none; }
         .sticky-cta > * { position: relative; z-index: 1; }
-        @keyframes sca { from { opacity: 0; } to { opacity: 1; } }
-        .sticky-cta:hover,.sticky-cta:focus-visible,.sticky-cta.peek { transform: translateY(-4px); border-color: rgba(199,55,74,.34); box-shadow: 0 28px 66px rgba(23,35,63,.22), 0 14px 34px rgba(199,55,74,.22), inset 0 1px 0 rgba(255,255,255,.9); }
+        @keyframes sca { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scg { 0%,100% { opacity: .72; transform: scale(.94); } 45% { opacity: 1; transform: scale(1.08); } 70% { opacity: .86; transform: scale(1.02); } }
+        .sticky-cta:hover,.sticky-cta.typing,.sticky-cta.peek { transform: translateY(-4px) scale(1.05); box-shadow: 0 26px 64px rgba(220,53,69,.62), 0 0 0 1px rgba(255,255,255,.2), inset 0 1px 0 rgba(255,255,255,.38); }
         .sticky-cta.hidden { transform: translateY(100px) !important; opacity: 0 !important; }
-        .sticky-cta-icon { width: 2.78rem; height: 2.78rem; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(180deg,#fff,#f7f1ea); box-shadow: inset 0 1px 0 rgba(255,255,255,.86), 0 10px 22px rgba(15,23,42,.12); flex: 0 0 auto; border: 1px solid rgba(199,55,74,.12); overflow: hidden; }
-        .sticky-cta-icon img { width: 2.16rem; height: 2.16rem; object-fit: contain; display: block; }
-        .sticky-cta-copy { display: inline-flex; flex-direction: column; gap: .16rem; min-width: 0; line-height: 1.05; }
-        .sticky-cta-kicker { display: inline-flex; align-items: center; gap: .32rem; color: #be2637; font-size: .66rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
-        .sticky-cta-kicker::before { content: ''; width: .44rem; height: .44rem; border-radius: 999px; background: #22c55e; box-shadow: 0 0 0 4px rgba(34,197,94,.12); }
-        .sticky-cta-label { color: inherit; font-weight: 900; font-size: .96rem; letter-spacing: 0; overflow-wrap: anywhere; }
-        .sticky-cta-detail { color: #64748b; font-size: .72rem; font-weight: 800; }
-        [data-theme="dark"] .sticky-cta-kicker { color: #f6a7b2; }
-        [data-theme="dark"] .sticky-cta-detail { color: rgba(226,232,240,.72); }
-        .sticky-cta-arrow { width: 2.24rem; height: 2.24rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#e63b51,#951b2a); color: #fff; font-weight: 900; box-shadow: 0 12px 26px rgba(199,55,74,.28); transition: transform .24s ease; }
-        .sticky-cta:hover .sticky-cta-arrow,.sticky-cta:focus-visible .sticky-cta-arrow { transform: translateX(2px); }
+        .sticky-cta-icon { width: 2.65rem; height: 2.65rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.94); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 10px 22px rgba(15,23,42,.18); flex: 0 0 auto; border: 1px solid rgba(255,255,255,.55); overflow: hidden; }
+        .sticky-cta-icon img { width: 2.08rem; height: 2.08rem; object-fit: contain; display: block; }
+        .sticky-cta-copy { display: inline-flex; flex-direction: column; line-height: 1.05; overflow: hidden; width: auto; opacity: 1; }
+        .sticky-cta-label { letter-spacing: .01em; min-width: 0; }
+        .sticky-cta.typing .sticky-cta-label::after { content: ''; display: inline-block; width: 2px; height: .95em; margin-left: 3px; vertical-align: -1px; background: rgba(255,255,255,.88); animation: ctablink .72s steps(1,end) infinite; }
+        @keyframes ctablink { 50% { opacity: 0; } }
+        .sticky-cta-detail { font-size: .68rem; opacity: .78; font-weight: 700; margin-top: .2rem; }
+        .sticky-cta.compact { gap: .52rem; padding-right: 1.05rem; }
+        .sticky-cta.compact .sticky-cta-copy { width: auto; }
+        .sticky-cta.compact .sticky-cta-label { font-size: .88rem; }
+        .sticky-cta.compact .sticky-cta-detail { display: none; }
+        .sticky-cta.peek { transform: translateY(-3px) scale(1.03); box-shadow: 0 22px 52px rgba(220,53,69,.46), inset 0 1px 0 rgba(255,255,255,.36); }
+        .sc-pulse { position: absolute; inset: -4px; border-radius: 50px; border: 2px solid var(--accent); animation: scp 2s ease-in-out infinite; pointer-events: none; }
+        @keyframes scp { 0%,100% { opacity: .4; transform: scale(1); } 50% { opacity: 0; transform: scale(1.1); } }
 
         /* ── FOOTER ── */
         footer { background: var(--nav-bg); backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%); padding: 4rem 0 2rem; text-align: center; border-top: 1px solid var(--glass-border); box-shadow: 0 -12px 40px var(--shadow); }
@@ -634,7 +636,7 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
             .countdown-item { min-width: 64px; padding: .7rem; }
             .form-row { grid-template-columns: 1fr; gap: 0; }
             .registration-form { margin: 1rem; padding: 2rem 1.5rem; }
-            .sticky-cta { bottom: 14px; right: 14px; left: auto; padding: .74rem .78rem; }
+            .sticky-cta { bottom: 14px; right: 14px; left: auto; padding: .74rem 1rem .74rem .76rem; font-size: .82rem; }
             .newsletter-form { flex-direction: column; align-items: stretch; }
             .newsletter-form input { min-width: auto; }
             .contact-buttons { flex-direction: column; align-items: center; }
@@ -857,12 +859,7 @@ img.loaded{opacity:1;}
   #latestPostsGrid{grid-template-columns:1fr!important;gap:1.2rem!important;}
   .newsletter-form{width:100%!important;max-width:none!important;}
   .newsletter-form input,.newsletter-form button{width:100%!important;}
-  .sticky-cta{left:12px!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom,0))!important;width:auto!important;max-width:none!important;grid-template-columns:auto 1fr auto!important;}
-  .sticky-cta-icon{width:2.42rem!important;height:2.42rem!important;border-radius:14px!important;}
-  .sticky-cta-icon img{width:1.9rem!important;height:1.9rem!important;}
-  .sticky-cta-label{font-size:.9rem!important;}
-  .sticky-cta-detail{font-size:.68rem!important;}
-  .sticky-cta-arrow{width:2rem!important;height:2rem!important;}
+  .sticky-cta{left:auto!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom,0))!important;width:auto!important;max-width:calc(100vw - 24px)!important;justify-content:flex-start!important;}
 }
 @media(max-width:480px){
   .container{padding:0 .9rem!important;}
@@ -1266,13 +1263,12 @@ img.loaded{opacity:1;}
 
 <!-- Sticky CTA -->
 <a href="register.html?session=single&label=Single%20Session&source=sticky" class="sticky-cta" id="stickyCta">
+    <div class="sc-pulse"></div>
     <span class="sticky-cta-icon" aria-hidden="true"><img src="atanda-logo.svg" alt=""></span>
     <span class="sticky-cta-copy">
-        <span class="sticky-cta-kicker">Open now</span>
-        <span class="sticky-cta-label">Book your free session</span>
-        <span class="sticky-cta-detail">90-minute clarity call</span>
+        <span class="sticky-cta-label">Book Free Session</span>
+        <span class="sticky-cta-detail">Single launch slot</span>
     </span>
-    <span class="sticky-cta-arrow" aria-hidden="true">-&gt;</span>
 </a>
 
 <footer class="site-footer">
@@ -1523,9 +1519,9 @@ img.loaded{opacity:1;}
     let stickyTypeTimer = null;
     let stickyTypeToken = 0;
     const stickyLabel = sc ? sc.querySelector('.sticky-cta-label') : null;
-    const stickyFullText = 'Book your free session';
-    const stickyCompactText = 'Book your free session';
-    const stickyReducedMotion = true;
+    const stickyFullText = 'Book Your Free Session';
+    const stickyCompactText = 'Book';
+    const stickyReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     function stopStickyTyping() {
         stickyTypeToken++;
         clearTimeout(stickyTypeTimer);
