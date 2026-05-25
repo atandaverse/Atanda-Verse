@@ -3167,7 +3167,7 @@ const SEED_POSTS=[
                         </div>
                     </div>`}
 ];
-function getSeedPosts(){localStorage.setItem('iv_posts',JSON.stringify(SEED_POSTS));return JSON.parse(JSON.stringify(SEED_POSTS));}
+function getSeedPosts(){return JSON.parse(JSON.stringify(SEED_POSTS));}
 const BRAND_PALETTE=[
   {hex:'#dc3545',label:'Accent Red'},
   {hex:'#b02a37',label:'Deep Red'},
@@ -3883,8 +3883,7 @@ async function forceResync(){
   let ok=0;
   for(const p of seed){
     try{
-      await _sbReq('posts?id=eq.'+p.id,'DELETE');
-      await _sbReq('posts','POST',{id:p.id,title:p.title,subtitle:p.subtitle||'',category:p.category,status:p.status,read_time:p.readTime||'5 min read',date:p.date,excerpt:p.excerpt||'',image:p.image||'',emoji:p.emoji||'📝',content:p.content||''});
+      await _sbUpsert('posts',{id:p.id,title:p.title,subtitle:p.subtitle||'',category:p.category,status:p.status,read_time:p.readTime||'5 min read',date:p.date,excerpt:p.excerpt||'',image:p.image||'',emoji:p.emoji||'📝',content:p.content||''});
       ok++;
     }catch(e){toast('Failed on '+p.id+': '+e.message,'er');}
   }
@@ -4067,7 +4066,7 @@ const _baseInitDashUnavailableAware=initDash;
 initDash=async function(){await _baseInitDashUnavailableAware();if(!_sbIsUnavailable())return;const liveOnly=['st2','st5','st6','st7','st8'];liveOnly.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});const map={st5s:'Supabase unavailable',st6:'—',st7s:_sbState==='paused'?'Resume project to load live reviews':'Reconnect Supabase to load live reviews'};Object.entries(map).forEach(([id,text])=>{const el=document.getElementById(id);if(el)el.textContent=text;});const subCount=document.getElementById('subCount');if(subCount)subCount.textContent='—';const pendingCount=document.getElementById('pendingCount');if(pendingCount)pendingCount.textContent='—';const cmtCount=document.getElementById('cmtCount');if(cmtCount)cmtCount.textContent='—';const pulseTitle=document.getElementById('dashPulseTitle');if(pulseTitle)pulseTitle.textContent=_sbState==='paused'?'Supabase paused':'Supabase unavailable';const pulseMeta=document.getElementById('dashPulseMeta');if(pulseMeta)pulseMeta.textContent='Live community, campaign, and analytics counters are temporarily unavailable, so the workspace is showing local content only.';}
 const _baseInitAnalyticsUnavailableAware=initAnalytics;
 initAnalytics=async function(){await _baseInitAnalyticsUnavailableAware();if(!_sbIsUnavailable())return;['analyticsVisitors24h','analyticsViews24h'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});const visMeta=document.getElementById('analyticsVisitors24hMeta');if(visMeta)visMeta.textContent=_sbState==='paused'?'This Supabase project is paused, so recent visitor data cannot be queried right now.':'Supabase is currently unavailable, so recent visitor data cannot be queried right now.';const vMeta=document.getElementById('analyticsViews24hMeta');if(vMeta)vMeta.textContent='Live analytics will return once the shared database connection is healthy again.';const mom=document.getElementById('analyticsMomentum');if(mom)mom.textContent='Unavailable';const momMeta=document.getElementById('analyticsMomentumMeta');if(momMeta)momMeta.textContent='Momentum is temporarily hidden because first-party analytics data is not currently reachable.';}
-forceResync = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('This will overwrite ALL posts in Supabase with the full seed content (ep1-ep4). Continue?'))return;toast('Resyncing posts to Supabase...','inf');const seed=getSeedPosts();let ok=0;for(const p of seed){try{await _sbReq('posts?id=eq.'+p.id,'DELETE');await _sbReq('posts','POST',{id:p.id,title:p.title,subtitle:p.subtitle||'',category:p.category,status:p.status,read_time:p.readTime||'5 min read',date:p.date,excerpt:p.excerpt||'',image:p.image||'',emoji:p.emoji||'📝',content:p.content||''});ok++;}catch(e){toast('Failed on '+p.id+': '+e.message,'er');}}toast(ok+' posts resynced to Supabase ✓','ok');initDash();renderPostsTbl();refreshContentHealth()}
+forceResync = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('This will upsert the seed content (ep1-ep4) into Supabase without deleting existing posts. Continue?'))return;toast('Resyncing posts to Supabase...','inf');const seed=getSeedPosts();let ok=0;for(const p of seed){try{await _sbUpsert('posts',{id:p.id,title:p.title,subtitle:p.subtitle||'',category:p.category,status:p.status,read_time:p.readTime||'5 min read',date:p.date,excerpt:p.excerpt||'',image:p.image||'',emoji:p.emoji||'📝',content:p.content||''});ok++;}catch(e){toast('Failed on '+p.id+': '+e.message,'er');}}toast(ok+' posts resynced to Supabase ✓','ok');initDash();renderPostsTbl();refreshContentHealth()}
 // Final admin dashboard/analytics pass. Keep this after legacy overrides.
 function avAdminEsc(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function avAdminText(id,value){const el=document.getElementById(id);if(el)el.textContent=value;}

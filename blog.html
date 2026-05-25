@@ -1890,7 +1890,7 @@ const SEED_POSTS=[
                         </div>
                     </div>`}
 ];
-function getSeedPosts(){localStorage.setItem('iv_posts',JSON.stringify(SEED_POSTS));return JSON.parse(JSON.stringify(SEED_POSTS));}
+function getSeedPosts(){return JSON.parse(JSON.stringify(SEED_POSTS));}
 
 const thB=document.getElementById('thBtn'),body=document.body;
 document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||'light');body.setAttribute('data-theme',localStorage.getItem('theme')||'light');
