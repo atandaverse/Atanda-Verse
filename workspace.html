@@ -904,6 +904,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <div class="ed-tabs">
               <div class="et on" onclick="switchTab('rich')">✏️ Rich Text</div>
               <div class="et" onclick="switchTab('md')">Ⓜ Markdown</div>
+              <div class="et" onclick="switchTab('html')">HTML</div>
               <div class="et" onclick="switchTab('paste')">✨ Smart Paste</div>
             </div>
             <div class="ep on" id="ep-rich">
@@ -915,6 +916,12 @@ create policy "public_write_logins" on admin_logins for all using (true);
               <div class="mdw">
                 <textarea class="mdt" id="mdt" placeholder="# Heading&#10;**bold**, *italic*, \`code\`&#10;> blockquote&#10;&#10;```js&#10;code here&#10;```" oninput="upMdPrev();upPrev()"></textarea>
                 <div class="mdp" id="mdp"><em style="color:var(--t3)">Markdown preview…</em></div>
+              </div>
+            </div>
+            <div class="ep" id="ep-html">
+              <div class="mdw">
+                <textarea class="mdt" id="htmlt" placeholder="<p>Article HTML...</p>" oninput="editorContentDirty=true;upHtmlPrev();upPrev()"></textarea>
+                <div class="mdp" id="htmlp"><em style="color:var(--t3)">HTML preview...</em></div>
               </div>
             </div>
             <div class="ep" id="ep-paste">
@@ -3240,7 +3247,7 @@ function upWc(){const t=quill?quill.getText():'';const w=t.trim()?t.trim().split
 // ── MARKDOWN ──────────────────────────────────────────────────────────────
 function switchTab(tab){
   activeTab=tab;
-  const tabOrder=['rich','md','paste'];
+  const tabOrder=['rich','md','html','paste'];
   const idx=tabOrder.indexOf(tab);
   document.querySelectorAll('.et').forEach((t,i)=>t.className='et'+(i===idx?' on':''));
   document.querySelectorAll('.ep').forEach((p,i)=>p.className='ep'+(i===idx?' on':''));
@@ -6127,10 +6134,13 @@ initQuill=function(){
   buildColTb();
 }
 upMdPrev=function(){const md=document.getElementById('mdt')?.value||'';const box=document.getElementById('mdp');if(box)box.innerHTML=md?safeMarkedParse(md):'<em style="color:var(--t3)">Preview...</em>';}
+function shouldUseHtmlSource(html){return /<\s*(div|section|article|aside|figure|table|style)\b|\sclass=|\sstyle=|data-/i.test(String(html||''));}
+function upHtmlPrev(){const html=document.getElementById('htmlt')?.value||'';const box=document.getElementById('htmlp');if(box)box.innerHTML=html||'<em style="color:var(--t3)">HTML preview...</em>';}
 getContent=function(){
   if(!editorContentDirty&&originalEditorContent)return originalEditorContent;
   if(activeTab==='rich')return quill&&quill.root?quill.root.innerHTML:'';
   if(activeTab==='md'){const md=document.getElementById('mdt')?.value||'';return md?safeMarkedParse(md):originalEditorContent||'';}
+  if(activeTab==='html')return document.getElementById('htmlt')?.value||originalEditorContent||'';
   return quill&&quill.root?quill.root.innerHTML:'';
 }
 setContent=function(html){
@@ -6138,16 +6148,19 @@ setContent=function(html){
   suppressEditorDirty=true;
   if(quill&&quill.root)quill.root.innerHTML=html||'';
   const md=document.getElementById('mdt');if(md)md.value='';
+  const htmlSrc=document.getElementById('htmlt');if(htmlSrc)htmlSrc.value=html||'';
   originalEditorContent=html||'';
   editorContentDirty=false;
   suppressEditorDirty=false;
-  upMdPrev();upWc();upPrev();
+  upMdPrev();upHtmlPrev();upWc();
+  if(shouldUseHtmlSource(html))switchTab('html');else switchTab('rich');
+  upPrev();
 }
 const _baseFinalSwitchTab=switchTab;
 switchTab=function(tab){_baseFinalSwitchTab(tab);}
 const _baseFinalConvertPaste=convertPaste;
 convertPaste=function(){_baseFinalConvertPaste();editorContentDirty=true;}
-setTimeout(()=>{const md=document.getElementById('mdt');if(md&&!md.dataset.editorDirtyBound){md.dataset.editorDirtyBound='1';md.addEventListener('input',()=>{editorContentDirty=true;});}},0);
+setTimeout(()=>{const md=document.getElementById('mdt');if(md&&!md.dataset.editorDirtyBound){md.dataset.editorDirtyBound='1';md.addEventListener('input',()=>{editorContentDirty=true;});}const html=document.getElementById('htmlt');if(html&&!html.dataset.editorDirtyBound){html.dataset.editorDirtyBound='1';html.addEventListener('input',()=>{editorContentDirty=true;});}},0);
 function setPostButtonsBusy(isBusy,label){
   ['savePostBtn','publishPostBtn','draftPostBtn'].forEach(id=>{const btn=document.getElementById(id);if(btn)btn.disabled=!!isBusy;});
   const save=document.getElementById('savePostBtn');
