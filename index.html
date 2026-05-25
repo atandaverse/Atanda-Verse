@@ -1520,10 +1520,15 @@ img.loaded{opacity:1;}
     let stickyCycleTimer = null;
     let stickyTypeTimer = null;
     let stickyTypeToken = 0;
+    let stickyScrollTimer = null;
+    let stickyHoldTimer = null;
+    let stickyLastReveal = 0;
+    let stickyMobileRevealSeen = false;
     const stickyLabel = sc ? sc.querySelector('.sticky-cta-label') : null;
     const stickyFullText = 'Book Your Free Session';
     const stickyCompactText = 'Book';
     const stickyReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stickyCanHover = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 769px)').matches;
     function stopStickyTyping() {
         stickyTypeToken++;
         clearTimeout(stickyTypeTimer);
@@ -1559,10 +1564,12 @@ img.loaded{opacity:1;}
     }
     function showStickyFull(shouldType) {
         if (!sc || !stickyLabel) return;
+        clearTimeout(stickyHoldTimer);
         stopStickyTyping();
         sc.classList.remove('compact');
         sc.classList.add('peek');
         sc.setAttribute('aria-label', 'Book your free single clarity session');
+        stickyLastReveal = Date.now();
         if (shouldType && !stickyReducedMotion) {
             const token = ++stickyTypeToken;
             stickyLabel.textContent = '';
@@ -1581,13 +1588,27 @@ img.loaded{opacity:1;}
         clearTimeout(stickyPeekTimer);
         stickyPeekTimer = setTimeout(function () { setStickyCompact(true); }, 4300);
     }
+    function revealStickyAfterScroll() {
+        if (!sc || stickyReducedMotion || stickyCanHover || window.scrollY <= 120) return;
+        if (stickyMobileRevealSeen && Date.now() - stickyLastReveal < 6500) return;
+        stickyMobileRevealSeen = true;
+        showStickyFull(true);
+        clearTimeout(stickyHoldTimer);
+        stickyHoldTimer = setTimeout(function () { setStickyCompact(true); }, 3600);
+    }
     showStickyFull(true);
     stickyPeekTimer = setTimeout(function () {
         if (window.scrollY > 120) setStickyCompact(true);
     }, 4700);
     window.addEventListener('scroll', function () {
-        if (window.scrollY > 120 && !sc.matches(':hover')) setStickyCompact(true);
-        else if (window.scrollY <= 120) showStickyFull(false);
+        clearTimeout(stickyScrollTimer);
+        if (window.scrollY > 120) {
+            if (!stickyCanHover) setStickyCompact(false);
+            else if (!sc.matches(':hover')) setStickyCompact(true);
+            stickyScrollTimer = setTimeout(revealStickyAfterScroll, 720);
+        } else {
+            showStickyFull(false);
+        }
     }, { passive: true });
     sc.addEventListener('mouseenter', function () { showStickyFull(true); });
     sc.addEventListener('focus', function () { showStickyFull(true); });
@@ -1597,10 +1618,12 @@ img.loaded{opacity:1;}
             stickyPeekTimer = setTimeout(function () { setStickyCompact(true); }, 1200);
         }
     });
-    stickyCycleTimer = setInterval(pulseStickyFull, 10500);
+    if (stickyCanHover) stickyCycleTimer = setInterval(pulseStickyFull, 10500);
     window.addEventListener('beforeunload', function () {
         clearInterval(stickyCycleTimer);
         clearTimeout(stickyPeekTimer);
+        clearTimeout(stickyScrollTimer);
+        clearTimeout(stickyHoldTimer);
         clearTimeout(stickyTypeTimer);
     });
 
