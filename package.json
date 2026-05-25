@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "seed:blog-posts": "node scripts/seed-original-blog-posts.mjs"
+  },
   "devDependencies": {
     "supabase": "^2.98.2"
   }
