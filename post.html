@@ -26,7 +26,7 @@
 <meta name="twitter:description" id="twDesc" content="">
 <meta name="twitter:image" id="twImg" content="">
 <script type="application/ld+json" id="ldJson">{}</script>
-<link rel="icon" type="image/png" href="logo I.png">
+<link rel="icon" type="image/png" href="/logo I.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -1133,21 +1133,21 @@ img.loaded{opacity:1;}
 <body>
 <div class="progress" id="progressBar"></div>
 <div class="c-dot" id="cd" style="opacity:0"></div><div class="c-ring" id="cr" style="opacity:0"></div>
-<div class="loader" id="loader"><div class="l-brand"><div class="l-brand-mark"><img src="ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo"></div><div class="l-brand-copy"><div class="l-brand-word">ATANDA <span>VERSE</span></div><div class="l-brand-note">Clarity in motion</div></div></div><div class="l-track"><div class="l-fill"></div></div></div>
+<div class="loader" id="loader"><div class="l-brand"><div class="l-brand-mark"><img src="/ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo"></div><div class="l-brand-copy"><div class="l-brand-word">ATANDA <span>VERSE</span></div><div class="l-brand-note">Clarity in motion</div></div></div><div class="l-track"><div class="l-fill"></div></div></div>
 <button class="theme-toggle" id="themeToggle">&#127769;</button>
 <nav id="mainNav">
   <div class="nav-container">
     <div class="nav-logo">
-      <div class="logo-icon"><img src="ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo" onerror="this.style.opacity='0'"></div>
-      <a href="index.html" class="logo-text">ATANDA <span class="logo-verse">VERSE</span></a>
+      <div class="logo-icon"><img src="/ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo" onerror="this.style.opacity='0'"></div>
+      <a href="/" class="logo-text">ATANDA <span class="logo-verse">VERSE</span></a>
     </div>
     <ul class="nav-links" id="navLinks">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="sessions.html">Sessions</a></li>
-      <li><a href="blog.html" class="active">Blog</a></li>
-      <li><a href="faq.html">FAQ</a></li>
-      <li><a href="library.html">Library</a></li>
-      <li><a href="index.html#contact" class="nav-cta">Register Free</a></li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/sessions">Sessions</a></li>
+      <li><a href="/blog" class="active">Blog</a></li>
+      <li><a href="/faq">FAQ</a></li>
+      <li><a href="/library">Library</a></li>
+      <li><a href="/#contact" class="nav-cta">Register Free</a></li>
     </ul>
     <div class="mobile-menu" id="mobileMenu"><span></span><span></span><span></span></div>
   </div>
@@ -1211,7 +1211,7 @@ img.loaded{opacity:1;}
     <div class="article-cta iv-pop">
       <h3>Ready to Find Your Clarity?</h3>
       <p>Free virtual clarity session — no charge during launch period.</p>
-      <a href="index.html#contact" class="cta-button">Book Free Session</a>
+      <a href="/#contact" class="cta-button">Book Free Session</a>
     </div>
     <!-- COMMENTS (always in DOM) -->
     <div class="comments-section iv-pop" id="commentsWrap">
@@ -1237,16 +1237,16 @@ img.loaded{opacity:1;}
     <span class="nf-icon">📭</span>
     <div class="nf-title">Post Not Found</div>
     <p class="nf-sub">This article may have moved or been removed.</p>
-    <a href="blog.html" class="nf-btn">← Back to Blog</a>
+    <a href="/blog" class="nf-btn">← Back to Blog</a>
   </div>
 </main>
 <footer class="site-footer">
   <div class="nav-container" style="flex-direction:column;gap:0">
     <div class="footer-logo">ATANDA</div>
     <div class="footer-links">
-      <a href="index.html">Home</a><a href="sessions.html">Sessions</a>
-      <a href="blog.html">Blog</a><a href="faq.html">FAQ</a>
-      <a href="library.html">Library</a><a href="index.html#contact">Register</a><a href="legal.html">Legal</a>
+      <a href="/">Home</a><a href="/sessions">Sessions</a>
+      <a href="/blog">Blog</a><a href="/faq">FAQ</a>
+      <a href="/library">Library</a><a href="/#contact">Register</a><a href="/legal">Legal</a>
     </div>
     <div class="footer-divider"></div>
     <p>&copy; 2025–2026 Atanda. All rights reserved.</p>
@@ -1344,7 +1344,38 @@ function processContent(html){
 }
 
 // ── SEO ──────────────────────────────────────────────────────────────────
-function absUrl(v){try{return new URL(v||'',location.href).href;}catch{return location.href;}}
+function sitePath(v){
+  const raw=String(v||'').trim();
+  if(!raw)return '';
+  if(/^(?:[a-z][a-z0-9+.-]*:|\/\/|data:|blob:)/i.test(raw))return raw;
+  if(raw.startsWith('/'))return raw;
+  return '/'+raw.replace(/^\.?\//,'');
+}
+function absUrl(v){try{return new URL(sitePath(v)||'',location.origin).href;}catch{return location.href;}}
+function normalizePostBodyLinks(root){
+  if(!root)return;
+  const cleanRoutes={
+    'index.html':'/',
+    'sessions.html':'/sessions',
+    'blog.html':'/blog',
+    'faq.html':'/faq',
+    'library.html':'/library',
+    'legal.html':'/legal',
+    'register.html':'/register'
+  };
+  root.querySelectorAll('a[href]').forEach(a=>{
+    const href=a.getAttribute('href')||'';
+    if(!href||href.startsWith('#')||/^(?:[a-z][a-z0-9+.-]*:|\/\/|mailto:|tel:)/i.test(href))return;
+    const hash=href.includes('#')?'#'+href.split('#').slice(1).join('#'):'';
+    const bare=href.split('#')[0].replace(/^\.?\//,'');
+    if(cleanRoutes[bare])a.setAttribute('href',cleanRoutes[bare]+hash);
+    else if(!href.startsWith('/'))a.setAttribute('href',sitePath(href));
+  });
+  root.querySelectorAll('img[src]').forEach(img=>{
+    const src=img.getAttribute('src')||'';
+    if(src&&!/^(?:[a-z][a-z0-9+.-]*:|\/\/|data:|blob:)/i.test(src))img.setAttribute('src',sitePath(src));
+  });
+}
 function stripHtml(v){return (v||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();}
 function seoDesc(post){const base=(post.excerpt&&post.excerpt.trim())||stripHtml(post.content)||post.title||'Atanda Verse article';return base.length>160?base.slice(0,157).trimEnd()+'...':base;}
 function seoKeywords(post){const parts=[post.category,post.title,'Atanda Verse',post.readTime].filter(Boolean).join(' ');return [...new Set(parts.toLowerCase().match(/[a-z0-9&]+/gi)||[])].filter(w=>w.length>2).slice(0,12).join(', ');}
@@ -1400,7 +1431,7 @@ function renderPost(post,all){
   document.getElementById('imgFb').textContent=post.emoji||'📝';
   if(post.image&&post.image.trim()){
     const img=document.createElement('img');
-    img.src=post.image;img.alt=post.title;img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;border-radius:16px;z-index:2';
+    img.src=sitePath(post.image);img.alt=post.title;img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;border-radius:16px;z-index:2';
     img.onerror=function(){this.style.display='none';};
     imgWrap.appendChild(img);
   }
@@ -1409,7 +1440,9 @@ function renderPost(post,all){
   const body=(post.content&&post.content.trim())
     ?processContent(post.content)
     :'<div style="text-align:center;padding:3rem 0"><span style="font-size:3rem;display:block;margin-bottom:1rem">📝</span><strong>Content coming soon</strong><br><span style="color:var(--text-muted)">Open the admin to enter the full article.</span></div>';
-  document.getElementById('postBody').innerHTML=body;
+  const postBody=document.getElementById('postBody');
+  postBody.innerHTML=body;
+  normalizePostBodyLinks(postBody);
 
   // Navigation
   const pub=all.filter(p=>p.status==='published').sort((a,b)=>new Date(a.date)-new Date(b.date)||a.id.localeCompare(b.id));

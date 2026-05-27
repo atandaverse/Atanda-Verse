@@ -13,6 +13,13 @@
     { "source": "/admin", "destination": "/admin.html" }
   ],
   "redirects": [
+    { "source": "/blog/index.html", "destination": "/", "permanent": true },
+    { "source": "/blog/sessions.html", "destination": "/sessions", "permanent": true },
+    { "source": "/blog/blog.html", "destination": "/blog", "permanent": true },
+    { "source": "/blog/faq.html", "destination": "/faq", "permanent": true },
+    { "source": "/blog/library.html", "destination": "/library", "permanent": true },
+    { "source": "/blog/register.html", "destination": "/register", "permanent": true },
+    { "source": "/blog/legal.html", "destination": "/legal", "permanent": true },
     { "source": "/index.html", "destination": "/", "permanent": true },
     { "source": "/blog.html", "destination": "/blog", "permanent": true },
     { "source": "/sessions.html", "destination": "/sessions", "permanent": true },
