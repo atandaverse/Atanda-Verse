@@ -815,7 +815,7 @@ nav{padding-left:env(safe-area-inset-left,0);padding-right:env(safe-area-inset-r
 
 /* Blog: featured post image height on mobile */
 @media(max-width:500px){
-  .fim{height:180px!important;}
+  .fim{height:auto!important;}
   .ftxt{padding:1.5rem!important;}
   .ftit{font-size:1.3rem!important;}
 }
@@ -1762,7 +1762,7 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
         function fmtD(d){if(!d)return'';var dt=new Date(d);if(isNaN(dt))return d;return dt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});}
         grid.innerHTML=posts.map(p=>`
           <a href="post.html?id=${p.id}" style="text-decoration:none;display:block;background:var(--glass);backdrop-filter:blur(20px);border-radius:20px;overflow:hidden;border:1px solid var(--glass-border);box-shadow:0 8px 32px var(--shadow);transition:all .4s cubic-bezier(.34,1.56,.64,1)" onmouseover="this.style.transform='translateY(-8px)';this.style.boxShadow='0 24px 60px var(--shadow-hover)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px var(--shadow)'">
-            <div style="width:100%;height:190px;background:linear-gradient(135deg,var(--text-primary),var(--accent));position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2.5rem">
+            <div style="width:100%;aspect-ratio:1831/958;background:linear-gradient(135deg,var(--text-primary),var(--accent));position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2.5rem">
               ${p.image?`<img src="${p.image}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;z-index:2" onerror="this.style.display='none'">`:''}
               <span style="z-index:1">${p.emoji||'📝'}</span>
             </div>

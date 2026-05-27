@@ -52,7 +52,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 .article-subtitle{font-family:'Instrument Serif',serif;font-size:clamp(1.1rem,2.5vw,1.5rem);font-weight:400;font-style:italic;color:var(--text-muted);margin-bottom:2rem;line-height:1.4;animation:fu .8s ease .5s both}
 .article-meta{display:flex;justify-content:center;gap:1.5rem;color:var(--text-muted);font-size:.9rem;flex-wrap:wrap;animation:fu .8s ease .65s both}
 @keyframes fu{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.featured-image{position:relative;width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:4rem;overflow:hidden;background:linear-gradient(135deg,var(--text-primary,#1a365d),var(--accent));border-radius:16px;margin:3rem auto 3rem;box-shadow:0 20px 60px var(--shadow)}
+.featured-image{position:relative;width:100%;aspect-ratio:1831/958;display:flex;align-items:center;justify-content:center;font-size:4rem;overflow:hidden;background:linear-gradient(135deg,var(--text-primary,#1a365d),var(--accent));border-radius:16px;margin:3rem auto 3rem;box-shadow:0 20px 60px var(--shadow)}
 .featured-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;border-radius:16px;z-index:2}
 .featured-image-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:4rem;z-index:1}
 .article-content{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);padding:4rem;border-radius:24px;border:1px solid var(--glass-border);box-shadow:0 22px 58px var(--shadow),inset 0 1px 0 rgba(255,255,255,.42);margin-bottom:3rem;position:relative;z-index:1;transition:background .3s}
@@ -187,7 +187,7 @@ a,button,input,select,textarea,.share-btn,.theme-toggle,.comment-submit,.nav-cta
 }
 @media(max-width:480px){
   .container{padding:0 .85rem!important}
-  .featured-image{aspect-ratio:4/3!important}
+  .featured-image{aspect-ratio:1831/958!important}
   .featured-image-fallback{font-size:3rem!important}
   .article-content{padding:1.15rem .9rem!important}
   .article-content h2{font-size:1.35rem!important}
@@ -251,7 +251,7 @@ a,button,input,select,textarea,.share-btn,.theme-toggle,.comment-submit,.nav-cta
 .featured-image {
             position: relative;
             width: 100%;
-            aspect-ratio: 2 / 1;
+            aspect-ratio: 1831 / 958;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -988,7 +988,7 @@ nav{padding-left:env(safe-area-inset-left,0);padding-right:env(safe-area-inset-r
 
 /* Blog: featured post image height on mobile */
 @media(max-width:500px){
-  .fim{height:180px!important;}
+  .fim{height:auto!important;}
   .ftxt{padding:1.5rem!important;}
   .ftit{font-size:1.3rem!important;}
 }
@@ -1158,7 +1158,7 @@ img.loaded{opacity:1;}
     <div style="height:32px;border-radius:6px;margin-bottom:1rem;background:linear-gradient(90deg,var(--border-color,rgba(0,0,0,.08)) 25%,rgba(220,53,69,.05) 50%,var(--border-color,rgba(0,0,0,.08)) 75%);background-size:200% 100%;animation:iv-shim 1.6s ease-in-out infinite;width:20%;"></div>
     <div style="height:48px;border-radius:8px;margin-bottom:.8rem;background:linear-gradient(90deg,var(--border-color,rgba(0,0,0,.08)) 25%,rgba(220,53,69,.05) 50%,var(--border-color,rgba(0,0,0,.08)) 75%);background-size:200% 100%;animation:iv-shim 1.6s ease-in-out infinite .05s;width:80%;"></div>
     <div style="height:28px;border-radius:6px;margin-bottom:2rem;background:linear-gradient(90deg,var(--border-color,rgba(0,0,0,.08)) 25%,rgba(220,53,69,.05) 50%,var(--border-color,rgba(0,0,0,.08)) 75%);background-size:200% 100%;animation:iv-shim 1.6s ease-in-out infinite .1s;width:50%;"></div>
-    <div style="width:100%;aspect-ratio:16/9;border-radius:16px;margin-bottom:2rem;background:linear-gradient(90deg,var(--border-color,rgba(0,0,0,.08)) 25%,rgba(220,53,69,.06) 50%,var(--border-color,rgba(0,0,0,.08)) 75%);background-size:200% 100%;animation:iv-shim 1.6s ease-in-out infinite;"></div>
+    <div style="width:100%;aspect-ratio:1831/958;border-radius:16px;margin-bottom:2rem;background:linear-gradient(90deg,var(--border-color,rgba(0,0,0,.08)) 25%,rgba(220,53,69,.06) 50%,var(--border-color,rgba(0,0,0,.08)) 75%);background-size:200% 100%;animation:iv-shim 1.6s ease-in-out infinite;"></div>
     <div class="iv-skel" style="padding:2rem">
       <div class="iv-skel-line l" style="margin-bottom:1rem"></div>
       <div class="iv-skel-line l"></div><div class="iv-skel-line l"></div><div class="iv-skel-line m"></div>
