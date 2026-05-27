@@ -3401,6 +3401,65 @@ function fillPasteMeta(meta,{force=false}={}){
   if(category&&meta.category&&(force||!category.value))category.value=meta.category;
   syncExcerptMeta();
 }
+function stripImportedHtml(v){return String(v||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();}
+function normalizeImportedAssetPath(v){return String(v||'').trim().replace(/^\.\.\//,'').replace(/\\/g,'/');}
+function normalizeImportedArticleLinks(html){
+  return String(html||'')
+    .replace(/\.\.\/images\//g,'images/')
+    .replace(/href=["']school-na-scam-ep(\d+)\.html["']/gi,'href="/blog/school-na-scam-ep$1"')
+    .replace(/href=["']\.\.\/blog\.html["']/gi,'href="/blog"')
+    .replace(/href=["']\.\.\/index\.html#sessions["']/gi,'href="/#sessions"');
+}
+function getImportedReadTime(doc){
+  const meta=[...doc.querySelectorAll('.article-meta span')].map(el=>stripImportedHtml(el.innerHTML));
+  return (meta.find(v=>/min read/i.test(v))||'').match(/\b\d+\s+min read\b/i)?.[0]||'5 min read';
+}
+function parseImportedDate(doc){
+  const meta=[...doc.querySelectorAll('.article-meta span')].map(el=>stripImportedHtml(el.innerHTML));
+  const raw=meta.find(v=>/\d{4}/.test(v))||'';
+  const parsed=Date.parse(raw.replace(/^[^\w]+/,''));
+  return Number.isNaN(parsed)?new Date().toISOString().split('T')[0]:new Date(parsed).toISOString().split('T')[0];
+}
+function parseOriginalPostHtml(raw,fileName=''){
+  if(!String(raw||'').includes('article-content'))return null;
+  const doc=document.createElement('template');
+  doc.innerHTML=raw;
+  const root=doc.content||doc;
+  const body=root.querySelector('.article-content');
+  if(!body)return null;
+  const title=stripImportedHtml(root.querySelector('.article-title')?.innerHTML||root.querySelector('h1')?.innerHTML||'');
+  const subtitle=stripImportedHtml(root.querySelector('.article-subtitle')?.innerHTML||'');
+  const category=stripImportedHtml(root.querySelector('.article-category')?.innerHTML||'')||'Education & Career';
+  const excerpt=root.querySelector('meta[name="description"]')?.getAttribute('content')||'';
+  const image=normalizeImportedAssetPath(root.querySelector('.featured-image img')?.getAttribute('src')||'');
+  const emoji=stripImportedHtml(root.querySelector('.featured-image-fallback')?.innerHTML||'')||'📝';
+  const idBase=String(fileName||'').replace(/\.[^.]+$/,'').trim();
+  const content=normalizeImportedArticleLinks(body.innerHTML.trim());
+  return {id:idBase,title,subtitle,category,excerpt,image,emoji,content,readTime:getImportedReadTime(root),date:parseImportedDate(root)};
+}
+async function applyOriginalPostImport(post){
+  if(!post||!post.content)return false;
+  clearForm();
+  const setVal=(id,value)=>{const el=document.getElementById(id);if(el&&value!=null)el.value=value;};
+  setVal('eid',post.id&&/^[a-z0-9-]+$/i.test(post.id)?post.id:await nextPostSlug(post.title,''));
+  setVal('ft',post.title||'Untitled Post');
+  setVal('fsu',post.subtitle||'');
+  setVal('fcat',post.category||'Education & Career');
+  setVal('frt',post.readTime||'5 min read');
+  setVal('fdt',post.date||new Date().toISOString().split('T')[0]);
+  setVal('fex',post.excerpt||'');
+  setVal('femo',post.emoji||'📝');
+  if(post.image){curImg=post.image;setVal('fiurl',post.image);showImg(post.image);}
+  setContent(post.content);
+  switchTab('html');
+  editorContentDirty=true;
+  upHtmlPrev();upWc();upPrev();syncExcerptMeta();syncStatusHint();
+  const prev=document.getElementById('pastePreview'),body=document.getElementById('pastePreviewBody');
+  if(prev&&body){body.innerHTML=post.content;prev.style.display='block';}
+  renderPasteMeta({title:post.title,subtitle:post.subtitle,excerpt:post.excerpt,category:post.category,readTime:post.readTime,words:stripImportedHtml(post.content).split(/\s+/).filter(Boolean).length});
+  toast('Original HTML imported into HTML mode. Review, then save.','ok');
+  return true;
+}
 function applyPasteMeta(){
   const raw=document.getElementById('pasteRaw')?.value||'';
   const meta=inferPasteMeta(raw);
@@ -3489,9 +3548,14 @@ function clearPaste(){
 function importPasteFile(e){
   const f=e.target.files[0];if(!f)return;
   const reader=new FileReader();
-  reader.onload=ev=>{
+  reader.onload=async ev=>{
     const ta=document.getElementById('pasteRaw');
     const text=normalizePasteRaw(ev.target.result);
+    const imported=/\.html?$/i.test(f.name)?parseOriginalPostHtml(ev.target.result,f.name):null;
+    if(imported&&await applyOriginalPostImport(imported)){
+      if(ta)ta.value=ev.target.result;
+      return;
+    }
     if(ta){ta.value=ev.target.result;toast('File loaded — click Convert & Use','ok');}
     if(ta&&ta.value!==text)ta.value=text;
     renderPasteMeta(inferPasteMeta(text));
