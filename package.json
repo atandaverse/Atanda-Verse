@@ -1,7 +1,8 @@
 {
   "scripts": {
     "seed:blog-posts": "node scripts/seed-original-blog-posts.mjs",
-    "seed:blog-posts:dry-run": "node scripts/seed-original-blog-posts.mjs --dry-run"
+    "seed:blog-posts:dry-run": "node scripts/seed-original-blog-posts.mjs --dry-run",
+    "seed:blog-posts:cleanup": "node scripts/seed-original-blog-posts.mjs --cleanup-legacy"
   },
   "devDependencies": {
     "supabase": "^2.98.2"

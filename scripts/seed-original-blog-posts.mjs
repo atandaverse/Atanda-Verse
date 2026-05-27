@@ -2,12 +2,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const DRY_RUN = process.argv.includes('--dry-run');
+const CLEANUP_LEGACY = process.argv.includes('--cleanup-legacy');
 const POST_SOURCES = [
   { id: 'school-na-scam-ep1', file: 'posts/school-na-scam-ep1.html' },
   { id: 'school-na-scam-ep2', file: 'posts/school-na-scam-ep2.html' },
   { id: 'school-na-scam-ep3', file: 'posts/school-na-scam-ep3.html' },
   { id: 'school-na-scam-ep4', file: 'posts/school-na-scam-ep4.html' },
 ];
+const LEGACY_POST_IDS = ['ep1', 'ep2', 'ep3', 'ep4'];
+const POST_LINK_MAP = {
+  'school-na-scam-ep1.html': 'post.html?id=school-na-scam-ep1',
+  'school-na-scam-ep2.html': 'post.html?id=school-na-scam-ep2',
+  'school-na-scam-ep3.html': 'post.html?id=school-na-scam-ep3',
+  'school-na-scam-ep4.html': 'post.html?id=school-na-scam-ep4',
+  '../blog.html': 'blog.html',
+  '../index.html#sessions': 'index.html#sessions',
+};
 
 const configJs = fs.existsSync('config.js') ? fs.readFileSync('config.js', 'utf8') : '';
 
@@ -27,6 +37,13 @@ function stripTags(value = '') {
 
 function normalizeAssetPath(value = '') {
   return value.replace(/^\.\.\//, '').replace(/\\/g, '/');
+}
+
+function normalizeContentLinks(value = '') {
+  return Object.entries(POST_LINK_MAP).reduce(
+    (html, [from, to]) => html.replaceAll(`href="${from}"`, `href="${to}"`).replaceAll(`href='${from}'`, `href='${to}'`),
+    value.replace(/\.\.\/images\//g, 'images/'),
+  );
 }
 
 function getFeaturedImage(html) {
@@ -99,7 +116,7 @@ function parsePost({ id, file }) {
   const metaHtml = getClassInnerHtml(html, 'article-meta', 'div');
   const metaItems = [...metaHtml.matchAll(/<span[^>]*>([\s\S]*?)<\/span>/gi)].map((item) => stripTags(item[1]));
   const image = getFeaturedImage(html);
-  const content = extractArticleContent(html, file).replace(/\.\.\/images\//g, 'images/');
+  const content = normalizeContentLinks(extractArticleContent(html, file));
 
   return {
     id,
@@ -131,7 +148,13 @@ function summarize(rows) {
 const rows = POST_SOURCES.map(parsePost);
 
 if (DRY_RUN) {
-  console.log(JSON.stringify({ dryRun: true, source: path.normalize('posts/*.html'), posts: summarize(rows) }, null, 2));
+  console.log(JSON.stringify({
+    dryRun: true,
+    source: path.normalize('posts/*.html'),
+    cleanupLegacy: CLEANUP_LEGACY,
+    legacyPostIds: CLEANUP_LEGACY ? LEGACY_POST_IDS : [],
+    posts: summarize(rows),
+  }, null, 2));
   process.exit(0);
 }
 
@@ -179,4 +202,23 @@ const restored = JSON.parse(verifyText).map((post) => ({
   contentLength: String(post.content || '').length,
 }));
 
-console.log(JSON.stringify({ upserted: rows.map((row) => row.id), restored }, null, 2));
+const deletedLegacy = [];
+if (CLEANUP_LEGACY) {
+  for (const id of LEGACY_POST_IDS) {
+    const remove = await fetch(`${supabaseUrl}/rest/v1/posts?id=eq.${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        Prefer: 'return=minimal',
+      },
+    });
+    const removeText = await remove.text();
+    if (!remove.ok) {
+      throw new Error(`Supabase legacy delete failed for ${id} ${remove.status}: ${removeText}`);
+    }
+    deletedLegacy.push(id);
+  }
+}
+
+console.log(JSON.stringify({ upserted: rows.map((row) => row.id), restored, deletedLegacy }, null, 2));
