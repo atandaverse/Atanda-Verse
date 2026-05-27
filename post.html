@@ -53,7 +53,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 .article-meta{display:flex;justify-content:center;gap:1.5rem;color:var(--text-muted);font-size:.9rem;flex-wrap:wrap;animation:fu .8s ease .65s both}
 @keyframes fu{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .featured-image{position:relative;width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:4rem;overflow:hidden;background:linear-gradient(135deg,var(--text-primary,#1a365d),var(--accent));border-radius:16px;margin:3rem auto 3rem;box-shadow:0 20px 60px var(--shadow)}
-.featured-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:16px;z-index:2}
+.featured-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;border-radius:16px;z-index:2}
 .featured-image-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:4rem;z-index:1}
 .article-content{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);padding:4rem;border-radius:24px;border:1px solid var(--glass-border);box-shadow:0 22px 58px var(--shadow),inset 0 1px 0 rgba(255,255,255,.42);margin-bottom:3rem;position:relative;z-index:1;transition:background .3s}
 .article-content h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;color:var(--text-primary);margin:3rem 0 1.2rem;line-height:1.25}
@@ -269,7 +269,7 @@ a,button,input,select,textarea,.share-btn,.theme-toggle,.comment-submit,.nav-cta
             inset: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             object-position: center;
             border-radius: 15px;
             display: flex;
@@ -1400,7 +1400,7 @@ function renderPost(post,all){
   document.getElementById('imgFb').textContent=post.emoji||'📝';
   if(post.image&&post.image.trim()){
     const img=document.createElement('img');
-    img.src=post.image;img.alt=post.title;img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:16px;z-index:2';
+    img.src=post.image;img.alt=post.title;img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;border-radius:16px;z-index:2';
     img.onerror=function(){this.style.display='none';};
     imgWrap.appendChild(img);
   }
