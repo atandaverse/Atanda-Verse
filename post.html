@@ -586,27 +586,53 @@ a,button,input,select,textarea,.share-btn,.theme-toggle,.comment-submit,.nav-cta
 .action-plan {
             max-width: 900px;
             margin: 2rem auto;
-            padding: 1.5rem;
-            border-radius: 12px;
-            background: var(--bg-card);
-            border: 2px solid var(--accent);
-            box-shadow: 0 5px 15px var(--shadow);
+            padding: 1.8rem;
+            border-radius: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 16px var(--shadow);
+        }
+.action-plan h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(1.9rem, 4vw, 2.45rem);
+            letter-spacing: 1px;
+            line-height: 1;
+            margin: 0 0 1.5rem;
+            color: var(--text-primary);
         }
 .action-sections {
             display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 1rem;
-            margin-top: 1rem;
+            margin: 1.5rem 0 0;
+        }
+.action-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.4rem;
+            box-shadow: 0 5px 16px var(--shadow);
+        }
+.action-section h3,
+.action-section h4 {
+            font-size: 1rem;
+            margin: 0 0 1rem;
+            color: var(--text-primary);
+            font-weight: 800;
         }
 .action-list {
-            counter-reset: action-counter;
-            list-style: none;
-            padding: 0;
+            list-style: decimal;
+            padding-left: 1.25rem;
             margin: 0;
+        }
+.action-section li {
+            margin-bottom: .65rem;
+            font-size: .98rem;
+            line-height: 1.65;
         }
 .skill-card,
             .stats-section,
             .framework-section,
-            .action-plan,
             .bottom-line,
             .whats-next,
             .discussion,
