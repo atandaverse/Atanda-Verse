@@ -139,9 +139,9 @@ td{padding:.76rem .95rem;font-size:.78rem;color:var(--t2);vertical-align:middle}
 .action-row{display:flex;gap:.35rem;flex-wrap:wrap}
 
 /* EDITOR */
-.el{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;min-height:calc(100vh - 120px)}.el.full{grid-template-columns:1fr}
+.el{display:grid;grid-template-columns:minmax(0,1fr);gap:1.2rem;min-height:calc(100vh - 120px)}.el.full{grid-template-columns:1fr}
 .ec{display:flex;flex-direction:column;gap:.95rem;overflow-y:auto;padding-right:.2rem}
-.pc{display:flex;flex-direction:column;border:1px solid var(--b);border-radius:var(--r);overflow:hidden;min-height:380px}.pc.hid{display:none}
+.pc{display:flex;flex-direction:column;border:1px solid var(--b);border-radius:var(--r);overflow:hidden;min-height:min(78vh,860px);width:100%;max-width:1120px;margin:0 auto}.pc.hid{display:none}
 .ptb{display:flex;align-items:center;justify-content:space-between;padding:.58rem .95rem;background:var(--bg3);border-bottom:1px solid var(--b);flex-shrink:0}
 .pl{font-size:.64rem;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px}
 .pf{flex:1;overflow-y:auto;background:#f8f9fa}.pf.dk{background:#0f172a}
@@ -864,6 +864,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         </div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
           <button class="tbb" onclick="openPrev()">Preview Post</button>
+          <button class="tbb" onclick="togglePrevPane()">Show Inline Review</button>
           <button class="tbb" onclick="nav('campaigns')">Open Campaigns</button>
         </div>
       </div>
@@ -960,7 +961,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <button class="btn d" id="delBtn" style="display:none" onclick="prepDel(document.getElementById('eid').value)">🗑 Delete</button>
           </div>
         </div>
-        <div class="pc" id="prevCol">
+        <div class="pc hid" id="prevCol">
           <div class="ptb">
             <span class="pl">👁 Live Preview</span>
             <div style="display:flex;gap:.38rem">
@@ -3572,10 +3573,32 @@ setTimeout(()=>{
   }
 },0);
 function buildPrevHtml(dark){
-  const title=document.getElementById('ft')?.value||'Untitled',sub=document.getElementById('fsu')?.value||'',cat=document.getElementById('fcat')?.value||'',date=document.getElementById('fdt')?.value||'',rt=document.getElementById('frt')?.value||'5 min read',emo=document.getElementById('femo')?.value||'📝',body=getContent();
+  const title=document.getElementById('ft')?.value||'Untitled',sub=document.getElementById('fsu')?.value||'',cat=document.getElementById('fcat')?.value||'',date=document.getElementById('fdt')?.value||'',rt=document.getElementById('frt')?.value||'5 min read',emo=document.getElementById('femo')?.value||'📝',body=processArticlePreviewContent(getContent());
   const bg=dark?'#0f172a':'#f8f9fa',tp=dark?'#f1f5f9':'#1a365d',ts=dark?'#cbd5e1':'#4a5568',tm=dark?'#94a3b8':'#6b7280',ac=dark?'#ef4444':'#dc3545',glass=dark?'rgba(30,41,59,.6)':'rgba(255,255,255,.7)',gb=dark?'rgba(255,255,255,.08)':'rgba(255,255,255,.8)',border=dark?'rgba(255,255,255,.08)':'rgba(0,0,0,.08)';
   const cov=curImg?`<div style="width:100%;aspect-ratio:2/1;overflow:hidden;border-radius:14px;margin:2rem 0;position:relative;background:linear-gradient(135deg,${tp},${ac})"><img src="${curImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:14px" onerror="this.style.opacity='0'"></div>`:`<div style="width:100%;aspect-ratio:2/1;background:linear-gradient(135deg,${tp},${ac});border-radius:14px;margin:2rem 0;display:flex;align-items:center;justify-content:center;font-size:3rem">${emo}</div>`;
   return`<div style="font-family:'DM Sans',sans-serif;background:${bg};min-height:100%;color:${ts};line-height:1.75"><div style="background:${dark?'rgba(15,23,42,.92)':bg};padding:3rem 2rem 2.5rem;text-align:center;border-bottom:1px solid ${border}"><div style="display:inline-block;background:rgba(220,53,69,.1);color:${ac};padding:.35rem 1rem;border-radius:50px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:1.2rem;border:1px solid rgba(220,53,69,.25)">${cat||'Category'}</div><h1 style="font-family:'Bebas Neue',serif;font-size:clamp(1.8rem,5vw,3.2rem);color:${tp};margin-bottom:.55rem;line-height:.95;letter-spacing:1px;text-transform:uppercase">${title}</h1>${sub?`<p style="font-style:italic;font-size:1.05rem;color:${tm};margin-bottom:1.1rem;line-height:1.4">${sub}</p>`:''}<div style="display:flex;justify-content:center;gap:1.5rem;color:${tm};font-size:.8rem;flex-wrap:wrap"><span>📅 ${date||'Today'}</span><span>⏱️ ${rt}</span><span>👁️ — views</span></div></div><div style="max-width:780px;margin:0 auto;padding:1.5rem 2rem 3rem">${cov}<div style="background:${glass};backdrop-filter:blur(20px);padding:2.5rem;border-radius:18px;border:1px solid ${gb};box-shadow:0 16px 50px rgba(0,0,0,.1);font-size:.98rem;color:${ts}">${body||`<p style="color:${tm};text-align:center;padding:2rem 0;font-style:italic">Start writing to see your preview here…</p>`}</div></div></div>`;
+}
+function processArticlePreviewContent(html){
+  if(!html||!String(html).trim())return html;
+  let out=String(html);
+  out=out
+    .replace(/<section[^>]*class="[^"]*\b(?:discussion|whats-next)\b[^"]*"[\s\S]*?<\/section>/gi,'')
+    .replace(/<div[^>]*class="[^"]*\bcomments-section\b[^"]*"[\s\S]*?<\/div>\s*<\/div>?/gi,'')
+    .replace(/<div[^>]*class="[^"]*\bcomments-list\b[^"]*"[\s\S]*?<\/div>/gi,'')
+    .replace(/<div[^>]*class="[^"]*\bcomment-form\b[^"]*"[\s\S]*?<\/div>/gi,'')
+    .replace(/<div[^>]*class="[^"]*\bcta(?:-buttons)?\b[^"]*"[\s\S]*?<\/div>/gi,'')
+    .replace(/<button[^>]*onclick="(?:subscribeToNewsletter|shareArticle|scrollToComments)\(\)"[^>]*>[\s\S]*?<\/button>/gi,'')
+    .replace(/<hr[^>]*class="[^"]*\bdivider\b[^"]*"[^>]*>\s*(?=<hr[^>]*class="[^"]*\bdivider\b)/gi,'')
+    .replace(/<p>\s*(?:<strong>)?\s*What(?:'|â€™|’)?s your biggest frustration[\s\S]*?<\/p>/gi,'')
+    .replace(/<p>\s*Drop a comment[\s\S]*?<\/p>/gi,'');
+  out=out.replace(/(<hr[^>]*class="[^"]*\bdivider\b[^"]*"[^>]*>\s*){2,}/gi,'$1');
+  out=out.replace(/<blockquote>([\s\S]*?)<\/blockquote>/gi,(_,inner)=>{
+    const text=inner.replace(/<p>/gi,'').replace(/<\/p>/gi,' ').trim();
+    return `<div class="iv-insight">${text}</div>`;
+  });
+  out=out.replace(/<h2([^>]*)>(The Bottom Line|Where [^<]+ Matters?|The Bottom Line[^<]*)<\/h2>([\s\S]*?)(?=<h2|<div class="iv-|$)/gi,(_,attrs,title,body)=>`<div class="iv-box accent"><h2>${title}</h2>${body.trim()}</div>`);
+  out=out.replace(/<h2([^>]*)>(What['’]?s Next[^<]*|Coming Up Next[^<]*|Next Episode[^<]*)<\/h2>([\s\S]*?)(?=<h2|<div class="iv-|$)/gi,(_,attrs,title,body)=>`<div class="iv-box" style="border-left:3px solid var(--accent)"><h2>${title}</h2>${body.trim()}</div>`);
+  return out;
 }
 function articlePreviewCss(dark=false){
   const bgCard=dark?'#1e293b':'#ffffff',bgSoft=dark?'rgba(255,255,255,.06)':'rgba(248,250,252,.9)',text=dark?'#cbd5e1':'#4a5568',title=dark?'#f1f5f9':'#1a365d',muted=dark?'#94a3b8':'#6b7280',border=dark?'rgba(255,255,255,.1)':'rgba(15,23,42,.1)',accent=dark?'#ef4444':'#dc3545',shadow=dark?'rgba(0,0,0,.32)':'rgba(15,23,42,.12)',gold=dark?'rgba(245,158,11,.13)':'rgba(245,158,11,.1)';
@@ -3583,7 +3606,7 @@ function articlePreviewCss(dark=false){
 }
 const _legacyPreviewHtml=buildPrevHtml;
 buildPrevHtml=function(dark){
-  const title=document.getElementById('ft')?.value||'Untitled',sub=document.getElementById('fsu')?.value||'',cat=document.getElementById('fcat')?.value||'',date=document.getElementById('fdt')?.value||'',rt=document.getElementById('frt')?.value||'5 min read',emo=document.getElementById('femo')?.value||'📝',body=getContent();
+  const title=document.getElementById('ft')?.value||'Untitled',sub=document.getElementById('fsu')?.value||'',cat=document.getElementById('fcat')?.value||'',date=document.getElementById('fdt')?.value||'',rt=document.getElementById('frt')?.value||'5 min read',emo=document.getElementById('femo')?.value||'📝',body=processArticlePreviewContent(getContent());
   const bg=dark?'#0f172a':'#f8f9fa',tp=dark?'#f1f5f9':'#1a365d',tm=dark?'#94a3b8':'#6b7280',ac=dark?'#ef4444':'#dc3545',glass=dark?'rgba(30,41,59,.6)':'rgba(255,255,255,.7)',gb=dark?'rgba(255,255,255,.08)':'rgba(255,255,255,.8)',border=dark?'rgba(255,255,255,.08)':'rgba(0,0,0,.08)';
   const cov=curImg?`<div style="width:100%;aspect-ratio:2/1;overflow:hidden;border-radius:14px;margin:2rem 0;position:relative;background:linear-gradient(135deg,${tp},${ac})"><img src="${curImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:14px" onerror="this.style.opacity='0'"></div>`:`<div style="width:100%;aspect-ratio:2/1;background:linear-gradient(135deg,${tp},${ac});border-radius:14px;margin:2rem 0;display:flex;align-items:center;justify-content:center;font-size:3rem">${emo}</div>`;
   return`<style>${articlePreviewCss(dark)}</style><div class="article-preview-scope" style="background:${bg};min-height:100%;line-height:1.75"><div style="background:${dark?'rgba(15,23,42,.92)':bg};padding:3rem 2rem 2.5rem;text-align:center;border-bottom:1px solid ${border}"><div style="display:inline-block;background:rgba(220,53,69,.1);color:${ac};padding:.35rem 1rem;border-radius:50px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:1.2rem;border:1px solid rgba(220,53,69,.25)">${cat||'Category'}</div><h1 style="font-family:'Bebas Neue',serif;font-size:clamp(1.8rem,5vw,3.2rem);color:${tp};margin-bottom:.55rem;line-height:.95;letter-spacing:1px;text-transform:uppercase">${title}</h1>${sub?`<p style="font-style:italic;font-size:1.05rem;color:${tm};margin-bottom:1.1rem;line-height:1.4">${sub}</p>`:''}<div style="display:flex;justify-content:center;gap:1.5rem;color:${tm};font-size:.8rem;flex-wrap:wrap"><span>${date||'Today'}</span><span>${rt}</span><span>views pending</span></div></div><div style="max-width:780px;margin:0 auto;padding:1.5rem 2rem 3rem">${cov}<div class="article-content" style="background:${glass};backdrop-filter:blur(20px);padding:2.5rem;border-radius:18px;border:1px solid ${gb};box-shadow:0 16px 50px rgba(0,0,0,.1)">${body||`<p style="color:${tm};text-align:center;padding:2rem 0;font-style:italic">Start writing to see your preview here...</p>`}</div></div></div>`;
@@ -6240,7 +6263,7 @@ initQuill=function(){
 }
 upMdPrev=function(){const md=document.getElementById('mdt')?.value||'';const box=document.getElementById('mdp');if(box)box.innerHTML=md?safeMarkedParse(md):'<em style="color:var(--t3)">Preview...</em>';}
 function shouldUseHtmlSource(html){return /<\s*(div|section|article|aside|figure|table|style)\b|\sclass=|\sstyle=|data-/i.test(String(html||''));}
-function upHtmlPrev(){const html=document.getElementById('htmlt')?.value||'';const box=document.getElementById('htmlp');if(box)box.innerHTML=html?`<style>${articlePreviewCss(false)}</style><div class="article-preview-scope"><div class="article-content" style="padding:1rem;background:transparent;border:none;box-shadow:none">${html}</div></div>`:'<em style="color:var(--t3)">HTML preview...</em>';}
+function upHtmlPrev(){const html=processArticlePreviewContent(document.getElementById('htmlt')?.value||'');const box=document.getElementById('htmlp');if(box)box.innerHTML=html?`<style>${articlePreviewCss(false)}</style><div class="article-preview-scope"><div class="article-content" style="padding:1rem;background:transparent;border:none;box-shadow:none">${html}</div></div>`:'<em style="color:var(--t3)">HTML preview...</em>';}
 getContent=function(){
   if(!editorContentDirty&&originalEditorContent)return originalEditorContent;
   if(activeTab==='rich')return quill&&quill.root?quill.root.innerHTML:'';
