@@ -1322,7 +1322,20 @@ function absUrl(v){try{return new URL(v||'',location.href).href;}catch{return lo
 function stripHtml(v){return (v||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();}
 function seoDesc(post){const base=(post.excerpt&&post.excerpt.trim())||stripHtml(post.content)||post.title||'Atanda Verse article';return base.length>160?base.slice(0,157).trimEnd()+'...':base;}
 function seoKeywords(post){const parts=[post.category,post.title,'Atanda Verse',post.readTime].filter(Boolean).join(' ');return [...new Set(parts.toLowerCase().match(/[a-z0-9&]+/gi)||[])].filter(w=>w.length>2).slice(0,12).join(', ');}
-function cleanPostUrl(post){return absUrl('post?id='+encodeURIComponent(post.id||new URLSearchParams(location.search).get('id')||''));}
+function postIdFromLocation(){
+  const params=new URLSearchParams(location.search);
+  const direct=params.get('id');
+  if(direct)return direct;
+  const parts=location.pathname.split('/').filter(Boolean).map(decodeURIComponent);
+  if(parts[0]==='blog'&&parts[1])return parts.slice(1).join('/');
+  if(parts[0]==='post'&&parts[1])return parts.slice(1).join('/');
+  return '';
+}
+function brandedPostPath(postOrId){
+  const id=String((postOrId&&postOrId.id)||postOrId||'').trim();
+  return id?'/blog/'+encodeURIComponent(id):'/blog';
+}
+function cleanPostUrl(post){return absUrl(brandedPostPath(post||postIdFromLocation()));}
 function updateLdJson(post){const ld=document.getElementById('ldJson');if(!ld)return;ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"Article","headline":post.title||'Atanda Verse Article',"description":seoDesc(post),"image":post.image?[absUrl(post.image)]:[absUrl('images/headers.png')],"datePublished":post.date||new Date().toISOString(),"dateModified":post.date||new Date().toISOString(),"articleSection":post.category||'Clarity',"keywords":seoKeywords(post),"mainEntityOfPage":cleanPostUrl(post),"author":{"@type":"Organization","name":"Atanda Verse"},"publisher":{"@type":"Organization","name":"Atanda Verse","logo":{"@type":"ImageObject","url":absUrl('logo I.png')}}});}
 function updateSEO(post){
   const description=seoDesc(post),image=post.image?absUrl(post.image):absUrl('images/headers.png');
@@ -1383,9 +1396,9 @@ function renderPost(post,all){
   const navInner=document.getElementById('postNavInner');
   const navSlot=document.getElementById('postNavSlot');
   const navRule=document.getElementById('postNavRule');
-  if(prev){navPrev.href='post.html?id='+prev.id;navPrev.classList.remove('disabled');document.getElementById('navPrevTitle').textContent=prev.title;}
+  if(prev){navPrev.href=brandedPostPath(prev);navPrev.classList.remove('disabled');document.getElementById('navPrevTitle').textContent=prev.title;}
   else{navPrev.classList.add('disabled');}
-  if(next){navNext.href='post.html?id='+next.id;navNext.classList.remove('disabled');document.getElementById('navNextTitle').textContent=next.title;}
+  if(next){navNext.href=brandedPostPath(next);navNext.classList.remove('disabled');document.getElementById('navNextTitle').textContent=next.title;}
   else{navNext.classList.add('disabled');}
   if(navInner&&navSlot){navInner.style.display='';navSlot.appendChild(navInner);}
   if(navRule&&navSlot){navRule.style.display='';navSlot.appendChild(navRule);}
@@ -1457,7 +1470,7 @@ function renderCmts(id){
 
 // ── SHARE ─────────────────────────────────────────────────────────────────
 function shareVia(m){
-  const url=location.href,tx=document.title+' — '+url;
+  const url=document.getElementById('canonical')?.href||location.href,tx=document.title+' — '+url;
   if(m==='wa')window.open('https://wa.me/?text='+encodeURIComponent(tx),'_blank');
   if(m==='tw')window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(tx),'_blank');
   if(m==='cp')navigator.clipboard.writeText(url).then(()=>{const b=document.getElementById('cpBtn');b.textContent='✓ Copied!';setTimeout(()=>b.textContent='🔗 Copy Link',2000);});
@@ -1476,8 +1489,7 @@ function showNotFound(){
 }
 
 async function initPostPage(){
-  const params=new URLSearchParams(location.search);
-  const id=params.get('id');
+  const id=postIdFromLocation();
   if(!id)return showNotFound();
   const all=await dbGetPosts();
   const post=all.find(p=>p.id===id);

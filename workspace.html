@@ -4022,6 +4022,36 @@ const renderPostsTblLegacyPreSafe = async function(){
     if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">Posts could not load. Refresh the workspace or check Supabase connection.</td></tr>';
   }
 }
+function brandedPostPath(postOrId){
+  const id=String((postOrId&&postOrId.id)||postOrId||'').trim();
+  return id?'/blog/'+encodeURIComponent(id):'/blog';
+}
+function slugifyPostTitle(title){
+  const text=String(title||'').trim().toLowerCase();
+  const schoolMatch=text.match(/^beyond\s+["']?school\s+na\s+scam["']?\s+(?:episode|ep)\s*(\d+)/i);
+  if(schoolMatch)return 'school-na-scam-ep'+schoolMatch[1];
+  return text
+    .replace(/&/g,' and ')
+    .replace(/\bepisode\s*(\d+)\b/g,'ep$1')
+    .replace(/\bep\s+(\d+)\b/g,'ep$1')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-+|-+$/g,'')
+    .slice(0,80)
+    .replace(/-+$/,'')||('post-'+Date.now());
+}
+async function nextPostSlug(title,currentId){
+  const existing=String(currentId||'').trim();
+  if(existing)return existing;
+  const base=slugifyPostTitle(title);
+  let ids=[];
+  try{ids=(await getPosts()).map(p=>String(p.id||''));}catch(e){}
+  if(!ids.includes(base))return base;
+  let i=2;
+  while(ids.includes(base+'-'+i))i++;
+  return base+'-'+i;
+}
 renderPostsTbl = async function(){
   const tb=document.getElementById('allTbl');
   const htmlSafe=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -4066,7 +4096,7 @@ renderPostsTbl = async function(){
       const statusMeta=status==='published'?'Live and visible on the blog.':status==='coming-soon'?'Visible only as a timed placeholder.':'Still private inside admin.';
       const actionStyle=status==='published'?'border-color:rgba(245,158,11,.5);color:var(--yl)':status==='draft'?'border-color:rgba(59,130,246,.5);color:var(--bl)':'border-color:rgba(16,185,129,.5);color:var(--gr)';
       const viewCount=Number(vm[id]||0);
-      const postUrl='post.html?id='+encodeURIComponent(id);
+      const postUrl=brandedPostPath(id);
       return`<tr><td class="tc2">${htmlSafe(title)}<span>${htmlSafe(postUrl)}</span><span style="font-family:inherit;font-size:.69rem;color:var(--t3);margin-top:.28rem">${htmlSafe(statusMeta)}</span></td><td><div style="display:grid;gap:.25rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${htmlSafe(category)}</strong><span class="mini-tag">${status==='published'?'Campaign ready':status==='draft'?'Needs finishing':'Schedule carefully'}</span></div></td><td><span class="pill ${safeStatus}">${htmlSafe(status)}</span></td><td class="vc">${viewCount.toLocaleString()}</td><td>${htmlSafe(p.readTime||'--')}</td><td>${htmlSafe(p.date||'--')}</td><td><div class="action-row"><button class="ab" onclick='editPost(${jsArg(id)})'>Edit</button><button class="ab" onclick='quickToggleStatus(${jsArg(id)},${jsArg(status)})' title="Toggle status" style="${actionStyle}">${htmlSafe(nextAction)}</button><button class="ab" onclick='window.open(${jsArg(postUrl)},"_blank")'>View</button><button class="ab del" onclick='prepDel(${jsArg(id)})'>Delete</button></div></td></tr>`;
     }).join('');
   }catch(e){
@@ -4160,7 +4190,7 @@ renderRecTbl = function(posts=[],vm={}){
   const tb=document.getElementById('recTbl');if(!tb)return;
   const recent=[...posts].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,5);
   if(!recent.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:1.8rem">No posts yet</td></tr>';return;}
-  tb.innerHTML=recent.map(p=>`<tr><td class="tc2">${avAdminEsc(p.title||'Untitled post')}<span>post.html?id=${avAdminEsc(p.id||'')}</span></td><td><div style="display:grid;gap:.22rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${avAdminEsc(p.category||'Uncategorized')}</strong><span class="mini-tag">${p.status==='published'?'Live post':p.status==='draft'?'Draft item':'Coming soon'}</span></div></td><td><span class="pill ${avAdminEsc(p.status||'draft')}">${avAdminEsc(p.status||'draft')}</span></td><td class="vc">${(vm[p.id]||0).toLocaleString()}</td><td>${avAdminEsc(p.date||'--')}</td><td><div class="action-row"><button class="ab" onclick='editPost(${JSON.stringify(String(p.id||''))})'>Edit</button><button class="ab del" onclick='prepDel(${JSON.stringify(String(p.id||''))})'>Delete</button></div></td></tr>`).join('');
+  tb.innerHTML=recent.map(p=>`<tr><td class="tc2">${avAdminEsc(p.title||'Untitled post')}<span>${avAdminEsc(brandedPostPath(p))}</span></td><td><div style="display:grid;gap:.22rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${avAdminEsc(p.category||'Uncategorized')}</strong><span class="mini-tag">${p.status==='published'?'Live post':p.status==='draft'?'Draft item':'Coming soon'}</span></div></td><td><span class="pill ${avAdminEsc(p.status||'draft')}">${avAdminEsc(p.status||'draft')}</span></td><td class="vc">${(vm[p.id]||0).toLocaleString()}</td><td>${avAdminEsc(p.date||'--')}</td><td><div class="action-row"><button class="ab" onclick='editPost(${JSON.stringify(String(p.id||''))})'>Edit</button><button class="ab del" onclick='prepDel(${JSON.stringify(String(p.id||''))})'>Delete</button></div></td></tr>`).join('');
 }
 initDash = async function(){
   const resolved=await resolvePostsSource();
@@ -4853,7 +4883,7 @@ async function loadCommentsPanel() {
           <div class="stack-title">
             <strong>${cmt.name}</strong>
             <div class="stack-meta">${cmt.email ? cmt.email + ' · ' : ''}${dt}</div>
-            <div class="stack-meta">On <a href="post.html?id=${cmt.post_id}" target="_blank" style="color:var(--ac);text-decoration:none">${postTitle}</a></div>
+            <div class="stack-meta">On <a href="${brandedPostPath(cmt.post_id)}" target="_blank" style="color:var(--ac);text-decoration:none">${postTitle}</a></div>
           </div>
           <div class="stack-actions"><span class="mini-tag">${cmt.email ? 'Known email' : 'No email'}</span><button class="btn d" style="padding:.3rem .7rem;font-size:.7rem;flex-shrink:0" onclick="deleteComment('${cmt.id}')">🗑 Delete</button></div>
         </div>
@@ -5173,7 +5203,7 @@ async function loadCampaignsPanel() {
 
 function viewCampaignPost(postId) {
   if (!postId) return toast('This campaign is not linked to a post', 'er');
-  window.open('post.html?id=' + postId, '_blank');
+  window.open(brandedPostPath(postId), '_blank');
 }
 
 async function editCampaign(campaignId) {
@@ -5278,7 +5308,7 @@ async function previewCampaign(campaignId) {
   } catch (e) {}
   const body = document.getElementById('prevModalBd');
   if (!body) return;
-  const ctaUrl = campaign.post_id ? `post.html?id=${campaign.post_id}` : 'blog.html';
+  const ctaUrl = campaign.post_id ? brandedPostPath(campaign.post_id) : '/blog';
   const title = post?.title || campaign.subject || 'Atanda Verse Update';
   const preview = campaign.preview_text || post?.excerpt || '';
   const image = _emailSafeImage(post?.image || '');
@@ -6179,9 +6209,9 @@ function setPostButtonsBusy(isBusy,label){
 }
 savePost=async function(statusOverride){
   initQuill();
-  const id=document.getElementById('eid').value||'post-'+Date.now();
   const title=document.getElementById('ft').value.trim();
   if(!title)return toast('Title is required','er');
+  const id=await nextPostSlug(title,document.getElementById('eid').value);
   const selectedStatus=document.getElementById('fst')?.value||'published';
   const status=statusOverride||selectedStatus;
   document.getElementById('eid').value=id;
@@ -6206,7 +6236,7 @@ savePost=async function(statusOverride){
       const result=await ensureNewsletterDraftForPost(post);
       if(result.created)toast('Newsletter draft created for this post','ok');
     }
-    toast(status==='published'?`Published - post.html?id=${id}`:'Saved as draft','ok');
+    toast(status==='published'?`Published - ${brandedPostPath(id)}`:'Saved as draft','ok');
     nav('posts');
   }catch(e){
     toast('Save failed: '+(e&&e.message?e.message:e),'er');
