@@ -1186,7 +1186,7 @@ img.loaded{opacity:1;}
         <div class="container">
             <span class="section-tag rv">Got Questions?</span>
             <h2 class="section-title rv">FREQUENTLY ASKED</h2>
-            <div class="faq-grid stg">
+            <div class="faq-grid stg" id="homeFaqGrid">
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>How do online sessions work?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Our virtual sessions are conducted via Zoom or your preferred video platform. You'll receive a private link and detailed preparation guide 24 hours before your session. All you need is a quiet space and stable internet connection.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>Is Atanda Verse free?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Your first single clarity session is free during launch. Three-session packages, weekly group access, and monthly intensives are paid guided offers, and payment details are confirmed after registration.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>What if I miss a scheduled session?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Life happens! Just give us 24 hours notice and we'll reschedule at no cost. We offer flexible timing to accommodate your schedule, including evening and weekend slots.</p></div></div>
@@ -1464,13 +1464,26 @@ img.loaded{opacity:1;}
     }, 1000);
 
     // ── FAQ ──
-    document.querySelectorAll('.faq-question').forEach(q => {
-        q.addEventListener('click', () => {
-            const item = q.parentElement, wasOpen = item.classList.contains('active');
-            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
-            if (!wasOpen) item.classList.add('active');
-        });
-    });
+    function wireHomeFaq(root=document){
+      root.querySelectorAll('.faq-question').forEach(q => {
+        q.onclick=()=>{
+          const item=q.parentElement,wasOpen=item.classList.contains('active');
+          document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('active'));
+          if(!wasOpen)item.classList.add('active');
+        };
+      });
+    }
+    wireHomeFaq();
+    (async function loadHomeFaq(){
+      if(!window.ivGetPublicFaq)return;
+      const items=await window.ivGetPublicFaq([]);
+      const grid=document.getElementById('homeFaqGrid');
+      if(!grid||!items.length)return;
+      const esc=value=>String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+      grid.innerHTML=items.slice().sort((a,b)=>(a.order||0)-(b.order||0)||String(a.category||'').localeCompare(String(b.category||''))).slice(0,8).map(item=>`<div class="faq-item iv-pop"><div class="faq-question"><h4>${esc(item.question)}</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>${esc(item.answer)}</p></div></div>`).join('');
+      wireHomeFaq(grid);
+      if(window.ivRefreshObserver)window.ivRefreshObserver();
+    })();
 
     // ── SMOOTH SCROLL ──
     document.querySelectorAll('a[href^="#"]').forEach(a => {

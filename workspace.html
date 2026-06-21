@@ -1556,10 +1556,14 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sec-hdr">
         <div>
           <div class="sl">FAQ (<span id="faqCount">0</span>)</div>
-          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Manage frequently asked questions shown on faq.html</div>
+          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Manage questions shown on the homepage and FAQ page</div>
         </div>
-        <button class="tbb p" onclick="showFaqForm()">+ Add Question</button>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="tbb" onclick="window.open('/faq','_blank')">Open Live FAQ</button>
+          <button class="tbb p" onclick="showFaqForm()">+ Add Question</button>
+        </div>
       </div>
+      <div class="source-note" id="faqSourceNote" data-kind="local"><strong><span class="source-dot"></span>Loading</strong><span>Checking FAQ source...</span></div>
       <!-- Add/Edit Form -->
       <div id="faqForm" style="display:none;background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:1.3rem;margin-bottom:1.5rem">
         <div style="font-size:.7rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:.9rem" id="faqFormTitle">New Question</div>
@@ -1660,7 +1664,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
 
 
 // ── SUPABASE CREDENTIALS (hardcoded for admin) ────────────────────────────
-const SB_URL_KEY='iv_sb_url', SB_KEY_KEY='iv_sb_key', LOCAL_KEY='iv_posts', SETTINGS_KEY='iv_settings', VAULT_ADMIN_TOKEN_KEY='iv_vault_admin_token';
+const SB_URL_KEY='iv_sb_url', SB_KEY_KEY='iv_sb_key', LOCAL_KEY='iv_posts', SETTINGS_KEY='iv_settings', FAQ_LOCAL_KEY='iv_faq', VAULT_ADMIN_TOKEN_KEY='iv_vault_admin_token';
 const _cleanSbUrl=url=>String(url||'').trim().replace(/\/+$/,'');
 const _validSbUrl=url=>/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(_cleanSbUrl(url));
 const _sbUrl=()=>_cleanSbUrl(localStorage.getItem(SB_URL_KEY)||'');
@@ -5479,31 +5483,56 @@ function _downloadBlob(blob, filename) {
 // ── FAQ ADMIN ─────────────────────────────────────────────────────────────
 const FAQ_CATS={sessions:'About Sessions',pricing:'Pricing & Access',logistics:'Logistics',language:'Language & Culture'};
 
+function getLocalFaq(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(FAQ_LOCAL_KEY)||'[]');
+    if(Array.isArray(saved)&&saved.length)return saved;
+  }catch(e){}
+  const defaults=JSON.parse(JSON.stringify(FAQ_DEFAULTS_ADMIN||[]));
+  localStorage.setItem(FAQ_LOCAL_KEY,JSON.stringify(defaults));
+  return defaults;
+}
+function saveLocalFaq(items){localStorage.setItem(FAQ_LOCAL_KEY,JSON.stringify(items||[]));}
+
 async function dbGetFaq(){
   if(_useSb()){try{
     const rows=await _sbReq('faq?select=*&order=category.asc,sort_order.asc');
-    if(rows)return rows.map(r=>({id:r.id,question:r.question,answer:r.answer,category:r.category||'sessions',order:r.sort_order||0}));
+    if(Array.isArray(rows)&&rows.length){
+      const items=rows.map(r=>({id:r.id,question:r.question,answer:r.answer,category:r.category||'sessions',order:r.sort_order||0}));
+      saveLocalFaq(items);
+      return items;
+    }
   }catch(e){console.warn('FAQ SB read failed',e);}}
-  return [];
+  return getLocalFaq();
 }
 async function dbSaveFaq(item){
-  if(_useSb()){try{
-    await _sbReq('faq?id=eq.'+item.id,'DELETE');
-    await _sbReq('faq','POST',{id:item.id,question:item.question,answer:item.answer,category:item.category,sort_order:item.order||0});
-  }catch(e){throw e;}}
+  const local=getLocalFaq();
+  const idx=local.findIndex(i=>i.id===item.id);
+  if(idx>=0)local[idx]=item;else local.push(item);
+  saveLocalFaq(local);
+  if(!_useSb())return 'local';
+  try{
+    await _sbUpsert('faq',{id:item.id,question:item.question,answer:item.answer,category:item.category,sort_order:item.order||0});
+    return 'database';
+  }catch(e){throw new Error('Saved in this browser, but live FAQ sync failed: '+e.message);}
 }
 async function dbDeleteFaq(id){
-  if(_useSb()){try{await _sbReq('faq?id=eq.'+id,'DELETE');}catch(e){console.warn(e);}}
+  saveLocalFaq(getLocalFaq().filter(i=>i.id!==id));
+  if(!_useSb())return 'local';
+  try{await _sbReq('faq?id=eq.'+encodeURIComponent(id),'DELETE');return 'database';}
+  catch(e){throw new Error('Removed in this browser, but live FAQ sync failed: '+e.message);}
 }
 
 async function loadFaqPanel(){
   const items=await dbGetFaq();
+  if(_useSb()&&!_sbIsUnavailable())noteForDb('faqSourceNote','FAQ items',items.length);
+  else noteForLocal('faqSourceNote','FAQ items',items.length);
   const cnt=document.getElementById('faqCount');if(cnt)cnt.textContent=items.length;
   const tb=document.getElementById('faqTbl');if(!tb)return;
   if(!items.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--t3);padding:2rem">No FAQ items yet — click + Add Question</td></tr>';return;}
   tb.innerHTML=items.map(i=>`<tr>
-    <td class="tc2" style="max-width:320px">${i.question}</td>
-    <td style="font-size:.78rem;color:var(--t2)">${FAQ_CATS[i.category]||i.category}</td>
+    <td class="tc2" style="max-width:320px">${avAdminEsc(i.question)}</td>
+    <td style="font-size:.78rem;color:var(--t2)">${avAdminEsc(FAQ_CATS[i.category]||i.category)}</td>
     <td style="font-size:.78rem;color:var(--t3)">${i.order}</td>
     <td>
       <button class="ab" onclick="editFaqItem('${i.id}')">✏️ Edit</button>
@@ -5544,19 +5573,21 @@ async function saveFaqItem(){
   const item={id,question:q,answer:a,category:document.getElementById('faqCat').value,order:parseInt(document.getElementById('faqOrder').value)||0};
   const btn=document.querySelector('#faqForm .btn.p');if(btn)btn.textContent='Saving…';
   try{
-    await dbSaveFaq(item);
+    const source=await dbSaveFaq(item);
     hideFaqForm();
     await loadFaqPanel();
-    toast('FAQ saved ✓','ok');
+    toast(source==='database'?'FAQ saved live':'FAQ saved in this browser only','ok');
   }catch(e){toast('Save failed: '+e.message,'er');}
   if(btn)btn.textContent='✓ Save';
 }
 
 async function deleteFaqItem(id){
   if(!confirm('Delete this FAQ item?'))return;
-  await dbDeleteFaq(id);
-  await loadFaqPanel();
-  toast('Deleted','ok');
+  try{
+    const source=await dbDeleteFaq(id);
+    await loadFaqPanel();
+    toast(source==='database'?'FAQ deleted live':'FAQ deleted in this browser only','ok');
+  }catch(e){toast('Delete failed: '+e.message,'er');}
 }
 
 async function loadLoginsPanel(){

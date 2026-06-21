@@ -998,6 +998,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
       ];
 
       let _faqItems=[], _faqActiveCat='all';
+      const faqEsc=value=>String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
       function renderFaqContent(cat){
         _faqActiveCat=cat;
@@ -1015,7 +1016,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
             <div class="faq-cat-title">${FAQ_CAT_LABELS[c]||c}</div>
             <div class="iv-rule rv" style="margin-bottom:1.2rem;"></div>
             <div class="faq-grid iv-stagger">
-              ${items.map(i=>`<div class="faq-item iv-pop"><div class="faq-question"><h4>${i.question}</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>${i.answer}</p></div></div>`).join('')}
+              ${items.map(i=>`<div class="faq-item iv-pop"><div class="faq-question"><h4>${faqEsc(i.question)}</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>${faqEsc(i.answer)}</p></div></div>`).join('')}
             </div>
           </div>`;
         }).join('');
@@ -1033,24 +1034,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
       function filterFaq(cat,btn){renderFaqContent(cat);}
 
       (async function loadFaq(){
-        const creds=window.ivGetSupabaseCreds&&window.ivGetSupabaseCreds();
-        if(creds&&creds.url&&creds.key){
-          try{
-            const r=await fetch(creds.url+'/rest/v1/faq?select=*&order=category.asc,sort_order.asc',{
-              headers:{'apikey':creds.key,'Authorization':'Bearer '+creds.key}
-            });
-            if(r.ok){
-              const rows=await r.json();
-              if(Array.isArray(rows)){
-                _faqItems=rows.map(r=>({id:r.id,question:r.question,answer:r.answer,category:r.category||'sessions',order:r.sort_order||0}));
-                renderFaqContent('all');
-                return;
-              }
-            }
-          }catch(e){}
-        }
-        // Fallback to defaults
-        _faqItems=FAQ_DEFAULTS;
+        _faqItems=window.ivGetPublicFaq?await window.ivGetPublicFaq(FAQ_DEFAULTS):FAQ_DEFAULTS;
         renderFaqContent('all');
       })();
 

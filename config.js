@@ -171,6 +171,37 @@
 
   window.ivGetPublicSettings = getPublicSettings;
 
+  async function getPublicFaq(defaults) {
+    var fallback = Array.isArray(defaults) ? defaults : [];
+    var cached = [];
+    try {
+      cached = JSON.parse(localStorage.getItem('iv_faq') || '[]') || [];
+    } catch (_err) {}
+
+    try {
+      var rows = await sbFetch('faq?select=*&order=category.asc,sort_order.asc');
+      if (Array.isArray(rows) && rows.length) {
+        var items = rows.map(function (row) {
+          return {
+            id: row.id,
+            question: row.question,
+            answer: row.answer,
+            category: row.category || 'sessions',
+            order: Number(row.sort_order) || 0
+          };
+        });
+        localStorage.setItem('iv_faq', JSON.stringify(items));
+        return items;
+      }
+    } catch (err) {
+      console.warn('Public FAQ fetch failed', err);
+    }
+
+    return cached.length ? cached : fallback;
+  }
+
+  window.ivGetPublicFaq = getPublicFaq;
+
   var DEFAULT_SESSION_PRICING = {
     single: {
       label: 'Single Session',
