@@ -1402,18 +1402,32 @@ img.loaded{opacity:1;}
     let prevCD = {};
     let publicSettingsState = null;
     let countdownSyncBusy = false;
+    const COUNTDOWN_FALLBACK_DAYS = 30;
     function getStoredPublicSettings() {
         try { return JSON.parse(localStorage.getItem('iv_settings') || '{}') || {}; }
         catch { return {}; }
+    }
+    function getFallbackCountdownTarget() {
+        try {
+            const key = 'iv_cd_default';
+            let stored = parseInt(localStorage.getItem(key) || '0', 10);
+            if (!Number.isFinite(stored) || stored <= Date.now()) {
+                stored = Date.now() + (COUNTDOWN_FALLBACK_DAYS * 86400000);
+                localStorage.setItem(key, String(stored));
+            }
+            return stored;
+        } catch {
+            return Date.now() + (COUNTDOWN_FALLBACK_DAYS * 86400000);
+        }
     }
     function getCountdownSettings() {
         return publicSettingsState || getStoredPublicSettings();
     }
     function getCountdownTarget(settings) {
         const s = settings || getCountdownSettings();
-        if (!s || !s.countdownTarget) return null;
+        if (!s || !s.countdownTarget) return getFallbackCountdownTarget();
         const ts = new Date(s.countdownTarget).getTime();
-        return Number.isFinite(ts) ? ts : null;
+        return Number.isFinite(ts) ? ts : getFallbackCountdownTarget();
     }
     async function syncCountdownSettings(force) {
         if (!window.ivGetPublicSettings || countdownSyncBusy) return getCountdownSettings();
@@ -1436,10 +1450,6 @@ img.loaded{opacity:1;}
         const target = getCountdownTarget(settings);
         const lbl = document.getElementById('cdLabel');
         if (lbl) lbl.textContent = settings && settings.countdownLabel ? settings.countdownLabel : '⏰ Free Access Ends In';
-        if (!target) {
-            ['days','hours','minutes','seconds'].forEach(k => { const el = document.getElementById(k); if (el) el.textContent = '--'; });
-            return;
-        }
         const diff = target - Date.now();
         if (diff <= 0) {
             ['days','hours','minutes','seconds'].forEach(k => { const el = document.getElementById(k); if (el) el.textContent = '00'; });
@@ -1661,18 +1671,23 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
         const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
         if (creds && creds.url && creds.key) {
             try {
+                const sessionSelect = document.getElementById('sessionType');
+                const sessionLabel = sessionSelect && sessionSelect.selectedOptions[0] ? sessionSelect.selectedOptions[0].textContent.trim() : d.sessionType;
+                const submittedAt = new Date().toISOString();
                 await fetch(creds.url + '/rest/v1/registrations', {
                     method: 'POST',
                     headers: { 'apikey': creds.key, 'Authorization': 'Bearer ' + creds.key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-                    body: JSON.stringify({ id: 'reg-' + Date.now(), full_name: d.fullName, email: d.email, phone: d.phone, session_type: d.sessionType, goals: d.goals || '', source: 'index', registered_at: new Date().toISOString() })
+                    body: JSON.stringify({ id: 'reg-' + Date.now(), full_name: d.fullName, email: d.email, phone: d.phone, session_type: d.sessionType, goals: d.goals || '', source: 'index', registered_at: submittedAt })
                 });
                 if (window.ivNotifyAdmin) window.ivNotifyAdmin('registration.created', {
                     name: d.fullName,
                     email: d.email,
                     phone: d.phone,
                     sessionType: d.sessionType,
+                    sessionLabel: sessionLabel,
                     source: 'index',
-                    goals: d.goals || ''
+                    goals: d.goals || '',
+                    submittedAt: submittedAt
                 });
             } catch(e) {}
         }

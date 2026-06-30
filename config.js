@@ -159,8 +159,9 @@
           try { settings[row.key] = JSON.parse(row.value); }
           catch (_err) { settings[row.key] = row.value; }
         });
-        localStorage.setItem('iv_settings', JSON.stringify(settings));
-        return settings;
+        var merged = Object.assign({}, cached, settings);
+        localStorage.setItem('iv_settings', JSON.stringify(merged));
+        return merged;
       }
     } catch (err) {
       console.warn('Public settings fetch failed', err);

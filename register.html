@@ -420,6 +420,9 @@
             const params = new URLSearchParams(window.location.search);
             const source = params.get('source') || 'register-page';
             const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
+            const sessionSelect = document.getElementById('sessionType');
+            const sessionLabel = sessionSelect && sessionSelect.selectedOptions[0] ? sessionSelect.selectedOptions[0].textContent.trim() : d.sessionType;
+            const submittedAt = new Date().toISOString();
 
             if (creds && creds.url && creds.key) {
                 try {
@@ -439,7 +442,7 @@
                             session_type: d.sessionType,
                             goals: d.goals || '',
                             source: 'register:' + source,
-                            registered_at: new Date().toISOString()
+                            registered_at: submittedAt
                         })
                     });
                     if (window.ivNotifyAdmin) window.ivNotifyAdmin('registration.created', {
@@ -447,8 +450,10 @@
                         email: d.email,
                         phone: d.phone,
                         sessionType: d.sessionType,
+                        sessionLabel: sessionLabel,
                         source: 'register:' + source,
-                        goals: d.goals || ''
+                        goals: d.goals || '',
+                        submittedAt: submittedAt
                     });
                 } catch (err) {
                     console.warn('Registration save failed', err);

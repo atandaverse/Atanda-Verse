@@ -71,7 +71,9 @@ It currently sends internal notifications for:
 
 Optional secrets:
 
-- `ADMIN_NOTIFY_EMAIL` defaults to `hello@atanda.site`
+- `ADMIN_NOTIFY_EMAIL` or `ADMIN_NOTIFY_EMAILS` can be one email or a comma/space-separated list
+- `ADMIN_COPY_EMAIL` or `ADMIN_COPY_EMAILS` can add extra internal copies
+- Registration notifications also default-copy `sessions@atanda.site` and `hello@atanda.site`
 - `ADMIN_NOTIFY_FROM` defaults to `Atanda Verse Admin <hello@atanda.site>`
 
 Existing specialized functions still handle their own notification logic:
