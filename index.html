@@ -1764,19 +1764,25 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
     (async function loadLatestPosts(){
       const grid=document.getElementById('latestPostsGrid');
       if(!grid)return;
+      function fmtD(d){if(!d)return'';var dt=new Date(d);if(isNaN(dt))return d;return dt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});}
+      function esc(v){return String(v||'').replace(/[&<>"']/g,function(ch){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch];});}
+      function brandedPostPath(postOrId){const id=String((postOrId&&postOrId.id)||postOrId||'').trim();return id?'/blog/'+encodeURIComponent(id):'/blog';}
+      function normalizePost(row){return {id:row.id,title:row.title||'',excerpt:row.excerpt||'',image:row.image||'',emoji:row.emoji||'📝',category:row.category||'',status:row.status||'published',date:row.date||'',readTime:row.readTime||row.read_time||'5 min read'};}
       try{
         const creds=window.ivGetSupabaseCreds&&window.ivGetSupabaseCreds();
-        let posts=[];
+        let posts=[],settings={};
+        if(window.ivGetPublicSettings){try{settings=await window.ivGetPublicSettings();}catch{}}
+        else{try{settings=JSON.parse(localStorage.getItem('iv_settings')||'{}')||{};}catch{}}
         if(creds&&creds.url&&creds.key){
-          const r=await fetch(creds.url+'/rest/v1/posts?select=id,title,excerpt,image,emoji,category,date,read_time&status=eq.published&order=date.desc&limit=3',{
+          const r=await fetch(creds.url+'/rest/v1/posts?select=id,title,excerpt,image,emoji,category,status,date,read_time&order=date.desc,id.asc',{
             headers:{'apikey':creds.key,'Authorization':'Bearer '+creds.key}
           });
-          if(r.ok)posts=await r.json();
+          if(r.ok)posts=(await r.json()).map(normalizePost);
         }
         if(!posts||!posts.length){
           try{
             const cached=JSON.parse(localStorage.getItem('iv_posts')||'[]');
-            posts=(cached||[]).filter(p=>String(p.status||'').toLowerCase()==='published');
+            posts=(cached||[]).map(normalizePost).sort((a,b)=>new Date(b.date)-new Date(a.date)||String(a.id).localeCompare(String(b.id)));
           }catch{}
         }
         if(!posts||!posts.length){
@@ -1786,10 +1792,14 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
             {id:'ep2',title:'Beyond "School Na Scam" Episode 2',excerpt:'We’re diving deep into digital skills that are transforming Nigerian careers...',image:'images/headers2.png',emoji:'💻',category:'Education & Career',date:'2025-10-07',read_time:'8 min read'}
           ];
         }
-        posts=posts.slice(0,3);
-        function fmtD(d){if(!d)return'';var dt=new Date(d);if(isNaN(dt))return d;return dt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});}
+        posts=posts.map(normalizePost);
+        const published=posts.filter(p=>String(p.status||'').toLowerCase()==='published');
+        const featuredId=settings&&settings.featuredPostId;
+        const featured=(featuredId&&published.find(p=>p.id===featuredId))||published[0];
+        posts=(featured?[featured,...published.filter(p=>p.id!==featured.id)]:published).slice(0,3);
+        posts=posts.map(p=>({...p,read_time:p.readTime||p.read_time||'5 min read'}));
         grid.innerHTML=posts.map(p=>`
-          <a href="post.html?id=${p.id}" style="text-decoration:none;display:block;background:var(--glass);backdrop-filter:blur(20px);border-radius:20px;overflow:hidden;border:1px solid var(--glass-border);box-shadow:0 8px 32px var(--shadow);transition:all .4s cubic-bezier(.34,1.56,.64,1)" onmouseover="this.style.transform='translateY(-8px)';this.style.boxShadow='0 24px 60px var(--shadow-hover)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px var(--shadow)'">
+          <a href="${brandedPostPath(p)}" style="text-decoration:none;display:block;background:var(--glass);backdrop-filter:blur(20px);border-radius:20px;overflow:hidden;border:1px solid var(--glass-border);box-shadow:0 8px 32px var(--shadow);transition:all .4s cubic-bezier(.34,1.56,.64,1)" onmouseover="this.style.transform='translateY(-8px)';this.style.boxShadow='0 24px 60px var(--shadow-hover)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px var(--shadow)'">
             <div style="width:100%;aspect-ratio:1831/958;background:linear-gradient(135deg,var(--text-primary),var(--accent));position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2.5rem">
               ${p.image?`<img src="${p.image}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:2" onerror="this.style.display='none'">`:''}
               <span style="z-index:1">${p.emoji||'📝'}</span>
