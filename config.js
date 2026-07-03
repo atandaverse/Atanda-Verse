@@ -179,6 +179,17 @@
       cached = JSON.parse(localStorage.getItem('iv_faq') || '[]') || [];
     } catch (_err) {}
 
+    function transformFaqForLaunch(items) {
+      var launch = getLaunchState();
+      if (!launch.expired) return items;
+      return (items || []).map(function (item) {
+        if (item.id === 'faq-d6') item.answer = 'The free launch window has ended. Single clarity sessions, three-session packages, weekly group access, and monthly intensives are guided offers confirmed after registration.';
+        if (item.id === 'faq-d7') item.answer = 'The free single-session launch offer has ended. Current session options remain available through the registration flow.';
+        if (item.id === 'faq-d9') item.answer = 'If a session does not add value, tell us honestly. The goal is genuine clarity, not just a completed session.';
+        return item;
+      });
+    }
+
     try {
       var rows = await sbFetch('faq?select=*&order=category.asc,sort_order.asc');
       if (Array.isArray(rows) && rows.length) {
@@ -192,16 +203,30 @@
           };
         });
         localStorage.setItem('iv_faq', JSON.stringify(items));
-        return items;
+        return transformFaqForLaunch(items);
       }
     } catch (err) {
       console.warn('Public FAQ fetch failed', err);
     }
 
-    return cached.length ? cached : fallback;
+    return transformFaqForLaunch(cached.length ? cached : fallback);
   }
 
   window.ivGetPublicFaq = getPublicFaq;
+
+  function getLaunchState(settings) {
+    var source = settings;
+    if (!source) {
+      try { source = JSON.parse(localStorage.getItem('iv_settings') || '{}') || {}; }
+      catch (_err) { source = {}; }
+    }
+    var target = source && source.countdownTarget ? new Date(source.countdownTarget).getTime() : NaN;
+    var hasTarget = Number.isFinite(target);
+    return {
+      target: hasTarget ? target : null,
+      expired: hasTarget ? target <= Date.now() : false
+    };
+  }
 
   var DEFAULT_SESSION_PRICING = {
     single: {
@@ -210,6 +235,9 @@
       usd: 'FREE',
       ngn: 'N0',
       note: 'single launch session',
+      paidUsd: '$15',
+      expiredBadge: 'PAID 1:1',
+      expiredNote: 'launch offer ended',
       free: true
     },
     'three-pack': {
@@ -238,15 +266,24 @@
     }
   };
 
-  function normalizePricing(raw) {
+  function normalizePricing(raw, settings) {
     var source = raw && typeof raw === 'object' ? raw : {};
+    var launch = getLaunchState(settings);
     var pricing = {};
     Object.keys(DEFAULT_SESSION_PRICING).forEach(function (key) {
       pricing[key] = Object.assign({}, DEFAULT_SESSION_PRICING[key], source[key] || {});
       if (key === 'three-pack' && pricing[key].ngn === 'N60,000' && pricing[key].usd === '$40') pricing[key].usd = '$48';
       if (key === 'group' && pricing[key].ngn === 'N45,000' && pricing[key].usd === '$30') pricing[key].usd = '$36';
       if (key === 'intensive' && pricing[key].ngn === 'N225,000' && pricing[key].usd === '$150') pricing[key].usd = '$180';
-      pricing[key].free = key === 'single' ? pricing[key].free !== false : !!pricing[key].free;
+      if (key === 'single' && launch.expired) {
+        pricing[key].free = false;
+        pricing[key].badge = pricing[key].expiredBadge || 'PAID 1:1';
+        pricing[key].usd = pricing[key].expiredUsd || pricing[key].paidUsd || '$15';
+        pricing[key].ngn = pricing[key].expiredNgn || pricing[key].paidNgn || '';
+        pricing[key].note = pricing[key].expiredNote || 'launch offer ended';
+      } else {
+        pricing[key].free = key === 'single' ? pricing[key].free !== false : !!pricing[key].free;
+      }
       pricing[key].price = pricing[key].free ? 'FREE' : [pricing[key].usd, pricing[key].ngn].filter(Boolean).join(' / ');
     });
     Object.keys(source).forEach(function (key) {
@@ -267,14 +304,42 @@
   async function getSessionPricing() {
     try {
       var settings = await getPublicSettings();
-      return normalizePricing(settings && settings.sessionPricing);
+      return normalizePricing(settings && settings.sessionPricing, settings);
     } catch (_err) {
       return normalizePricing();
     }
   }
 
-  function applySessionPricing(pricing) {
-    var data = normalizePricing(pricing);
+  function applyLaunchState(settings) {
+    var launch = getLaunchState(settings);
+    document.documentElement.setAttribute('data-launch-expired', launch.expired ? 'true' : 'false');
+    if (!launch.expired) return launch;
+    var textMap = [
+      ['.nav-cta', 'Register'],
+      ['.hero-badge', 'Paid Single Sessions Now Open'],
+      ['.sticky-cta-label', 'Book Session'],
+      ['.sticky-cta-detail', 'Single 1:1 path'],
+      ['[data-price-plan="single"] .cta-button', 'Reserve Session'],
+      ['#registerButton', 'Reserve my session'],
+      ['#registerMicrocopy', 'The free launch window has ended. Single sessions and paid plans are reviewed before confirmation. Session questions belong at sessions@atanda.site.']
+    ];
+    textMap.forEach(function (pair) {
+      document.querySelectorAll(pair[0]).forEach(function (el) { el.textContent = pair[1]; });
+    });
+    document.querySelectorAll('[data-launch-copy]').forEach(function (el) {
+      var next = el.getAttribute('data-launch-expired-copy');
+      if (next) el.textContent = next;
+    });
+    document.querySelectorAll('[data-launch-html]').forEach(function (el) {
+      var next = el.getAttribute('data-launch-expired-html');
+      if (next) el.innerHTML = next;
+    });
+    return launch;
+  }
+
+  function applySessionPricing(pricing, settings) {
+    var data = normalizePricing(pricing, settings);
+    var launch = getLaunchState(settings);
     document.querySelectorAll('[data-price-generated="true"]').forEach(function (el) { el.remove(); });
     Object.keys(data).forEach(function (key) {
       var item = data[key];
@@ -289,7 +354,7 @@
         if (naira) naira.textContent = (item.ngn || '') + (item.note ? ' \u00b7 ' + item.note : '');
       });
       document.querySelectorAll('option[data-price-option="' + key + '"]').forEach(function (opt) {
-        opt.textContent = item.free ? item.label + ' (Free launch)' : item.label + ' (' + item.usd + ' / ' + item.ngn + ')';
+        opt.textContent = item.free ? item.label + ' (Free launch)' : item.label + ' (' + item.price + ')';
       });
       if (!DEFAULT_SESSION_PRICING[key]) {
         document.querySelectorAll('select#sessionType').forEach(function (sel) {
@@ -318,17 +383,28 @@
       }
     });
     window.ivSessionPricing = data;
+    window.ivLaunchState = launch;
+    applyLaunchState(settings);
     return data;
   }
 
   async function syncSessionPricing() {
-    return applySessionPricing(await getSessionPricing());
+    var settings = await getPublicSettings();
+    return applySessionPricing(settings && settings.sessionPricing, settings);
   }
 
   window.ivDefaultSessionPricing = DEFAULT_SESSION_PRICING;
+  window.ivGetLaunchState = getLaunchState;
+  window.ivApplyLaunchState = applyLaunchState;
   window.ivGetSessionPricing = getSessionPricing;
   window.ivApplySessionPricing = applySessionPricing;
   window.ivSyncSessionPricing = syncSessionPricing;
+
+  function refreshLaunchState() {
+    getPublicSettings().then(applyLaunchState).catch(function () { applyLaunchState(); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', refreshLaunchState);
+  else refreshLaunchState();
 
   async function sbInvoke(fnName, payload) {
     var creds = getCreds();

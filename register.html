@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register for an Atanda Verse Clarity Session</title>
-    <meta name="description" content="Register for an Atanda Verse clarity session. Start with the free single session or choose a paid group, package, or intensive clarity plan.">
+    <meta name="description" content="Register for an Atanda Verse clarity session. Choose a single session, group path, package, or intensive clarity plan.">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="theme-color" content="#1a365d">
     <link rel="canonical" href="https://verse.atanda.site/register">
     <link rel="alternate" hreflang="en-ng" href="https://verse.atanda.site/register">
     <meta property="og:title" content="Register for an Atanda Verse Clarity Session">
-    <meta property="og:description" content="Start with a free single session or choose a paid guided plan for deeper clarity support.">
+    <meta property="og:description" content="Choose a single session or guided plan for deeper clarity support.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://verse.atanda.site/register">
     <meta property="og:image" content="https://verse.atanda.site/images/headers.png">
     <meta property="og:image:alt" content="Atanda Verse clarity session registration">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Register for an Atanda Verse Clarity Session">
-    <meta name="twitter:description" content="Start with a free single session or choose a paid guided plan for deeper clarity support.">
+    <meta name="twitter:description" content="Choose a single session or guided plan for deeper clarity support.">
     <meta name="twitter:image" content="https://verse.atanda.site/images/headers.png">
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"RegisterAction","name":"Register for an Atanda Verse clarity session","target":"https://verse.atanda.site/register","object":{"@type":"Service","name":"Atanda Verse Clarity Session","provider":{"@type":"Organization","name":"Atanda Verse","url":"https://verse.atanda.site/"}}}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -210,10 +210,10 @@
                 <h1>Register with the right path already selected</h1>
                 <p>
                     Choose a session, arrive with the right package prefilled, and complete one focused registration flow.
-                    The first single session is free; paid plans are clearly marked before you submit.
+                    <span data-launch-copy data-launch-expired-copy="Single sessions and guided plans are clearly marked before you submit.">The first single session is free; paid plans are clearly marked before you submit.</span>
                 </p>
                 <div class="mini-points">
-                    <span>Single session is free during launch</span>
+                    <span data-launch-copy data-launch-expired-copy="Single session details confirmed after registration">Single session is free during launch</span>
                     <span>Paid plans are confirmed before scheduling</span>
                     <span>WhatsApp confirmation within 24 hours</span>
                     <span>Built for future in-app payment</span>
@@ -266,7 +266,7 @@
                         <textarea id="goals" name="goals" rows="4" placeholder="Tell us what you're navigating right now, what kind of clarity you need, or what you'd like this session to unlock."></textarea>
                     </div>
                     <button type="submit" class="cta-button" id="registerButton">Book my free session</button>
-                    <div class="microcopy" id="registerMicrocopy">
+                    <div class="microcopy" id="registerMicrocopy" data-launch-html data-launch-expired-html='The free launch window has ended. Single sessions and paid plans are reviewed and confirmed before payment details are sent. Session questions belong at <a href="mailto:sessions@atanda.site" style="color:var(--accent);font-weight:700;text-decoration:none">sessions@atanda.site</a>.'>
                         Single session registration is free during launch. Paid plans are reviewed and confirmed before payment details are sent. Session questions belong at <a href="mailto:sessions@atanda.site" style="color:var(--accent);font-weight:700;text-decoration:none">sessions@atanda.site</a>.
                     </div>
                 </form>
@@ -379,12 +379,16 @@
                 data.currentPrice = live.usd || data.currentPrice;
                 data.note = (live.ngn || '') + (live.note ? ' - ' + live.note : '');
                 data.tag = live.badge || data.tag;
+                if (sessionKey === 'single' && live.free === false) {
+                    data.oldPrice = '';
+                    data.button = 'Reserve my session';
+                }
             }
             document.getElementById('summaryTag').textContent = data.tag;
             document.getElementById('summaryTitle').textContent = data.title;
             const wasEl = document.getElementById('summaryWas');
             wasEl.textContent = data.oldPrice;
-            wasEl.style.display = sessionKey === 'single' ? '' : 'none';
+            wasEl.style.display = data.oldPrice ? '' : 'none';
             document.getElementById('summaryNow').textContent = data.currentPrice || 'FREE';
             document.getElementById('summaryNote').textContent = data.note;
             document.getElementById('registerButton').textContent = data.button;
@@ -469,7 +473,8 @@
                 });
             }
 
-            alert(d.sessionType === 'single' ? "Thank you for registering! We'll contact you within 24 hours to confirm your free single session." : "Thank you for registering! We'll contact you within 24 hours with confirmation and payment details for your selected plan.");
+            const singleIsFree = window.ivSessionPricing && window.ivSessionPricing.single && window.ivSessionPricing.single.free !== false;
+            alert(d.sessionType === 'single' && singleIsFree ? "Thank you for registering! We'll contact you within 24 hours to confirm your free single session." : "Thank you for registering! We'll contact you within 24 hours with confirmation and payment details for your selected plan.");
             this.reset();
             applyPackage(getSelectedPackage());
         });

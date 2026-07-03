@@ -1335,7 +1335,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       </div>
       <div class="scc" style="margin-bottom:1rem">
         <div class="sct">Pricing Source</div>
-        <div class="scd">This panel saves to the live Supabase <strong>settings.sessionPricing</strong> row. The single session stays free unless you intentionally change launch strategy in code.</div>
+        <div class="scd">This panel saves to the live Supabase <strong>settings.sessionPricing</strong> row. The public site also checks the countdown target and stops presenting the launch-free single session after expiry.</div>
         <div id="pricingSourceStatus" class="fn" style="margin:.8rem 0 0;padding:.7rem .85rem;border:1px solid var(--b);border-radius:12px;background:var(--bg3);color:var(--t3)">Checking live pricing source...</div>
       </div>
       <div id="pricingRows" style="display:grid;gap:.85rem"></div>
@@ -4404,7 +4404,7 @@ function toast(msg,type='inf'){const wrap=document.getElementById('toasts');cons
 
 // ── COUNTDOWN ADMIN ──────────────────────────────────────────────────────
 const DEFAULT_SESSION_PRICING={
-  single:{label:'Single Session',badge:'FREE START',usd:'FREE',ngn:'N0',note:'single launch session',free:true},
+  single:{label:'Single Session',badge:'FREE START',usd:'FREE',ngn:'N0',note:'single launch session',free:true,paidUsd:'$15',expiredBadge:'PAID 1:1',expiredNote:'launch offer ended'},
   'three-pack':{label:'Three Session Package',badge:'MOST POPULAR',usd:'$48',ngn:'N60,000',note:'paid package',free:false},
   group:{label:'Weekly Group Sessions',badge:'GROUP PATH',usd:'$36',ngn:'N45,000',note:'paid group access',free:false},
   intensive:{label:'Monthly Intensive',badge:'INTENSIVE',usd:'$180',ngn:'N225,000',note:'paid intensive',free:false}
@@ -4499,7 +4499,7 @@ function openPricingModal(key){
   document.getElementById('pricingEditNgn').value=p.ngn||'';
   document.getElementById('pricingEditNote').value=p.note||'';
   document.getElementById('pricingEditFree').checked=!!p.free;
-  document.getElementById('pricingEditFree').disabled=key==='single';
+  document.getElementById('pricingEditFree').disabled=false;
   document.getElementById('pricingModalHint').textContent=DEFAULT_SESSION_PRICING[key]?'Core offers can be edited but not deleted.':'Custom offers can be renamed, priced, saved, or deleted from the pricing page.';
   document.getElementById('pricingEditModal').classList.add('on');
 }
@@ -4518,7 +4518,7 @@ async function savePricingModalPlan(){
     usd:document.getElementById('pricingEditUsd').value.trim(),
     ngn:document.getElementById('pricingEditNgn').value.trim(),
     note:document.getElementById('pricingEditNote').value.trim(),
-    free:key==='single'||document.getElementById('pricingEditFree').checked
+    free:document.getElementById('pricingEditFree').checked
   };
   persistLocalSessionPricing(pricing);
   await saveSessionPricing();
