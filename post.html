@@ -1534,11 +1534,9 @@ function shareVia(m){
   const post=window.currentPostForShare||{};
   const url=document.getElementById('canonical')?.href||location.href;
   const title=post.title||document.title.replace(/\s+\|\s+Atanda Verse$/,'');
-  const desc=seoDesc(post);
-  const context=[post.category,post.readTime].filter(Boolean).join(' - ');
-  const tx=[title,desc,context,url].filter(Boolean).join('\n\n');
+  const tx=[title,url].filter(Boolean).join('\n\n');
   if(m==='wa')window.open('https://wa.me/?text='+encodeURIComponent(tx),'_blank');
-  if(m==='tw')window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(title+(desc?' - '+desc:'')),'_blank');
+  if(m==='tw')window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(title),'_blank');
   if(m==='cp')navigator.clipboard.writeText(url).then(()=>{
     const b=document.getElementById('cpBtn');
     if(!b)return;
