@@ -198,7 +198,7 @@
                 <a href="blog.html">Blog</a>
                 <a href="faq.html">FAQ</a>
                 <a href="library.html">Library</a>
-                <a href="register.html" class="nav-cta">Register Free</a>
+                <a href="register.html" class="nav-cta">Register</a>
             </div>
         </div>
     </nav>
@@ -207,23 +207,23 @@
         <div class="container hero-grid">
             <div class="hero-copy">
                 <div class="eyebrow">Reserved entry</div>
-                <h1>Register with the right path already selected</h1>
+                <h1>Register for the session path that fits</h1>
                 <p>
-                    Choose a session, arrive with the right package prefilled, and complete one focused registration flow.
-                    <span data-launch-copy data-launch-expired-copy="Single sessions and guided plans are clearly marked before you submit.">The first single session is free; paid plans are clearly marked before you submit.</span>
+                    Choose a session path, review the selected offer, and complete one focused registration flow.
+                    <span data-launch-copy data-launch-active-copy="The first single session is free; paid plans are clearly marked before you submit." data-launch-expired-copy="Single sessions and guided plans are clearly marked before you submit.">Single sessions and guided plans are clearly marked before you submit.</span>
                 </p>
                 <div class="mini-points">
-                    <span data-launch-copy data-launch-expired-copy="Single session details confirmed after registration">Single session is free during launch</span>
+                    <span data-launch-copy data-launch-active-copy="Single session is free during launch" data-launch-expired-copy="Single session details confirmed after registration">Single session details confirmed after registration</span>
                     <span>Paid plans are confirmed before scheduling</span>
                     <span>WhatsApp confirmation within 24 hours</span>
                     <span>Built for future in-app payment</span>
                 </div>
             </div>
             <aside class="summary-card" id="selectionSummary">
-                <div class="summary-tag" id="summaryTag">Recommended</div>
-                <h2 class="summary-title" id="summaryTitle">Single Session</h2>
-                <div class="summary-price"><span id="summaryWas">$15</span><strong id="summaryNow">FREE</strong></div>
-                <div class="summary-note" id="summaryNote">N0 · launch access</div>
+                <div class="summary-tag" id="summaryTag">Choose path</div>
+                <h2 class="summary-title" id="summaryTitle">Select a session</h2>
+                <div class="summary-price"><span id="summaryWas"></span><strong id="summaryNow">Ready when you are</strong></div>
+                <div class="summary-note" id="summaryNote">Pick one option from the form to see the exact offer summary.</div>
                 <ul class="summary-list" id="summaryFeatures"></ul>
             </aside>
         </div>
@@ -233,7 +233,7 @@
         <div class="container layout">
             <div class="registration-card">
                 <h2 class="section-title">Reserve your session</h2>
-                <p class="section-copy">Your selected package already shapes this form. You can still change it, but the flow starts from the option you clicked.</p>
+                <p class="section-copy">If you clicked from a plan, it will be preselected. If not, choose the path that matches what you need now.</p>
                 <form id="registrationForm">
                     <div class="form-row">
                         <div class="form-group">
@@ -265,7 +265,7 @@
                         <label for="goals">What do you hope to achieve? (Optional)</label>
                         <textarea id="goals" name="goals" rows="4" placeholder="Tell us what you're navigating right now, what kind of clarity you need, or what you'd like this session to unlock."></textarea>
                     </div>
-                    <button type="submit" class="cta-button" id="registerButton">Book my free session</button>
+                    <button type="submit" class="cta-button" id="registerButton">Reserve my session</button>
                     <div class="microcopy" id="registerMicrocopy" data-launch-html data-launch-expired-html='Single sessions and paid plans are reviewed and confirmed before payment details are sent. Session questions belong at <a href="mailto:sessions@atanda.site" style="color:var(--accent);font-weight:700;text-decoration:none">sessions@atanda.site</a>.'>
                         Single sessions and paid plans are reviewed and confirmed before payment details are sent. Session questions belong at <a href="mailto:sessions@atanda.site" style="color:var(--accent);font-weight:700;text-decoration:none">sessions@atanda.site</a>.
                     </div>
@@ -366,18 +366,63 @@
             }
         };
 
+        const EMPTY_SELECTION = {
+            tag: 'Choose path',
+            title: 'Select a session',
+            oldPrice: '',
+            currentPrice: 'Ready when you are',
+            note: 'Pick one option from the form to see the exact offer summary.',
+            button: 'Reserve my session',
+            features: [
+                'Choose from single, package, group, or intensive support',
+                'Confirmation comes by email and WhatsApp',
+                'Payment details are only sent where they apply'
+            ]
+        };
+
+        const CUSTOM_SELECTION = {
+            tag: 'Custom offer',
+            title: 'Selected offer',
+            oldPrice: '',
+            currentPrice: '',
+            note: 'Details confirmed after registration',
+            button: 'Reserve my session',
+            features: [
+                'Custom Atanda Verse support offer',
+                'Details confirmed after registration',
+                'Follow-up comes through email and WhatsApp'
+            ]
+        };
+
         function getSelectedPackage() {
             const params = new URLSearchParams(window.location.search);
-            return params.get('session') || 'single';
+            const selected = params.get('session');
+            return selected && /^[a-z0-9-]+$/i.test(selected) ? selected : '';
         }
 
         function applyPackage(sessionKey) {
+            if (!sessionKey) {
+                const data = EMPTY_SELECTION;
+                document.getElementById('summaryTag').textContent = data.tag;
+                document.getElementById('summaryTitle').textContent = data.title;
+                const wasEl = document.getElementById('summaryWas');
+                wasEl.textContent = '';
+                wasEl.style.display = 'none';
+                document.getElementById('summaryNow').textContent = data.currentPrice;
+                document.getElementById('summaryNote').textContent = data.note;
+                document.getElementById('registerButton').textContent = data.button;
+                document.getElementById('summaryFeatures').innerHTML = data.features.map(function(item){
+                    return '<li>' + item + '</li>';
+                }).join('');
+                document.getElementById('sessionType').value = '';
+                return;
+            }
             const live = window.ivSessionPricing && window.ivSessionPricing[sessionKey];
-            const data = Object.assign({}, PACKAGE_MAP[sessionKey] || PACKAGE_MAP.single);
+            const data = Object.assign({}, PACKAGE_MAP[sessionKey] || CUSTOM_SELECTION);
             if (live) {
                 data.title = live.label || data.title;
-                data.currentPrice = live.usd || data.currentPrice;
-                data.note = (live.ngn || '') + (live.note ? ' - ' + live.note : '');
+                data.currentPrice = live.price || live.usd || data.currentPrice;
+                data.note = [live.ngn, live.note].filter(Boolean).join(' - ') || data.note;
                 data.tag = live.badge || data.tag;
                 if (sessionKey === 'single' && live.free === false) {
                     data.oldPrice = '';
@@ -389,7 +434,7 @@
             const wasEl = document.getElementById('summaryWas');
             wasEl.textContent = data.oldPrice;
             wasEl.style.display = data.oldPrice ? '' : 'none';
-            document.getElementById('summaryNow').textContent = data.currentPrice || 'FREE';
+            document.getElementById('summaryNow').textContent = data.currentPrice || 'Details pending';
             document.getElementById('summaryNote').textContent = data.note;
             document.getElementById('registerButton').textContent = data.button;
             document.getElementById('summaryFeatures').innerHTML = data.features.map(function(item){

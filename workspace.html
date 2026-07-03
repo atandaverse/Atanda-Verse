@@ -806,6 +806,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         <div class="ops-card"><span>Publishing Pulse</span><strong id="dashPulseTitle">Calm</strong><small id="dashPulseMeta">We are reading the queue and checking what needs action next.</small></div>
         <div class="ops-card"><span>Best Performing</span><strong id="dashTopTitle">—</strong><small id="dashTopMeta">Your strongest post by current view count.</small></div>
         <div class="ops-card"><span>Next Move</span><strong id="dashNextMove">Open posts</strong><small id="dashNextMeta">We will suggest the cleanest next action once the queue loads.</small></div>
+        <div class="ops-card"><span>Content Source</span><strong id="dashSourceTitle">Checking</strong><small id="dashSourceMeta">Confirming whether Workspace is reading live content or fallback data.</small></div>
       </div>
       <div class="crow">
         <div class="cc"><div class="ct">Views Per Post <span class="live-w" style="font-size:.57rem"><span class="ld"></span>LIVE</span></div><div class="bc" id="barchart"></div></div>
@@ -824,6 +825,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         <div class="ops-card"><span>Activity (24h)</span><strong id="analyticsViews24h">0</strong><small id="analyticsViews24hMeta">Tracked page views captured during the last 24 hours.</small></div>
         <div class="ops-card"><span>Coverage</span><strong id="analyticsCoverage">0</strong><small id="analyticsCoverageMeta">Categories currently represented across your posts.</small></div>
         <div class="ops-card"><span>Momentum</span><strong id="analyticsMomentum">Stable</strong><small id="analyticsMomentumMeta">A quick read on whether your content engine is active or waiting.</small></div>
+        <div class="ops-card"><span>Data Source</span><strong id="analyticsSourceTitle">Checking</strong><small id="analyticsSourceMeta">Confirming live analytics availability.</small></div>
       </div>
       <div class="ag">
         <div class="ac2"><div class="ct">Top Posts by Views</div><div id="toprank"></div></div>
@@ -4338,6 +4340,9 @@ initDash = async function(){
   avAdminText('dashPulseTitle',pulseTitle);avAdminText('dashPulseMeta',pulseMeta);
   avAdminText('dashNextMove',counts.draft?'Finish drafts':counts.coming?'Review timing':counts.published?'Review campaigns':'Create post');
   avAdminText('dashNextMeta',counts.draft?'Open All Posts and move the strongest draft forward.':counts.coming?'Decide what should go live and what should stay hidden.':counts.published?'Turn live posts into newsletter or social moments.':'Start a new article draft and publish it when ready.');
+  const sourceLabel=resolved.source==='database'?'Supabase':resolved.source==='cache'?'Local cache':resolved.source==='seed'?'Seed fallback':resolved.source||'Unknown';
+  avAdminText('dashSourceTitle',sourceLabel);
+  avAdminText('dashSourceMeta',resolved.source==='database'?'Workspace is reading the shared database source.':resolved.source==='cache'?'Live content is unavailable, so this view is using browser cache.':'This view is using bundled fallback content until live posts are reachable.');
   const box=document.getElementById('attentionList');
   if(box)box.innerHTML=attention.slice(0,5).map(avAdminAttentionItem).join('')||'<div class="attention-item"><div class="attention-copy"><strong>Everything looks calm right now.</strong><span>The content queue, community surfaces, and campaigns are in a manageable state.</span></div><button class="ab" onclick="nav(\'editor\')">Create post</button></div>';
 }
@@ -4361,6 +4366,8 @@ initAnalytics = async function(){
   const momentum=_sbIsUnavailable()?'Unavailable':views24h>24?'Rising':views24h>0?'Active':counts.draft?'Building':counts.published?'Live':'Quiet';
   avAdminText('analyticsMomentum',momentum);
   avAdminText('analyticsMomentumMeta',_sbIsUnavailable()?'Momentum is hidden until Supabase responds again.':views24h>24?'Audience activity is above idle and the analytics layer is catching it.':views24h>0?'You have live traffic now, even if it is still early.':counts.draft?'Draft energy is waiting to become published reach.':counts.published?'Published posts are available; reader activity will appear as visits come in.':'The analytics layer will come alive once posts start moving.');
+  avAdminText('analyticsSourceTitle',_sbIsUnavailable()?'Unavailable':'First-party');
+  avAdminText('analyticsSourceMeta',_sbIsUnavailable()?'Supabase analytics tables are not reachable right now.':'Analytics is reading the Atanda Verse first-party tracking path.');
   const top=document.getElementById('toprank');
   if(top)top.innerHTML=sorted.slice(0,8).map((p,i)=>`<div class="ri"><div class="rn">#${i+1}</div><div class="rif"><div class="rt2">${avAdminEsc(p.title||'Untitled post')}</div><div class="rc">${avAdminEsc(p.category||'Uncategorized')} - ${avAdminEsc(p.status||'draft')} - ${Number((snapshot.perPostVisitors24h||{})[p.id]||0).toLocaleString()} visitors in 24h</div></div><div class="rv2">${(vm[p.id]||0).toLocaleString()}</div></div>`).join('')||'<div style="color:var(--t3);font-size:.82rem;padding:1rem;text-align:center">No posts available for ranking.</div>';
   avAdminCategoryBreakdown(posts);
@@ -4426,17 +4433,47 @@ const DEFAULT_SESSION_PRICING={
   group:{label:'Weekly Group Sessions',badge:'GROUP PATH',usd:'$36',ngn:'N45,000',note:'paid group access',free:false},
   intensive:{label:'Monthly Intensive',badge:'INTENSIVE',usd:'$180',ngn:'N225,000',note:'paid intensive',free:false}
 };
+function workspaceLaunchActive(){
+  const s=_localSettings();
+  const target=s&&s.countdownTarget?new Date(s.countdownTarget).getTime():NaN;
+  const campaign=s&&s.publicCampaign&&typeof s.publicCampaign==='object'?s.publicCampaign:{};
+  return Number.isFinite(target)&&target>Date.now()&&campaign.enabled!==false;
+}
+function normalizeAdminPricingPlan(key,plan){
+  const out={...(plan||{})};
+  if(key!=='single')return out;
+  const active=workspaceLaunchActive();
+  const stale=/free\s*start|launch|campaign|ended/i;
+  if(active){
+    out.free=true;
+    out.badge=out.activeBadge||'FREE START';
+    out.usd='FREE';
+    out.ngn='N0';
+    out.note=out.activeNote||'single launch session';
+    return out;
+  }
+  const staleBadge=stale.test(String(out.badge||out.expiredBadge||''));
+  const staleUsd=stale.test(String(out.usd||out.expiredUsd||''));
+  const staleNgn=/^n?0$/i.test(String(out.ngn||out.expiredNgn||'').replace(/\s+/g,''));
+  const staleNote=stale.test(String(out.note||out.expiredNote||''));
+  out.free=false;
+  out.badge=staleBadge?'1:1 CLARITY':(out.expiredBadge||out.badge||'1:1 CLARITY');
+  out.usd=staleUsd?(out.paidUsd||'$15'):(out.expiredUsd||out.paidUsd||out.usd||'$15');
+  out.ngn=staleNgn?(out.paidNgn||''):(out.expiredNgn||out.paidNgn||out.ngn||'');
+  out.note=staleNote?'single clarity session':(out.expiredNote||out.note||'single clarity session');
+  return out;
+}
 function getSessionPricingSettings(){
   const saved=_localSettings().sessionPricing||{};
   const out={};
   Object.keys(DEFAULT_SESSION_PRICING).forEach(k=>{
-    out[k]={...DEFAULT_SESSION_PRICING[k],...(saved[k]||{})};
+    out[k]=normalizeAdminPricingPlan(k,{...DEFAULT_SESSION_PRICING[k],...(saved[k]||{})});
     if(k==='three-pack'&&out[k].ngn==='N60,000'&&out[k].usd==='$40')out[k].usd='$48';
     if(k==='group'&&out[k].ngn==='N45,000'&&out[k].usd==='$30')out[k].usd='$36';
     if(k==='intensive'&&out[k].ngn==='N225,000'&&out[k].usd==='$150')out[k].usd='$180';
   });
   Object.keys(saved).forEach(k=>{
-    if(!out[k]&&saved[k])out[k]={label:k.replace(/-/g,' ').replace(/\b\w/g,m=>m.toUpperCase()),badge:'CUSTOM',usd:'',ngn:'',note:'custom offer',free:false,...saved[k]};
+    if(!out[k]&&saved[k])out[k]=normalizeAdminPricingPlan(k,{label:k.replace(/-/g,' ').replace(/\b\w/g,m=>m.toUpperCase()),badge:'CUSTOM',usd:'',ngn:'',note:'custom offer',free:false,...saved[k]});
   });
   return out;
 }
@@ -4516,8 +4553,8 @@ function openPricingModal(key){
   document.getElementById('pricingEditNgn').value=p.ngn||'';
   document.getElementById('pricingEditNote').value=p.note||'';
   document.getElementById('pricingEditFree').checked=!!p.free;
-  document.getElementById('pricingEditFree').disabled=false;
-  document.getElementById('pricingModalHint').textContent=DEFAULT_SESSION_PRICING[key]?'Core offers can be edited but not deleted.':'Custom offers can be renamed, priced, saved, or deleted from the pricing page.';
+  document.getElementById('pricingEditFree').disabled=key==='single'&&!workspaceLaunchActive();
+  document.getElementById('pricingModalHint').textContent=key==='single'&&!workspaceLaunchActive()?'Single Session only becomes free while an active campaign countdown is running. Outside campaigns it stays as the evergreen paid offer.':(DEFAULT_SESSION_PRICING[key]?'Core offers can be edited but not deleted.':'Custom offers can be renamed, priced, saved, or deleted from the pricing page.');
   document.getElementById('pricingEditModal').classList.add('on');
 }
 function addSessionPricingPlan(){openPricingModal('');}

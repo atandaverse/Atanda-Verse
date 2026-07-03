@@ -334,6 +334,7 @@
     var source = raw && typeof raw === 'object' ? raw : {};
     var launch = getLaunchState(settings);
     var pricing = {};
+    var staleLaunchText = /free\s*start|launch|campaign|ended/i;
     Object.keys(DEFAULT_SESSION_PRICING).forEach(function (key) {
       pricing[key] = Object.assign({}, DEFAULT_SESSION_PRICING[key], source[key] || {});
       if (key === 'three-pack' && pricing[key].ngn === 'N60,000' && pricing[key].usd === '$40') pricing[key].usd = '$48';
@@ -346,11 +347,14 @@
         pricing[key].ngn = 'N0';
         pricing[key].note = pricing[key].activeNote || 'single launch session';
       } else if (key === 'single') {
-        var staleCampaignNote = /launch|campaign|ended/i.test(String(pricing[key].expiredNote || ''));
+        var staleCampaignBadge = staleLaunchText.test(String(pricing[key].expiredBadge || pricing[key].badge || ''));
+        var staleCampaignUsd = staleLaunchText.test(String(pricing[key].expiredUsd || pricing[key].usd || ''));
+        var staleCampaignNgn = /^n?0$/i.test(String(pricing[key].expiredNgn || pricing[key].ngn || '').replace(/\s+/g, ''));
+        var staleCampaignNote = staleLaunchText.test(String(pricing[key].expiredNote || pricing[key].note || ''));
         pricing[key].free = false;
-        pricing[key].badge = pricing[key].expiredBadge || pricing[key].badge || '1:1 CLARITY';
-        pricing[key].usd = pricing[key].expiredUsd || pricing[key].paidUsd || pricing[key].usd || '$15';
-        pricing[key].ngn = pricing[key].expiredNgn || pricing[key].paidNgn || '';
+        pricing[key].badge = staleCampaignBadge ? '1:1 CLARITY' : (pricing[key].expiredBadge || pricing[key].badge || '1:1 CLARITY');
+        pricing[key].usd = staleCampaignUsd ? (pricing[key].paidUsd || '$15') : (pricing[key].expiredUsd || pricing[key].paidUsd || pricing[key].usd || '$15');
+        pricing[key].ngn = staleCampaignNgn ? (pricing[key].paidNgn || '') : (pricing[key].expiredNgn || pricing[key].paidNgn || '');
         pricing[key].note = staleCampaignNote ? 'single clarity session' : (pricing[key].expiredNote || 'single clarity session');
       } else {
         pricing[key].free = !!pricing[key].free;
