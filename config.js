@@ -181,10 +181,16 @@
 
     function transformFaqForLaunch(items) {
       var launch = getLaunchState();
-      if (!launch.expired) return items;
+      if (launch.active) return items;
       return (items || []).map(function (item) {
-        if (item.id === 'faq-d6') item.answer = 'The free launch window has ended. Single clarity sessions, three-session packages, weekly group access, and monthly intensives are guided offers confirmed after registration.';
-        if (item.id === 'faq-d7') item.answer = 'The free single-session launch offer has ended. Current session options remain available through the registration flow.';
+        if (item.id === 'faq-d6') {
+          item.question = 'Are the sessions free?';
+          item.answer = 'Single clarity sessions, three-session packages, weekly group access, and monthly intensives are guided offers confirmed after registration.';
+        }
+        if (item.id === 'faq-d7') {
+          item.question = 'How do current session offers work?';
+          item.answer = 'Choose the session path that fits your need. Details, next steps, and any payment information are confirmed after registration.';
+        }
         if (item.id === 'faq-d9') item.answer = 'If a session does not add value, tell us honestly. The goal is genuine clarity, not just a completed session.';
         return item;
       });
@@ -222,9 +228,14 @@
     }
     var target = source && source.countdownTarget ? new Date(source.countdownTarget).getTime() : NaN;
     var hasTarget = Number.isFinite(target);
+    var expired = hasTarget ? target <= Date.now() : false;
+    var campaign = source && source.publicCampaign && typeof source.publicCampaign === 'object' ? source.publicCampaign : {};
+    var campaignEnabled = campaign.enabled !== false;
     return {
       target: hasTarget ? target : null,
-      expired: hasTarget ? target <= Date.now() : false,
+      expired: expired,
+      active: hasTarget && !expired && campaignEnabled,
+      hasCampaign: hasTarget && campaignEnabled,
       settings: source || {}
     };
   }
@@ -233,24 +244,31 @@
     enabled: true,
     type: 'free-session',
     activeBadge: 'Free Single Session During Launch',
-    expiredBadge: 'Paid Single Sessions Now Open',
+    expiredBadge: 'Single Sessions Open',
     activeNavCta: 'Register Free',
     expiredNavCta: 'Register',
     activeStickyLabel: 'Book Free Session',
-    expiredStickyLabel: 'Book Session',
+    expiredStickyLabel: 'Book a Session',
     activeStickyDetail: 'Single launch slot',
-    expiredStickyDetail: 'Single 1:1 path',
+    expiredStickyDetail: 'Clarity support',
     activeSingleCta: 'Book Free Session',
     expiredSingleCta: 'Reserve Session',
     activeRegisterButton: 'Book my free session',
     expiredRegisterButton: 'Reserve my session',
-    expiredRegisterMicrocopy: 'The free launch window has ended. Single sessions and paid plans are reviewed before confirmation. Session questions belong at sessions@atanda.site.'
+    expiredRegisterMicrocopy: 'Single sessions and guided plans are reviewed before confirmation. Session questions belong at sessions@atanda.site.'
   };
 
   function getPublicCampaign(settings) {
     var source = settings || {};
     var custom = source.publicCampaign && typeof source.publicCampaign === 'object' ? source.publicCampaign : {};
-    return Object.assign({}, DEFAULT_PUBLIC_CAMPAIGN, custom);
+    var campaign = Object.assign({}, DEFAULT_PUBLIC_CAMPAIGN, custom);
+    if (/campaign\s*ended|launch\s*offer\s*ended/i.test(String(campaign.expiredStickyDetail || ''))) {
+      campaign.expiredStickyDetail = DEFAULT_PUBLIC_CAMPAIGN.expiredStickyDetail;
+    }
+    if (/launch\s*offer\s*ended/i.test(String(campaign.expiredRegisterMicrocopy || ''))) {
+      campaign.expiredRegisterMicrocopy = DEFAULT_PUBLIC_CAMPAIGN.expiredRegisterMicrocopy;
+    }
+    return campaign;
   }
 
   function rememberOriginal(el) {
@@ -277,14 +295,14 @@
   var DEFAULT_SESSION_PRICING = {
     single: {
       label: 'Single Session',
-      badge: 'FREE START',
-      usd: 'FREE',
-      ngn: 'N0',
-      note: 'single launch session',
+      badge: '1:1 CLARITY',
+      usd: '$15',
+      ngn: '',
+      note: 'single clarity session',
       paidUsd: '$15',
-      expiredBadge: 'PAID 1:1',
-      expiredNote: 'launch offer ended',
-      free: true
+      expiredBadge: '1:1 CLARITY',
+      expiredNote: 'single clarity session',
+      free: false
     },
     'three-pack': {
       label: 'Three Session Package',
@@ -321,14 +339,21 @@
       if (key === 'three-pack' && pricing[key].ngn === 'N60,000' && pricing[key].usd === '$40') pricing[key].usd = '$48';
       if (key === 'group' && pricing[key].ngn === 'N45,000' && pricing[key].usd === '$30') pricing[key].usd = '$36';
       if (key === 'intensive' && pricing[key].ngn === 'N225,000' && pricing[key].usd === '$150') pricing[key].usd = '$180';
-      if (key === 'single' && launch.expired) {
+      if (key === 'single' && launch.active) {
+        pricing[key].free = true;
+        pricing[key].badge = pricing[key].activeBadge || 'FREE START';
+        pricing[key].usd = 'FREE';
+        pricing[key].ngn = 'N0';
+        pricing[key].note = pricing[key].activeNote || 'single launch session';
+      } else if (key === 'single') {
+        var staleCampaignNote = /launch|campaign|ended/i.test(String(pricing[key].expiredNote || ''));
         pricing[key].free = false;
-        pricing[key].badge = pricing[key].expiredBadge || 'PAID 1:1';
-        pricing[key].usd = pricing[key].expiredUsd || pricing[key].paidUsd || '$15';
+        pricing[key].badge = pricing[key].expiredBadge || pricing[key].badge || '1:1 CLARITY';
+        pricing[key].usd = pricing[key].expiredUsd || pricing[key].paidUsd || pricing[key].usd || '$15';
         pricing[key].ngn = pricing[key].expiredNgn || pricing[key].paidNgn || '';
-        pricing[key].note = pricing[key].expiredNote || 'launch offer ended';
+        pricing[key].note = staleCampaignNote ? 'single clarity session' : (pricing[key].expiredNote || 'single clarity session');
       } else {
-        pricing[key].free = key === 'single' ? pricing[key].free !== false : !!pricing[key].free;
+        pricing[key].free = !!pricing[key].free;
       }
       pricing[key].price = pricing[key].free ? 'FREE' : [pricing[key].usd, pricing[key].ngn].filter(Boolean).join(' / ');
     });
@@ -359,14 +384,23 @@
   function applyLaunchState(settings) {
     var launch = getLaunchState(settings);
     var campaign = getPublicCampaign(launch.settings);
-    var restore = campaign.enabled === false;
+    var active = !!launch.active;
+    var inactive = !active;
     document.documentElement.setAttribute('data-launch-expired', launch.expired ? 'true' : 'false');
-    document.documentElement.setAttribute('data-public-campaign', campaign.type || 'custom');
-    if (restore) {
+    document.documentElement.setAttribute('data-launch-active', active ? 'true' : 'false');
+    document.documentElement.setAttribute('data-public-campaign', active ? (campaign.type || 'custom') : 'none');
+    document.querySelectorAll('.countdown-timer').forEach(function (el) {
+      el.hidden = inactive;
+      el.setAttribute('aria-hidden', inactive ? 'true' : 'false');
+    });
+    document.querySelectorAll('.hero-badge').forEach(function (el) {
+      el.hidden = inactive;
+      el.setAttribute('aria-hidden', inactive ? 'true' : 'false');
+    });
+    if (campaign.enabled === false) {
       ['.nav-cta','.hero-badge','.sticky-cta-label','.sticky-cta-detail','[data-price-plan="single"] .cta-button','#registerButton','#registerMicrocopy'].forEach(function (selector) { setHtml(selector, '', true); });
       return launch;
     }
-    var active = !launch.expired;
     var textMap = [
       ['.nav-cta', active ? campaign.activeNavCta : campaign.expiredNavCta],
       ['.hero-badge', active ? campaign.activeBadge : campaign.expiredBadge],
@@ -413,7 +447,7 @@
         if (naira) naira.textContent = (item.ngn || '') + (item.note ? ' \u00b7 ' + item.note : '');
       });
       document.querySelectorAll('option[data-price-option="' + key + '"]').forEach(function (opt) {
-        opt.textContent = item.free ? item.label + ' (Free launch)' : item.label + ' (' + item.price + ')';
+        opt.textContent = item.free ? item.label + ' (Free)' : item.label + ' (' + item.price + ')';
       });
       if (!DEFAULT_SESSION_PRICING[key]) {
         document.querySelectorAll('select#sessionType').forEach(function (sel) {
@@ -422,7 +456,7 @@
             opt.value = key;
             opt.dataset.priceOption = key;
             opt.dataset.priceGenerated = 'true';
-            opt.textContent = item.free ? item.label + ' (Free launch)' : item.label + ' (' + item.price + ')';
+            opt.textContent = item.free ? item.label + ' (Free)' : item.label + ' (' + item.price + ')';
             sel.appendChild(opt);
           }
         });

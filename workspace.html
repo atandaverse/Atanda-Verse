@@ -1352,7 +1352,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       </div>
       <div class="scc" style="margin-bottom:1rem">
         <div class="sct">Pricing Source</div>
-        <div class="scd">This panel saves to the live Supabase <strong>settings.sessionPricing</strong> row. The public site also checks the countdown target and stops presenting the launch-free single session after expiry.</div>
+        <div class="scd">This panel saves to the live Supabase <strong>settings.sessionPricing</strong> row. Active campaigns can temporarily change public CTAs and pricing; inactive campaigns return the site to evergreen session language.</div>
         <div id="pricingSourceStatus" class="fn" style="margin:.8rem 0 0;padding:.7rem .85rem;border:1px solid var(--b);border-radius:12px;background:var(--bg3);color:var(--t3)">Checking live pricing source...</div>
       </div>
       <div id="pricingRows" style="display:grid;gap:.85rem"></div>
@@ -4375,8 +4375,8 @@ const FAQ_DEFAULTS_ADMIN=[
   {id:'faq-d3',question:'What should I expect from my first session?',answer:'Your first session focuses on your situation, identifying mental blocks, and creating a clear vision forward. You will leave with actionable insights and a personalized clarity plan.',category:'sessions',order:2},
   {id:'faq-d4',question:'How are group sessions different from 1:1?',answer:'Group sessions have weekly themes and build community accountability. 1:1 sessions are entirely focused on you. Many people start with group and later add 1:1 for deeper work.',category:'sessions',order:3},
   {id:'faq-d5',question:'Do I need to prepare anything?',answer:'You will receive a short guide 24 hours before with reflection questions. All you need is a quiet space, stable internet, and an open mind.',category:'sessions',order:4},
-  {id:'faq-d6',question:'Is Atanda Verse free?',answer:'Your first single clarity session is free during launch. Three-session packages, weekly group access, and monthly intensives are paid guided offers, and payment details are confirmed after registration.',category:'pricing',order:0},
-  {id:'faq-d7',question:'How long is the free single-session offer?',answer:'The countdown timer on the homepage shows how much time remains for the free single-session launch offer. Paid plans stay available for deeper support.',category:'pricing',order:1},
+  {id:'faq-d6',question:'Are the sessions free?',answer:'Single clarity sessions, three-session packages, weekly group access, and monthly intensives are guided offers confirmed after registration.',category:'pricing',order:0},
+  {id:'faq-d7',question:'How do current session offers work?',answer:'Choose the session path that fits your need. Details, next steps, and any payment information are confirmed after registration.',category:'pricing',order:1},
   {id:'faq-d8',question:'What are the current paid prices?',answer:'The default paid pricing is $48 / N60,000 for the three-session package, $36 / N45,000 for weekly group access, and $180 / N225,000 for the monthly intensive. Dollar pricing intentionally carries about a 20% international client margin. Admin can update these prices when needed.',category:'pricing',order:2},
   {id:'faq-d9',question:'What if the session does not help me?',answer:'Your first single session has no payment risk during launch. If it does not add value, tell us honestly. The goal is genuine clarity, not just a completed session.',category:'pricing',order:3},
   {id:'faq-d10',question:'How do online sessions work?',answer:'Sessions are held via Zoom or your preferred platform. You will receive a private link and a preparation guide before the session.',category:'logistics',order:0},
@@ -4421,7 +4421,7 @@ function toast(msg,type='inf'){const wrap=document.getElementById('toasts');cons
 
 // ── COUNTDOWN ADMIN ──────────────────────────────────────────────────────
 const DEFAULT_SESSION_PRICING={
-  single:{label:'Single Session',badge:'FREE START',usd:'FREE',ngn:'N0',note:'single launch session',free:true,paidUsd:'$15',expiredBadge:'PAID 1:1',expiredNote:'launch offer ended'},
+  single:{label:'Single Session',badge:'1:1 CLARITY',usd:'$15',ngn:'',note:'single clarity session',free:false,paidUsd:'$15',expiredBadge:'1:1 CLARITY',expiredNote:'single clarity session'},
   'three-pack':{label:'Three Session Package',badge:'MOST POPULAR',usd:'$48',ngn:'N60,000',note:'paid package',free:false},
   group:{label:'Weekly Group Sessions',badge:'GROUP PATH',usd:'$36',ngn:'N45,000',note:'paid group access',free:false},
   intensive:{label:'Monthly Intensive',badge:'INTENSIVE',usd:'$180',ngn:'N225,000',note:'paid intensive',free:false}
@@ -4620,9 +4620,9 @@ async function saveCountdown(){
     expiredSingleCta:document.getElementById('campaignExpiredCta')?.value.trim()||'Reserve Session',
     expiredRegisterButton:(document.getElementById('campaignExpiredCta')?.value.trim()||'Reserve Session').replace(/^Reserve /i,'Reserve my '),
     activeStickyLabel:document.getElementById('campaignActiveCta')?.value.trim()||'Book Free Session',
-    expiredStickyLabel:document.getElementById('campaignExpiredCta')?.value.trim()||'Book Session',
+    expiredStickyLabel:document.getElementById('campaignExpiredCta')?.value.trim()||'Book a Session',
     activeStickyDetail:'Campaign active',
-    expiredStickyDetail:'Campaign ended'
+    expiredStickyDetail:'Clarity support'
   };
   try{
     if(d){await dbSaveSetting('countdownTarget',new Date(d).toISOString());const el=document.getElementById('cdCurrentTarget');if(el)el.textContent=new Date(d).toLocaleString();}
