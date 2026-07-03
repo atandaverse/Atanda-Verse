@@ -17,6 +17,24 @@ function escapeHtml(value: unknown) {
     .replaceAll('"', "&quot;");
 }
 
+function splitEmails(value: string | null) {
+  return String(value || "")
+    .split(/[,\s;]+/)
+    .map((email) => email.trim())
+    .filter((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+}
+
+function adminCopyRecipients() {
+  const configured = [
+    ...splitEmails(Deno.env.get("ADMIN_COPY_EMAIL")),
+    ...splitEmails(Deno.env.get("ADMIN_COPY_EMAILS")),
+    ...splitEmails(Deno.env.get("ADMIN_NOTIFY_EMAIL")),
+    ...splitEmails(Deno.env.get("ADMIN_NOTIFY_EMAILS")),
+  ];
+  const recipients = configured.length ? configured : ["hello@atanda.site", "sessions@atanda.site"];
+  return Array.from(new Set(recipients.map((email) => email.toLowerCase())));
+}
+
 function makeApplicationNo() {
   return `AV-${new Date().getFullYear()}-${crypto.randomUUID().slice(0, 6).toUpperCase()}`;
 }
@@ -98,10 +116,12 @@ Deno.serve(async (req) => {
 
     if (!existing?.emailed_at) {
       const vaultUrl = siteUrl("vaultlibrary.html");
+      const copyRecipients = adminCopyRecipients().filter((recipient) => recipient !== cleanEmail);
       await sendEmail(resendKey, {
         from: "Atanda Verse Blog <letters@atanda.site>",
         reply_to: "letters@atanda.site",
         to: [cleanEmail],
+        bcc: copyRecipients,
         subject: "Your 5-Day Clarity Challenge access",
         html: `
           <div style="margin:0;padding:24px 12px;background:#f3f6fb;font-family:Arial,sans-serif;color:#172033">

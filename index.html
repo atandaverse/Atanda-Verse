@@ -782,10 +782,11 @@ nav{padding-left:env(safe-area-inset-left,0);padding-right:env(safe-area-inset-r
 
 /* Fix FAQ answer clipping on mobile (250px cuts long answers) */
 @media(max-width:768px){
-  .faq-item.active .faq-answer{max-height:none!important;}
+  .faq-item.active .faq-answer{max-height:none!important;overflow:visible!important;}
   /* Use grid trick instead for smooth animation */
-  .faq-answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);max-height:none!important;overflow:visible;}
-  .faq-answer > p{overflow:hidden;padding:0 1.2rem 1.2rem;}
+  .faq-answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);max-height:none!important;overflow:hidden!important;}
+  .faq-answer > p,.faq-answer .faq-inner{overflow:hidden;padding:0 1.2rem 1.2rem;}
+  .faq-answer .faq-inner > p{padding:0!important;margin:0;}
   .faq-item.active .faq-answer{grid-template-rows:1fr;}
 }
 
