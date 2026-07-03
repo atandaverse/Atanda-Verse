@@ -1305,24 +1305,34 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <div class="sct">⏰ Countdown Timer</div>
           <div class="scd">Set the deadline shown on the homepage. Timer auto-updates on every visitor's page.</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem">
-            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Target Date &amp; Time</label><input type="datetime-local" id="cdDate" class="mn" onchange="saveCountdown()"></div>
-            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Label Text</label><input type="text" id="cdLabel2" class="mn" placeholder="⏰ Free Access Ends In" oninput="saveCountdown()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Target Date &amp; Time</label><input type="datetime-local" id="cdDate" class="mn" onchange="markCountdownDirty()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Label Text</label><input type="text" id="cdLabel2" class="mn" placeholder="⏰ Free Access Ends In" oninput="markCountdownDirty()"></div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.8rem;margin-bottom:.8rem">
-            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Campaign Type</label><input type="text" id="campaignType" class="mn" placeholder="free-session" oninput="saveCountdown()"></div>
-            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active Badge</label><input type="text" id="campaignActiveBadge" class="mn" placeholder="Free Single Session During Launch" oninput="saveCountdown()"></div>
-            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired Badge</label><input type="text" id="campaignExpiredBadge" class="mn" placeholder="Paid Single Sessions Now Open" oninput="saveCountdown()"></div>
-            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active CTA</label><input type="text" id="campaignActiveCta" class="mn" placeholder="Book Free Session" oninput="saveCountdown()"></div>
-            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired CTA</label><input type="text" id="campaignExpiredCta" class="mn" placeholder="Reserve Session" oninput="saveCountdown()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Campaign Type</label><input type="text" id="campaignType" class="mn" placeholder="free-session" oninput="markCountdownDirty()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active Badge</label><input type="text" id="campaignActiveBadge" class="mn" placeholder="Free Single Session During Launch" oninput="markCountdownDirty()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired Badge</label><input type="text" id="campaignExpiredBadge" class="mn" placeholder="Paid Single Sessions Now Open" oninput="markCountdownDirty()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active CTA</label><input type="text" id="campaignActiveCta" class="mn" placeholder="Book Free Session" oninput="markCountdownDirty()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired CTA</label><input type="text" id="campaignExpiredCta" class="mn" placeholder="Reserve Session" oninput="markCountdownDirty()"></div>
           </div>
-          <div style="background:var(--s);border-radius:var(--rs);padding:.7rem;font-size:.74rem;color:var(--t3)">Current target: <span id="cdCurrentTarget" style="color:var(--t2)">Not set (defaults to 30 days from first visit)</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;background:var(--s);border-radius:var(--rs);padding:.7rem;font-size:.74rem;color:var(--t3)">
+            <div>
+              <div>Current target: <span id="cdCurrentTarget" style="color:var(--t2)">Not set (defaults to 30 days from first visit)</span></div>
+              <div id="countdownSaveStatus" style="margin-top:.25rem;color:var(--t3)">No unsaved timer changes.</div>
+            </div>
+            <button class="btn p" id="countdownSaveBtn" style="padding:.5rem 1rem;font-size:.76rem" onclick="saveCountdown()">Save Campaign Timer</button>
+          </div>
         </div>
         <div class="scc" style="grid-column:1/-1">
           <div class="sct">⭐ Featured Post</div>
           <div class="scd">Pin a specific post as featured on the blog. If none selected, most recent is used.</div>
-          <div style="display:flex;flex-direction:column;gap:.38rem;max-width:500px">
-            <label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Select Featured Post</label>
-            <select id="featuredPostSelect" class="mn" onchange="saveFeaturedPost()"><option value="">Most Recent (auto)</option></select>
+          <div style="display:flex;align-items:flex-end;gap:.65rem;flex-wrap:wrap;max-width:760px">
+            <div style="display:flex;flex-direction:column;gap:.38rem;flex:1;min-width:260px">
+              <label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Select Featured Post</label>
+              <select id="featuredPostSelect" class="mn" onchange="markFeaturedPostDirty()"><option value="">Most Recent (auto)</option></select>
+            </div>
+            <button class="btn p" id="featuredPostSaveBtn" style="padding:.55rem 1rem;font-size:.76rem" onclick="saveFeaturedPost()">Save Featured Post</button>
+            <div id="featuredPostSaveStatus" style="font-size:.74rem;color:var(--t3);min-width:180px">No unsaved featured-post changes.</div>
           </div>
         </div>
       </div>
@@ -4577,9 +4587,26 @@ function loadCountdownSettings(){
     set('campaignExpiredCta',c.expiredSingleCta||'Reserve Session');
     const cur=document.getElementById('cdCurrentTarget');
     if(cur)cur.textContent=s.countdownTarget?new Date(s.countdownTarget).toLocaleString():(()=>{const d=localStorage.getItem('iv_cd_default');return d?new Date(parseInt(d)).toLocaleString():'Not set'})();
+    setCountdownSaveStatus('No unsaved timer changes.', 'idle');
   }catch{}
 }
+function setCountdownSaveStatus(message,type='idle'){
+  const status=document.getElementById('countdownSaveStatus');
+  const btn=document.getElementById('countdownSaveBtn');
+  if(status){
+    status.textContent=message;
+    status.style.color=type==='dirty'?'var(--yl)':type==='ok'?'var(--ok)':type==='er'?'var(--er)':'var(--t3)';
+  }
+  if(btn)btn.disabled=type==='saving';
+}
+function markCountdownDirty(){
+  setCountdownSaveStatus('Unsaved timer/campaign changes.', 'dirty');
+}
 async function saveCountdown(){
+  const btn=document.getElementById('countdownSaveBtn');
+  const oldText=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='Saving...';}
+  setCountdownSaveStatus('Saving timer and campaign...', 'saving');
   const d=document.getElementById('cdDate').value,l=document.getElementById('cdLabel2').value;
   const publicCampaign={
     enabled:true,
@@ -4597,10 +4624,19 @@ async function saveCountdown(){
     activeStickyDetail:'Campaign active',
     expiredStickyDetail:'Campaign ended'
   };
-  if(d){await saveSetting('countdownTarget',new Date(d).toISOString());const el=document.getElementById('cdCurrentTarget');if(el)el.textContent=new Date(d).toLocaleString();}
-  if(l)await saveSetting('countdownLabel',l);
-  await saveSetting('publicCampaign',publicCampaign);
-  toast('Timer updated ✓','ok');
+  try{
+    if(d){await dbSaveSetting('countdownTarget',new Date(d).toISOString());const el=document.getElementById('cdCurrentTarget');if(el)el.textContent=new Date(d).toLocaleString();}
+    await dbSaveSetting('countdownLabel',l||'Free Access Ends In');
+    await dbSaveSetting('publicCampaign',publicCampaign);
+    setCountdownSaveStatus('Saved. Public countdown and campaign CTAs are updated.', 'ok');
+    toast('Timer updated','ok');
+  }catch(e){
+    console.warn('Countdown save failed',e);
+    setCountdownSaveStatus('Save failed. Check Supabase connection and try again.', 'er');
+    toast('Timer save failed','er');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=oldText||'Save Campaign Timer';}
+  }
 }
 // ── FEATURED POST ADMIN ───────────────────────────────────────────────────
 async function loadFeaturedPostSelector(){
@@ -4608,8 +4644,37 @@ async function loadFeaturedPostSelector(){
   const posts=await getPosts();const pub=posts.filter(p=>p.status==='published');
   const s=_localSettings();
   sel.innerHTML='<option value="">Most Recent (auto)</option>'+pub.map(p=>`<option value="${p.id}"${s.featuredPostId===p.id?' selected':''}>${p.title}</option>`).join('');
+  setFeaturedPostSaveStatus('No unsaved featured-post changes.', 'idle');
 }
-async function saveFeaturedPost(){await saveSetting('featuredPostId',document.getElementById('featuredPostSelect').value||'');toast('Featured post updated ✓','ok')}
+function setFeaturedPostSaveStatus(message,type='idle'){
+  const status=document.getElementById('featuredPostSaveStatus');
+  const btn=document.getElementById('featuredPostSaveBtn');
+  if(status){
+    status.textContent=message;
+    status.style.color=type==='dirty'?'var(--yl)':type==='ok'?'var(--ok)':type==='er'?'var(--er)':'var(--t3)';
+  }
+  if(btn)btn.disabled=type==='saving';
+}
+function markFeaturedPostDirty(){
+  setFeaturedPostSaveStatus('Unsaved featured-post change.', 'dirty');
+}
+async function saveFeaturedPost(){
+  const btn=document.getElementById('featuredPostSaveBtn');
+  const oldText=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='Saving...';}
+  setFeaturedPostSaveStatus('Saving featured post...', 'saving');
+  try{
+    await dbSaveSetting('featuredPostId',document.getElementById('featuredPostSelect').value||'');
+    setFeaturedPostSaveStatus('Saved. Blog showcase will use this featured post.', 'ok');
+    toast('Featured post updated','ok');
+  }catch(e){
+    console.warn('Featured post save failed',e);
+    setFeaturedPostSaveStatus('Save failed. Check Supabase connection and try again.', 'er');
+    toast('Featured post save failed','er');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=oldText||'Save Featured Post';}
+  }
+}
 // ── TESTIMONIALS ADMIN ────────────────────────────────────────────────────
 function showAddTestimonial(){document.getElementById('addTestForm').style.display='block';document.getElementById('tManualName').focus();}
 function hideAddTestimonial(){
