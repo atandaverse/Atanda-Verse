@@ -1308,6 +1308,13 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Target Date &amp; Time</label><input type="datetime-local" id="cdDate" class="mn" onchange="saveCountdown()"></div>
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Label Text</label><input type="text" id="cdLabel2" class="mn" placeholder="⏰ Free Access Ends In" oninput="saveCountdown()"></div>
           </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.8rem;margin-bottom:.8rem">
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Campaign Type</label><input type="text" id="campaignType" class="mn" placeholder="free-session" oninput="saveCountdown()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active Badge</label><input type="text" id="campaignActiveBadge" class="mn" placeholder="Free Single Session During Launch" oninput="saveCountdown()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired Badge</label><input type="text" id="campaignExpiredBadge" class="mn" placeholder="Paid Single Sessions Now Open" oninput="saveCountdown()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active CTA</label><input type="text" id="campaignActiveCta" class="mn" placeholder="Book Free Session" oninput="saveCountdown()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired CTA</label><input type="text" id="campaignExpiredCta" class="mn" placeholder="Reserve Session" oninput="saveCountdown()"></div>
+          </div>
           <div style="background:var(--s);border-radius:var(--rs);padding:.7rem;font-size:.74rem;color:var(--t3)">Current target: <span id="cdCurrentTarget" style="color:var(--t2)">Not set (defaults to 30 days from first visit)</span></div>
         </div>
         <div class="scc" style="grid-column:1/-1">
@@ -4561,14 +4568,38 @@ function loadCountdownSettings(){
     if(el&&s.countdownTarget)el.value=new Date(s.countdownTarget).toISOString().slice(0,16);
     const ll=document.getElementById('cdLabel2');
     if(ll&&s.countdownLabel)ll.value=s.countdownLabel;
+    const c=s.publicCampaign||{};
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+    set('campaignType',c.type||'free-session');
+    set('campaignActiveBadge',c.activeBadge||'Free Single Session During Launch');
+    set('campaignExpiredBadge',c.expiredBadge||'Paid Single Sessions Now Open');
+    set('campaignActiveCta',c.activeSingleCta||'Book Free Session');
+    set('campaignExpiredCta',c.expiredSingleCta||'Reserve Session');
     const cur=document.getElementById('cdCurrentTarget');
     if(cur)cur.textContent=s.countdownTarget?new Date(s.countdownTarget).toLocaleString():(()=>{const d=localStorage.getItem('iv_cd_default');return d?new Date(parseInt(d)).toLocaleString():'Not set'})();
   }catch{}
 }
 async function saveCountdown(){
   const d=document.getElementById('cdDate').value,l=document.getElementById('cdLabel2').value;
+  const publicCampaign={
+    enabled:true,
+    type:document.getElementById('campaignType')?.value.trim()||'free-session',
+    activeBadge:document.getElementById('campaignActiveBadge')?.value.trim()||'Free Single Session During Launch',
+    expiredBadge:document.getElementById('campaignExpiredBadge')?.value.trim()||'Paid Single Sessions Now Open',
+    activeNavCta:document.getElementById('campaignActiveCta')?.value.trim()||'Register Free',
+    activeSingleCta:document.getElementById('campaignActiveCta')?.value.trim()||'Book Free Session',
+    activeRegisterButton:(document.getElementById('campaignActiveCta')?.value.trim()||'Book Free Session').replace(/^Book /i,'Book my '),
+    expiredNavCta:'Register',
+    expiredSingleCta:document.getElementById('campaignExpiredCta')?.value.trim()||'Reserve Session',
+    expiredRegisterButton:(document.getElementById('campaignExpiredCta')?.value.trim()||'Reserve Session').replace(/^Reserve /i,'Reserve my '),
+    activeStickyLabel:document.getElementById('campaignActiveCta')?.value.trim()||'Book Free Session',
+    expiredStickyLabel:document.getElementById('campaignExpiredCta')?.value.trim()||'Book Session',
+    activeStickyDetail:'Campaign active',
+    expiredStickyDetail:'Campaign ended'
+  };
   if(d){await saveSetting('countdownTarget',new Date(d).toISOString());const el=document.getElementById('cdCurrentTarget');if(el)el.textContent=new Date(d).toLocaleString();}
   if(l)await saveSetting('countdownLabel',l);
+  await saveSetting('publicCampaign',publicCampaign);
   toast('Timer updated ✓','ok');
 }
 // ── FEATURED POST ADMIN ───────────────────────────────────────────────────

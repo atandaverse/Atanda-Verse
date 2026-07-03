@@ -430,7 +430,7 @@
 
             if (creds && creds.url && creds.key) {
                 try {
-                    await fetch(creds.url + '/rest/v1/registrations', {
+                    const saveRes = await fetch(creds.url + '/rest/v1/registrations', {
                         method: 'POST',
                         headers: {
                             apikey: creds.key,
@@ -449,6 +449,7 @@
                             registered_at: submittedAt
                         })
                     });
+                    if (!saveRes.ok) throw new Error(await saveRes.text());
                     if (window.ivNotifyAdmin) window.ivNotifyAdmin('registration.created', {
                         name: d.fullName,
                         email: d.email,
@@ -461,7 +462,12 @@
                     });
                 } catch (err) {
                     console.warn('Registration save failed', err);
+                    alert('Your registration could not be saved right now. Please try again or use WhatsApp/email so we do not miss you.');
+                    return;
                 }
+            } else {
+                alert('Registration storage is not available right now. Please use WhatsApp/email so we do not miss you.');
+                return;
             }
 
             if (window.ivCaptureSubscriber) {

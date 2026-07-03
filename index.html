@@ -1674,11 +1674,12 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
                 const sessionSelect = document.getElementById('sessionType');
                 const sessionLabel = sessionSelect && sessionSelect.selectedOptions[0] ? sessionSelect.selectedOptions[0].textContent.trim() : d.sessionType;
                 const submittedAt = new Date().toISOString();
-                await fetch(creds.url + '/rest/v1/registrations', {
+                const saveRes = await fetch(creds.url + '/rest/v1/registrations', {
                     method: 'POST',
                     headers: { 'apikey': creds.key, 'Authorization': 'Bearer ' + creds.key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
                     body: JSON.stringify({ id: 'reg-' + Date.now(), full_name: d.fullName, email: d.email, phone: d.phone, session_type: d.sessionType, goals: d.goals || '', source: 'index', registered_at: submittedAt })
                 });
+                if (!saveRes.ok) throw new Error(await saveRes.text());
                 if (window.ivNotifyAdmin) window.ivNotifyAdmin('registration.created', {
                     name: d.fullName,
                     email: d.email,
@@ -1689,7 +1690,10 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
                     goals: d.goals || '',
                     submittedAt: submittedAt
                 });
-            } catch(e) {}
+            } catch(e) { console.warn('Registration save failed', e); alert('Your registration could not be saved right now. Please try again or use WhatsApp/email so we do not miss you.'); return; }
+        } else {
+            alert('Registration storage is not available right now. Please use WhatsApp/email so we do not miss you.');
+            return;
         }
         if (window.ivCaptureSubscriber) {
             await window.ivCaptureSubscriber({

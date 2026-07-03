@@ -224,8 +224,54 @@
     var hasTarget = Number.isFinite(target);
     return {
       target: hasTarget ? target : null,
-      expired: hasTarget ? target <= Date.now() : false
+      expired: hasTarget ? target <= Date.now() : false,
+      settings: source || {}
     };
+  }
+
+  var DEFAULT_PUBLIC_CAMPAIGN = {
+    enabled: true,
+    type: 'free-session',
+    activeBadge: 'Free Single Session During Launch',
+    expiredBadge: 'Paid Single Sessions Now Open',
+    activeNavCta: 'Register Free',
+    expiredNavCta: 'Register',
+    activeStickyLabel: 'Book Free Session',
+    expiredStickyLabel: 'Book Session',
+    activeStickyDetail: 'Single launch slot',
+    expiredStickyDetail: 'Single 1:1 path',
+    activeSingleCta: 'Book Free Session',
+    expiredSingleCta: 'Reserve Session',
+    activeRegisterButton: 'Book my free session',
+    expiredRegisterButton: 'Reserve my session',
+    expiredRegisterMicrocopy: 'The free launch window has ended. Single sessions and paid plans are reviewed before confirmation. Session questions belong at sessions@atanda.site.'
+  };
+
+  function getPublicCampaign(settings) {
+    var source = settings || {};
+    var custom = source.publicCampaign && typeof source.publicCampaign === 'object' ? source.publicCampaign : {};
+    return Object.assign({}, DEFAULT_PUBLIC_CAMPAIGN, custom);
+  }
+
+  function rememberOriginal(el) {
+    if (!el || el.dataset.ivCampaignOriginal === '1') return;
+    el.dataset.ivCampaignOriginal = '1';
+    el.dataset.ivOriginalText = el.textContent || '';
+    el.dataset.ivOriginalHtml = el.innerHTML || '';
+  }
+
+  function setText(selector, text, restore) {
+    document.querySelectorAll(selector).forEach(function (el) {
+      rememberOriginal(el);
+      el.textContent = restore ? (el.dataset.ivOriginalText || '') : text;
+    });
+  }
+
+  function setHtml(selector, html, restore) {
+    document.querySelectorAll(selector).forEach(function (el) {
+      rememberOriginal(el);
+      el.innerHTML = restore ? (el.dataset.ivOriginalHtml || '') : html;
+    });
   }
 
   var DEFAULT_SESSION_PRICING = {
@@ -312,26 +358,39 @@
 
   function applyLaunchState(settings) {
     var launch = getLaunchState(settings);
+    var campaign = getPublicCampaign(launch.settings);
+    var restore = campaign.enabled === false;
     document.documentElement.setAttribute('data-launch-expired', launch.expired ? 'true' : 'false');
-    if (!launch.expired) return launch;
+    document.documentElement.setAttribute('data-public-campaign', campaign.type || 'custom');
+    if (restore) {
+      ['.nav-cta','.hero-badge','.sticky-cta-label','.sticky-cta-detail','[data-price-plan="single"] .cta-button','#registerButton','#registerMicrocopy'].forEach(function (selector) { setHtml(selector, '', true); });
+      return launch;
+    }
+    var active = !launch.expired;
     var textMap = [
-      ['.nav-cta', 'Register'],
-      ['.hero-badge', 'Paid Single Sessions Now Open'],
-      ['.sticky-cta-label', 'Book Session'],
-      ['.sticky-cta-detail', 'Single 1:1 path'],
-      ['[data-price-plan="single"] .cta-button', 'Reserve Session'],
-      ['#registerButton', 'Reserve my session'],
-      ['#registerMicrocopy', 'The free launch window has ended. Single sessions and paid plans are reviewed before confirmation. Session questions belong at sessions@atanda.site.']
+      ['.nav-cta', active ? campaign.activeNavCta : campaign.expiredNavCta],
+      ['.hero-badge', active ? campaign.activeBadge : campaign.expiredBadge],
+      ['.sticky-cta-label', active ? campaign.activeStickyLabel : campaign.expiredStickyLabel],
+      ['.sticky-cta-detail', active ? campaign.activeStickyDetail : campaign.expiredStickyDetail],
+      ['[data-price-plan="single"] .cta-button', active ? campaign.activeSingleCta : campaign.expiredSingleCta],
+      ['#registerButton', active ? campaign.activeRegisterButton : campaign.expiredRegisterButton]
     ];
     textMap.forEach(function (pair) {
-      document.querySelectorAll(pair[0]).forEach(function (el) { el.textContent = pair[1]; });
+      setText(pair[0], pair[1], false);
     });
+    if (active) {
+      setHtml('#registerMicrocopy', '', true);
+    } else {
+      setText('#registerMicrocopy', campaign.expiredRegisterMicrocopy, false);
+    }
     document.querySelectorAll('[data-launch-copy]').forEach(function (el) {
-      var next = el.getAttribute('data-launch-expired-copy');
+      rememberOriginal(el);
+      var next = active ? (el.getAttribute('data-launch-active-copy') || el.dataset.ivOriginalText) : el.getAttribute('data-launch-expired-copy');
       if (next) el.textContent = next;
     });
     document.querySelectorAll('[data-launch-html]').forEach(function (el) {
-      var next = el.getAttribute('data-launch-expired-html');
+      rememberOriginal(el);
+      var next = active ? (el.getAttribute('data-launch-active-html') || el.dataset.ivOriginalHtml) : el.getAttribute('data-launch-expired-html');
       if (next) el.innerHTML = next;
     });
     return launch;
@@ -395,6 +454,7 @@
 
   window.ivDefaultSessionPricing = DEFAULT_SESSION_PRICING;
   window.ivGetLaunchState = getLaunchState;
+  window.ivGetPublicCampaign = getPublicCampaign;
   window.ivApplyLaunchState = applyLaunchState;
   window.ivGetSessionPricing = getSessionPricing;
   window.ivApplySessionPricing = applySessionPricing;
@@ -405,6 +465,9 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', refreshLaunchState);
   else refreshLaunchState();
+  setInterval(function () {
+    syncSessionPricing().catch(function () { refreshLaunchState(); });
+  }, 60000);
 
   async function sbInvoke(fnName, payload) {
     var creds = getCreds();
