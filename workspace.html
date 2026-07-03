@@ -69,8 +69,8 @@ body[data-admin-theme="evolutionary"]::before{background:radial-gradient(circle 
 .panel{display:none;padding:1.6rem;animation:fin .3s ease}.panel.on{display:block}@keyframes fin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* STATS */
-.srow{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.4rem}
-.sc{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:1.2rem;position:relative;overflow:hidden;transition:all .3s}.sc:hover{border-color:var(--b2);transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,0,0,.25)}.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ac),transparent);opacity:0;transition:opacity .3s}.sc:hover::before{opacity:1}
+.srow{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.15rem}
+.sc{background:linear-gradient(145deg,var(--bg2),var(--s));border:1px solid var(--b);border-radius:18px;padding:1.25rem;position:relative;overflow:hidden;transition:all .3s;box-shadow:0 16px 42px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.05)}.sc:hover{border-color:var(--b2);transform:translateY(-3px);box-shadow:0 24px 58px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.08)}.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ac),#f59e0b,var(--bl));opacity:.92;transition:opacity .3s}.sc::after{content:'';position:absolute;right:-28px;top:-38px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(220,53,69,.13),transparent 68%);pointer-events:none}
 .sci{font-size:1.25rem;margin-bottom:.48rem}.scv{font-family:'Bebas Neue',sans-serif;font-size:1.95rem;letter-spacing:1px;line-height:1}.scl{font-size:.67rem;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-top:.28rem}.scs{font-size:.67rem;color:var(--gr);margin-top:.32rem;font-weight:600}
 
 /* CHARTS */
@@ -111,11 +111,13 @@ td{padding:.76rem .95rem;font-size:.78rem;color:var(--t2);vertical-align:middle}
 .pill.published{background:rgba(16,185,129,.15);color:var(--gr)}.pill.draft{background:rgba(245,158,11,.12);color:var(--yl)}.pill.coming-soon{background:var(--s2);color:var(--t3)}
 .ab{background:var(--s);border:1px solid var(--b);border-radius:4px;padding:3px 7px;color:var(--t2);font-size:.66rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:3px;margin-right:2px;white-space:nowrap}.ab:hover{border-color:var(--ac);color:var(--ac)}.ab.del:hover{border-color:#ef4444;color:#ef4444}
 .vc{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--bl)}
-.ops-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin:0 0 1rem}
-.ops-card{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:.85rem .9rem;display:grid;gap:.18rem}
-.ops-card strong{font-size:1rem;color:var(--t)}
-.ops-card span{font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px}
-.ops-card small{font-size:.74rem;color:var(--t2);line-height:1.5}
+.ops-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:0 0 1.15rem}
+.ops-card{background:linear-gradient(145deg,var(--s),var(--bg2));border:1px solid var(--b);border-radius:18px;padding:1rem 1.05rem;display:grid;gap:.28rem;min-height:126px;position:relative;overflow:hidden;box-shadow:0 14px 36px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.06)}
+.ops-card::before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--ac),#f59e0b,transparent);opacity:.85}
+.ops-card::after{content:'';position:absolute;right:-34px;bottom:-42px;width:112px;height:112px;border-radius:50%;background:radial-gradient(circle,rgba(220,53,69,.12),transparent 70%);pointer-events:none}
+.ops-card strong{font-size:1.2rem;color:var(--t);line-height:1.15;letter-spacing:0;position:relative;z-index:1}
+.ops-card span{font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;position:relative;z-index:1}
+.ops-card small{font-size:.76rem;color:var(--t2);line-height:1.55;position:relative;z-index:1}
 .stack-list{display:flex;flex-direction:column;gap:.8rem}
 .stack-card{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:1rem 1.05rem}
 .stack-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.85rem;flex-wrap:wrap;margin-bottom:.55rem}
@@ -291,8 +293,8 @@ body[data-admin-theme="evolutionary"] .panel{animation:finevo .34s ease}
 @keyframes finevo{from{opacity:0;transform:translateY(10px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 /* ANALYTICS */
-.ag{display:grid;grid-template-columns:2fr 1fr;gap:.9rem;margin-bottom:1.3rem}.ac2{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:1.2rem}
-.ri{display:flex;align-items:center;gap:.62rem;padding:.58rem;background:var(--s);border-radius:var(--rs);margin-bottom:.5rem;transition:background .2s}.ri:hover{background:var(--s2)}
+.ag{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,.9fr);gap:1rem;margin-bottom:1.3rem}.ac2{background:linear-gradient(145deg,var(--bg2),var(--s));border:1px solid var(--b);border-radius:18px;padding:1.25rem;box-shadow:0 14px 38px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.05)}
+.ri{display:flex;align-items:center;gap:.72rem;padding:.72rem .78rem;background:var(--s);border:1px solid var(--b);border-radius:14px;margin-bottom:.58rem;transition:background .2s,transform .2s,border-color .2s}.ri:hover{background:var(--s2);border-color:var(--b2);transform:translateY(-1px)}
 .rn{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--t3);width:22px;flex-shrink:0}.rif{flex:1;min-width:0}
 .rt2{font-size:.75rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc{font-size:.62rem;color:var(--t3);margin-top:1px}.rv2{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--bl);flex-shrink:0}
 .spk{height:32px;display:flex;align-items:flex-end;gap:2px}.sb2{flex:1;background:linear-gradient(to top,var(--ac),rgba(220,53,69,.3));border-radius:2px 2px 0 0;min-height:3px}
@@ -1314,7 +1316,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Campaign Type</label><input type="text" id="campaignType" class="mn" placeholder="free-session" oninput="markCountdownDirty()"></div>
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active Badge</label><input type="text" id="campaignActiveBadge" class="mn" placeholder="Free Single Session During Launch" oninput="markCountdownDirty()"></div>
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired Badge</label><input type="text" id="campaignExpiredBadge" class="mn" placeholder="Paid Single Sessions Now Open" oninput="markCountdownDirty()"></div>
-            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active CTA</label><input type="text" id="campaignActiveCta" class="mn" placeholder="Book Free Session" oninput="markCountdownDirty()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active CTA</label><input type="text" id="campaignActiveCta" class="mn" placeholder="Book a Session" oninput="markCountdownDirty()"></div>
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired CTA</label><input type="text" id="campaignExpiredCta" class="mn" placeholder="Reserve Session" oninput="markCountdownDirty()"></div>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;background:var(--s);border-radius:var(--rs);padding:.7rem;font-size:.74rem;color:var(--t3)">
@@ -4385,7 +4387,7 @@ const FAQ_DEFAULTS_ADMIN=[
   {id:'faq-d6',question:'Are the sessions free?',answer:'Single clarity sessions, three-session packages, weekly group access, and monthly intensives are guided offers confirmed after registration.',category:'pricing',order:0},
   {id:'faq-d7',question:'How do current session offers work?',answer:'Choose the session path that fits your need. Details, next steps, and any payment information are confirmed after registration.',category:'pricing',order:1},
   {id:'faq-d8',question:'What are the current paid prices?',answer:'The default paid pricing is $48 / N60,000 for the three-session package, $36 / N45,000 for weekly group access, and $180 / N225,000 for the monthly intensive. Dollar pricing intentionally carries about a 20% international client margin. Admin can update these prices when needed.',category:'pricing',order:2},
-  {id:'faq-d9',question:'What if the session does not help me?',answer:'Your first single session has no payment risk during launch. If it does not add value, tell us honestly. The goal is genuine clarity, not just a completed session.',category:'pricing',order:3},
+  {id:'faq-d9',question:'What if the session does not help me?',answer:'If a session does not add value, tell us honestly. The goal is genuine clarity, not just a completed session.',category:'pricing',order:3},
   {id:'faq-d10',question:'How do online sessions work?',answer:'Sessions are held via Zoom or your preferred platform. You will receive a private link and a preparation guide before the session.',category:'logistics',order:0},
   {id:'faq-d11',question:'What if I miss a scheduled session?',answer:'Give us 24 hours notice and we will reschedule at no cost where possible.',category:'logistics',order:1},
   {id:'faq-d12',question:'How quickly can I get a session?',answer:'We respond within 24 hours of registration. Most people can get their first session within a few days.',category:'logistics',order:2},
@@ -4620,7 +4622,7 @@ function loadCountdownSettings(){
     set('campaignType',c.type||'free-session');
     set('campaignActiveBadge',c.activeBadge||'Free Single Session During Launch');
     set('campaignExpiredBadge',c.expiredBadge||'Paid Single Sessions Now Open');
-    set('campaignActiveCta',c.activeSingleCta||'Book Free Session');
+    set('campaignActiveCta',c.activeSingleCta||'Book a Session');
     set('campaignExpiredCta',c.expiredSingleCta||'Reserve Session');
     const cur=document.getElementById('cdCurrentTarget');
     if(cur)cur.textContent=s.countdownTarget?new Date(s.countdownTarget).toLocaleString():(()=>{const d=localStorage.getItem('iv_cd_default');return d?new Date(parseInt(d)).toLocaleString():'Not set'})();
@@ -4650,13 +4652,13 @@ async function saveCountdown(){
     type:document.getElementById('campaignType')?.value.trim()||'free-session',
     activeBadge:document.getElementById('campaignActiveBadge')?.value.trim()||'Free Single Session During Launch',
     expiredBadge:document.getElementById('campaignExpiredBadge')?.value.trim()||'Paid Single Sessions Now Open',
-    activeNavCta:document.getElementById('campaignActiveCta')?.value.trim()||'Register Free',
-    activeSingleCta:document.getElementById('campaignActiveCta')?.value.trim()||'Book Free Session',
-    activeRegisterButton:(document.getElementById('campaignActiveCta')?.value.trim()||'Book Free Session').replace(/^Book /i,'Book my '),
+    activeNavCta:document.getElementById('campaignActiveCta')?.value.trim()||'Register',
+    activeSingleCta:document.getElementById('campaignActiveCta')?.value.trim()||'Book a Session',
+    activeRegisterButton:(document.getElementById('campaignActiveCta')?.value.trim()||'Book a Session').replace(/^Book /i,'Book my '),
     expiredNavCta:'Register',
     expiredSingleCta:document.getElementById('campaignExpiredCta')?.value.trim()||'Reserve Session',
     expiredRegisterButton:(document.getElementById('campaignExpiredCta')?.value.trim()||'Reserve Session').replace(/^Reserve /i,'Reserve my '),
-    activeStickyLabel:document.getElementById('campaignActiveCta')?.value.trim()||'Book Free Session',
+    activeStickyLabel:document.getElementById('campaignActiveCta')?.value.trim()||'Book a Session',
     expiredStickyLabel:document.getElementById('campaignExpiredCta')?.value.trim()||'Book a Session',
     activeStickyDetail:'Campaign active',
     expiredStickyDetail:'Clarity support'

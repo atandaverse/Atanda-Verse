@@ -526,6 +526,7 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         .contact-btn.whatsapp:hover { background: linear-gradient(135deg,#31e47a,#1c9d4d); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(37,211,102,.38), inset 0 1px 0 rgba(255,255,255,.34); }
         .contact-btn.email { background: linear-gradient(135deg,var(--accent),var(--accent-hover)); color: white !important; box-shadow: 0 8px 24px rgba(220,53,69,.28), inset 0 1px 0 rgba(255,255,255,.28); }
         .contact-btn.email:hover { background: linear-gradient(135deg,var(--accent),#972430); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(220,53,69,.38), inset 0 1px 0 rgba(255,255,255,.34); }
+        .brand-mark { width: 1.15em; height: 1.15em; flex: 0 0 auto; display: inline-block; vertical-align: -0.18em; margin-right: .45rem; }
 
         /* ── FAQ ── */
         .faq { padding: 7rem 0; background: var(--bg-secondary); }
@@ -1131,7 +1132,7 @@ img.loaded{opacity:1;}
         <div class="container">
             <span class="section-tag rv">Take Action</span>
             <h2 class="section-title rv">REGISTER FOR YOUR SESSION</h2>
-            <p class="section-subtitle rv" data-launch-copy data-launch-expired-copy="Single 90-minute sessions, packages, and group plans are guided offers confirmed after registration.">The single 90-minute session is free during launch. Packages and group plans are paid offers.</p>
+            <p class="section-subtitle rv" data-launch-copy data-launch-active-copy="The single 90-minute session is free during launch. Packages and group plans are paid offers." data-launch-expired-copy="Single 90-minute sessions, packages, and group plans are guided offers confirmed after registration.">Single 90-minute sessions, packages, and group plans are guided offers confirmed after registration.</p>
             <form class="registration-form rv" id="registrationForm">
                 <div class="form-row">
                     <div class="form-group"><label for="fullName">Full Name *</label><input type="text" id="fullName" name="fullName" required placeholder="Your full name"></div>
@@ -1156,8 +1157,8 @@ img.loaded{opacity:1;}
             <div class="contact-alternatives rv">
                 <p>Prefer to reach out directly?</p>
                 <div class="contact-buttons">
-                    <a href="https://wa.me/2348147732687?text=Hi! I'd like help choosing an Atanda Verse clarity session" class="contact-btn whatsapp" target="_blank">💬 WhatsApp Us</a>
-                    <a href="mailto:hello@atanda.site" class="contact-btn email">📧 Email Us</a>
+                    <a href="https://wa.me/2348147732687?text=Hi! I'd like help choosing an Atanda Verse clarity session" class="contact-btn whatsapp" target="_blank" rel="noopener noreferrer"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16.02 3.2A12.63 12.63 0 0 0 5.1 22.18L3.8 28.8l6.78-1.58A12.66 12.66 0 1 0 16.02 3.2Zm0 22.9c-1.96 0-3.86-.55-5.5-1.6l-.4-.25-4.02.94.86-3.93-.26-.4a10.25 10.25 0 1 1 9.32 5.24Zm5.78-7.68c-.32-.16-1.88-.93-2.17-1.04-.29-.1-.5-.16-.71.16-.21.31-.82 1.04-1.01 1.25-.18.21-.37.24-.69.08-.32-.16-1.34-.49-2.55-1.57-.94-.84-1.58-1.88-1.76-2.2-.18-.32-.02-.49.14-.65.14-.14.32-.37.48-.56.16-.18.21-.32.32-.53.1-.21.05-.4-.03-.56-.08-.16-.71-1.71-.98-2.35-.26-.62-.52-.54-.71-.55h-.61c-.21 0-.56.08-.85.4-.29.32-1.12 1.09-1.12 2.66 0 1.57 1.15 3.09 1.31 3.3.16.21 2.26 3.45 5.47 4.83.77.33 1.36.52 1.83.67.77.24 1.46.21 2.01.13.61-.09 1.88-.77 2.15-1.52.26-.75.26-1.39.18-1.52-.08-.14-.29-.22-.61-.38Z"/></svg>WhatsApp Us</a>
+                    <a href="mailto:hello@atanda.site" class="contact-btn email"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M4 8.5A3.5 3.5 0 0 1 7.5 5h17A3.5 3.5 0 0 1 28 8.5v15a3.5 3.5 0 0 1-3.5 3.5h-17A3.5 3.5 0 0 1 4 23.5v-15Zm3.5-1A1 1 0 0 0 6.65 9l8.3 6.32a1.75 1.75 0 0 0 2.12 0L25.35 9a1 1 0 0 0-.85-1.5h-17Zm18 4.1-7.2 5.49a3.75 3.75 0 0 1-4.55 0L6.5 11.6v11.9a1 1 0 0 0 1 1h17a1 1 0 0 0 1-1V11.6Z"/></svg>Email Us</a>
                 </div>
             </div>
         </div>
@@ -1189,13 +1190,13 @@ img.loaded{opacity:1;}
             <h2 class="section-title rv">FREQUENTLY ASKED</h2>
             <div class="faq-grid stg" id="homeFaqGrid">
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>How do online sessions work?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Our virtual sessions are conducted via Zoom or your preferred video platform. You'll receive a private link and detailed preparation guide 24 hours before your session. All you need is a quiet space and stable internet connection.</p></div></div>
-                <div class="faq-item iv-pop"><div class="faq-question"><h4>Are the sessions free?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p data-launch-copy data-launch-expired-copy="Single clarity sessions, three-session packages, weekly group access, and monthly intensives are guided offers confirmed after registration.">Your first single clarity session is free during launch. Three-session packages, weekly group access, and monthly intensives are paid guided offers, and payment details are confirmed after registration.</p></div></div>
+                <div class="faq-item iv-pop"><div class="faq-question"><h4>Are the sessions free?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p data-launch-copy data-launch-active-copy="Your first single clarity session is free during launch. Three-session packages, weekly group access, and monthly intensives are paid guided offers, and payment details are confirmed after registration." data-launch-expired-copy="Single clarity sessions, three-session packages, weekly group access, and monthly intensives are guided offers confirmed after registration.">Single clarity sessions, three-session packages, weekly group access, and monthly intensives are guided offers confirmed after registration.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>What if I miss a scheduled session?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Life happens! Just give us 24 hours notice and we'll reschedule at no cost. We offer flexible timing to accommodate your schedule, including evening and weekend slots.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>What should I expect from my first session?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Your first session focuses on understanding your current situation, identifying mental blocks, and creating a clear vision for your path forward. You'll leave with actionable insights and a personalized clarity plan.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>Is this coaching, therapy, or counselling?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Clarity sessions are coaching-based, not therapy. We help you gain clarity, set direction, and take meaningful action. For clinical mental health needs, we recommend a licensed therapist.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>Can I do sessions in Yoruba, Igbo, or Pidgin?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Absolutely. Some things are best expressed in the language you think and feel in. Sessions can be conducted in English, Pidgin, Yoruba, or Igbo — whatever helps you express yourself most authentically.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>Do I need to prepare anything beforehand?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>You'll receive a short guide 24 hours before your session with 3 reflection questions. All you need is a quiet space, stable internet, and an open mind. Come as you are.</p></div></div>
-                <div class="faq-item iv-pop"><div class="faq-question"><h4>What if the session doesn't help me?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p data-launch-copy data-launch-expired-copy="If a session does not add value, tell us honestly. Your feedback helps us improve. Our goal is genuine transformation, not just a completed session.">Your first single session has no payment risk during launch. If it does not add value, tell us honestly — your feedback helps us improve. Our goal is genuine transformation, not just a completed session.</p></div></div>
+                <div class="faq-item iv-pop"><div class="faq-question"><h4>What if the session doesn't help me?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p data-launch-copy data-launch-active-copy="Your first single session has no payment risk during launch. If it does not add value, tell us honestly - your feedback helps us improve. Our goal is genuine transformation, not just a completed session." data-launch-expired-copy="If a session does not add value, tell us honestly. Your feedback helps us improve. Our goal is genuine transformation, not just a completed session.">If a session does not add value, tell us honestly. Your feedback helps us improve. Our goal is genuine transformation, not just a completed session.</p></div></div>
             </div>
             <div style="text-align:center;margin-top:2rem"><a href="faq.html" style="color:var(--accent);font-weight:600;font-size:.9rem;text-decoration:none">See all FAQs →</a></div>
         </div>
@@ -1269,8 +1270,8 @@ img.loaded{opacity:1;}
     <div class="sc-pulse"></div>
     <span class="sticky-cta-icon" aria-hidden="true"><img src="atanda-logo.svg" alt=""></span>
     <span class="sticky-cta-copy">
-        <span class="sticky-cta-label">Book Free Session</span>
-        <span class="sticky-cta-detail">Single launch slot</span>
+        <span class="sticky-cta-label">Book a Session</span>
+        <span class="sticky-cta-detail">Clarity support</span>
     </span>
 </a>
 
