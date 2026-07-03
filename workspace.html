@@ -3709,7 +3709,10 @@ async function doDelete(){if(!delId)return;await dbDeletePost(delId);delId=null;
 function closeModal(id){document.getElementById(id).classList.remove('on');if(id==='campEditModal')activeCampaignEditId=null}
 
 // ── NAV ───────────────────────────────────────────────────────────────────
-function nav(panel){
+const WORKSPACE_PANELS={dash:'dash',analytics:'analytics',posts:'posts',editor:'editor',settings:'settings',pricing:'pricing',library:'library',vault:'vault',testimonials:'testimonials','lib-editor':'lib-editor',comments:'comments',subscribers:'subscribers',campaigns:'campaigns',logins:'logins',registrations:'registrations',faq:'faq','vault-access':'vault'};
+function nav(panel,opts={}){
+  panel=WORKSPACE_PANELS[String(panel||'').toLowerCase()]||'dash';
+  if(!opts.fromHash&&location.hash!=='#'+panel)history.pushState(null,'','#'+panel);
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.sb-lnk').forEach(l=>l.classList.remove('on'));
   const el=document.getElementById('panel-'+panel);if(el)el.classList.add('on');
 const lmap={dash:'Dashboard',analytics:'Analytics',posts:'Posts',editor:'Post',settings:'Settings',pricing:'Pricing',library:'Library',vault:'Vault Access',testimonials:'Testimonials','lib-editor':'Library Item',comments:'Comments',subscribers:'Subscribers',campaigns:'Campaigns',logins:'Admin Logins',registrations:'Registrations',faq:'FAQ'};
@@ -3736,10 +3739,11 @@ if(panel==='campaigns')loadCampaignsPanel();
 
 function routeWorkspaceHash(){
   const key=String(location.hash||'').replace(/^#/,'').toLowerCase();
-  const map={'vault':'vault','vault-access':'vault','subscribers':'subscribers','registrations':'registrations','comments':'comments','library':'library','posts':'posts','campaigns':'campaigns','testimonials':'testimonials','faq':'faq'};
-  if(map[key])nav(map[key]);
+  if(!key){history.replaceState(null,'','#dash');return nav('dash',{fromHash:true});}
+  nav(WORKSPACE_PANELS[key]||'dash',{fromHash:true});
 }
 window.addEventListener('hashchange',routeWorkspaceHash);
+window.addEventListener('popstate',routeWorkspaceHash);
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 async function initApp(){
