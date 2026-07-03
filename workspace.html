@@ -5442,15 +5442,18 @@ async function previewCampaign(campaignId) {
   const preview = campaign.preview_text || post?.excerpt || '';
   const image = _emailSafeImage(post?.image || '');
   const bodyCopy = extras.body_copy || post?.excerpt || preview || 'Your campaign preview will appear here.';
+  const headerTeaser = preview && preview.trim() !== bodyCopy.trim()
+    ? preview
+    : 'A new reflection is ready to read.';
   const kicker = extras.hero_kicker || 'New on Atanda Verse';
   const ctaLabel = extras.cta_label || 'Read now';
   const browserLabel = extras.browser_link_label || 'Open in browser';
   body.innerHTML = `
-    <div style="max-width:660px;margin:0 auto;background:#f8fafc;border-radius:24px;overflow:hidden;border:1px solid rgba(15,23,42,.08);box-shadow:0 24px 60px rgba(15,23,42,.16)">
-      <div style="padding:22px 28px 18px;background:#0f172a;color:#fff">
-        <div style="font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:#f8b4bc">Atanda Verse</div>
-        <div style="font-size:15px;line-height:1.75;color:rgba(255,255,255,.78);margin-top:12px;max-width:520px">${preview || 'A new reflection is ready to read.'}</div>
-      </div>
+      <div style="max-width:660px;margin:0 auto;background:#f8fafc;border-radius:24px;overflow:hidden;border:1px solid rgba(15,23,42,.08);box-shadow:0 24px 60px rgba(15,23,42,.16)">
+        <div style="padding:22px 28px 18px;background:#0f172a;color:#fff">
+          <div style="font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:#f8b4bc">Atanda Verse</div>
+          <div style="font-size:15px;line-height:1.75;color:rgba(255,255,255,.78);margin-top:12px;max-width:520px">${headerTeaser}</div>
+        </div>
       ${image ? `<div style="background:#ffffff;padding:24px 24px 0"><img src="${image}" alt="${title}" style="display:block;width:100%;height:auto;max-height:280px;object-fit:cover;border-radius:18px"></div>` : ''}
       <div style="padding:28px;background:#ffffff;color:#172033">
         <div style="font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:#c7374a;font-weight:700;margin-bottom:12px">${kicker}</div>

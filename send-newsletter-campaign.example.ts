@@ -77,6 +77,9 @@ Deno.serve(async (req) => {
     const preview = overrides.preview_text || campaign.preview_text || post?.excerpt || "";
     const image = emailSafeImage(post?.image || "");
     const bodyCopy = overrides.body_copy || post?.excerpt || preview || "";
+    const headerTeaser = preview && preview.trim() !== bodyCopy.trim()
+      ? preview
+      : "A new reflection is ready to read.";
     const kicker = overrides.hero_kicker || "New on Atanda Verse";
     const ctaLabel = overrides.cta_label || "Read now";
     const browserLabel = overrides.browser_link_label || "Open in browser";
@@ -96,7 +99,7 @@ Deno.serve(async (req) => {
             <div style="max-width:660px;margin:0 auto;background:#ffffff;border-radius:24px;overflow:hidden;border:1px solid rgba(15,23,42,.08)">
               <div style="padding:22px 28px 18px;background:#0f172a;color:#fff">
                 <div style="font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:#f8b4bc">Atanda Verse</div>
-                <div style="font-size:15px;line-height:1.75;color:rgba(255,255,255,.78);margin-top:12px;max-width:520px">${preview || "A new reflection is ready to read."}</div>
+                <div style="font-size:15px;line-height:1.75;color:rgba(255,255,255,.78);margin-top:12px;max-width:520px">${headerTeaser}</div>
               </div>
               ${image ? `<div style="background:#ffffff;padding:24px 24px 0"><img src="${image}" alt="${title}" style="display:block;width:100%;height:auto;max-height:280px;object-fit:cover;border-radius:18px"></div>` : ""}
               <div style="padding:28px;background:#ffffff;color:#172033">
