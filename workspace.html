@@ -90,6 +90,28 @@ body[data-admin-theme="evolutionary"]::before{background:radial-gradient(circle 
 .attention-copy strong{font-size:.84rem;color:var(--t)}
 .attention-copy span{font-size:.73rem;color:var(--t3);line-height:1.55}
 .attention-actions{display:grid;gap:.55rem}
+.command-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.75fr);gap:1rem;margin-bottom:1rem}
+.command-panel{position:relative;overflow:hidden;border:1px solid var(--b);border-radius:22px;background:linear-gradient(135deg,rgba(220,53,69,.16),rgba(255,255,255,.045) 38%,rgba(56,189,248,.08));padding:1.4rem;min-height:210px;box-shadow:0 20px 60px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.07)}
+.command-panel::before{content:'';position:absolute;right:-88px;top:-94px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(220,53,69,.24),transparent 64%);pointer-events:none}
+.command-panel::after{content:'';position:absolute;inset:auto 0 0 0;height:1px;background:linear-gradient(90deg,transparent,var(--ac),#38bdf8,transparent);opacity:.8}
+.command-kicker{font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;font-weight:800;margin-bottom:.65rem}
+.command-title{font-size:clamp(1.55rem,3vw,2.45rem);line-height:1.05;color:var(--t);font-weight:900;max-width:720px;position:relative;z-index:1}
+.command-copy{margin-top:.8rem;max-width:680px;color:var(--t2);font-size:.86rem;line-height:1.65;position:relative;z-index:1}
+.command-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem;margin-top:1.1rem;position:relative;z-index:1}
+.command-meta div{background:rgba(255,255,255,.055);border:1px solid var(--b);border-radius:14px;padding:.72rem .8rem}
+.command-meta span{display:block;font-size:.63rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+.command-meta strong{display:block;margin-top:.18rem;color:var(--t);font-size:.92rem}
+.command-actions{display:grid;gap:.62rem}
+.quick-link{display:flex;align-items:center;justify-content:space-between;gap:.8rem;background:linear-gradient(145deg,var(--s),var(--bg2));border:1px solid var(--b);border-radius:16px;padding:.86rem .95rem;cursor:pointer;transition:transform .22s,border-color .22s,background .22s}
+.quick-link:hover{transform:translateY(-2px);border-color:var(--b2);background:var(--s2)}
+.quick-link strong{display:block;color:var(--t);font-size:.84rem}
+.quick-link span{font-size:.72rem;color:var(--t3);line-height:1.45}
+.analytics-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.45fr);gap:1rem;margin-bottom:1rem}
+.analytics-focus{background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(220,53,69,.10));border:1px solid var(--b);border-radius:22px;padding:1.25rem;position:relative;overflow:hidden;min-height:180px;box-shadow:0 20px 56px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.07)}
+.analytics-focus::before{content:'';position:absolute;right:-70px;bottom:-90px;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(56,189,248,.2),transparent 65%)}
+.analytics-focus .ops-card{box-shadow:none;background:transparent;border:0;padding:0;min-height:0}
+.analytics-focus .ops-card::before,.analytics-focus .ops-card::after{display:none}
+.analytics-side{display:grid;gap:1rem}
 .quick-link{display:flex;align-items:center;justify-content:space-between;gap:.7rem;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:.82rem .9rem;cursor:pointer;transition:all .2s}
 .quick-link:hover{transform:translateY(-1px);border-color:var(--b2)}
 .quick-link strong{font-size:.8rem}
@@ -314,6 +336,7 @@ body[data-admin-theme="evolutionary"] .panel{animation:finevo .34s ease}
 .md2 h3{font-family:'Bebas Neue',sans-serif;font-size:1.28rem;letter-spacing:2px;margin-bottom:.38rem}.md2 p{color:var(--t2);font-size:.79rem;margin-bottom:1.4rem;line-height:1.6}.mda{display:flex;gap:.55rem;justify-content:flex-end}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--ac)}
 @media(max-width:1180px){.el{grid-template-columns:1fr}.pc{display:none}.srow{grid-template-columns:1fr 1fr}.crow,.ag{grid-template-columns:1fr}.sg{grid-template-columns:1fr}}
+@media(max-width:1180px){.command-hero,.analytics-hero{grid-template-columns:1fr}.command-meta{grid-template-columns:1fr 1fr 1fr}}
 @media(max-width:900px){
   .shell{grid-template-columns:1fr}
   .sidebar{display:flex;position:sticky;top:0;height:auto;max-height:none;border-right:none;border-bottom:1px solid var(--b);padding:.8rem 0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;z-index:120}
@@ -324,6 +347,7 @@ body[data-admin-theme="evolutionary"] .panel{animation:finevo .34s ease}
   .topbar{padding:.85rem 1rem!important}
   .panel{padding:1rem!important}
   .srow,.ops-strip,.theme-grid,.fr,.fr3,.sg,.attention-grid{grid-template-columns:1fr!important}
+  .command-meta{grid-template-columns:1fr!important}
   .pricing-form-grid{grid-template-columns:1fr}
   .tw{border-radius:16px!important}
   table{min-width:760px}
@@ -774,68 +798,80 @@ create policy "public_write_logins" on admin_logins for all using (true);
 
     <!-- DASHBOARD -->
     <div class="panel on" id="panel-dash">
-      <div class="attention">
-        <div class="attention-grid">
-          <div>
-            <div class="ct" style="margin-bottom:.75rem">Attention Now</div>
-            <div class="attention-list" id="attentionList">
-              <div class="attention-item"><div class="attention-copy"><strong>Loading priorities…</strong><span>We’re checking posts, campaigns, and community activity for anything that needs your attention.</span></div></div>
-            </div>
+      <div class="command-hero">
+        <div class="command-panel">
+          <div class="command-kicker">Workspace command center</div>
+          <div class="command-title" id="dashCommandTitle">Reading the system</div>
+          <div class="command-copy" id="dashCommandCopy">We are checking posts, campaigns, registrations, and live data before suggesting the cleanest next move.</div>
+          <div class="command-meta">
+            <div><span>Source</span><strong id="dashSourceTitle">Checking</strong></div>
+            <div><span>Pulse</span><strong id="dashPulseTitle">Calm</strong></div>
+            <div><span>Next</span><strong id="dashNextMove">Open posts</strong></div>
           </div>
-          <div>
-            <div class="ct" style="margin-bottom:.75rem">Quick Actions</div>
-            <div class="attention-actions">
-              <div class="quick-link" onclick="nav('editor')"><div><strong>Create a new post</strong><span>Start a new article draft</span></div><span>→</span></div>
-              <div class="quick-link" onclick="nav('campaigns')"><div><strong>Review campaigns</strong><span>Check drafts before sending</span></div><span>→</span></div>
-              <div class="quick-link" onclick="nav('registrations')"><div><strong>Check registrations</strong><span>Follow up on new session interest</span></div><span>→</span></div>
-            </div>
+        </div>
+        <div class="command-actions">
+          <div class="quick-link" onclick="nav('editor')"><div><strong>Create a new post</strong><span>Start a draft in the editor</span></div><span>-></span></div>
+          <div class="quick-link" onclick="nav('campaigns')"><div><strong>Review campaigns</strong><span>Check newsletter drafts and sends</span></div><span>-></span></div>
+          <div class="quick-link" onclick="nav('registrations')"><div><strong>Check registrations</strong><span>Follow up on session interest</span></div><span>-></span></div>
+          <div class="quick-link" onclick="nav('pricing')"><div><strong>Review offers</strong><span>Confirm public pricing and CTAs</span></div><span>-></span></div>
+        </div>
+      </div>
+      <div class="attention">
+        <div>
+          <div class="ct" style="margin-bottom:.75rem">Attention Now</div>
+          <div class="attention-list" id="attentionList">
+            <div class="attention-item"><div class="attention-copy"><strong>Loading priorities...</strong><span>We are checking posts, campaigns, and community activity for anything that needs your attention.</span></div></div>
           </div>
         </div>
       </div>
       <div class="srow">
-        <div class="sc"><div class="sci">📝</div><div class="scv" id="st1">0</div><div class="scl">Total Posts</div><div class="scs" id="st1s">0 published</div></div>
-        <div class="sc"><div class="sci">👁️</div><div class="scv" id="st2">—</div><div class="scl">Total Views</div><div class="scs">All time</div></div>
-        <div class="sc"><div class="sci">📂</div><div class="scv" id="st3">0</div><div class="scl">Categories</div><div class="scs">Topics</div></div>
-        <div class="sc"><div class="sci">⏳</div><div class="scv" id="st4">0</div><div class="scl">Drafts</div><div class="scs" style="color:var(--yl)">Pending</div></div>
+        <div class="sc"><div class="sci">Posts</div><div class="scv" id="st1">0</div><div class="scl">Total Posts</div><div class="scs" id="st1s">0 published</div></div>
+        <div class="sc"><div class="sci">Views</div><div class="scv" id="st2">--</div><div class="scl">Total Views</div><div class="scs">All time</div></div>
+        <div class="sc"><div class="sci">Topics</div><div class="scv" id="st3">0</div><div class="scl">Categories</div><div class="scs">Content coverage</div></div>
+        <div class="sc"><div class="sci">Drafts</div><div class="scv" id="st4">0</div><div class="scl">Drafts</div><div class="scs" style="color:var(--yl)">Pending</div></div>
       </div>
       <div class="srow" style="margin-top:.75rem">
-        <div class="sc" style="cursor:pointer" onclick="nav('registrations')"><div class="sci">🎯</div><div class="scv" id="st5">0</div><div class="scl">Registrations</div><div class="scs" id="st5s">Session bookings</div></div>
-        <div class="sc" style="cursor:pointer" onclick="nav('subscribers')"><div class="sci">📧</div><div class="scv" id="st6">0</div><div class="scl">Subscribers</div><div class="scs">Newsletter</div></div>
-        <div class="sc" style="cursor:pointer" onclick="nav('testimonials')"><div class="sci">💬</div><div class="scv" id="st7">0</div><div class="scl">Testimonials</div><div class="scs" id="st7s" style="color:var(--yl)">pending review</div></div>
-        <div class="sc" style="cursor:pointer" onclick="nav('comments')"><div class="sci">🗨️</div><div class="scv" id="st8">0</div><div class="scl">Comments</div><div class="scs">All posts</div></div>
+        <div class="sc" style="cursor:pointer" onclick="nav('registrations')"><div class="sci">Bookings</div><div class="scv" id="st5">0</div><div class="scl">Registrations</div><div class="scs" id="st5s">Session bookings</div></div>
+        <div class="sc" style="cursor:pointer" onclick="nav('subscribers')"><div class="sci">Mail</div><div class="scv" id="st6">0</div><div class="scl">Subscribers</div><div class="scs">Newsletter</div></div>
+        <div class="sc" style="cursor:pointer" onclick="nav('testimonials')"><div class="sci">Proof</div><div class="scv" id="st7">0</div><div class="scl">Testimonials</div><div class="scs" id="st7s" style="color:var(--yl)">pending review</div></div>
+        <div class="sc" style="cursor:pointer" onclick="nav('comments')"><div class="sci">Talk</div><div class="scv" id="st8">0</div><div class="scl">Comments</div><div class="scs">All posts</div></div>
       </div>
       <div class="ops-strip" id="dashBoardStrip">
-        <div class="ops-card"><span>Publishing Pulse</span><strong id="dashPulseTitle">Calm</strong><small id="dashPulseMeta">We are reading the queue and checking what needs action next.</small></div>
-        <div class="ops-card"><span>Best Performing</span><strong id="dashTopTitle">—</strong><small id="dashTopMeta">Your strongest post by current view count.</small></div>
-        <div class="ops-card"><span>Next Move</span><strong id="dashNextMove">Open posts</strong><small id="dashNextMeta">We will suggest the cleanest next action once the queue loads.</small></div>
-        <div class="ops-card"><span>Content Source</span><strong id="dashSourceTitle">Checking</strong><small id="dashSourceMeta">Confirming whether Workspace is reading live content or fallback data.</small></div>
+        <div class="ops-card"><span>Publishing Pulse</span><strong id="dashPulseTitleCard">Calm</strong><small id="dashPulseMeta">We are reading the queue and checking what needs action next.</small></div>
+        <div class="ops-card"><span>Best Performing</span><strong id="dashTopTitle">--</strong><small id="dashTopMeta">Your strongest post by current view count.</small></div>
+        <div class="ops-card"><span>Next Move</span><strong id="dashNextMoveCard">Open posts</strong><small id="dashNextMeta">We will suggest the cleanest next action once the queue loads.</small></div>
+        <div class="ops-card"><span>Content Source</span><strong id="dashSourceTitleCard">Checking</strong><small id="dashSourceMeta">Confirming whether Workspace is reading live content or fallback data.</small></div>
       </div>
       <div class="crow">
         <div class="cc"><div class="ct">Views Per Post <span class="live-w" style="font-size:.57rem"><span class="ld"></span>LIVE</span></div><div class="bc" id="barchart"></div></div>
         <div class="cc"><div class="ct">By Category</div><div class="dw"><div class="dn"><svg viewBox="0 0 120 120" width="98" height="98" id="donut"></svg><div class="dc"><div class="dnv" id="dv">0</div><div class="dns">posts</div></div></div><div class="leg" id="dleg"></div></div></div>
       </div>
-      <div class="sh"><div class="sl">Recent Posts</div><button class="tbb" onclick="nav('posts')">View All →</button></div>
+      <div class="sh"><div class="sl">Recent Posts</div><button class="tbb" onclick="nav('posts')">View All -></button></div>
       <div class="tw"><table><thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Views</th><th>Date</th><th>Actions</th></tr></thead><tbody id="recTbl"></tbody></table></div>
     </div>
-
     <!-- ANALYTICS -->
     <div class="panel" id="panel-analytics">
-      <div class="table-note"><strong>First-party analytics</strong><span>These numbers now come from your own Supabase tracking path. Open real posts to generate live view activity, then refresh this panel.</span></div>
+      <div class="table-note"><strong>First-party analytics</strong><span>These numbers come from the Supabase tracking path. Refresh after opening live posts to see new activity.</span></div>
+      <div class="analytics-hero">
+        <div class="analytics-focus">
+          <div class="ops-card"><span>Leader</span><strong id="analyticsLeadTitle">--</strong><small id="analyticsLeadMeta">Top post by current view count.</small></div>
+        </div>
+        <div class="analytics-side">
+          <div class="ops-card"><span>Momentum</span><strong id="analyticsMomentum">Stable</strong><small id="analyticsMomentumMeta">A quick read on whether your content engine is active or waiting.</small></div>
+          <div class="ops-card"><span>Data Source</span><strong id="analyticsSourceTitle">Checking</strong><small id="analyticsSourceMeta">Confirming live analytics availability.</small></div>
+        </div>
+      </div>
       <div class="ops-strip" id="analyticsStrip">
-        <div class="ops-card"><span>Leader</span><strong id="analyticsLeadTitle">—</strong><small id="analyticsLeadMeta">Top post by current view count.</small></div>
         <div class="ops-card"><span>Visitors (24h)</span><strong id="analyticsVisitors24h">0</strong><small id="analyticsVisitors24hMeta">Unique readers recorded during the last 24 hours.</small></div>
         <div class="ops-card"><span>Activity (24h)</span><strong id="analyticsViews24h">0</strong><small id="analyticsViews24hMeta">Tracked page views captured during the last 24 hours.</small></div>
         <div class="ops-card"><span>Coverage</span><strong id="analyticsCoverage">0</strong><small id="analyticsCoverageMeta">Categories currently represented across your posts.</small></div>
-        <div class="ops-card"><span>Momentum</span><strong id="analyticsMomentum">Stable</strong><small id="analyticsMomentumMeta">A quick read on whether your content engine is active or waiting.</small></div>
-        <div class="ops-card"><span>Data Source</span><strong id="analyticsSourceTitle">Checking</strong><small id="analyticsSourceMeta">Confirming live analytics availability.</small></div>
       </div>
       <div class="ag">
         <div class="ac2"><div class="ct">Top Posts by Views</div><div id="toprank"></div></div>
         <div class="ac2"><div class="ct">By Category</div><div id="catbrk"></div></div>
       </div>
-      <div class="cc"><div class="ct">Sparklines</div><div id="spklines" style="display:flex;flex-direction:column;gap:.58rem;margin-top:.4rem"></div></div>
+      <div class="cc"><div class="ct">Seven-Day Signals</div><div id="spklines" style="display:flex;flex-direction:column;gap:.58rem;margin-top:.4rem"></div></div>
     </div>
-
     <!-- ALL POSTS -->
     <div class="panel" id="panel-posts">
       <div class="queue-note">Use this view as your content queue. Drafts need finishing, Coming Soon needs timing, and Published posts are ready for campaign review.</div>
@@ -4339,12 +4375,15 @@ initDash = async function(){
   avAdminText('dashTopMeta',topPost?avAdminNum(vm[topPost.id]||0)+' all-time views - '+(topPost.category||'Uncategorized'):'Publish something to start measuring momentum.');
   const pulseTitle=_sbIsUnavailable()?(_sbState==='paused'?'Supabase paused':'Supabase unavailable'):(counts.draft?'Needs attention':counts.coming?'Almost live':counts.published?'Publishing well':'Quiet');
   const pulseMeta=_sbIsUnavailable()?'Live counters are temporarily unavailable. Content still renders from the active fallback source.':counts.draft?'Draft work is waiting, so the next admin move is editorial.':counts.coming?'Some posts are parked as Coming Soon and need a decision.':counts.published?'Published posts are carrying the public blog right now.':'Nothing is live yet, so create or publish the first post.';
-  avAdminText('dashPulseTitle',pulseTitle);avAdminText('dashPulseMeta',pulseMeta);
-  avAdminText('dashNextMove',counts.draft?'Finish drafts':counts.coming?'Review timing':counts.published?'Review campaigns':'Create post');
+  avAdminText('dashPulseTitle',pulseTitle);avAdminText('dashPulseTitleCard',pulseTitle);avAdminText('dashPulseMeta',pulseMeta);
+  const nextMove=counts.draft?'Finish drafts':counts.coming?'Review timing':counts.published?'Review campaigns':'Create post';
+  avAdminText('dashNextMove',nextMove);avAdminText('dashNextMoveCard',nextMove);
   avAdminText('dashNextMeta',counts.draft?'Open All Posts and move the strongest draft forward.':counts.coming?'Decide what should go live and what should stay hidden.':counts.published?'Turn live posts into newsletter or social moments.':'Start a new article draft and publish it when ready.');
   const sourceLabel=resolved.source==='database'?'Supabase':resolved.source==='cache'?'Local cache':resolved.source==='seed'?'Seed fallback':resolved.source||'Unknown';
-  avAdminText('dashSourceTitle',sourceLabel);
+  avAdminText('dashSourceTitle',sourceLabel);avAdminText('dashSourceTitleCard',sourceLabel);
   avAdminText('dashSourceMeta',resolved.source==='database'?'Workspace is reading the shared database source.':resolved.source==='cache'?'Live content is unavailable, so this view is using browser cache.':'This view is using bundled fallback content until live posts are reachable.');
+  avAdminText('dashCommandTitle',counts.draft?'Editorial decisions are waiting':counts.coming?'The queue is almost ready':counts.published?'The public engine is live':'Build the first public signal');
+  avAdminText('dashCommandCopy',_sbIsUnavailable()?'Live counters are unavailable, but Workspace can still help you work from the active content source.':counts.draft?'Draft work is the current bottleneck. Finish the strongest piece, publish it, then use campaigns to distribute it.':counts.coming?'Some content is parked as Coming Soon. Decide what deserves to go live and what should stay hidden.':counts.published?'Published posts, offers, and audience signals are available. Review campaigns and follow up on people who raised their hands.':'Create the first post or restore content so the workspace has something meaningful to operate.');
   const box=document.getElementById('attentionList');
   if(box)box.innerHTML=attention.slice(0,5).map(avAdminAttentionItem).join('')||'<div class="attention-item"><div class="attention-copy"><strong>Everything looks calm right now.</strong><span>The content queue, community surfaces, and campaigns are in a manageable state.</span></div><button class="ab" onclick="nav(\'editor\')">Create post</button></div>';
 }

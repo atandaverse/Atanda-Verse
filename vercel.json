@@ -3,6 +3,7 @@
     { "source": "/blog/:slug", "destination": "/api/blog/:slug" },
     { "source": "/blog", "destination": "/blog.html" },
     { "source": "/sessions", "destination": "/sessions.html" },
+    { "source": "/about", "destination": "/about.html" },
     { "source": "/faq", "destination": "/faq.html" },
     { "source": "/library", "destination": "/library.html" },
     { "source": "/vaultlibrary", "destination": "/vaultlibrary.html" },
@@ -15,6 +16,7 @@
   "redirects": [
     { "source": "/blog/index.html", "destination": "/", "permanent": true },
     { "source": "/blog/sessions.html", "destination": "/sessions", "permanent": true },
+    { "source": "/blog/about.html", "destination": "/about", "permanent": true },
     { "source": "/blog/blog.html", "destination": "/blog", "permanent": true },
     { "source": "/blog/faq.html", "destination": "/faq", "permanent": true },
     { "source": "/blog/library.html", "destination": "/library", "permanent": true },
@@ -23,6 +25,7 @@
     { "source": "/index.html", "destination": "/", "permanent": true },
     { "source": "/blog.html", "destination": "/blog", "permanent": true },
     { "source": "/sessions.html", "destination": "/sessions", "permanent": true },
+    { "source": "/about.html", "destination": "/about", "permanent": true },
     { "source": "/faq.html", "destination": "/faq", "permanent": true },
     { "source": "/library.html", "destination": "/library", "permanent": true },
     { "source": "/vaultlibrary.html", "destination": "/vaultlibrary", "permanent": true },
