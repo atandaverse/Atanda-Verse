@@ -1548,7 +1548,6 @@ img.loaded{opacity:1;}
     let stickyLastReveal = 0;
     let stickyMobileRevealSeen = false;
     const stickyLabel = sc ? sc.querySelector('.sticky-cta-label') : null;
-    const stickyFullText = 'Book Your Free Session';
     const stickyCompactText = 'Book';
     const stickyReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const stickyCanHover = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 769px)').matches;
@@ -1569,11 +1568,11 @@ img.loaded{opacity:1;}
         sc.classList.remove('peek');
         if (shouldErase && !stickyReducedMotion && stickyLabel.textContent.length > stickyCompactText.length) {
             const token = ++stickyTypeToken;
-            stickyTypeTimer = setTimeout(function () { eraseStickyText(stickyLabel.textContent || stickyFullText, stickyCompactText, token, 0); }, 90);
+            stickyTypeTimer = setTimeout(function () { eraseStickyText(stickyLabel.textContent || getStickyFullText(), stickyCompactText, token, 0); }, 90);
         } else {
             stickyLabel.textContent = stickyCompactText;
         }
-        sc.setAttribute('aria-label', 'Book free single session');
+        sc.setAttribute('aria-label', getStickyAriaLabel());
     }
     function typeStickyText(text, token, i) {
         if (!stickyLabel || token !== stickyTypeToken) return;
@@ -1591,7 +1590,8 @@ img.loaded{opacity:1;}
         stopStickyTyping();
         sc.classList.remove('compact');
         sc.classList.add('peek');
-        sc.setAttribute('aria-label', 'Book your free single clarity session');
+        const stickyFullText = getStickyFullText();
+        sc.setAttribute('aria-label', getStickyAriaLabel());
         stickyLastReveal = Date.now();
         if (shouldType && !stickyReducedMotion) {
             const token = ++stickyTypeToken;
@@ -1962,3 +1962,9 @@ if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone
 </script>
 </body>
 </html>
+    function getStickyFullText() {
+        return (window.ivLaunchState && window.ivLaunchState.expired) ? 'Book Session' : 'Book Your Free Session';
+    }
+    function getStickyAriaLabel() {
+        return (window.ivLaunchState && window.ivLaunchState.expired) ? 'Book a clarity session' : 'Book your free single clarity session';
+    }
