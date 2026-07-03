@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-<title>Admin — Atanda</title>
+<title>Admin - Atanda</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -117,6 +117,37 @@ body[data-admin-theme="evolutionary"]::before{background:radial-gradient(circle 
 .quick-link strong{font-size:.8rem}
 .quick-link span{font-size:.7rem;color:var(--t3)}
 .queue-note{font-size:.75rem;color:var(--t3);margin:.2rem 0 1rem;line-height:1.55}
+
+/* ADMIN COHESION PASS */
+.command-hero{grid-template-columns:minmax(0,1.42fr) minmax(320px,.72fr);gap:1rem;margin-bottom:1.05rem}
+.command-panel{border-color:rgba(220,53,69,.24);border-radius:24px;background:linear-gradient(135deg,rgba(220,53,69,.18),rgba(255,255,255,.05) 42%,rgba(59,130,246,.1));padding:1.55rem;min-height:224px;box-shadow:0 24px 70px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08)}
+.command-panel::before{right:-100px;top:-112px;width:290px;height:290px;background:radial-gradient(circle,rgba(220,53,69,.28),transparent 65%)}
+.command-panel::after{height:2px;background:linear-gradient(90deg,transparent,var(--ac),#f59e0b,#3b82f6,transparent);opacity:.9}
+.command-kicker{font-size:.66rem;letter-spacing:2px;font-weight:900;margin-bottom:.72rem}
+.command-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.15rem,4.2vw,4rem);letter-spacing:1.5px;line-height:.92;font-weight:400;max-width:760px}
+.command-copy{margin-top:.95rem;max-width:700px;font-size:.91rem;line-height:1.7}
+.command-meta{gap:.7rem;margin-top:1.25rem}
+.command-meta div{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:.78rem .85rem}
+.command-meta span{font-size:.61rem;letter-spacing:1.4px;font-weight:800}
+.command-meta strong{font-size:.96rem}
+.command-actions{gap:.7rem}
+.quick-link{border-radius:18px;padding:.95rem 1rem;background:linear-gradient(145deg,rgba(255,255,255,.045),var(--bg2));box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.quick-link:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.06)}
+.quick-link strong{font-size:.86rem}
+.quick-link>span:last-child{flex:0 0 auto;min-width:46px;text-align:center;border:1px solid var(--b);border-radius:999px;padding:.2rem .55rem;color:var(--t2);font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px}
+.srow{grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
+.sc{border-radius:20px;padding:1.15rem 1.18rem;background:linear-gradient(145deg,rgba(255,255,255,.045),var(--bg2));box-shadow:0 18px 46px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.055)}
+.sci{font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:1.6px;font-weight:900;margin-bottom:.55rem}
+.scv{font-size:2.35rem;letter-spacing:1.2px}
+.scl{font-size:.64rem;letter-spacing:1.4px}
+.analytics-focus{border-color:rgba(59,130,246,.18);border-radius:24px;background:linear-gradient(135deg,rgba(59,130,246,.13),rgba(220,53,69,.12));padding:1.35rem;min-height:190px;box-shadow:0 22px 62px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.07)}
+.analytics-focus::before{right:-76px;bottom:-96px;width:250px;height:250px;background:radial-gradient(circle,rgba(59,130,246,.22),transparent 65%)}
+.analytics-focus .ops-card span,.analytics-side .ops-card span{font-size:.64rem;letter-spacing:1.7px}
+.analytics-focus .ops-card strong{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,5vw,4.3rem);letter-spacing:1.4px;line-height:.9;font-weight:400}
+.analytics-focus .ops-card small{max-width:640px;font-size:.86rem}
+.table-note{border-radius:18px;padding:.82rem 1rem;background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(255,255,255,.035));box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.ag{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:1rem;margin-bottom:1rem}
+.ac2{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:1.15rem}
 
 /* SEC HEADER */
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;gap:1rem;flex-wrap:wrap;padding-bottom:.7rem;border-bottom:1px solid var(--b)}
@@ -759,28 +790,28 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sb-logo"><div class="sb-brand">ATANDA</div><div class="sb-role">Admin</div></div>
     <nav class="sb-nav">
       <div class="sb-sec">Operate</div>
-      <div class="sb-lnk on" onclick="nav('dash')">📊 Dashboard</div>
-      <div class="sb-lnk" onclick="nav('analytics')">📈 Analytics</div>
+      <div class="sb-lnk on" onclick="nav('dash')">Dashboard</div>
+      <div class="sb-lnk" onclick="nav('analytics')">Analytics</div>
       <div class="sb-sec">Publishing</div>
-      <div class="sb-lnk" onclick="nav('posts')">📝 All Posts <span class="sb-badge" id="pc">0</span></div>
-      <div class="sb-lnk" onclick="nav('editor')">✏️ New Post</div>
+      <div class="sb-lnk" onclick="nav('posts')">All Posts <span class="sb-badge" id="pc">0</span></div>
+      <div class="sb-lnk" onclick="nav('editor')">New Post</div>
       <div class="sb-sec">Workspace</div>
-      <div class="sb-lnk" onclick="nav('settings')">⚙️ Settings</div>
-      <div class="sb-lnk" onclick="nav('pricing')">💳 Pricing</div>
+      <div class="sb-lnk" onclick="nav('settings')">Settings</div>
+      <div class="sb-lnk" onclick="nav('pricing')">Pricing</div>
       <div class="sb-sec">Audience</div>
-      <div class="sb-lnk" onclick="nav('testimonials')">💬 Testimonials <span class="sb-badge" id="pendingCount">0</span></div>
-      <div class="sb-lnk" onclick="nav('library')">📚 Library</div>
-      <div class="sb-lnk" onclick="nav('vault')">🗝️ Vault Access <span class="sb-badge" id="vaultCount">0</span></div>
-      <div class="sb-lnk" onclick="nav('comments')">🗨️ Comments <span class="sb-badge" id="cmtCount">0</span></div>
-      <div class="sb-lnk" onclick="nav('registrations')">🎯 Registrations <span class="sb-badge" id="regCount">0</span></div>
-      <div class="sb-lnk" onclick="nav('subscribers')">📧 Subscribers <span class="sb-badge" id="subCount">0</span></div>
-      <div class="sb-lnk" onclick="nav('campaigns')">📨 Campaigns <span class="sb-badge" id="campCount">0</span></div>
-      <div class="sb-lnk" onclick="nav('faq')">❓ FAQ</div>
-      <div class="sb-lnk" onclick="nav('logins')">🔐 Logins</div>
-      <div class="sb-lnk" onclick="window.open('blog.html','_blank')">🌐 View Blog</div>
-      <div class="sb-lnk" onclick="window.open('index.html','_blank')">🏠 View Site</div>
+      <div class="sb-lnk" onclick="nav('testimonials')">Testimonials <span class="sb-badge" id="pendingCount">0</span></div>
+      <div class="sb-lnk" onclick="nav('library')">Library</div>
+      <div class="sb-lnk" onclick="nav('vault')">Vault Access <span class="sb-badge" id="vaultCount">0</span></div>
+      <div class="sb-lnk" onclick="nav('comments')">Comments <span class="sb-badge" id="cmtCount">0</span></div>
+      <div class="sb-lnk" onclick="nav('registrations')">Registrations <span class="sb-badge" id="regCount">0</span></div>
+      <div class="sb-lnk" onclick="nav('subscribers')">Subscribers <span class="sb-badge" id="subCount">0</span></div>
+      <div class="sb-lnk" onclick="nav('campaigns')">Campaigns <span class="sb-badge" id="campCount">0</span></div>
+      <div class="sb-lnk" onclick="nav('faq')">FAQ</div>
+      <div class="sb-lnk" onclick="nav('logins')">Logins</div>
+      <div class="sb-lnk" onclick="window.open('blog.html','_blank')">View Blog</div>
+      <div class="sb-lnk" onclick="window.open('index.html','_blank')">View Site</div>
     </nav>
-    <div class="sb-foot"><div class="sb-usr"><div class="sb-av">👤</div><div><div class="sb-un" id="sbUn">Admin</div><div class="sb-ur" id="dbModeLbl">Local</div></div></div></div>
+    <div class="sb-foot"><div class="sb-usr"><div class="sb-av">A</div><div><div class="sb-un" id="sbUn">Admin</div><div class="sb-ur" id="dbModeLbl">Local</div></div></div></div>
   </aside>
   <div class="main">
     <div class="topbar">
@@ -790,9 +821,9 @@ create policy "public_write_logins" on admin_logins for all using (true);
       </div>
       <div class="tbr">
         <span class="live-w"><span class="ld"></span>LIVE</span>
-        <button class="tbb" onclick="refreshViews()">🔄 Refresh</button>
-        <button class="tbb p" onclick="nav('editor')">✏️ New Post</button>
-        <button class="tbb" onclick="logout()">🚪 Logout</button>
+        <button class="tbb" onclick="refreshViews()">Refresh</button>
+        <button class="tbb p" onclick="nav('editor')">New Post</button>
+        <button class="tbb" onclick="logout()">Logout</button>
       </div>
     </div>
 
@@ -810,10 +841,10 @@ create policy "public_write_logins" on admin_logins for all using (true);
           </div>
         </div>
         <div class="command-actions">
-          <div class="quick-link" onclick="nav('editor')"><div><strong>Create a new post</strong><span>Start a draft in the editor</span></div><span>-></span></div>
-          <div class="quick-link" onclick="nav('campaigns')"><div><strong>Review campaigns</strong><span>Check newsletter drafts and sends</span></div><span>-></span></div>
-          <div class="quick-link" onclick="nav('registrations')"><div><strong>Check registrations</strong><span>Follow up on session interest</span></div><span>-></span></div>
-          <div class="quick-link" onclick="nav('pricing')"><div><strong>Review offers</strong><span>Confirm public pricing and CTAs</span></div><span>-></span></div>
+          <div class="quick-link" onclick="nav('editor')"><div><strong>Create a new post</strong><span>Start a draft in the editor</span></div><span>Open</span></div>
+          <div class="quick-link" onclick="nav('campaigns')"><div><strong>Review campaigns</strong><span>Check newsletter drafts and sends</span></div><span>Open</span></div>
+          <div class="quick-link" onclick="nav('registrations')"><div><strong>Check registrations</strong><span>Follow up on session interest</span></div><span>Open</span></div>
+          <div class="quick-link" onclick="nav('pricing')"><div><strong>Review offers</strong><span>Confirm public pricing and CTAs</span></div><span>Open</span></div>
         </div>
       </div>
       <div class="attention">
@@ -846,7 +877,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         <div class="cc"><div class="ct">Views Per Post <span class="live-w" style="font-size:.57rem"><span class="ld"></span>LIVE</span></div><div class="bc" id="barchart"></div></div>
         <div class="cc"><div class="ct">By Category</div><div class="dw"><div class="dn"><svg viewBox="0 0 120 120" width="98" height="98" id="donut"></svg><div class="dc"><div class="dnv" id="dv">0</div><div class="dns">posts</div></div></div><div class="leg" id="dleg"></div></div></div>
       </div>
-      <div class="sh"><div class="sl">Recent Posts</div><button class="tbb" onclick="nav('posts')">View All -></button></div>
+      <div class="sh"><div class="sl">Recent Posts</div><button class="tbb" onclick="nav('posts')">View All</button></div>
       <div class="tw"><table><thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Views</th><th>Date</th><th>Actions</th></tr></thead><tbody id="recTbl"></tbody></table></div>
     </div>
     <!-- ANALYTICS -->
