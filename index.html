@@ -528,6 +528,20 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         .contact-btn.email:hover { background: linear-gradient(135deg,var(--accent),#972430); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(220,53,69,.38), inset 0 1px 0 rgba(255,255,255,.34); }
         .brand-mark { width: 1.15em; height: 1.15em; flex: 0 0 auto; display: inline-block; vertical-align: -0.18em; margin-right: .45rem; }
 
+        /* About snapshot */
+        .about-snapshot{padding:6rem 0;background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(248,250,252,.46));border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border)}
+        [data-theme="dark"] .about-snapshot{background:linear-gradient(135deg,rgba(15,23,42,.66),rgba(30,41,59,.44))}
+        .about-snapshot-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);gap:2rem;align-items:stretch}
+        .about-snapshot-copy{padding:1rem 0}
+        .about-snapshot-copy .section-title{text-align:left;margin-bottom:1rem}
+        .about-snapshot-copy .section-subtitle{text-align:left;margin:0 0 1.6rem;max-width:680px}
+        .about-snapshot-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;padding:2rem;box-shadow:0 20px 48px var(--shadow),inset 0 1px 0 rgba(255,255,255,.38)}
+        .about-snapshot-card h3{font-size:1rem;color:var(--text-primary);margin-bottom:.65rem}
+        .about-snapshot-card p{color:var(--text-secondary);font-size:.92rem;line-height:1.7;margin-bottom:1rem}
+        .about-snapshot-list{display:grid;gap:.75rem;margin-top:1rem}
+        .about-snapshot-list span{display:flex;align-items:center;gap:.7rem;color:var(--text-secondary);font-weight:700;font-size:.9rem}
+        .about-snapshot-list span::before{content:'';width:10px;height:10px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 5px rgba(220,53,69,.1)}
+
         /* ── FAQ ── */
         .faq { padding: 7rem 0; background: var(--bg-secondary); }
         .faq-grid { max-width: 780px; margin: 1rem auto 0; }
@@ -644,6 +658,8 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
             .newsletter-form input { min-width: auto; }
             .contact-buttons { flex-direction: column; align-items: center; }
             .contact-btn { width: 100%; max-width: 300px; justify-content: center; }
+            .about-snapshot-grid{grid-template-columns:1fr}
+            .about-snapshot-copy .section-title,.about-snapshot-copy .section-subtitle{text-align:center}
             .scroll-hint { display: none; }
         }
         @media (max-width: 480px) {
@@ -1064,6 +1080,27 @@ img.loaded{opacity:1;}
         <div class="scroll-hint"><div class="scroll-line"></div><span>Scroll</span></div>
     </section>
 
+    <!-- ABOUT SNAPSHOT -->
+    <section class="about-snapshot" id="about">
+        <div class="container about-snapshot-grid">
+            <div class="about-snapshot-copy rv">
+                <span class="section-tag">About Atanda Verse</span>
+                <h2 class="section-title">CLARITY WITH A HUMAN CENTER</h2>
+                <p class="section-subtitle">Atanda Verse helps people move from mental noise to language, direction, and next steps through reflective writing, practical tools, and guided clarity sessions.</p>
+                <a href="about.html" class="cta-button">Learn About Us</a>
+            </div>
+            <div class="about-snapshot-card iv-pop">
+                <h3>Built for real life, not performance.</h3>
+                <p>We work where questions about purpose, career, faith, pressure, identity, relationships, and ambition often meet: the private space where a person knows they need clarity but has not yet found the words.</p>
+                <div class="about-snapshot-list">
+                    <span>Reflective articles that name what is happening</span>
+                    <span>Sessions that turn confusion into direction</span>
+                    <span>Resources that help the next step feel possible</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- PRICING -->
     <section class="pricing" id="sessions">
         <div class="container">
@@ -1282,7 +1319,7 @@ img.loaded{opacity:1;}
             <a href="faq.html">FAQ</a>
             <a href="library.html">Library</a>
             <a href="register.html">Register</a>
-            <a href="legal.html">Legal</a>
+            <a href="privacy.html">Privacy</a><a href="legal.html">Legal</a>
         </div>
         <div class="footer-divider"></div>
         <p>&copy; 2025–2026 Atanda. All rights reserved.</p>
