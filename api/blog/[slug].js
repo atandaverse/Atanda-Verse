@@ -25,6 +25,17 @@ function descriptionFor(post) {
   return base.length > 160 ? `${base.slice(0, 157).trimEnd()}...` : base;
 }
 
+function keywordsFor(post) {
+  return [
+    post && post.title,
+    post && post.category,
+    'Atanda Verse',
+    'clarity insights',
+    'Nigerian career growth',
+    'personal development Nigeria'
+  ].filter(Boolean).join(', ');
+}
+
 async function fetchPost(slug) {
   const url = `${SUPABASE_URL}/rest/v1/posts?select=id,title,subtitle,excerpt,category,date,read_time,image,emoji,status,content&id=eq.${encodeURIComponent(slug)}&limit=1`;
   const response = await fetch(url, {
@@ -45,10 +56,30 @@ function injectMeta(html, post, slug) {
   const image = absoluteUrl(post && post.image);
   const category = post && post.category ? post.category : 'Clarity';
   const date = post && post.date ? post.date : new Date().toISOString();
+  const keywords = post ? keywordsFor(post) : 'Atanda Verse article, clarity insights, Nigerian career growth, personal transformation blog';
+  const articleLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post && post.title ? post.title : 'Atanda Verse Article',
+    description: desc,
+    image: [image],
+    datePublished: date,
+    dateModified: date,
+    articleSection: category,
+    keywords,
+    mainEntityOfPage: canonical,
+    author: { '@type': 'Organization', name: 'Atanda Verse' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Atanda Verse',
+      logo: { '@type': 'ImageObject', url: `${SITE_ORIGIN}/logo%20I.png` }
+    }
+  };
 
   return html
     .replace(/<title id="pageTitle">[\s\S]*?<\/title>/, `<title id="pageTitle">${attr(title)}</title>`)
     .replace(/(<meta name="description" id="metaDesc" content=")[^"]*(")/, `$1${attr(desc)}$2`)
+    .replace(/(<meta name="keywords" id="metaKeywords" content=")[^"]*(")/, `$1${attr(keywords)}$2`)
     .replace(/(<link rel="canonical" id="canonical" href=")[^"]*(")/, `$1${attr(canonical)}$2`)
     .replace(/(<meta property="og:title" id="ogTitle" content=")[^"]*(")/, `$1${attr(post && post.title ? post.title : 'Atanda Verse Article')}$2`)
     .replace(/(<meta property="og:description" id="ogDesc" content=")[^"]*(")/, `$1${attr(desc)}$2`)
@@ -59,6 +90,7 @@ function injectMeta(html, post, slug) {
     .replace(/(<meta name="twitter:title" id="twTitle" content=")[^"]*(")/, `$1${attr(post && post.title ? post.title : 'Atanda Verse Article')}$2`)
     .replace(/(<meta name="twitter:description" id="twDesc" content=")[^"]*(")/, `$1${attr(desc)}$2`)
     .replace(/(<meta name="twitter:image" id="twImg" content=")[^"]*(")/, `$1${attr(image)}$2`)
+    .replace(/<script type="application\/ld\+json" id="ldJson">[\s\S]*?<\/script>/, `<script type="application/ld+json" id="ldJson">${JSON.stringify(articleLd).replace(/</g, '\\u003c')}</script>`)
     .replace('</head>', `<meta property="og:image:secure_url" content="${attr(image)}"><meta property="og:image:alt" content="${attr(post && post.title ? post.title : 'Atanda Verse article image')}"><meta name="twitter:url" content="${attr(canonical)}"></head>`);
 }
 
