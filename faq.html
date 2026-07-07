@@ -24,7 +24,7 @@
 <meta name="twitter:title" content="FAQ - Atanda Verse">
 <meta name="twitter:description" content="Answers about clarity sessions, pricing, online meetings, language options, and support.">
 <meta name="twitter:image" content="https://verse.atanda.site/images/headers.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","name":"Atanda Verse FAQ","url":"https://verse.atanda.site/faq"}</script>
+<script type="application/ld+json" id="faqLdJson">{"@context":"https://schema.org","@type":"FAQPage","name":"Atanda Verse FAQ","url":"https://verse.atanda.site/faq"}</script>
 <script>!function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.style.colorScheme=t==="dark"?"dark":"light"}();</script>
 <script src="config.js"></script>
 
@@ -1015,6 +1015,24 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
       let _faqItems=[], _faqActiveCat='all';
       const faqEsc=value=>String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
+      function updateFaqSchema(items){
+        const ld=document.getElementById('faqLdJson');
+        if(!ld)return;
+        const mainEntity=(items||[]).slice(0,20).map(item=>({
+          "@type":"Question",
+          "name":String(item.question||''),
+          "acceptedAnswer":{"@type":"Answer","text":String(item.answer||'')}
+        })).filter(item=>item.name&&item.acceptedAnswer.text);
+        ld.textContent=JSON.stringify({
+          "@context":"https://schema.org",
+          "@type":"FAQPage",
+          "name":"Atanda Verse FAQ",
+          "url":"https://verse.atanda.site/faq",
+          "inLanguage":"en-NG",
+          "mainEntity":mainEntity
+        });
+      }
+
       function renderFaqContent(cat){
         _faqActiveCat=cat;
         document.querySelectorAll('.faq-filter-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+cat+"'")));
@@ -1050,6 +1068,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
 
       (async function loadFaq(){
         _faqItems=window.ivGetPublicFaq?await window.ivGetPublicFaq(FAQ_DEFAULTS):FAQ_DEFAULTS;
+        updateFaqSchema(_faqItems);
         renderFaqContent('all');
       })();
 

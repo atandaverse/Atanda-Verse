@@ -1,11 +1,15 @@
 User-agent: *
 Allow: /
+Allow: /api/sitemap.xml
 Disallow: /admin.html
 Disallow: /workspace.html
 Disallow: /admin
 Disallow: /workspace
 Disallow: /vaultlibrary
 Disallow: /vaultlibrary.html
+Disallow: /posts/
+Disallow: /api/
 Disallow: /*?preview=
+Disallow: /*?draft=
 
-Sitemap: https://verse.atanda.site/sitemap.xml
+Sitemap: https://verse.atanda.site/api/sitemap.xml

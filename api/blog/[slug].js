@@ -4,6 +4,16 @@ const path = require('path');
 const SITE_ORIGIN = 'https://verse.atanda.site';
 const SUPABASE_URL = 'https://lrgpegfrewlqdqlunrml.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyZ3BlZ2ZyZXdscWRxbHVucm1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjgzMDIsImV4cCI6MjA4OTYwNDMwMn0.JyBdLFV7ko8aEYvlZ7a05xn6XMNsYY0COqMmGOm3RR0';
+const LEGACY_POST_ALIASES = {
+  ep1: 'school-na-scam-ep1',
+  ep2: 'school-na-scam-ep2',
+  ep3: 'school-na-scam-ep3',
+  ep4: 'school-na-scam-ep4'
+};
+const BRANDED_POST_ALIASES = Object.keys(LEGACY_POST_ALIASES).reduce((map, legacy) => {
+  map[LEGACY_POST_ALIASES[legacy]] = legacy;
+  return map;
+}, {});
 
 function attr(value) {
   return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -49,8 +59,21 @@ async function fetchPost(slug) {
   return Array.isArray(rows) && rows[0] ? rows[0] : null;
 }
 
-function injectMeta(html, post, slug) {
-  const canonical = `${SITE_ORIGIN}/blog/${encodeURIComponent(slug)}`;
+async function resolvePost(slug) {
+  let post = await fetchPost(slug);
+  if (post) return { post, canonicalSlug: LEGACY_POST_ALIASES[slug] || slug };
+  const legacySlug = BRANDED_POST_ALIASES[slug];
+  if (legacySlug) {
+    post = await fetchPost(legacySlug);
+    if (post) return { post, canonicalSlug: slug };
+  }
+  return { post: null, canonicalSlug: LEGACY_POST_ALIASES[slug] || slug };
+}
+
+function injectMeta(html, post, slug, options) {
+  const opts = options || {};
+  const canonicalSlug = opts.canonicalSlug || slug;
+  const canonical = `${SITE_ORIGIN}/blog/${encodeURIComponent(canonicalSlug)}`;
   const title = post && post.title ? `${post.title} | Atanda Verse` : 'Atanda Verse Article - Clarity Insights';
   const desc = post ? descriptionFor(post) : 'Read Atanda Verse clarity insights on career growth, Nigerian life, purpose, relationships, and personal transformation.';
   const image = absoluteUrl(post && post.image);
@@ -67,7 +90,7 @@ function injectMeta(html, post, slug) {
     dateModified: date,
     articleSection: category,
     keywords,
-    mainEntityOfPage: canonical,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     author: { '@type': 'Organization', name: 'Atanda Verse' },
     publisher: {
       '@type': 'Organization',
@@ -80,7 +103,10 @@ function injectMeta(html, post, slug) {
     .replace(/<title id="pageTitle">[\s\S]*?<\/title>/, `<title id="pageTitle">${attr(title)}</title>`)
     .replace(/(<meta name="description" id="metaDesc" content=")[^"]*(")/, `$1${attr(desc)}$2`)
     .replace(/(<meta name="keywords" id="metaKeywords" content=")[^"]*(")/, `$1${attr(keywords)}$2`)
+    .replace(/(<meta name="robots" content=")[^"]*(")/, `$1${opts.noindex ? 'noindex, follow, max-image-preview:large' : 'index, follow, max-image-preview:large'}$2`)
     .replace(/(<link rel="canonical" id="canonical" href=")[^"]*(")/, `$1${attr(canonical)}$2`)
+    .replace(/(<link rel="alternate" hreflang="en-ng" href=")[^"]*(")/, `$1${attr(canonical)}$2`)
+    .replace(/(<link rel="alternate" hreflang="x-default" href=")[^"]*(")/, `$1${attr(canonical)}$2`)
     .replace(/(<meta property="og:title" id="ogTitle" content=")[^"]*(")/, `$1${attr(post && post.title ? post.title : 'Atanda Verse Article')}$2`)
     .replace(/(<meta property="og:description" id="ogDesc" content=")[^"]*(")/, `$1${attr(desc)}$2`)
     .replace(/(<meta property="og:image" id="ogImg" content=")[^"]*(")/, `$1${attr(image)}$2`)
@@ -91,7 +117,7 @@ function injectMeta(html, post, slug) {
     .replace(/(<meta name="twitter:description" id="twDesc" content=")[^"]*(")/, `$1${attr(desc)}$2`)
     .replace(/(<meta name="twitter:image" id="twImg" content=")[^"]*(")/, `$1${attr(image)}$2`)
     .replace(/<script type="application\/ld\+json" id="ldJson">[\s\S]*?<\/script>/, `<script type="application/ld+json" id="ldJson">${JSON.stringify(articleLd).replace(/</g, '\\u003c')}</script>`)
-    .replace('</head>', `<meta property="og:image:secure_url" content="${attr(image)}"><meta property="og:image:alt" content="${attr(post && post.title ? post.title : 'Atanda Verse article image')}"><meta name="twitter:url" content="${attr(canonical)}"></head>`);
+    .replace('</head>', `<meta property="og:image:secure_url" content="${attr(image)}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="628"><meta property="og:image:alt" content="${attr(post && post.title ? post.title : 'Atanda Verse article image')}"><meta name="twitter:url" content="${attr(canonical)}"></head>`);
 }
 
 module.exports = async function handler(req, res) {
@@ -101,15 +127,20 @@ module.exports = async function handler(req, res) {
   const html = fs.readFileSync(htmlPath, 'utf8');
 
   let post = null;
+  let canonicalSlug = slug;
   if (slug) {
     try {
-      post = await fetchPost(slug);
+      const resolved = await resolvePost(slug);
+      post = resolved.post;
+      canonicalSlug = resolved.canonicalSlug;
     } catch (_err) {
       post = null;
     }
   }
 
+  const isPublicPost = post && (!post.status || post.status === 'published');
+
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=86400');
-  res.status(200).send(injectMeta(html, post, slug));
+  res.status(isPublicPost ? 200 : 404).send(injectMeta(html, isPublicPost ? post : null, slug, { noindex: !isPublicPost, canonicalSlug }));
 };
