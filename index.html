@@ -1225,7 +1225,71 @@ img.loaded{opacity:1;}
                         </select>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ageRange">Age Range *</label>
+                        <select id="ageRange" name="ageRange" required>
+                            <option value="">Select age range</option>
+                            <option value="under-18">Under 18</option>
+                            <option value="18-24">18-24</option>
+                            <option value="25-34">25-34</option>
+                            <option value="35-44">35-44</option>
+                            <option value="45+">45+</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country *</label>
+                        <input type="text" id="country" name="country" required placeholder="Nigeria">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lifeStage">Current Season *</label>
+                        <select id="lifeStage" name="lifeStage" required>
+                            <option value="">Select what fits best</option>
+                            <option value="student">Student</option>
+                            <option value="graduate">Graduate / NYSC</option>
+                            <option value="job-seeker">Job seeker</option>
+                            <option value="employed">Employed</option>
+                            <option value="business-owner">Business owner / freelancer</option>
+                            <option value="transition">In transition</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="focusArea">Main Focus *</label>
+                        <select id="focusArea" name="focusArea" required>
+                            <option value="">What do you need clarity on?</option>
+                            <option value="career">Career / work direction</option>
+                            <option value="purpose">Purpose / identity</option>
+                            <option value="relationships">Relationships / family pressure</option>
+                            <option value="faith">Faith / inner life</option>
+                            <option value="money">Money / business decisions</option>
+                            <option value="mental-fog">Mental fog / overwhelm</option>
+                            <option value="other">Something else</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="preferredContact">Preferred Follow-up *</label>
+                        <select id="preferredContact" name="preferredContact" required>
+                            <option value="">Choose channel</option>
+                            <option value="whatsapp">WhatsApp first</option>
+                            <option value="email">Email first</option>
+                            <option value="either">Either is fine</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="availability">Best Availability</label>
+                        <input type="text" id="availability" name="availability" placeholder="Weekday evenings, Saturdays, after 6pm...">
+                    </div>
+                </div>
                 <div class="form-group"><label for="goals">What do you hope to achieve? (Optional)</label><textarea id="goals" name="goals" rows="3" placeholder="Tell us about your current challenges or what you're looking to gain clarity on..."></textarea></div>
+                <label class="contact-check" style="display:flex;gap:.75rem;align-items:flex-start">
+                    <input type="checkbox" id="detailsConfirmed" name="detailsConfirmed" required style="width:auto;margin-top:.2rem">
+                    <span><strong>I have checked my contact details.</strong> I understand confirmation and follow-up will go to the email and WhatsApp/phone number I entered here.</span>
+                </label>
                 <div class="contact-check">
                     <strong>Before you submit, check your contact details carefully.</strong>
                     Confirmation and follow-up will go to the email and WhatsApp/phone number you enter here.
@@ -1795,12 +1859,35 @@ img.loaded{opacity:1;}
         );
     }
 
+    function cleanRegistrationField(value) {
+        return String(value || '').trim();
+    }
+
+    function buildRegistrationNotes(d, sessionLabel, source) {
+        const lines = [
+            'Selected path: ' + sessionLabel,
+            'Age range: ' + cleanRegistrationField(d.ageRange),
+            'Country: ' + cleanRegistrationField(d.country),
+            'Current season: ' + cleanRegistrationField(d.lifeStage),
+            'Main focus: ' + cleanRegistrationField(d.focusArea),
+            'Preferred follow-up: ' + cleanRegistrationField(d.preferredContact),
+            'Best availability: ' + (cleanRegistrationField(d.availability) || 'Not provided'),
+            'Source: ' + source
+        ];
+        const personalNote = cleanRegistrationField(d.goals);
+        if (personalNote) lines.push('', 'Personal note:', personalNote);
+        return lines.join('\n');
+    }
+
     document.getElementById('registrationForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const d = Object.fromEntries(new FormData(this));
-        if (!d.fullName || !d.email || !d.phone || !d.sessionType) { alert('Please fill in all required fields.'); return; }
+        if (!d.fullName || !d.email || !d.phone || !d.sessionType || !d.ageRange || !d.country || !d.lifeStage || !d.focusArea || !d.preferredContact) { alert('Please fill in all required fields.'); return; }
+        d.fullName = cleanRegistrationField(d.fullName);
         d.email = d.email.trim().toLowerCase();
         d.phone = d.phone.trim();
+        d.country = cleanRegistrationField(d.country);
+        d.availability = cleanRegistrationField(d.availability);
         if (!isValidContactEmail(d.email)) {
             alert('Please enter a valid email address we can actually reach.');
             document.getElementById('email').focus();
@@ -1819,10 +1906,11 @@ img.loaded{opacity:1;}
                 const sessionSelect = document.getElementById('sessionType');
                 const sessionLabel = sessionSelect && sessionSelect.selectedOptions[0] ? sessionSelect.selectedOptions[0].textContent.trim() : d.sessionType;
                 const submittedAt = new Date().toISOString();
+                const structuredGoals = buildRegistrationNotes(d, sessionLabel, 'index');
                 const saveRes = await fetch(creds.url + '/rest/v1/registrations', {
                     method: 'POST',
                     headers: { 'apikey': creds.key, 'Authorization': 'Bearer ' + creds.key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-                    body: JSON.stringify({ id: 'reg-' + Date.now(), full_name: d.fullName, email: d.email, phone: d.phone, session_type: d.sessionType, goals: d.goals || '', source: 'index', registered_at: submittedAt })
+                    body: JSON.stringify({ id: 'reg-' + Date.now(), full_name: d.fullName, email: d.email, phone: d.phone, session_type: d.sessionType, goals: structuredGoals, source: 'index', registered_at: submittedAt })
                 });
                 if (!saveRes.ok) throw new Error(await saveRes.text());
                 if (window.ivNotifyAdmin) window.ivNotifyAdmin('registration.created', {
@@ -1831,8 +1919,14 @@ img.loaded{opacity:1;}
                     phone: d.phone,
                     sessionType: d.sessionType,
                     sessionLabel: sessionLabel,
+                    ageRange: d.ageRange,
+                    country: d.country,
+                    lifeStage: d.lifeStage,
+                    focusArea: d.focusArea,
+                    preferredContact: d.preferredContact,
+                    availability: d.availability,
                     source: 'index',
-                    goals: d.goals || '',
+                    goals: structuredGoals,
                     submittedAt: submittedAt
                 });
             } catch(e) { console.warn('Registration save failed', e); alert('Your registration could not be saved right now. Please try again or use WhatsApp/email so we do not miss you.'); return; }

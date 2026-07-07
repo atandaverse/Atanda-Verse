@@ -278,10 +278,84 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ageRange">Age Range *</label>
+                            <select id="ageRange" name="ageRange" required>
+                                <option value="">Select age range</option>
+                                <option value="under-18">Under 18</option>
+                                <option value="18-24">18-24</option>
+                                <option value="25-34">25-34</option>
+                                <option value="35-44">35-44</option>
+                                <option value="45+">45+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country *</label>
+                            <input type="text" id="country" name="country" required placeholder="Nigeria">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City / Time Zone</label>
+                            <input type="text" id="city" name="city" placeholder="Lagos, Abuja, London, EST...">
+                        </div>
+                        <div class="form-group">
+                            <label for="lifeStage">Current Season *</label>
+                            <select id="lifeStage" name="lifeStage" required>
+                                <option value="">Select what fits best</option>
+                                <option value="student">Student</option>
+                                <option value="graduate">Graduate / NYSC</option>
+                                <option value="job-seeker">Job seeker</option>
+                                <option value="employed">Employed</option>
+                                <option value="business-owner">Business owner / freelancer</option>
+                                <option value="transition">In transition</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="focusArea">Main Focus *</label>
+                            <select id="focusArea" name="focusArea" required>
+                                <option value="">What do you need clarity on?</option>
+                                <option value="career">Career / work direction</option>
+                                <option value="purpose">Purpose / identity</option>
+                                <option value="relationships">Relationships / family pressure</option>
+                                <option value="faith">Faith / inner life</option>
+                                <option value="money">Money / business decisions</option>
+                                <option value="mental-fog">Mental fog / overwhelm</option>
+                                <option value="other">Something else</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="preferredContact">Preferred Follow-up *</label>
+                            <select id="preferredContact" name="preferredContact" required>
+                                <option value="">Choose channel</option>
+                                <option value="whatsapp">WhatsApp first</option>
+                                <option value="email">Email first</option>
+                                <option value="either">Either is fine</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="availability">Best Availability</label>
+                            <input type="text" id="availability" name="availability" placeholder="Weekday evenings, Saturdays, after 6pm...">
+                        </div>
+                        <div class="form-group">
+                            <label for="heardFrom">How did you hear about us?</label>
+                            <input type="text" id="heardFrom" name="heardFrom" placeholder="Instagram, WhatsApp, friend, blog...">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="goals">What do you hope to achieve? (Optional)</label>
                         <textarea id="goals" name="goals" rows="4" placeholder="Tell us what you're navigating right now, what kind of clarity you need, or what you'd like this session to unlock."></textarea>
                     </div>
+                    <label class="contact-check" style="display:flex;gap:.75rem;align-items:flex-start">
+                        <input type="checkbox" id="detailsConfirmed" name="detailsConfirmed" required style="width:auto;margin-top:.2rem">
+                        <span><strong>I have checked my contact details.</strong> I understand confirmation and follow-up will go to the email and WhatsApp/phone number I entered.</span>
+                    </label>
                     <div class="contact-check">
                         <strong>Before you submit, check your contact details carefully.</strong>
                         Confirmation and follow-up will go to the email and WhatsApp/phone number you enter here.
@@ -494,15 +568,42 @@
             );
         }
 
+        function cleanField(value) {
+            return String(value || '').trim();
+        }
+
+        function buildRegistrationNotes(d, sessionLabel, source) {
+            const lines = [
+                'Selected path: ' + sessionLabel,
+                'Age range: ' + cleanField(d.ageRange),
+                'Country: ' + cleanField(d.country),
+                'City / time zone: ' + (cleanField(d.city) || 'Not provided'),
+                'Current season: ' + cleanField(d.lifeStage),
+                'Main focus: ' + cleanField(d.focusArea),
+                'Preferred follow-up: ' + cleanField(d.preferredContact),
+                'Best availability: ' + (cleanField(d.availability) || 'Not provided'),
+                'Heard from: ' + (cleanField(d.heardFrom) || 'Not provided'),
+                'Source: register:' + source
+            ];
+            const personalNote = cleanField(d.goals);
+            if (personalNote) lines.push('', 'Personal note:', personalNote);
+            return lines.join('\n');
+        }
+
         document.getElementById('registrationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const d = Object.fromEntries(new FormData(this));
-            if (!d.fullName || !d.email || !d.phone || !d.sessionType) {
+            if (!d.fullName || !d.email || !d.phone || !d.sessionType || !d.ageRange || !d.country || !d.lifeStage || !d.focusArea || !d.preferredContact) {
                 alert('Please fill in all required fields.');
                 return;
             }
             d.email = d.email.trim().toLowerCase();
             d.phone = d.phone.trim();
+            d.fullName = cleanField(d.fullName);
+            d.country = cleanField(d.country);
+            d.city = cleanField(d.city);
+            d.availability = cleanField(d.availability);
+            d.heardFrom = cleanField(d.heardFrom);
             if (!isValidContactEmail(d.email)) {
                 alert('Please enter a valid email address we can actually reach.');
                 document.getElementById('email').focus();
@@ -523,6 +624,7 @@
             const sessionSelect = document.getElementById('sessionType');
             const sessionLabel = sessionSelect && sessionSelect.selectedOptions[0] ? sessionSelect.selectedOptions[0].textContent.trim() : d.sessionType;
             const submittedAt = new Date().toISOString();
+            const structuredGoals = buildRegistrationNotes(d, sessionLabel, source);
 
             if (creds && creds.url && creds.key) {
                 try {
@@ -540,7 +642,7 @@
                             email: d.email,
                             phone: d.phone,
                             session_type: d.sessionType,
-                            goals: d.goals || '',
+                            goals: structuredGoals,
                             source: 'register:' + source,
                             registered_at: submittedAt
                         })
@@ -552,8 +654,16 @@
                         phone: d.phone,
                         sessionType: d.sessionType,
                         sessionLabel: sessionLabel,
+                        ageRange: d.ageRange,
+                        country: d.country,
+                        city: d.city,
+                        lifeStage: d.lifeStage,
+                        focusArea: d.focusArea,
+                        preferredContact: d.preferredContact,
+                        availability: d.availability,
+                        heardFrom: d.heardFrom,
                         source: 'register:' + source,
-                        goals: d.goals || '',
+                        goals: structuredGoals,
                         submittedAt: submittedAt
                     });
                 } catch (err) {

@@ -1127,7 +1127,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sec-hdr">
         <div>
           <div class="sl">Registrations (<span id="regTotalLbl">0</span>)</div>
-          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Everyone who booked a free clarity session</div>
+          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Everyone who requested a session path across the site.</div>
         </div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
           <button class="tbb" onclick="loadRegistrationsPanel()">↻ Refresh</button>
@@ -1145,6 +1145,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         <select id="regSourceFilt" class="mn" style="width:auto;padding:.38rem .72rem;font-size:.78rem" onchange="loadRegistrationsPanel()">
           <option value="">All Sources</option>
           <option value="index">Homepage</option>
+          <option value="register">Register Page</option>
           <option value="sessions">Sessions Page</option>
         </select>
         <select id="regTypeFilt" class="mn" style="width:auto;padding:.38rem .72rem;font-size:.78rem" onchange="loadRegistrationsPanel()">
@@ -5995,16 +5996,24 @@ async function loadRegistrationsPanel() {
   try {
     const rows = await _sbReq('registrations?select=*&order=registered_at.desc') || [];
     _allRegs = rows;
+    const clean=value=>String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    const sourceKey=value=>{
+      const raw=String(value||'').toLowerCase();
+      if(raw.indexOf('register')===0)return 'register';
+      if(raw.indexOf('sessions')===0)return 'sessions';
+      if(raw.indexOf('index')===0)return 'index';
+      return raw||'unknown';
+    };
     const ro=document.getElementById('regOpsTotal'); if (ro) ro.textContent = rows.length;
-    const ri=document.getElementById('regOpsIndex'); if (ri) ri.textContent = rows.filter(r => r.source === 'index').length;
-    const rs=document.getElementById('regOpsSessions'); if (rs) rs.textContent = rows.filter(r => r.source === 'sessions').length;
+    const ri=document.getElementById('regOpsIndex'); if (ri) ri.textContent = rows.filter(r => sourceKey(r.source) === 'index').length;
+    const rs=document.getElementById('regOpsSessions'); if (rs) rs.textContent = rows.filter(r => sourceKey(r.source) === 'register' || sourceKey(r.source) === 'sessions').length;
     // Apply filters
     const src = document.getElementById('regSourceFilt')?.value || '';
     const typ = document.getElementById('regTypeFilt')?.value || '';
     const from = document.getElementById('regDateFrom')?.value || '';
     const to = document.getElementById('regDateTo')?.value || '';
     const filtered = rows.filter(r => {
-      if (src && r.source !== src) return false;
+      if (src && sourceKey(r.source) !== src) return false;
       if (typ && r.session_type !== typ) return false;
       if (from && r.registered_at < from) return false;
       if (to && r.registered_at.slice(0,10) > to) return false;
@@ -6018,19 +6027,19 @@ async function loadRegistrationsPanel() {
       return;
     }
     const typeLabels = {'single':'Single','three-pack':'3× Package','group':'Group','intensive':'Intensive'};
-    const srcLabels = {'index':'Homepage','sessions':'Sessions Page'};
+    const srcLabels = {'index':'Homepage','register':'Register Page','sessions':'Sessions Page'};
     tbl.innerHTML = filtered.map(r => {
       const dt = new Date(r.registered_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
       const goals = (r.goals || '').slice(0,60) + ((r.goals||'').length>60?'…':'');
       return `<tr>
-        <td class="tc2">${r.full_name}<span>${srcLabels[r.source]||r.source}</span></td>
-        <td style="font-size:.8rem">${r.email}</td>
-        <td style="font-size:.8rem">${r.phone}</td>
-        <td><span class="pill published" style="font-size:.7rem">${typeLabels[r.session_type]||r.session_type}</span></td>
-        <td style="font-size:.76rem;color:var(--t3);max-width:160px" title="${r.goals||''}">${goals||'—'}</td>
-        <td style="font-size:.74rem;color:var(--t3)">${srcLabels[r.source]||r.source}</td>
-        <td style="font-size:.74rem;color:var(--t3)">${dt}</td>
-        <td><div class="action-row"><button class="ab del" onclick="deleteReg('${r.id}')">🗑 Delete</button></div></td>
+        <td class="tc2">${clean(r.full_name)}<span>${clean(srcLabels[sourceKey(r.source)]||r.source)}</span></td>
+        <td style="font-size:.8rem">${clean(r.email)}</td>
+        <td style="font-size:.8rem">${clean(r.phone)}</td>
+        <td><span class="pill published" style="font-size:.7rem">${clean(typeLabels[r.session_type]||r.session_type)}</span></td>
+        <td style="font-size:.76rem;color:var(--t3);max-width:220px;white-space:pre-line" title="${clean(r.goals||'')}">${clean(goals)||'--'}</td>
+        <td style="font-size:.74rem;color:var(--t3)">${clean(srcLabels[sourceKey(r.source)]||r.source)}</td>
+        <td style="font-size:.74rem;color:var(--t3)">${clean(dt)}</td>
+        <td><div class="action-row"><button class="ab del" onclick="deleteReg('${clean(r.id)}')">Delete</button></div></td>
       </tr>`;
     }).join('');
   } catch(e) {

@@ -402,7 +402,7 @@
       el.setAttribute('aria-hidden', inactive ? 'true' : 'false');
     });
     if (campaign.enabled === false) {
-      ['.nav-cta','.hero-badge','.sticky-cta-label','.sticky-cta-detail','[data-price-plan="single"] .cta-button','#registerButton','#registerMicrocopy'].forEach(function (selector) { setHtml(selector, '', true); });
+      ['.nav-cta','.hero-badge','.sticky-cta-label','.sticky-cta-detail','[data-price-plan="single"] .cta-button','#registerMicrocopy'].forEach(function (selector) { setHtml(selector, '', true); });
       return launch;
     }
     var textMap = [
@@ -410,8 +410,7 @@
       ['.hero-badge', active ? campaign.activeBadge : campaign.expiredBadge],
       ['.sticky-cta-label', active ? campaign.activeStickyLabel : campaign.expiredStickyLabel],
       ['.sticky-cta-detail', active ? campaign.activeStickyDetail : campaign.expiredStickyDetail],
-      ['[data-price-plan="single"] .cta-button', active ? campaign.activeSingleCta : campaign.expiredSingleCta],
-      ['#registerButton', active ? campaign.activeRegisterButton : campaign.expiredRegisterButton]
+      ['[data-price-plan="single"] .cta-button', active ? campaign.activeSingleCta : campaign.expiredSingleCta]
     ];
     textMap.forEach(function (pair) {
       setText(pair[0], pair[1], false);
