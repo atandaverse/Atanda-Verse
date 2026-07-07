@@ -796,6 +796,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sb-lnk" onclick="nav('posts')">All Posts <span class="sb-badge" id="pc">0</span></div>
       <div class="sb-lnk" onclick="nav('editor')">New Post</div>
       <div class="sb-sec">Workspace</div>
+      <div class="sb-lnk" onclick="nav('about')">About Page</div>
       <div class="sb-lnk" onclick="nav('settings')">Settings</div>
       <div class="sb-lnk" onclick="nav('pricing')">Pricing</div>
       <div class="sb-sec">Audience</div>
@@ -1278,6 +1279,30 @@ create policy "public_write_logins" on admin_logins for all using (true);
       </div>
       <div id="loginsList" style="display:flex;flex-direction:column;gap:.5rem">
         <div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Loading…</div>
+      </div>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div class="panel" id="panel-about">
+      <div class="sec-hdr">
+        <div>
+          <div class="sl">About Page</div>
+          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Edit every visible About page entry. Saves to <strong>settings.aboutContent</strong>.</div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="tbb" onclick="loadAboutEditor(true)">Refresh Live</button>
+          <button class="tbb" onclick="window.open('about.html','_blank')">Open About Page</button>
+        </div>
+      </div>
+      <div class="source-note" id="aboutSourceNote" data-kind="local"><strong><span class="source-dot"></span>Source</strong><span>Checking About content source...</span></div>
+      <div class="scc" style="margin-bottom:1rem">
+        <div class="sct">Editorial Control</div>
+        <div class="scd">These fields drive the live public About page. Keep the copy short enough to breathe on mobile.</div>
+      </div>
+      <div id="aboutEditorGrid" class="pricing-form-grid" style="align-items:start"></div>
+      <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem">
+        <button class="btn p" onclick="saveAboutContent()">Save About Page</button>
+        <button class="btn s" onclick="resetAboutEditor()">Reset Defaults</button>
       </div>
     </div>
 
@@ -3797,19 +3822,20 @@ async function doDelete(){if(!delId)return;await dbDeletePost(delId);delId=null;
 function closeModal(id){document.getElementById(id).classList.remove('on');if(id==='campEditModal')activeCampaignEditId=null}
 
 // ── NAV ───────────────────────────────────────────────────────────────────
-const WORKSPACE_PANELS={dash:'dash',analytics:'analytics',posts:'posts',editor:'editor',settings:'settings',pricing:'pricing',library:'library',vault:'vault',testimonials:'testimonials','lib-editor':'lib-editor',comments:'comments',subscribers:'subscribers',campaigns:'campaigns',logins:'logins',registrations:'registrations',faq:'faq','vault-access':'vault'};
+const WORKSPACE_PANELS={dash:'dash',analytics:'analytics',posts:'posts',editor:'editor',about:'about',settings:'settings',pricing:'pricing',library:'library',vault:'vault',testimonials:'testimonials','lib-editor':'lib-editor',comments:'comments',subscribers:'subscribers',campaigns:'campaigns',logins:'logins',registrations:'registrations',faq:'faq','vault-access':'vault'};
 function nav(panel,opts={}){
   panel=WORKSPACE_PANELS[String(panel||'').toLowerCase()]||'dash';
   if(!opts.fromHash&&location.hash!=='#'+panel)history.pushState(null,'','#'+panel);
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.sb-lnk').forEach(l=>l.classList.remove('on'));
   const el=document.getElementById('panel-'+panel);if(el)el.classList.add('on');
-const lmap={dash:'Dashboard',analytics:'Analytics',posts:'Posts',editor:'Post',settings:'Settings',pricing:'Pricing',library:'Library',vault:'Vault Access',testimonials:'Testimonials','lib-editor':'Library Item',comments:'Comments',subscribers:'Subscribers',campaigns:'Campaigns',logins:'Admin Logins',registrations:'Registrations',faq:'FAQ'};
+const lmap={dash:'Dashboard',analytics:'Analytics',posts:'Posts',editor:'Post',about:'About Page',settings:'Settings',pricing:'Pricing',library:'Library',vault:'Vault Access',testimonials:'Testimonials','lib-editor':'Library Item',comments:'Comments',subscribers:'Subscribers',campaigns:'Campaigns',logins:'Admin Logins',registrations:'Registrations',faq:'FAQ'};
   document.querySelectorAll('.sb-lnk').forEach(l=>{if(lmap[panel]&&l.textContent.includes(lmap[panel].split(' ')[0]))l.classList.add('on')});
-const tmap={dash:'DASHBOARD',analytics:'ANALYTICS',posts:'ALL POSTS',editor:'NEW POST',settings:'SETTINGS',pricing:'PRICING','lib-editor':'LIBRARY ITEM',library:'LIBRARY',vault:'VAULT ACCESS',testimonials:'TESTIMONIALS',comments:'COMMENTS',subscribers:'SUBSCRIBERS',campaigns:'CAMPAIGNS',logins:'ADMIN LOGINS',registrations:'REGISTRATIONS',faq:'FAQ'};
-const smap={dash:'See what needs attention, what is moving, and where to act next.',analytics:'Track momentum, post performance, and category signals.',posts:'Manage the full content queue from draft to published.',editor:'Write, preview, and prepare a post for publishing.',settings:'Control dashboard behavior, admin theme, and site-linked settings.',pricing:'Edit session offers, public card prices, and registration dropdown labels.',library:'Manage library resources, status, and presentation.',vault:'Review vault access requests and issue approved reader credentials.',testimonials:'Review proof, approve stories, and add new testimonials.',comments:'Moderate discussion across the blog.',subscribers:'Review and export the people who asked to stay connected.',campaigns:'Refine newsletter drafts, send them, and manage history.',logins:'Review admin access activity.',registrations:'Track who asked for sessions and what they need.',faq:'Maintain the answers visitors rely on.'};
+const tmap={dash:'DASHBOARD',analytics:'ANALYTICS',posts:'ALL POSTS',editor:'NEW POST',about:'ABOUT PAGE',settings:'SETTINGS',pricing:'PRICING','lib-editor':'LIBRARY ITEM',library:'LIBRARY',vault:'VAULT ACCESS',testimonials:'TESTIMONIALS',comments:'COMMENTS',subscribers:'SUBSCRIBERS',campaigns:'CAMPAIGNS',logins:'ADMIN LOGINS',registrations:'REGISTRATIONS',faq:'FAQ'};
+const smap={dash:'See what needs attention, what is moving, and where to act next.',analytics:'Track momentum, post performance, and category signals.',posts:'Manage the full content queue from draft to published.',editor:'Write, preview, and prepare a post for publishing.',about:'Edit the public About page copy and keep the brand story current.',settings:'Control dashboard behavior, admin theme, and site-linked settings.',pricing:'Edit session offers, public card prices, and registration dropdown labels.',library:'Manage library resources, status, and presentation.',vault:'Review vault access requests and issue approved reader credentials.',testimonials:'Review proof, approve stories, and add new testimonials.',comments:'Moderate discussion across the blog.',subscribers:'Review and export the people who asked to stay connected.',campaigns:'Refine newsletter drafts, send them, and manage history.',logins:'Review admin access activity.',registrations:'Track who asked for sessions and what they need.',faq:'Maintain the answers visitors rely on.'};
   document.getElementById('pageTit').textContent=tmap[panel]||panel.toUpperCase();
   const sub=document.getElementById('pageSub');if(sub)sub.textContent=smap[panel]||'';
   if(panel==='dash')initDash();if(panel==='analytics')initAnalytics();if(panel==='posts')renderPostsTbl();
+  if(panel==='about')loadAboutEditor();
   if(panel==='settings'){loadSettings();renderPalGrid();loadCountdownSettings();loadFeaturedPostSelector()}
   if(panel==='pricing')loadSessionPricingSettings({forceLive:true});
   if(panel==='editor')setTimeout(()=>{initQuill();buildColTb();syncStatusHint();syncExcerptMeta();upPrev()},50);
@@ -5693,6 +5719,97 @@ function _downloadBlob(blob, filename) {
 // ── ADMIN LOGINS PANEL ────────────────────────────────────────────────────
 
 // ── FAQ ADMIN ─────────────────────────────────────────────────────────────
+// ABOUT PAGE ADMIN
+const ABOUT_DEFAULT_CONTENT={
+  heroEyebrow:'About Atanda Verse',
+  heroTitle:'Clarity for the life you are actually living.',
+  heroIntro:'Atanda Verse is a clarity platform for Nigerians and the diaspora navigating purpose, career pressure, relationships, family expectations, faith, money, and the quiet questions people often carry alone.',
+  heroPrimaryLabel:'Register',
+  heroSecondaryLabel:'Read the blog',
+  identityKicker:'What we are building',
+  identityText:'A place where reflective writing, guided sessions, and practical resources meet. Not noise. Not vague motivation. Just sharper thinking, honest language, and next steps you can act on.',
+  identityOneTitle:'For clarity',
+  identityOneText:'When your thoughts feel crowded and direction feels expensive.',
+  identityTwoTitle:'For context',
+  identityTwoText:'Built with Nigerian realities in mind, not imported life advice.',
+  identityThreeTitle:'For action',
+  identityThreeText:'Every insight should move toward a decision, conversation, or habit.',
+  purposeEyebrow:'The purpose',
+  purposeTitle:'We help people name what is happening inside them.',
+  quoteText:'Clarity is not just knowing more. It is finally having language for what your life has been trying to tell you.',
+  purposeParagraphOne:'Many people are not lazy, unserious, or confused by default. They are overloaded. Atanda Verse exists to help people slow down enough to see the pattern, ask better questions, and choose a direction with more honesty.',
+  purposeParagraphTwo:'That work happens through essays, clarity sessions, guided resources, community proof, and tools that make the next step less vague.',
+  pathsEyebrow:'How it works',
+  pathsTitle:'Three connected paths.',
+  pathOneTag:'Read',
+  pathOneTitle:'Clarity essays',
+  pathOneText:'Blog posts that speak plainly about career, school, identity, relationships, and the Nigerian pressure cooker.',
+  pathTwoTag:'Talk',
+  pathTwoTitle:'Guided sessions',
+  pathTwoText:'Structured conversations for people who need perspective, a plan, and a calmer way to move forward.',
+  pathThreeTag:'Use',
+  pathThreeTitle:'Resources and library',
+  pathThreeText:'Guides, exercises, and materials that help you keep doing the work after the first insight lands.',
+  valueOneTitle:'Plain language',
+  valueOneText:'We avoid performance and speak to the real thing.',
+  valueTwoTitle:'Context-aware',
+  valueTwoText:'The work respects Nigerian pressure, family systems, money, faith, and ambition.',
+  valueThreeTitle:'Actionable clarity',
+  valueThreeText:'Insight should become a decision, habit, conversation, or next step.',
+  ctaTitle:'Start where the question feels loudest.',
+  ctaText:'Read an essay, compare session paths, or register when you are ready to turn the fog into a conversation.',
+  ctaPrimaryLabel:'Register',
+  ctaSecondaryLabel:'View sessions',
+  ctaTertiaryLabel:'Read the blog',
+  metaDescription:'Atanda Verse helps Nigerians and the diaspora find clarity through reflective writing, guided sessions, practical resources, and honest conversations about purpose, career, and growth.',
+  ogDescription:'A clarity platform for people navigating purpose, career, Nigerian life, and personal direction.'
+};
+const ABOUT_FIELD_GROUPS=[
+  {title:'Hero',fields:[['heroEyebrow','Eyebrow'],['heroTitle','Main headline','long'],['heroIntro','Intro copy','area'],['heroPrimaryLabel','Primary button'],['heroSecondaryLabel','Secondary button']]},
+  {title:'Identity Card',fields:[['identityKicker','Card kicker'],['identityText','Card intro','area'],['identityOneTitle','Identity 1 title'],['identityOneText','Identity 1 text','area'],['identityTwoTitle','Identity 2 title'],['identityTwoText','Identity 2 text','area'],['identityThreeTitle','Identity 3 title'],['identityThreeText','Identity 3 text','area']]},
+  {title:'Purpose',fields:[['purposeEyebrow','Eyebrow'],['purposeTitle','Section title','long'],['quoteText','Quote panel','area'],['purposeParagraphOne','Paragraph 1','area'],['purposeParagraphTwo','Paragraph 2','area']]},
+  {title:'Paths',fields:[['pathsEyebrow','Eyebrow'],['pathsTitle','Section title'],['pathOneTag','Card 1 tag'],['pathOneTitle','Card 1 title'],['pathOneText','Card 1 text','area'],['pathTwoTag','Card 2 tag'],['pathTwoTitle','Card 2 title'],['pathTwoText','Card 2 text','area'],['pathThreeTag','Card 3 tag'],['pathThreeTitle','Card 3 title'],['pathThreeText','Card 3 text','area']]},
+  {title:'Values',fields:[['valueOneTitle','Value 1 title'],['valueOneText','Value 1 text','area'],['valueTwoTitle','Value 2 title'],['valueTwoText','Value 2 text','area'],['valueThreeTitle','Value 3 title'],['valueThreeText','Value 3 text','area']]},
+  {title:'CTA and SEO',fields:[['ctaTitle','CTA title','long'],['ctaText','CTA text','area'],['ctaPrimaryLabel','Primary CTA label'],['ctaSecondaryLabel','Secondary CTA label'],['ctaTertiaryLabel','Third CTA label'],['metaDescription','Meta description','area'],['ogDescription','Share description','area']]}
+];
+function aboutEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function getAboutContentSettings(){return Object.assign({},ABOUT_DEFAULT_CONTENT,(_localSettings().aboutContent||{}));}
+function setAboutSourceStatus(text,kind='local'){
+  const note=document.getElementById('aboutSourceNote');if(!note)return;
+  note.dataset.kind=kind;
+  note.innerHTML=`<strong><span class="source-dot"></span>${kind==='database'?'Live Supabase':'Local Draft'}</strong><span>${aboutEsc(text)}</span>`;
+}
+function renderAboutEditor(content){
+  const host=document.getElementById('aboutEditorGrid');if(!host)return;
+  const data=Object.assign({},ABOUT_DEFAULT_CONTENT,content||{});
+  host.innerHTML=ABOUT_FIELD_GROUPS.map(group=>`<section class="scc" style="grid-column:1/-1"><div class="sct">${aboutEsc(group.title)}</div><div class="pricing-form-grid" style="margin-top:.85rem">${group.fields.map(([key,label,type])=>`<div class="${type==='area'||type==='long'?'full':''}"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${aboutEsc(label)}</label>${type==='area'?`<textarea class="mn" data-about-field="${aboutEsc(key)}" rows="4" style="min-height:98px;resize:vertical">${aboutEsc(data[key])}</textarea>`:`<input class="mn" data-about-field="${aboutEsc(key)}" value="${aboutEsc(data[key])}">`}</div>`).join('')}</div></section>`).join('');
+}
+async function loadAboutEditor(forceLive=false){
+  let data=getAboutContentSettings();
+  let source='local';
+  if(forceLive&&_useSb()&&!_sbIsUnavailable()){
+    try{
+      const rows=await _sbReq('settings?select=key,value&key=eq.aboutContent');
+      if(Array.isArray(rows)&&rows[0]){
+        data=Object.assign({},ABOUT_DEFAULT_CONTENT,JSON.parse(rows[0].value||'{}'));
+        const s=_localSettings();s.aboutContent=data;localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+        source='database';
+      }
+    }catch(e){console.warn('About content live fetch failed',e);}
+  }
+  renderAboutEditor(data);
+  setAboutSourceStatus(source==='database'?'Live About content loaded. Changes here publish to the public About page.':'Editing local About content. Save will sync live when Supabase is available.',source==='database'?'database':'local');
+}
+async function saveAboutContent(){
+  const data=Object.assign({},ABOUT_DEFAULT_CONTENT);
+  document.querySelectorAll('[data-about-field]').forEach(el=>{data[el.dataset.aboutField]=el.value.trim();});
+  const s=_localSettings();s.aboutContent=data;localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+  try{await dbSaveSetting('aboutContent',data);setAboutSourceStatus('Saved About content. Public page will read this settings row.','database');toast('About page saved','ok');}
+  catch(e){console.warn('About content save failed',e);setAboutSourceStatus('Saved locally. Live sync needs Supabase.','local');toast('Saved locally. Live sync needs Supabase.','inf');}
+}
+function resetAboutEditor(){renderAboutEditor(ABOUT_DEFAULT_CONTENT);setAboutSourceStatus('Defaults loaded in the editor. Click Save About Page to publish them.','local');}
+Object.assign(window,{loadAboutEditor,saveAboutContent,resetAboutEditor});
+
 const FAQ_CATS={sessions:'About Sessions',pricing:'Pricing & Access',logistics:'Logistics',language:'Language & Culture'};
 
 function getLocalFaq(){
