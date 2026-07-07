@@ -135,6 +135,17 @@
         .form-group input:focus,.form-group select:focus,.form-group textarea:focus{
             border-color:rgba(199,55,74,.4);box-shadow:0 0 0 4px rgba(199,55,74,.08);
         }
+        .contact-check{
+            margin:.2rem 0 1.1rem;
+            padding:1rem 1.05rem;
+            border-radius:16px;
+            background:rgba(199,55,74,.07);
+            border:1px solid rgba(199,55,74,.16);
+            color:var(--text-soft);
+            font-size:.9rem;
+            line-height:1.65;
+        }
+        .contact-check strong{color:var(--text);display:block;margin-bottom:.25rem}
         .cta-button{
             display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
             width:100%;border:none;border-radius:18px;padding:1.1rem 1.4rem;
@@ -265,6 +276,10 @@
                     <div class="form-group">
                         <label for="goals">What do you hope to achieve? (Optional)</label>
                         <textarea id="goals" name="goals" rows="4" placeholder="Tell us what you're navigating right now, what kind of clarity you need, or what you'd like this session to unlock."></textarea>
+                    </div>
+                    <div class="contact-check">
+                        <strong>Before you submit, check your contact details carefully.</strong>
+                        Confirmation and follow-up will go to the email and WhatsApp/phone number you enter here.
                     </div>
                     <button type="submit" class="cta-button" id="registerButton">Reserve my session</button>
                     <div class="microcopy" id="registerMicrocopy" data-launch-html data-launch-expired-html='Single sessions and paid plans are reviewed and confirmed before payment details are sent. Session questions belong at <a href="mailto:sessions@atanda.site" style="color:var(--accent);font-weight:700;text-decoration:none">sessions@atanda.site</a>.'>
@@ -451,6 +466,29 @@
             if (this.value) applyPackage(this.value);
         });
 
+        function isValidContactEmail(value) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(value || '').trim());
+        }
+
+        function normalizeContactPhone(value) {
+            return String(value || '').trim().replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '');
+        }
+
+        function isValidContactPhone(value) {
+            const phone = normalizeContactPhone(value);
+            const digits = phone.replace(/\D/g, '');
+            return digits.length >= 10 && digits.length <= 15 && (/^\+?\d{10,15}$/.test(phone));
+        }
+
+        function confirmContactDetails(email, phone) {
+            return confirm(
+                'Please check your contact details before we submit.\n\n' +
+                'Email: ' + email.trim() + '\n' +
+                'WhatsApp / Phone: ' + phone.trim() + '\n\n' +
+                'If any detail is wrong, choose Cancel and correct it now.'
+            );
+        }
+
         document.getElementById('registrationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const d = Object.fromEntries(new FormData(this));
@@ -458,8 +496,19 @@
                 alert('Please fill in all required fields.');
                 return;
             }
-            if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) {
-                alert('Please enter a valid phone number.');
+            d.email = d.email.trim().toLowerCase();
+            d.phone = d.phone.trim();
+            if (!isValidContactEmail(d.email)) {
+                alert('Please enter a valid email address we can actually reach.');
+                document.getElementById('email').focus();
+                return;
+            }
+            if (!isValidContactPhone(d.phone)) {
+                alert('Please enter a valid WhatsApp or phone number with country code if possible.');
+                document.getElementById('phone').focus();
+                return;
+            }
+            if (!confirmContactDetails(d.email, d.phone)) {
                 return;
             }
 

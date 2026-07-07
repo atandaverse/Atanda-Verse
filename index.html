@@ -527,6 +527,20 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         .contact-btn.email { background: linear-gradient(135deg,var(--accent),var(--accent-hover)); color: white !important; box-shadow: 0 8px 24px rgba(220,53,69,.28), inset 0 1px 0 rgba(255,255,255,.28); }
         .contact-btn.email:hover { background: linear-gradient(135deg,var(--accent),#972430); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(220,53,69,.38), inset 0 1px 0 rgba(255,255,255,.34); }
         .brand-mark { width: 1.15em; height: 1.15em; flex: 0 0 auto; display: inline-block; vertical-align: -0.18em; margin-right: .45rem; }
+        .contact-check{margin:.2rem 0 1.3rem;padding:1rem 1.1rem;border-radius:16px;background:rgba(220,53,69,.07);border:1px solid rgba(220,53,69,.16);color:var(--text-secondary);font-size:.9rem;line-height:1.65}
+        .contact-check strong{display:block;color:var(--text-primary);margin-bottom:.25rem}
+
+        /* Support */
+        .support-work{padding:6rem 0;background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(248,250,252,.42));border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border)}
+        [data-theme="dark"] .support-work{background:linear-gradient(135deg,rgba(15,23,42,.72),rgba(30,41,59,.46))}
+        .support-shell{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.82fr);gap:2rem;align-items:stretch;background:var(--glass);border:1px solid var(--glass-border);border-radius:28px;padding:2.5rem;box-shadow:0 24px 64px var(--shadow),inset 0 1px 0 rgba(255,255,255,.42)}
+        .support-copy .section-tag,.support-copy .section-title,.support-copy .section-subtitle{text-align:left;margin-left:0;margin-right:0}
+        .support-card{background:rgba(255,255,255,.58);border:1px solid var(--glass-border);border-radius:22px;padding:1.5rem;display:grid;gap:1rem;align-content:center}
+        [data-theme="dark"] .support-card{background:rgba(15,23,42,.36)}
+        .support-card h3{font-size:1.05rem;color:var(--text-primary)}
+        .support-card p{color:var(--text-secondary);line-height:1.7}
+        .support-actions{display:flex;gap:.8rem;flex-wrap:wrap}
+        @media(max-width:900px){.support-shell{grid-template-columns:1fr;padding:1.5rem}.support-copy .section-tag,.support-copy .section-title,.support-copy .section-subtitle{text-align:center}.support-actions{justify-content:center}}
 
         /* About snapshot */
         .about-snapshot{padding:6rem 0;background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(248,250,252,.46));border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border)}
@@ -1188,6 +1202,10 @@ img.loaded{opacity:1;}
                     </div>
                 </div>
                 <div class="form-group"><label for="goals">What do you hope to achieve? (Optional)</label><textarea id="goals" name="goals" rows="3" placeholder="Tell us about your current challenges or what you're looking to gain clarity on..."></textarea></div>
+                <div class="contact-check">
+                    <strong>Before you submit, check your contact details carefully.</strong>
+                    Confirmation and follow-up will go to the email and WhatsApp/phone number you enter here.
+                </div>
                 <button type="submit" class="cta-button" style="margin:0">RESERVE MY SESSION</button>
             </form>
             <div class="contact-alternatives rv">
@@ -1201,6 +1219,28 @@ img.loaded{opacity:1;}
     </section>
 
     <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>✦</span></div>
+    <!-- SUPPORT THE WORK -->
+    <section class="support-work" id="support">
+        <div class="container">
+            <div class="support-shell rv">
+                <div class="support-copy">
+                    <span class="section-tag">Support The Work</span>
+                    <h2 class="section-title">HELP KEEP CLARITY ACCESSIBLE</h2>
+                    <p class="section-subtitle">If Atanda Verse has helped you, or you want to sponsor access for someone else, reach out and we will share the correct support details directly.</p>
+                </div>
+                <div class="support-card">
+                    <h3>For now, support is handled by direct contact.</h3>
+                    <p>Send a message if you want to sponsor a session, support free resources, or discuss partnership. Payment details are only shared after the request is confirmed.</p>
+                    <div class="support-actions">
+                        <a href="https://wa.me/2348147732687?text=Hi! I'd like to support the work at Atanda Verse." class="contact-btn whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp Support</a>
+                        <a href="mailto:support@atanda.site?subject=Support%20the%20Work&body=Hi%20Atanda%20Verse%2C%0A%0AI'd%20like%20to%20support%20the%20work." class="contact-btn email">Email Support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>âœ¦</span></div>
     <!-- LATEST INSIGHTS -->
     <section style="padding:6rem 0;background:var(--bg-secondary)" id="insights">
       <div class="container">
@@ -1319,6 +1359,7 @@ img.loaded{opacity:1;}
             <a href="faq.html">FAQ</a>
             <a href="library.html">Library</a>
             <a href="register.html">Register</a>
+            <a href="#support">Support</a>
             <a href="privacy.html">Privacy</a><a href="legal.html">Legal</a>
         </div>
         <div class="footer-divider"></div>
@@ -1710,11 +1751,43 @@ img.loaded{opacity:1;}
         intensive: { label: 'Monthly Intensive', price: '$180 / N225,000', note: 'paid intensive' }
     };
 
+    function isValidContactEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(value || '').trim());
+    }
+    function normalizeContactPhone(value) {
+        return String(value || '').trim().replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '');
+    }
+    function isValidContactPhone(value) {
+        const phone = normalizeContactPhone(value);
+        const digits = phone.replace(/\D/g, '');
+        return digits.length >= 10 && digits.length <= 15 && (/^\+?\d{10,15}$/.test(phone));
+    }
+    function confirmContactDetails(email, phone) {
+        return confirm(
+            'Please check your contact details before we submit.\n\n' +
+            'Email: ' + email.trim() + '\n' +
+            'WhatsApp / Phone: ' + phone.trim() + '\n\n' +
+            'If any detail is wrong, choose Cancel and correct it now.'
+        );
+    }
+
     document.getElementById('registrationForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const d = Object.fromEntries(new FormData(this));
         if (!d.fullName || !d.email || !d.phone || !d.sessionType) { alert('Please fill in all required fields.'); return; }
-if (!/^[\+\d\s\-\(\)]{7,15}$/.test(d.phone)) { alert('Please enter a valid phone number.'); return; }
+        d.email = d.email.trim().toLowerCase();
+        d.phone = d.phone.trim();
+        if (!isValidContactEmail(d.email)) {
+            alert('Please enter a valid email address we can actually reach.');
+            document.getElementById('email').focus();
+            return;
+        }
+        if (!isValidContactPhone(d.phone)) {
+            alert('Please enter a valid WhatsApp or phone number with country code if possible.');
+            document.getElementById('phone').focus();
+            return;
+        }
+        if (!confirmContactDetails(d.email, d.phone)) return;
         // Save to Supabase
         const creds = window.ivGetSupabaseCreds && window.ivGetSupabaseCreds();
         if (creds && creds.url && creds.key) {
