@@ -171,6 +171,11 @@
               merged.countdownTarget = featured.end_date;
               merged.countdownLabel = featured.countdown_label || featured.title || merged.countdownLabel;
             }
+          } else {
+            delete merged.publicFeaturedCampaign;
+            delete merged.publicCampaign;
+            delete merged.countdownTarget;
+            delete merged.countdownLabel;
           }
         } catch (eventErr) {
           console.warn('Public events/campaigns fetch failed', eventErr);
@@ -318,7 +323,7 @@
 
     function transformFaqForLaunch(items) {
       var launch = getLaunchState();
-      if (launch.active) return items;
+      if (launch.freeSessionActive) return items;
       return (items || []).map(function (item) {
         if (item.id === 'faq-d6') {
           item.question = 'Are the sessions free?';
@@ -370,11 +375,15 @@
     var expired = hasTarget ? target <= Date.now() : false;
     var campaign = source && source.publicCampaign && typeof source.publicCampaign === 'object' ? source.publicCampaign : {};
     var campaignEnabled = campaign.enabled !== false;
+    var featuredActive = !!(featured && campaignEnabled && (!featured.has_countdown || (hasTarget && !expired)));
+    var freeIdentity = [featured && featured.id, featured && featured.slug, featured && featured.title].join(' ').toLowerCase();
+    var freeSessionActive = featuredActive && /free.+session|session.+free/.test(freeIdentity);
     return {
       target: hasTarget ? target : null,
       expired: expired,
-      active: hasTarget && !expired && campaignEnabled,
-      hasCampaign: hasTarget && campaignEnabled,
+      active: featuredActive,
+      freeSessionActive: freeSessionActive,
+      hasCampaign: !!featured && campaignEnabled,
       featuredCampaign: featured || null,
       settings: source || {}
     };
@@ -480,7 +489,7 @@
       if (key === 'three-pack' && pricing[key].ngn === 'N60,000' && pricing[key].usd === '$40') pricing[key].usd = '$48';
       if (key === 'group' && pricing[key].ngn === 'N45,000' && pricing[key].usd === '$30') pricing[key].usd = '$36';
       if (key === 'intensive' && pricing[key].ngn === 'N225,000' && pricing[key].usd === '$150') pricing[key].usd = '$180';
-      if (key === 'single' && launch.active) {
+      if (key === 'single' && launch.freeSessionActive) {
         pricing[key].free = true;
         pricing[key].badge = pricing[key].activeBadge || 'FREE START';
         pricing[key].usd = 'FREE';
@@ -540,6 +549,10 @@
     document.querySelectorAll('.hero-badge').forEach(function (el) {
       el.hidden = inactive;
       el.setAttribute('aria-hidden', inactive ? 'true' : 'false');
+    });
+    document.querySelectorAll('.sticky-cta').forEach(function (el) {
+      el.hidden = !launch.featuredCampaign;
+      el.setAttribute('aria-hidden', launch.featuredCampaign ? 'false' : 'true');
     });
     if (campaign.enabled === false) {
       ['.nav-cta','.hero-badge','.sticky-cta-label','.sticky-cta-detail','[data-price-plan="single"] .cta-button','#registerMicrocopy'].forEach(function (selector) { setHtml(selector, '', true); });
@@ -1304,10 +1317,100 @@
     });
   }
 
+  function themeIconMarkup(theme) {
+    return theme === 'dark'
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>'
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.3A8.5 8.5 0 0 1 8.7 3.8 8.5 8.5 0 1 0 20.2 15.3Z"></path></svg>';
+  }
+
+  function installThemeIcon() {
+    var button = document.getElementById('themeToggle') || document.querySelector('.theme-toggle');
+    var created = false;
+    if (!button) {
+      var page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+      if (['index.html', '', 'about.html', 'sessions.html', 'events.html', 'blog.html', 'faq.html', 'library.html'].indexOf(page) === -1) return;
+      button = document.createElement('button');
+      button.type = 'button';
+      button.id = 'themeToggle';
+      button.className = 'theme-toggle iv-shared-theme-toggle';
+      document.body.appendChild(button);
+      created = true;
+    }
+    if (!document.getElementById('ivSharedThemeIconStyle')) {
+      var style = document.createElement('style');
+      style.id = 'ivSharedThemeIconStyle';
+      style.textContent = '.theme-toggle{font-size:0!important;display:flex!important;align-items:center!important;justify-content:center!important}.theme-toggle svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.iv-shared-theme-toggle{position:fixed;right:18px;top:96px;z-index:80;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.78);color:#19385f;box-shadow:0 14px 34px rgba(15,23,42,.14);backdrop-filter:blur(18px);cursor:pointer}[data-theme="dark"] .iv-shared-theme-toggle{background:rgba(24,35,55,.8);color:#fff;border-color:rgba(255,255,255,.13)}';
+      document.head.appendChild(style);
+    }
+    function update() {
+      var theme = document.documentElement.getAttribute('data-theme') || localStorage.getItem('theme') || 'light';
+      button.innerHTML = themeIconMarkup(theme);
+      button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      button.setAttribute('title', theme === 'dark' ? 'Light mode' : 'Dark mode');
+    }
+    update();
+    if (created) {
+      button.addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        document.body.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        document.documentElement.style.colorScheme = next;
+      });
+    }
+    new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    setTimeout(update, 500);
+  }
+
+  function installSharedNewsletter() {
+    var page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    var allowed = ['index.html', '', 'about.html', 'sessions.html', 'events.html', 'blog.html', 'faq.html', 'library.html'];
+    if (allowed.indexOf(page) === -1) return;
+    if (document.querySelector('.newsletter,#nlWrap,.iv-shared-newsletter')) return;
+    var footer = document.querySelector('footer');
+    if (!footer) return;
+    if (!document.getElementById('ivSharedNewsletterStyle')) {
+      var style = document.createElement('style');
+      style.id = 'ivSharedNewsletterStyle';
+      style.textContent = '.iv-shared-newsletter{background:#17365f;padding:4rem 1rem;text-align:center;position:relative;overflow:hidden}.iv-shared-newsletter::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(220,53,69,.3),transparent 62%)}.iv-shared-newsletter>*{position:relative;z-index:1}.iv-shared-newsletter h2{margin:0;color:#fff;font-family:"Bebas Neue",sans-serif;font-size:clamp(2.4rem,6vw,4rem);letter-spacing:2px}.iv-shared-newsletter p{color:rgba(255,255,255,.78);margin:.5rem auto 1.4rem}.iv-shared-newsletter form{display:flex;gap:.65rem;max-width:520px;margin:auto}.iv-shared-newsletter input{flex:1;min-width:0;padding:.95rem 1rem;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font:inherit}.iv-shared-newsletter input::placeholder{color:rgba(255,255,255,.58)}.iv-shared-newsletter button{border:0;border-radius:10px;padding:.95rem 1.25rem;background:#d62f43;color:#fff;font:inherit;font-weight:800;cursor:pointer}@media(max-width:560px){.iv-shared-newsletter form{flex-direction:column}}';
+      document.head.appendChild(style);
+    }
+    var section = document.createElement('section');
+    section.className = 'iv-shared-newsletter';
+    section.innerHTML = '<h2>Stay Connected</h2><p>Weekly clarity notes, new events, and practical resources.</p><form><input type="email" required autocomplete="email" placeholder="Enter your email address" aria-label="Email address"><button type="submit">Join the List</button></form><p class="iv-newsletter-status" aria-live="polite"></p>';
+    footer.parentNode.insertBefore(section, footer);
+    section.querySelector('form').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      var input = section.querySelector('input');
+      var button = section.querySelector('button');
+      var status = section.querySelector('.iv-newsletter-status');
+      button.disabled = true;
+      button.textContent = 'Joining...';
+      try {
+        await captureSubscriber({ email: input.value.trim(), source: 'shared-newsletter-' + page.replace('.html', ''), tags: ['newsletter', 'site-footer'] });
+        status.textContent = 'You are on the list. Check your inbox for the clarity guide.';
+        event.target.reset();
+      } catch (error) {
+        status.textContent = 'We could not complete that signup. Please try again.';
+      }
+      button.disabled = false;
+      button.textContent = 'Join the List';
+    });
+  }
+
+  function installSharedPublicUi() {
+    installThemeIcon();
+    installSharedNewsletter();
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bindContactTriggers);
+    document.addEventListener('DOMContentLoaded', function () {
+      bindContactTriggers();
+      installSharedPublicUi();
+    });
   } else {
     bindContactTriggers();
+    installSharedPublicUi();
   }
 
   window.ivGetSupabaseCreds = getCreds;

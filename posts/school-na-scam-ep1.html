@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -64,7 +64,7 @@ nav.scrolled{padding:.65rem 0;box-shadow:0 4px 30px var(--shadow)}
 .article-meta span{display:flex;align-items:center;gap:.4rem}
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .featured-image{position:relative;width:100%;aspect-ratio:2/1;display:flex;align-items:center;justify-content:center;color:white;font-size:4rem;overflow:hidden;background:linear-gradient(135deg,var(--text-primary) 0%,var(--accent) 100%);border-radius:20px;margin:3rem auto;max-width:1300px;box-shadow:0 20px 60px var(--shadow)}
-.featured-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:20px;transition:transform .6s ease}
+.featured-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;border-radius:20px;transition:transform .6s ease}
 .featured-image:hover img{transform:scale(1.02)}
 .featured-image-fallback{position:absolute;inset:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--text-primary),var(--accent));color:white;font-size:4rem;border-radius:20px}
 .article-content{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:4rem;border-radius:24px;border:1px solid var(--glass-border);box-shadow:0 20px 60px var(--shadow);margin-bottom:3rem;position:relative;z-index:1}
@@ -154,14 +154,14 @@ a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointe
 </style>
 <title>Beyond "School Na Scam" - The Series Begins - Atanda Verse</title>
 <meta name="description" content="The new reality of education in Nigeria. Decoding the new rules of the game and revealing the strategy that actually works.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔓</text></svg>">
+<link rel="icon" href="../atanda-logo-primary.png">
 </head>
 <body>
 <div class="progress" id="pb"></div>
 <div class="c-dot" id="cd"></div>
 <div class="c-ring" id="cr"></div>
 <div class="loader" id="loader"><div class="l-brand">ATANDA <span>VERSE</span></div><div class="l-track"><div class="l-fill"></div></div></div>
-<button class="theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+<button class="theme-btn" id="themeBtn" aria-label="Toggle theme">Dark</button>
 <nav id="mainNav">
   <div class="nav-container">
     <div class="nav-logo">
@@ -173,7 +173,7 @@ a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointe
 <li><a href="../index.html#sessions">Sessions</a></li>
 <li><a href="../blog.html" class="active">Blog</a></li>
 <li><a href="../index.html#library">Library</a></li>
-<li><a href="../blog.html" class="back-btn">← Back to Blog</a></li>
+<li><a href="../blog.html" class="back-btn">Back to Blog</a></li>
     </ul>
     <div class="mob-menu" id="mobMenu"><span></span><span></span><span></span></div>
   </div>
@@ -186,32 +186,32 @@ a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointe
       <h1 class="article-title">Beyond "School Na Scam" Episode 1</h1>
       <p class="article-subtitle">The New Reality of Education in Nigeria</p>
       <div class="article-meta">
-        <span>📅 October 1, 2025</span>
-        <span>⏱️ 5 min read</span>
-        <span>👁️ <span id="viewCount">—</span> views</span>
+        <span>October 1, 2025</span>
+        <span>5 min read</span>
+        <span><span id="viewCount">-</span> views</span>
       </div>
     </div>
   </header>
   <div class="container">
     <div class="featured-image rv">
       <img src="../images/headers.png" alt="Education Reality Article" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="featured-image-fallback" style="display:none">📚</div>
+      <div class="featured-image-fallback" style="display:none">Article</div>
     </div>
     <div class="article-content">
                     <p><strong>Welcome to "Beyond School Na Scam" - a 12-part series that will transform how you think about education and success in Nigeria. Every Tuesday for the next 3 months, we're decoding the new rules of the game.</strong></p>
 
                     <h2>Look, I have to tell you something that might hurt.</h2>
-                    <p>"School na scam!" I hear this everywhere. Your WhatsApp status, Twitter bio, that heated argument with your uncle last Christmas. Hell, I've said it myself when my experience studying at LASU proved frustrating. But I was in a conversation, and I sat next to two guys. One had a degree in Engineering from Covenant, the other dropped out of OOU to sell phone accessories at Computer Village. Guess who was complaining about money? The engineer was doing Uber weekends to supplement his ₦180k salary. The "dropout" just bought his second car. That conversation kept me awake for three nights. Here's what I realized: we're all fighting the wrong battle.</p>
+                    <p>"School na scam!" I hear this everywhere. Your WhatsApp status, Twitter bio, that heated argument with your uncle last Christmas. Hell, I've said it myself when my experience studying at LASU proved frustrating. But I was in a conversation, and I sat next to two guys. One had a degree in Engineering from Covenant, the other dropped out of OOU to sell phone accessories at Computer Village. Guess who was complaining about money? The engineer was doing Uber weekends to supplement his N180k salary. The "dropout" just bought his second car. That conversation kept me awake for three nights. Here's what I realized: we're all fighting the wrong battle.</p>
 
                     <p><strong>Numbers That Will Shock You</strong></p>
                     <p>Let me hit you with facts your lecturers won't tell you:</p>
-                    <p>• 600,000 graduates are produced annually in Nigeria</p>
-                    <p>• Graduate unemployment jumped from 1% in 1974 to 28.8% in 2020</p>
+                    <p>- 600,000 graduates are produced annually in Nigeria</p>
+                    <p>- Graduate unemployment jumped from 1% in 1974 to 28.8% in 2020</p>
                     <p><strong>The system overproduces certificates but underproduces opportunities.</strong></p>
 
                     <h3>What Really Changed</h3>
                     <p>A man could have walked into First Bank in 1987 with his HND, got interviewed on the spot, and started on Monday. His salary could rent a flat in Ikeja and buy a car. That world is dead.</p>
-                    <p>The Old Rules (1970s-90s): Degree → Automatic Job → Career Growth</p>
+                    <p>The Old Rules (1970s-90s): Degree -> Automatic Job -> Career Growth</p>
                     <p>The New Reality (Now): Degree Alone = Expensive Toilet Paper</p>
                     <p>But here's where most people get it wrong - they think education is now useless. <strong>No. Education just changed its job description.</strong> Instead of being your ticket to success, it's now your ID card for certain opportunities.</p>
 
@@ -220,7 +220,7 @@ a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointe
 
                     <ul>
                         <li><strong>Chike</strong> - Computer Science graduate, FUTO. Learned web development on YouTube during COVID. Now makes $2,000 monthly working remotely for US companies. His degree got him past international HR filters. His skills pay the bills.</li>
-                        <li><strong>Adunni</strong> - Mass Comm, OAU. Started a food blog during service year. Makes ₦500k per sponsored post with 100k Instagram followers. Her degree helped with media credibility. Her content creation skills built her audience.</li>
+                        <li><strong>Adunni</strong> - Mass Comm, OAU. Started a food blog during service year. Makes N500k per sponsored post with 100k Instagram followers. Her degree helped with media credibility. Her content creation skills built her audience.</li>
                         <li><strong>Emeka</strong> - Dropped out of Engineering. Makes good money importing phones but can't get certain contracts because companies require degree-holder certificates. Going back to finish - not to learn, but for the paper.</li>
                     </ul>
 
@@ -228,19 +228,19 @@ a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointe
 
                     <section class="three-pillars">
                         <div class="pill">
-                            <span class="emoji">📋</span>
+                            <span class="emoji">Paper</span>
                             <h3>Paper (Degree)</h3>
                             <p>Gets you in certain rooms (doesn't guarantee the deal)</p>
                         </div>
 
                         <div class="pill">
-                            <span class="emoji">🧠</span>
+                            <span class="emoji">Skill</span>
                             <h3>Brain (Skills)</h3>
                             <p>Actually makes you money</p>
                         </div>
 
                         <div class="pill">
-                            <span class="emoji">🤝</span>
+                            <span class="emoji">Network</span>
                             <h3>Network (Connections)</h3>
                             <p>Accelerates everything else</p>
                         </div>
@@ -290,7 +290,7 @@ a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointe
                         <h2>What's Next</h2>
                         <p><strong>Episode 2 (Next Tuesday):</strong> <em>"The Skills That Actually Pay in Nigeria"</em></p>
                         <ul>
-                            <li>Exactly which skills pay ₦500k+ monthly right now</li>
+                            <li>Exactly which skills pay N500k+ monthly right now</li>
                             <li>How to develop them quickly</li>
                             <li>Real case studies of successful transitions</li>
                         </ul>
@@ -347,11 +347,11 @@ a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointe
     </div>
     <div class="post-navigation rv">
   <a href="#" class="nav-post">
-    <div class="nav-direction">← Previous</div>
+    <div class="nav-direction">Previous</div>
     <div class="nav-post-title">No Previous Post</div>
   </a>
   <a href="school-na-scam-ep2.html" class="nav-post">
-    <div class="nav-direction">Next →</div>
+    <div class="nav-direction">Next -></div>
     <div class="nav-post-title">Episode 2: Digital Skills That Actually Pay</div>
   </a>
 </div>
@@ -376,7 +376,7 @@ a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointe
 window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('gone'),1200));
 const themeBtn=document.getElementById('themeBtn'),body=document.body;
 body.setAttribute('data-theme',localStorage.getItem('theme')||'light');
-const upIcon=()=>themeBtn.textContent=body.getAttribute('data-theme')==='light'?'🌙':'☀️';
+const upIcon=()=>themeBtn.textContent=body.getAttribute('data-theme')==='light'?'Dark':'Light';
 upIcon();themeBtn.addEventListener('click',()=>{const t=body.getAttribute('data-theme')==='light'?'dark':'light';body.setAttribute('data-theme',t);localStorage.setItem('theme',t);upIcon()});
 const cd=document.getElementById('cd'),cr=document.getElementById('cr');let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});

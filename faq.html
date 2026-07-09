@@ -30,7 +30,7 @@
 <script>!function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.style.colorScheme=t==="dark"?"dark":"light"}();</script>
 <script src="config.js"></script>
 
-<link rel="icon" type="image/png" href="logo I.png">
+<link rel="icon" type="image/png" href="atanda-logo-primary.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
@@ -555,7 +555,7 @@ a,button,input,select,textarea,.faq-question,.mobile-menu,.contact-btn,.sticky-c
 .page-tag{display:inline-block;background:rgba(220,53,69,.08);border:1px solid rgba(220,53,69,.3);padding:.4rem 1.2rem;border-radius:50px;font-size:.75rem;font-weight:700;color:var(--accent);margin-bottom:1.2rem;text-transform:uppercase;letter-spacing:2px}
 </style>
 <!-- ═══════════════════════════════════════════════════════
-     SHARED PATCH: Skeletons · Animations · Mobile 100%
+     SHARED PATCH: Skeletons  -  Animations  -  Mobile 100%
      Inject before <script>
 // Set theme before first paint to prevent flash
 (function(){var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t==='dark'?'dark':'light';})();
@@ -666,7 +666,7 @@ a,button,input,select,textarea,.faq-question,.mobile-menu,.contact-btn,.sticky-c
 }
 
 /* ══════════════════════════════════════════════════════════
-   MOBILE 100% — Global fixes applied to all pages
+   MOBILE 100% - Global fixes applied to all pages
 ══════════════════════════════════════════════════════════ */
 
 /* Safe area for notched/Dynamic-Island phones */
@@ -700,7 +700,7 @@ nav{padding-left:env(safe-area-inset-left,0);padding-right:env(safe-area-inset-r
   .faq-item.active .faq-answer{grid-template-rows:1fr;}
 }
 
-/* Post: university-comparison, skill-reality, framework grids → stack on mobile */
+/* Post: university-comparison, skill-reality, framework grids -> stack on mobile */
 @media(max-width:600px){
   .university-comparison{grid-template-columns:1fr!important;}
   .skill-reality{grid-template-columns:1fr!important;}
@@ -774,8 +774,8 @@ img.loaded{opacity:1;}
 #faqContent .faq-question{padding:1.15rem 1.25rem!important;gap:1rem;align-items:center;}
 #faqContent .faq-question h4{font-size:clamp(.95rem,2.5vw,1.05rem)!important;line-height:1.35!important;font-weight:800!important;}
 #faqContent .faq-toggle{width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;}
-#faqContent .faq-answer{display:block!important;max-height:0!important;overflow:hidden!important;transition:max-height .32s ease!important;}
-#faqContent .faq-item.active .faq-answer{max-height:900px!important;}
+#faqContent .faq-answer{display:block!important;max-height:0!important;overflow:hidden!important;opacity:0!important;visibility:hidden!important;transition:max-height .32s ease,opacity .2s ease!important;}
+#faqContent .faq-item.active .faq-answer{max-height:900px!important;opacity:1!important;visibility:visible!important;}
 #faqContent .faq-answer p{padding:0 1.25rem 1.2rem!important;margin:0!important;font-size:.95rem!important;line-height:1.75!important;color:var(--text-secondary)!important;}
 .faq-note,.faq-question-card{border-radius:18px!important;}
 @media(max-width:900px){
@@ -916,9 +916,9 @@ img.loaded{opacity:1;}
 <body>
 <div class="progress" id="progressBar"></div>
 <div class="c-dot" id="cd" style="opacity:0"></div><div class="c-ring" id="cr" style="opacity:0"></div>
-<div class="loader" id="loader"><div class="l-brand"><div class="l-brand-mark"><img src="ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo"></div><div class="l-brand-copy"><div class="l-brand-word">ATANDA <span>VERSE</span></div><div class="l-brand-note">Clarity in motion</div></div></div><div class="l-track"><div class="l-fill"></div></div></div>
+<div class="loader" id="loader"><div class="l-brand"><div class="l-brand-mark"><img src="atanda-logo-primary.png" alt="Atanda logo"></div><div class="l-brand-copy"><div class="l-brand-word">ATANDA <span>VERSE</span></div><div class="l-brand-note">Clarity in motion</div></div></div><div class="l-track"><div class="l-fill"></div></div></div>
 <button class="theme-toggle" id="themeToggle">&#127769;</button>
-<nav id="mainNav"><div class="nav-container"><div class="nav-logo"><div class="logo-icon"><img src="ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo" onerror="this.style.opacity='0'"></div><a href="index.html" class="logo-text">ATANDA <span class="logo-verse">VERSE</span></a></div><ul class="nav-links" id="navLinks"><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="sessions.html">Sessions</a></li><li><a href="blog.html">Blog</a></li><li><a href="faq.html" class="active">FAQ</a></li><li><a href="library.html">Library</a></li><li><a href="register.html" class="nav-cta">Register</a></li></ul><div class="mobile-menu" id="mobileMenu"><span></span><span></span><span></span></div></div></nav>
+<nav id="mainNav"><div class="nav-container"><div class="nav-logo"><div class="logo-icon"><img src="atanda-logo-primary.png" alt="Atanda logo" onerror="this.style.opacity='0'"></div><a href="index.html" class="logo-text">ATANDA <span class="logo-verse">VERSE</span></a></div><ul class="nav-links" id="navLinks"><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="sessions.html">Sessions</a></li><li><a href="events.html">Events</a></li><li><a href="blog.html">Blog</a></li><li><a href="faq.html" class="active">FAQ</a></li><li><a href="library.html">Library</a></li><li><a href="register.html" class="nav-cta">Register</a></li></ul><div class="mobile-menu" id="mobileMenu"><span></span><span></span><span></span></div></div></nav>
 <main>
   <section class="page-hero">
     <div class="container" style="position:relative;z-index:2;text-align:center">
@@ -940,11 +940,11 @@ img.loaded{opacity:1;}
 
 
 <div id="faqContent">
-        <div style="text-align:center;color:var(--text-secondary);padding:3rem">Loading…</div>
+        <div style="text-align:center;color:var(--text-secondary);padding:3rem">Loading...</div>
       </div>
 
       <div class="faq-note" style="background:rgba(220,53,69,.05);border:1px solid rgba(220,53,69,.2);border-radius:14px;padding:1.2rem 1.6rem;margin-top:2.5rem;font-size:.82rem;color:var(--text-secondary);line-height:1.7">
-        ⚠️ <strong style="color:var(--text-primary)">Coaching Disclaimer:</strong> Atanda Verse offers coaching-based clarity sessions — not therapy, counselling, or clinical mental health treatment. If you are experiencing a mental health crisis, please contact a licensed professional. <a href="legal.html#disclaimer" style="color:var(--accent);font-weight:600;text-decoration:none">Full disclaimer →</a>
+        ⚠️ <strong style="color:var(--text-primary)">Coaching Disclaimer:</strong> Atanda Verse offers coaching-based clarity sessions - not therapy, counselling, or clinical mental health treatment. If you are experiencing a mental health crisis, please contact a licensed professional. <a href="legal.html#disclaimer" style="color:var(--accent);font-weight:600;text-decoration:none">Full disclaimer -></a>
       </div>
 
       <div class="rv faq-question-card" style="background:var(--glass);backdrop-filter:blur(20px);border-radius:20px;padding:3rem;text-align:center;border:1px solid var(--glass-border);box-shadow:0 8px 32px var(--shadow);margin-top:4rem">
@@ -959,7 +959,7 @@ img.loaded{opacity:1;}
     </div>
   </section>
 </main>
-<footer class="site-footer"><div class="nav-container" style="flex-direction:column;gap:0"><div class="footer-logo">ATANDA</div><div class="footer-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="sessions.html">Sessions</a><a href="blog.html">Blog</a><a href="faq.html">FAQ</a><a href="library.html">Library</a><a href="register.html">Register</a><a href="privacy.html">Privacy</a><a href="legal.html">Legal</a></div><div class="footer-divider"></div><p>&copy; 2025–2026 Atanda. All rights reserved.</p></div></footer>
+<footer class="site-footer"><div class="nav-container" style="flex-direction:column;gap:0"><div class="footer-logo">ATANDA</div><div class="footer-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="sessions.html">Sessions</a><a href="events.html">Events</a><a href="blog.html">Blog</a><a href="faq.html">FAQ</a><a href="library.html">Library</a><a href="register.html">Register</a><a href="privacy.html">Privacy</a><a href="legal.html">Legal</a></div><div class="footer-divider"></div><p>&copy; 2025-2026 Atanda. All rights reserved.</p></div></footer>
 <script>
 
 const LOADER_SEEN_KEY='iv_loader_seen';
@@ -996,10 +996,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
 // ── Load FAQ from Supabase ──────────────────────────────────────────
       const FAQ_CAT_LABELS={sessions:'About Sessions',pricing:'Pricing & Access',logistics:'Logistics',language:'Language & Culture'};
       const FAQ_DEFAULTS=[
-        {id:'faq-d1',question:'What exactly is a clarity session?',answer:'A clarity session is a guided conversation designed to cut through mental fog and help you gain perspective on your life, goals, and challenges. It\'s coaching-based — helping you identify what\'s blocking you and build a concrete action plan.',category:'sessions',order:0},
+        {id:'faq-d1',question:'What exactly is a clarity session?',answer:'A clarity session is a guided conversation designed to cut through mental fog and help you gain perspective on your life, goals, and challenges. It\'s coaching-based - helping you identify what\'s blocking you and build a concrete action plan.',category:'sessions',order:0},
         {id:'faq-d2',question:'Is this coaching, therapy, or counselling?',answer:'Clarity sessions are coaching-based, not therapy. We focus on your present situation and future goals. For clinical mental health needs, we recommend a licensed therapist.',category:'sessions',order:1},
         {id:'faq-d3',question:'What should I expect from my first session?',answer:'Your first session focuses on your situation, identifying mental blocks, and creating a clear vision forward. You\'ll leave with actionable insights and a personalized clarity plan.',category:'sessions',order:2},
-        {id:'faq-d4',question:'How are group sessions different from 1:1?',answer:'Group sessions (6–12 people) have weekly themes and build community accountability. 1:1 sessions are entirely focused on you. Many people start with group and later add 1:1 for deeper work.',category:'sessions',order:3},
+        {id:'faq-d4',question:'How are group sessions different from 1:1?',answer:'Group sessions (6-12 people) have weekly themes and build community accountability. 1:1 sessions are entirely focused on you. Many people start with group and later add 1:1 for deeper work.',category:'sessions',order:3},
         {id:'faq-d5',question:'Do I need to prepare anything?',answer:'You\'ll receive a short guide 24 hours before with 3 reflection questions. All you need is a quiet space, stable internet, and an open mind.',category:'sessions',order:4},
         {id:'faq-d6',question:'Are the sessions free?',answer:'Single clarity sessions, three-session packages, weekly group access, and monthly intensives are guided offers confirmed after registration.',category:'pricing',order:0},
         {id:'faq-d7',question:'How do current session offers work?',answer:'Choose the session path that fits your need. Details, next steps, and any payment information are confirmed after registration.',category:'pricing',order:1},
@@ -1007,10 +1007,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
         {id:'faq-d9',question:'What if the session doesn\'t help me?',answer:'If a session does not add value, tell us honestly. The goal is genuine clarity, not just a completed session.',category:'pricing',order:3},
         {id:'faq-d10',question:'How do online sessions work?',answer:'Sessions are via Zoom or your preferred platform. You\'ll receive a private link and preparation guide 24 hours before. All you need is a quiet space and stable internet.',category:'logistics',order:0},
         {id:'faq-d11',question:'What if I miss a scheduled session?',answer:'Give us 24 hours notice via WhatsApp and we\'ll reschedule at no cost. We offer flexible timing including evenings and weekends.',category:'logistics',order:1},
-        {id:'faq-d12',question:'How quickly can I get a session?',answer:'We respond within 24 hours of registration. You can usually have your first session within 2–5 days. WhatsApp us directly if you need something sooner.',category:'logistics',order:2},
+        {id:'faq-d12',question:'How quickly can I get a session?',answer:'We respond within 24 hours of registration. You can usually have your first session within 2-5 days. WhatsApp us directly if you need something sooner.',category:'logistics',order:2},
         {id:'faq-d13',question:'Is my conversation confidential?',answer:'Absolutely. Everything shared stays between you and your facilitator. Nothing identifying is ever shared without your explicit consent.',category:'logistics',order:3},
-        {id:'faq-d14',question:'Can I do sessions in Yoruba, Igbo, or Pidgin?',answer:'Absolutely. Sessions can be in English, Nigerian Pidgin, Yoruba, or Igbo — whatever helps you express yourself most authentically.',category:'language',order:0},
-        {id:'faq-d15',question:'Is this relevant to Nigerians specifically?',answer:'Atanda Verse was built with the Nigerian context in mind — family expectations, career uncertainty, and economic challenges. Our facilitators understand your world from the inside.',category:'language',order:1},
+        {id:'faq-d14',question:'Can I do sessions in Yoruba, Igbo, or Pidgin?',answer:'Absolutely. Sessions can be in English, Nigerian Pidgin, Yoruba, or Igbo - whatever helps you express yourself most authentically.',category:'language',order:0},
+        {id:'faq-d15',question:'Is this relevant to Nigerians specifically?',answer:'Atanda Verse was built with the Nigerian context in mind - family expectations, career uncertainty, and economic challenges. Our facilitators understand your world from the inside.',category:'language',order:1},
         {id:'faq-d16',question:'Can I join from outside Nigeria?',answer:'Yes. Our sessions are fully virtual and open to anyone in the diaspora. If you\'re Nigerian by heart or experience, you\'re welcome here.',category:'language',order:2},
       ];
 

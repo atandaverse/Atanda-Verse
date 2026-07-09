@@ -64,7 +64,7 @@ nav.scrolled{padding:.65rem 0;box-shadow:0 4px 30px var(--shadow)}
 .article-meta span{display:flex;align-items:center;gap:.4rem}
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .featured-image{position:relative;width:100%;aspect-ratio:2/1;display:flex;align-items:center;justify-content:center;color:white;font-size:4rem;overflow:hidden;background:linear-gradient(135deg,var(--text-primary) 0%,var(--accent) 100%);border-radius:20px;margin:3rem auto;max-width:1300px;box-shadow:0 20px 60px var(--shadow)}
-.featured-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:20px;transition:transform .6s ease}
+.featured-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;border-radius:20px;transition:transform .6s ease}
 .featured-image:hover img{transform:scale(1.02)}
 .featured-image-fallback{position:absolute;inset:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--text-primary),var(--accent));color:white;font-size:4rem;border-radius:20px}
 .article-content{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:4rem;border-radius:24px;border:1px solid var(--glass-border);box-shadow:0 20px 60px var(--shadow);margin-bottom:3rem;position:relative;z-index:1}
@@ -188,7 +188,7 @@ a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointe
       <div class="article-meta">
         <span>📅 October 7, 2025</span>
         <span>⏱️ 8 min read</span>
-        <span>👁️ <span id="viewCount">—</span> views</span>
+        <span>️ <span id="viewCount">-</span> views</span>
       </div>
     </div>
   </header>
@@ -565,7 +565,7 @@ a,button,input,select,textarea,.theme-btn,.mob-menu,.btn,.back-btn{cursor:pointe
     <div class="nav-post-title">Episode 1: The New Reality of Education</div>
   </a>
   <a href="school-na-scam-ep3.html" class="nav-post">
-    <div class="nav-direction">Next →</div>
+    <div class="nav-direction">Next -></div>
     <div class="nav-post-title">Episode 3: Business Skills That Pay</div>
   </a>
 </div>

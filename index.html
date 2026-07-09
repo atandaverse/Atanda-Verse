@@ -301,6 +301,11 @@ width: 50px; height: 50px; cursor: pointer;
         .countdown-item span:first-child.flip { animation: flip .3s cubic-bezier(.68,-.55,.265,1.55); }
         @keyframes flip { 50% { opacity: .4; transform: translateY(-6px) scale(.9); } }
         .countdown-item span:last-child { font-size: .68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-top: 3px; display: block; }
+        .hero-countdowns{display:flex;justify-content:center;gap:1rem;width:min(1120px,100%);margin:2rem auto 0;overflow-x:auto;scroll-snap-type:x mandatory;padding:.25rem .25rem 1rem;scrollbar-width:thin}
+        .hero-countdown{flex:1 0 min(500px,calc(100vw - 3rem));max-width:540px;scroll-snap-align:center;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:1.15rem;box-shadow:0 18px 48px var(--shadow),inset 0 1px 0 rgba(255,255,255,.42)}
+        .hero-countdown .countdown-text{margin-bottom:.8rem}
+        .hero-countdown .countdown-display{flex-wrap:nowrap}
+        .hero-countdown .countdown-item{min-width:68px;padding:.72rem .62rem}
 
         /* ── CTA BUTTON ── */
         .cta-button {
@@ -514,16 +519,15 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         .events-head { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 1.1rem; margin-bottom: 1.05rem; }
         .events-head .section-title { font-size: clamp(3rem,6vw,5.4rem); }
         .events-link { color: var(--accent); font-weight: 800; text-decoration: none; white-space: nowrap; }
-        .home-events-grid { display: grid; gap: 1rem; }
-        .home-event-card { display: grid; grid-template-columns: minmax(220px,.42fr) minmax(0,1fr); align-items: center; gap: 1.35rem; background: rgba(255,255,255,.64); border: 1px solid var(--glass-border); border-radius: 24px; overflow: hidden; color: var(--text-primary); text-decoration: none; box-shadow: 0 18px 48px var(--shadow); padding: 1rem 1.25rem 1rem 1rem; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
-        .home-event-card:hover { transform: translateY(-5px); box-shadow: 0 26px 64px var(--shadow-hover); border-color: rgba(220,53,69,.22); }
-        [data-theme="dark"] .home-event-card { background: rgba(255,255,255,.08); }
-        .home-event-media { justify-self: stretch; max-width: 360px; position: relative; isolation: isolate; border-radius: 18px; padding: 4px; background: rgba(255,255,255,.84); box-shadow: 0 10px 28px rgba(24,54,93,.14); }
+        .home-events-grid { display:flex; gap:1.4rem; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:thin; padding:.45rem .15rem 1.25rem; }
+        .home-event-card { flex:0 0 min(1080px,calc(100vw - 5rem)); display:grid; grid-template-columns:minmax(420px,.95fr) minmax(360px,1.05fr); align-items:stretch; gap:1.25rem; color:var(--text-primary); text-decoration:none; scroll-snap-align:start; }
+        .home-event-card:hover .home-event-media,.home-event-card:hover .home-event-body { transform:translateY(-5px); box-shadow:0 28px 68px var(--shadow-hover); }
+        .home-event-media { min-height:430px; position:relative; isolation:isolate; border-radius:22px; padding:4px; background:rgba(255,255,255,.84); box-shadow:0 18px 48px var(--shadow); transition:transform .25s ease,box-shadow .25s ease; }
         .home-event-media::before { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit; padding: 3px; pointer-events: none; background: conic-gradient(from var(--event-edge-angle),transparent 0 78%,rgba(66,133,244,.25) 81%,#4285f4 84%,#34a853 88%,#fbbc05 92%,#ea4335 96%,transparent 100%); -webkit-mask: linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; filter: drop-shadow(0 0 5px rgba(66,133,244,.82)); animation: eventEdgeOrbit 4.5s linear infinite; }
-        .home-event-media img { position: relative; z-index: 1; width: 100%; height: auto; max-height: 210px; object-fit: contain; display: block; border-radius: 13px; box-shadow: 0 8px 22px rgba(15,23,42,.16); background: #fff; }
+        .home-event-media img { position:relative;z-index:1;width:100%;height:100%;object-fit:contain;display:block;border-radius:18px;background:#fff; }
         @property --event-edge-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
         @keyframes eventEdgeOrbit { to { --event-edge-angle: 360deg; } }
-        .home-event-body { padding: .35rem 0; min-width: 0; }
+        .home-event-body { min-width:0;padding:2.25rem;display:flex;flex-direction:column;justify-content:center;background:var(--glass);border:1px solid var(--glass-border);border-radius:22px;box-shadow:0 18px 48px var(--shadow);transition:transform .25s ease,box-shadow .25s ease; }
         .home-event-kind { color: var(--accent); font-size: .7rem; font-weight: 900; letter-spacing: 2.2px; text-transform: uppercase; margin-bottom: .35rem; }
         .home-event-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem,4vw,3.15rem); line-height: .95; letter-spacing: 1px; margin: 0 0 .55rem; }
         .home-event-card p { color: var(--text-secondary); font-size: 1rem; line-height: 1.65; margin: 0 0 .8rem; max-width: 620px; }
@@ -578,25 +582,27 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         .contact-check strong{display:block;color:var(--text-primary);margin-bottom:.25rem}
 
         /* Support */
-        .support-work{padding:6rem 0;background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(248,250,252,.42));border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border)}
+        .support-work{padding:4.5rem 0;background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(248,250,252,.42));border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border)}
         [data-theme="dark"] .support-work{background:linear-gradient(135deg,rgba(15,23,42,.72),rgba(30,41,59,.46))}
-        .support-shell{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.82fr);gap:2rem;align-items:stretch;background:var(--glass);border:1px solid var(--glass-border);border-radius:28px;padding:2.5rem;box-shadow:0 24px 64px var(--shadow),inset 0 1px 0 rgba(255,255,255,.42)}
+        .support-shell{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);gap:1.2rem;align-items:center;background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;padding:1.5rem;box-shadow:0 20px 54px var(--shadow),inset 0 1px 0 rgba(255,255,255,.42)}
         .support-copy .section-tag,.support-copy .section-title,.support-copy .section-subtitle{text-align:left;margin-left:0;margin-right:0}
-        .support-card{background:rgba(255,255,255,.58);border:1px solid var(--glass-border);border-radius:22px;padding:1.5rem;display:grid;gap:1rem;align-content:center}
+        .support-card{background:rgba(255,255,255,.58);border:1px solid var(--glass-border);border-radius:18px;padding:1.25rem;display:grid;gap:.75rem;align-content:center}
         [data-theme="dark"] .support-card{background:rgba(15,23,42,.36)}
         .support-card h3{font-size:1.05rem;color:var(--text-primary)}
         .support-card p{color:var(--text-secondary);line-height:1.7}
         .support-actions{display:flex;gap:.8rem;flex-wrap:wrap}
         @media(max-width:900px){.support-shell{grid-template-columns:1fr;padding:1.5rem}.support-copy .section-tag,.support-copy .section-title,.support-copy .section-subtitle{text-align:center}.support-actions{justify-content:center}}
+        @media(min-width:700px){.services-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.service-card{min-height:390px}}
+        @media(max-width:768px){.home-event-card{flex-basis:calc(100vw - 2rem);grid-template-columns:1fr!important}.home-event-media{min-height:0;aspect-ratio:4/5}.home-event-body{padding:1.35rem}.hero-countdown{flex-basis:calc(100vw - 2.5rem)}.hero-countdown .countdown-display{gap:.35rem}.hero-countdown .countdown-item{min-width:58px;padding:.65rem .35rem}}
 
         /* About snapshot */
-        .about-snapshot{padding:6rem 0;background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(248,250,252,.46));border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border)}
+        .about-snapshot{padding:4.5rem 0;background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(248,250,252,.46));border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border)}
         [data-theme="dark"] .about-snapshot{background:linear-gradient(135deg,rgba(15,23,42,.66),rgba(30,41,59,.44))}
-        .about-snapshot-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);gap:2rem;align-items:stretch}
-        .about-snapshot-copy{padding:1rem 0}
+        .about-snapshot-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.82fr);gap:1.4rem;align-items:center}
+        .about-snapshot-copy{padding:.5rem 0}
         .about-snapshot-copy .section-title{text-align:left;margin-bottom:1rem}
         .about-snapshot-copy .section-subtitle{text-align:left;margin:0 0 1.6rem;max-width:680px}
-        .about-snapshot-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;padding:2rem;box-shadow:0 20px 48px var(--shadow),inset 0 1px 0 rgba(255,255,255,.38)}
+        .about-snapshot-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:1.5rem;box-shadow:0 18px 42px var(--shadow),inset 0 1px 0 rgba(255,255,255,.38)}
         .about-snapshot-card h3{font-size:1rem;color:var(--text-primary);margin-bottom:.65rem}
         .about-snapshot-card p{color:var(--text-secondary);font-size:.92rem;line-height:1.7;margin-bottom:1rem}
         .about-snapshot-list{display:grid;gap:.75rem;margin-top:1rem}
@@ -1132,15 +1138,7 @@ img.loaded{opacity:1;}
                 <span class="title-session s4">Session</span>
             </h1>
             <p class="hero-subtitle s5">Break through the digital noise and mental barriers. Discover your authentic self and unlock the clarity that transforms your life from within.</p>
-            <div class="countdown-timer s5">
-                <div class="countdown-text" id="cdLabel">Free Access Ends In</div>
-                <div class="countdown-display">
-                    <div class="countdown-item"><span id="days">30</span><span>Days</span></div>
-                    <div class="countdown-item"><span id="hours">00</span><span>Hours</span></div>
-                    <div class="countdown-item"><span id="minutes">00</span><span>Minutes</span></div>
-                    <div class="countdown-item"><span id="seconds">00</span><span>Seconds</span></div>
-                </div>
-            </div>
+            <div class="hero-countdowns s5" id="heroCountdowns" aria-live="polite"></div>
             <div class="s6"><a href="register.html?session=single&label=Single%20Session&source=hero" class="cta-button">Begin Your Journey</a></div>
         </div>
         <div class="scroll-hint"><div class="scroll-line"></div><span>Scroll</span></div>
@@ -1359,16 +1357,16 @@ img.loaded{opacity:1;}
         <div class="container">
             <div class="support-shell rv">
                 <div class="support-copy">
-                    <span class="section-tag">Support The Work</span>
+                    <span class="section-tag">Partner With Atanda Verse</span>
                     <h2 class="section-title">HELP KEEP CLARITY ACCESSIBLE</h2>
-                    <p class="section-subtitle">If Atanda Verse has helped you, or you want to sponsor access for someone else, reach out and we will share the correct support details directly.</p>
+                    <p class="section-subtitle">Sponsor access, support practical resources, or explore a thoughtful partnership with Atanda Verse.</p>
                 </div>
                 <div class="support-card">
-                    <h3>For now, support is handled by direct contact.</h3>
-                    <p>Send a message if you want to sponsor a session, support free resources, or discuss partnership. Payment details are only shared after the request is confirmed.</p>
+                    <h3>Start a partnership conversation.</h3>
+                    <p>Tell us what you would like to support. We will confirm the right path and share payment details only after the request is reviewed.</p>
                     <div class="support-actions">
-                        <a href="https://wa.me/2348147732687?text=Hi! I'd like to support the work at Atanda Verse." class="contact-btn whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp Support</a>
-                        <a href="mailto:support@atanda.site?subject=Support%20the%20Work&body=Hi%20Atanda%20Verse%2C%0A%0AI'd%20like%20to%20support%20the%20work." class="contact-btn email">Email Support</a>
+                        <a href="https://wa.me/2348147732687?text=Hi! I'd like to discuss partnering with Atanda Verse." class="contact-btn whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp Partnership</a>
+                        <a href="mailto:hello@atanda.site?subject=Partner%20With%20Atanda%20Verse" class="contact-btn email">Email Partnership</a>
                     </div>
                 </div>
             </div>
@@ -1494,7 +1492,7 @@ img.loaded{opacity:1;}
             <a href="faq.html">FAQ</a>
             <a href="library.html">Library</a>
             <a href="register.html">Register</a>
-            <a href="#support">Support</a>
+            <a href="#support">Partner</a>
             <a href="privacy.html">Privacy</a><a href="legal.html">Legal</a>
         </div>
         <div class="footer-divider"></div>
@@ -1646,85 +1644,32 @@ img.loaded{opacity:1;}
     document.querySelectorAll('.rv, .rl, .rr').forEach(el => revealObs.observe(el));
 
     // ── COUNTDOWN (admin-driven) ──
-    let prevCD = {};
-    let publicSettingsState = null;
-    let countdownSyncBusy = false;
-    const COUNTDOWN_FALLBACK_DAYS = 30;
-    function getStoredPublicSettings() {
-        try { return JSON.parse(localStorage.getItem('iv_settings') || '{}') || {}; }
-        catch { return {}; }
+    let heroCountdownItems=[];
+    function heroCountdownMarkup(item,index){
+      const esc=value=>String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+      return `<div class="hero-countdown" data-deadline="${esc(item.end_date)}" data-countdown-index="${index}"><div class="countdown-text">${esc(item.countdown_label||item.title||'Campaign ends in')}</div><div class="countdown-display">${['days','hours','minutes','seconds'].map(unit=>`<div class="countdown-item"><span data-unit="${unit}">00</span><span>${unit}</span></div>`).join('')}</div></div>`;
     }
-    function getFallbackCountdownTarget() {
-        try {
-            const key = 'iv_cd_default';
-            let stored = parseInt(localStorage.getItem(key) || '0', 10);
-            if (!Number.isFinite(stored) || stored <= Date.now()) {
-                stored = Date.now() + (COUNTDOWN_FALLBACK_DAYS * 86400000);
-                localStorage.setItem(key, String(stored));
-            }
-            return stored;
-        } catch {
-            return Date.now() + (COUNTDOWN_FALLBACK_DAYS * 86400000);
-        }
+    function tickHeroCountdowns(){
+      document.querySelectorAll('.hero-countdown[data-deadline]').forEach(card=>{
+        const diff=Math.max(0,new Date(card.dataset.deadline).getTime()-Date.now());
+        const values={days:Math.floor(diff/86400000),hours:Math.floor(diff/3600000)%24,minutes:Math.floor(diff/60000)%60,seconds:Math.floor(diff/1000)%60};
+        Object.entries(values).forEach(([unit,value])=>{const el=card.querySelector(`[data-unit="${unit}"]`);if(el)el.textContent=String(value).padStart(2,'0');});
+        if(diff<=0)card.hidden=true;
+      });
     }
-    function getCountdownSettings() {
-        return publicSettingsState || getStoredPublicSettings();
+    async function loadHeroCountdowns(){
+      const host=document.getElementById('heroCountdowns');if(!host)return;
+      try{
+        const items=window.ivGetPublicEventsCampaigns?await window.ivGetPublicEventsCampaigns():[];
+        heroCountdownItems=items.filter(item=>item.status==='published'&&item.has_countdown&&item.end_date&&new Date(item.end_date).getTime()>Date.now());
+        host.innerHTML=heroCountdownItems.map(heroCountdownMarkup).join('');
+        host.hidden=!heroCountdownItems.length;
+        tickHeroCountdowns();
+      }catch(error){host.hidden=true;console.warn('Hero countdowns failed',error);}
     }
-    function getCountdownTarget(settings) {
-        const s = settings || getCountdownSettings();
-        if (!s || !s.countdownTarget) return null;
-        const ts = new Date(s.countdownTarget).getTime();
-        return Number.isFinite(ts) ? ts : null;
-    }
-    async function syncCountdownSettings(force) {
-        if (!window.ivGetPublicSettings || countdownSyncBusy) return getCountdownSettings();
-        const now = Date.now();
-        const current = publicSettingsState || getStoredPublicSettings();
-        if (!force && current && current.__fetchedAt && (now - current.__fetchedAt) < 60000) return current;
-        countdownSyncBusy = true;
-        try {
-            const fetched = await window.ivGetPublicSettings();
-            publicSettingsState = Object.assign({}, fetched || {}, { __fetchedAt: now });
-            return publicSettingsState;
-        } catch (e) {
-            return current;
-        } finally {
-            countdownSyncBusy = false;
-        }
-    }
-    function updateCountdown() {
-        const settings = getCountdownSettings();
-        const target = getCountdownTarget(settings);
-        const timer = document.querySelector('.countdown-timer');
-        const active = !!(target && target > Date.now());
-        if (timer) {
-            timer.hidden = !active;
-            timer.setAttribute('aria-hidden', active ? 'false' : 'true');
-        }
-        if (!active) {
-            ['days','hours','minutes','seconds'].forEach(k => { const el = document.getElementById(k); if (el) el.textContent = '00'; });
-            return;
-        }
-        const lbl = document.getElementById('cdLabel');
-        if (lbl) lbl.textContent = settings && settings.countdownLabel ? settings.countdownLabel : 'Free Access Ends In';
-        const diff = target - Date.now();
-        const vals = { days: Math.floor(diff/86400000), hours: Math.floor(diff%86400000/3600000), minutes: Math.floor(diff%3600000/60000), seconds: Math.floor(diff%60000/1000) };
-        Object.entries(vals).forEach(([k, v]) => {
-            const el = document.getElementById(k); if (!el) return;
-            const s = String(v).padStart(2, '0');
-            if (prevCD[k] !== s) { el.textContent = s; el.classList.remove('flip'); void el.offsetWidth; el.classList.add('flip'); prevCD[k] = s; }
-        });
-    }
-    // Load settings from Supabase so countdown/label reflect admin changes cross-device
-    (async function loadSettings() {
-        publicSettingsState = Object.assign({}, getStoredPublicSettings());
-        await syncCountdownSettings(true);
-        updateCountdown();
-    })();
-    setInterval(() => {
-        updateCountdown();
-        syncCountdownSettings(false);
-    }, 1000);
+    loadHeroCountdowns();
+    setInterval(tickHeroCountdowns,1000);
+    setInterval(loadHeroCountdowns,60000);
 
     // ── FAQ ──
     function wireHomeFaq(root=document){
@@ -1792,10 +1737,12 @@ img.loaded{opacity:1;}
 
     // ── STICKY CTA ──
     function getStickyFullText() {
-        return (window.ivLaunchState && window.ivLaunchState.active) ? 'Book Your Free Session' : 'Book a Session';
+        const campaign=window.ivLaunchState&&window.ivLaunchState.settings&&window.ivLaunchState.settings.publicCampaign;
+        return campaign&&campaign.activeStickyLabel ? campaign.activeStickyLabel : 'Book a Session';
     }
     function getStickyAriaLabel() {
-        return (window.ivLaunchState && window.ivLaunchState.active) ? 'Book your free single clarity session' : 'Book a clarity session';
+        const campaign=window.ivLaunchState&&window.ivLaunchState.settings&&window.ivLaunchState.settings.publicCampaign;
+        return campaign&&campaign.activeStickyLabel ? campaign.activeStickyLabel : 'Book a clarity session';
     }
     const sc = document.getElementById('stickyCta');
     let stickyPeekTimer = null;
@@ -2092,13 +2039,13 @@ img.loaded{opacity:1;}
       if(!grid)return;
       function esc(v){return String(v||'').replace(/[&<>"']/g,function(ch){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch];});}
       function fmtDate(v){if(!v)return 'Date to be announced';try{return new Date(v).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch{return 'Date to be announced';}}
-      function href(item){return item.funnel_url||item.cta_url||('event-register.html?event='+encodeURIComponent(item.slug||item.id));}
+      function href(item){return 'event.html?event='+encodeURIComponent(item.slug||item.id);}
       try{
         let items=window.ivGetPublicEventsCampaigns?await window.ivGetPublicEventsCampaigns():(window.ivDefaultEventsCampaigns||[]).filter(x=>x.status==='published');
         const featured=window.ivGetFeaturedEventCampaign&&window.ivGetFeaturedEventCampaign(items);
-        items=items.slice().sort((a,b)=>Number(b.id===featured?.id)-Number(a.id===featured?.id)||((a.sort_order||50)-(b.sort_order||50))).slice(0,3);
+        items=items.slice().sort((a,b)=>Number(b.id===featured?.id)-Number(a.id===featured?.id)||((a.sort_order||50)-(b.sort_order||50)));
         if(!items.length){grid.innerHTML='<div class="home-event-card"><div class="home-event-body"><div class="home-event-kind">Soon</div><h3>Events will appear here</h3><p>New Atanda Verse experiences will show once published from Workspace.</p></div></div>';return;}
-        grid.innerHTML=items.map(item=>`<a class="home-event-card iv-pop" href="${esc(href(item))}"><div class="home-event-media"><img src="${esc(item.image_url||'social-preview.png')}" alt="${esc(item.title)}" onerror="this.src='social-preview.png'"></div><div class="home-event-body"><div class="home-event-kind">${esc(item.eyebrow||item.kind||'Event')}</div><h3>${esc(item.title)}</h3><p>${esc(item.summary)}</p><div class="home-event-meta">${esc(fmtDate(item.event_date))} - ${esc(item.location||'Online')}</div></div></a>`).join('');
+        grid.innerHTML=items.map(item=>`<a class="home-event-card iv-pop" href="${esc(href(item))}"><div class="home-event-media"><img src="${esc(item.image_url||'social-preview.png')}" alt="${esc(item.title)}" onerror="this.src='social-preview.png'"></div><div class="home-event-body"><div class="home-event-kind">${esc(item.eyebrow||item.kind||'Event')}</div><h3>${esc(item.title)}</h3><p>${esc(item.summary)}</p><div class="home-event-meta">${esc(fmtDate(item.event_date))} - ${esc(item.location||'Online')}</div><span class="events-link" style="margin-top:1rem">View full details -></span></div></a>`).join('');
         if(window.revealObs){document.querySelectorAll('.home-event-card').forEach(el=>revealObs.observe(el));}
       }catch(err){
         console.warn('Events preview failed',err);
