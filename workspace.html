@@ -209,7 +209,7 @@ td{padding:.76rem .95rem;font-size:.78rem;color:var(--t2);vertical-align:middle}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(220,53,69,.1)}.fg input::placeholder,.fg textarea::placeholder{color:var(--t3)}.fg select option{background:var(--bg3)}
 .iz{background:var(--s);border:2px dashed var(--b);border-radius:var(--rs);padding:1.4rem;text-align:center;cursor:pointer;transition:all .3s;position:relative}.iz:hover,.iz.dg{border-color:var(--ac);background:rgba(220,53,69,.04)}.iz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .iz-i{font-size:1.6rem;display:block;margin-bottom:.35rem}.iz p{color:var(--t2);font-size:.77rem;margin-bottom:.15rem}.iz small{color:var(--t3);font-size:.67rem}
-.ipw{display:none;position:relative;margin-top:.65rem}.ipw img{width:100%;max-height:145px;object-fit:cover;border-radius:var(--rs)}
+.ipw{display:none;position:relative;margin-top:.65rem}.ipw img{width:100%;max-height:145px;object-fit:contain;border-radius:var(--rs)}
 .ic{position:absolute;top:.35rem;right:.35rem;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:background .2s}.ic:hover{background:var(--ac)}
 .ur{display:flex;align-items:center;gap:.42rem;margin-top:.42rem}.ur span{font-size:.64rem;color:var(--t3);white-space:nowrap}
 .ed-tabs{display:flex;border-bottom:1px solid var(--b)}.et{padding:.44rem 1.05rem;font-size:.74rem;font-weight:600;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;transition:all .2s;user-select:none}.et.on{color:var(--ac);border-bottom-color:var(--ac)}.et:hover{color:var(--t2)}
@@ -405,17 +405,17 @@ body[data-admin-theme="evolutionary"] .panel{animation:finevo .34s ease}
         <div class="setup-logo">ATANDA</div>
   <div class="setup-sub">Connect Supabase Database</div>
   <div class="sc-card">
-    <h2>1 — Create a Supabase Project</h2>
-    <p>Supabase gives you a free Postgres database that works from any HTML file — no server required.</p>
+    <h2>1 - Create a Supabase Project</h2>
+    <p>Supabase gives you a free Postgres database that works from any HTML file - no server required.</p>
     <ol>
       <li>Go to <strong>supabase.com</strong> and sign up (free)</li>
-      <li>Click <strong>"New project"</strong> → give it a name → set a password → Create</li>
+      <li>Click <strong>"New project"</strong> -> give it a name -> set a password -> Create</li>
       <li>Wait ~1 minute for it to provision</li>
     </ol>
   </div>
   <div class="sc-card">
-    <h2>2 — Run This SQL</h2>
-    <p>In your Supabase project: click <strong>SQL Editor</strong> in the left sidebar → paste the code below → Run.</p>
+    <h2>2 - Run This SQL</h2>
+    <p>In your Supabase project: click <strong>SQL Editor</strong> in the left sidebar -> paste the code below -> Run.</p>
     <div class="sql-box" id="sqlBox"><button class="copy-btn" onclick="copySql()">Copy</button>create table if not exists posts (
   id text primary key,
   title text, subtitle text,
@@ -748,25 +748,25 @@ drop policy if exists "public_write_logins" on admin_logins;
 create policy "public_read_logins" on admin_logins for select using (true);
 create policy "public_write_logins" on admin_logins for all using (true);
 
--- Storage bucket for media uploads (run in Storage → New bucket):
+-- Storage bucket for media uploads (run in Storage -> New bucket):
               -- Bucket name: innerverse-media (legacy) | Public: ON</div>
   </div>
   <div class="sc-card">
-    <h2>3 — Paste Your Credentials</h2>
-    <p>In your Supabase project: go to <strong>Project Settings → API</strong>.</p>
+    <h2>3 - Paste Your Credentials</h2>
+    <p>In your Supabase project: go to <strong>Project Settings -> API</strong>.</p>
     <div class="field">
       <label>Project URL</label>
       <input class="fi" type="text" id="sbUrlIn" placeholder="https://xxxxxxxxxxxx.supabase.co">
-      <div class="fn">Settings → API → Project URL. Usually needed once per browser unless you clear storage.</div>
+      <div class="fn">Settings -> API -> Project URL. Usually needed once per browser unless you clear storage.</div>
     </div>
     <div class="field">
       <label>Anon / Public Key</label>
-      <input class="fi" type="text" id="sbKeyIn" placeholder="eyJhbGci…">
-      <div class="fn">Settings → API → Project API keys → <strong>anon public</strong>. Saved on this browser after a successful connection test.</div>
+      <input class="fi" type="text" id="sbKeyIn" placeholder="eyJhbGci...">
+      <div class="fn">Settings -> API -> Project API keys -> <strong>anon public</strong>. Saved on this browser after a successful connection test.</div>
     </div>
     <div class="test-res" id="testRes"></div>
     <div class="sa">
-      <button class="btn p" onclick="testAndSave()">Test &amp; Connect →</button>
+      <button class="btn p" onclick="testAndSave()">Test &amp; Connect -></button>
       <span class="skip-lnk" onclick="skipSetup()">Continue in local mode</span>
     </div>
   </div>
@@ -801,6 +801,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sb-lnk" onclick="nav('about')">About Page</div>
       <div class="sb-lnk" onclick="nav('settings')">Settings</div>
       <div class="sb-lnk" onclick="nav('pricing')">Pricing</div>
+      <div class="sb-lnk" onclick="nav('events')">Events</div>
       <div class="sb-sec">Audience</div>
       <div class="sb-lnk" onclick="nav('testimonials')">Testimonials <span class="sb-badge" id="pendingCount">0</span></div>
       <div class="sb-lnk" onclick="nav('library')">Library</div>
@@ -918,7 +919,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sh">
         <div class="sl">All Posts (<span id="pclbl">0</span>)</div>
         <div style="display:flex;gap:.45rem;flex-wrap:wrap">
-          <input type="text" id="psrch" placeholder="🔍 Search…" style="background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);padding:.38rem .78rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.75rem;outline:none;width:152px" oninput="renderPostsTbl()">
+          <input type="text" id="psrch" placeholder="🔍 Search..." style="background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);padding:.38rem .78rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.75rem;outline:none;width:152px" oninput="renderPostsTbl()">
           <select id="pfstt" style="background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);padding:.38rem .65rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.75rem;outline:none" onchange="renderPostsTbl()">
             <option value="">All</option><option value="published">Published</option><option value="draft">Draft</option><option value="coming-soon">Coming Soon</option>
           </select>
@@ -944,7 +945,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       </div>
       <div class="el" id="edLayout">
         <div class="ec" id="edCol">
-          <div class="fr fr1"><div class="fg"><label>Post Title *</label><input type="text" id="ft" placeholder="Write a compelling title…" oninput="upPrev()"></div></div>
+          <div class="fr fr1"><div class="fg"><label>Post Title *</label><input type="text" id="ft" placeholder="Write a compelling title..." oninput="upPrev()"></div></div>
           <div class="fr">
             <div class="fg"><label>Subtitle / Tagline</label><input type="text" id="fsu" placeholder="Short line under the title" oninput="upPrev()"></div>
             <div class="fg"><label>Category</label><select id="fcat" onchange="upPrev()">
@@ -961,17 +962,17 @@ create policy "public_write_logins" on admin_logins for all using (true);
           </div>
           <div class="fg">
             <label>Excerpt (blog card)</label>
-            <textarea id="fex" rows="2" placeholder="Short teaser…" oninput="syncExcerptMeta()"></textarea>
+            <textarea id="fex" rows="2" placeholder="Short teaser..." oninput="syncExcerptMeta()"></textarea>
             <div style="display:flex;justify-content:space-between;gap:.75rem;align-items:center;margin-top:.35rem;font-size:.68rem;color:var(--t3)">
               <span id="statusHint">Published posts appear on the blog immediately.</span>
               <span id="excerptMeta">Leave blank to auto-generate from the article.</span>
             </div>
           </div>
           <div class="fg">
-            <label>Post Image <span style="font-size:.67rem;color:var(--t3);font-weight:400">(used as blog card thumbnail & post cover — 16:9 ratio recommended)</span></label>
-            <div class="iz" id="imgZone"><input type="file" accept="image/*" id="imgFile" onchange="handleImg(event)"><span class="iz-i">🖼️</span><p>Click to upload or drag &amp; drop</p><small>JPG, PNG, WebP · max 5MB · uploaded to Supabase Storage when connected</small></div>
+            <label>Post Image <span style="font-size:.67rem;color:var(--t3);font-weight:400">(used as blog card thumbnail & post cover - 16:9 ratio recommended)</span></label>
+            <div class="iz" id="imgZone"><input type="file" accept="image/*" id="imgFile" onchange="handleImg(event)"><span class="iz-i">🖼️</span><p>Click to upload or drag &amp; drop</p><small>JPG, PNG, WebP  -  max 5MB  -  uploaded to Supabase Storage when connected</small></div>
             <div class="ipw" id="ipw"><img id="iprev" src="" alt="Cover"><button class="ic" onclick="clearImg()" type="button">✕</button></div>
-            <div class="ur"><span>— or URL —</span><input type="text" id="fiurl" placeholder="https://… or images/file.jpg" style="flex:1;background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);padding:.48rem .72rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.79rem;outline:none" oninput="handleUrlImg(this.value)"></div>
+            <div class="ur"><span>- or URL -</span><input type="text" id="fiurl" placeholder="https://... or images/file.jpg" style="flex:1;background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);padding:.48rem .72rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.79rem;outline:none" oninput="handleUrlImg(this.value)"></div>
           </div>
           <div class="fg"><label>Emoji Fallback</label><input type="text" id="femo" placeholder="📚" maxlength="4" value="📝" oninput="upPrev()"></div>
           <div class="fg">
@@ -990,7 +991,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <div class="ep" id="ep-md">
               <div class="mdw">
                 <textarea class="mdt" id="mdt" placeholder="# Heading&#10;**bold**, *italic*, \`code\`&#10;> blockquote&#10;&#10;```js&#10;code here&#10;```" oninput="upMdPrev();upPrev()"></textarea>
-                <div class="mdp" id="mdp"><em style="color:var(--t3)">Markdown preview…</em></div>
+                <div class="mdp" id="mdp"><em style="color:var(--t3)">Markdown preview...</em></div>
               </div>
             </div>
             <div class="ep" id="ep-html">
@@ -1002,7 +1003,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <div class="ep" id="ep-paste">
               <div style="background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);overflow:hidden">
                 <div style="padding:.6rem .9rem;background:var(--s2);border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
-                  <span style="font-size:.72rem;color:var(--t2);font-weight:600">✨ Smart Paste — paste plain text, markdown, or drop a .md / .txt file</span>
+                  <span style="font-size:.72rem;color:var(--t2);font-weight:600">✨ Smart Paste - paste plain text, markdown, or drop a .md / .txt file</span>
                   <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">
                     <label style="background:var(--s2);border:1px solid var(--b);border-radius:4px;padding:2px 8px;font-size:.65rem;color:var(--t3);cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='var(--ac)'" onmouseleave="this.style.borderColor='var(--b)'">
                       📁 Import file
@@ -1014,9 +1015,9 @@ create policy "public_write_logins" on admin_logins for all using (true);
                     <button class="ab" onclick="applyPasteMeta()" style="font-size:.7rem">Apply Fields</button>
                   </div>
                 </div>
-                <textarea id="pasteRaw" style="width:100%;min-height:280px;padding:.85rem;background:var(--s2);border:none;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.65;outline:none;resize:vertical" placeholder="Paste your article text or markdown here…&#10;&#10;Examples of what auto-formats:&#10;> This becomes an insight card&#10;## The Bottom Line → styled summary box&#10;## What's Next → styled next section&#10;## Where Degrees Matter → styled info box&#10;&#10;Three consecutive h3 + paragraph pairs → pillar grid&#10;&#10;Plain paragraphs get proper spacing automatically."></textarea>
+                <textarea id="pasteRaw" style="width:100%;min-height:280px;padding:.85rem;background:var(--s2);border:none;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.65;outline:none;resize:vertical" placeholder="Paste your article text or markdown here...&#10;&#10;Examples of what auto-formats:&#10;> This becomes an insight card&#10;## The Bottom Line -> styled summary box&#10;## What's Next -> styled next section&#10;## Where Degrees Matter -> styled info box&#10;&#10;Three consecutive h3 + paragraph pairs -> pillar grid&#10;&#10;Plain paragraphs get proper spacing automatically."></textarea>
                 <div style="padding:.55rem .9rem;background:var(--s);border-top:1px solid var(--b);font-size:.68rem;color:var(--t3)">
-                  💡 After converting, switch to Rich Text tab to fine-tune with the editor. The conversion is non-destructive — your raw paste stays here.
+                  💡 After converting, switch to Rich Text tab to fine-tune with the editor. The conversion is non-destructive - your raw paste stays here.
                 </div>
               </div>
               <div id="pasteMeta" style="display:none;margin-top:.85rem;background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);padding:.85rem .95rem;font-size:.74rem;color:var(--t2);line-height:1.6"></div>
@@ -1030,14 +1031,14 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <button class="btn p" id="savePostBtn" onclick="savePost()">💾 Save Changes</button>
             <button class="btn p" id="publishPostBtn" onclick="savePost('published')">🚀 Publish + Draft Campaign</button>
             <button class="btn s" id="draftPostBtn" onclick="savePost('draft')">📝 Save Draft</button>
-            <button class="btn pv" onclick="openPrev()">👁 Full Preview</button>
+            <button class="btn pv" onclick="openPrev()">Full Preview</button>
             <button class="btn s" onclick="clearForm()">✕ Clear</button>
             <button class="btn d" id="delBtn" style="display:none" onclick="prepDel(document.getElementById('eid').value)">🗑 Delete</button>
           </div>
         </div>
         <div class="pc" id="prevCol">
           <div class="ptb">
-            <span class="pl">👁 Live Preview</span>
+            <span class="pl">Live Preview</span>
             <div style="display:flex;gap:.38rem">
               <button class="tbb" onclick="togglePrevTheme(this)" style="font-size:.68rem;padding:.26rem .6rem">🌙 Dark</button>
               <button class="tbb" onclick="togglePrevPane()" style="font-size:.68rem;padding:.26rem .6rem">✕ Hide</button>
@@ -1053,7 +1054,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="sec-hdr">
         <div>
           <div class="sl">Comments (<span id="cmtTotalLbl">0</span>)</div>
-          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">All reader comments across posts — click trash to delete</div>
+          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">All reader comments across posts - click trash to delete</div>
         </div>
         <button class="tbb" onclick="loadCommentsPanel()">↻ Refresh</button>
       </div>
@@ -1061,10 +1062,10 @@ create policy "public_write_logins" on admin_logins for all using (true);
       <div class="ops-strip" id="commentOpsStrip">
         <div class="ops-card"><span>Total</span><strong id="cmtOpsTotal">0</strong><small>Reader comments currently stored in Supabase.</small></div>
         <div class="ops-card"><span>Posts Active</span><strong id="cmtOpsPosts">0</strong><small>How many post pages have recent discussion attached.</small></div>
-        <div class="ops-card"><span>Latest</span><strong id="cmtOpsLatest">—</strong><small>The freshest comment timestamp in this queue.</small></div>
+        <div class="ops-card"><span>Latest</span><strong id="cmtOpsLatest">-</strong><small>The freshest comment timestamp in this queue.</small></div>
       </div>
       <div id="cmtPanelList" style="display:flex;flex-direction:column;gap:.75rem">
-        <div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Loading comments…</div>
+        <div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Loading comments...</div>
       </div>
     </div>
 
@@ -1087,7 +1088,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         <div class="ops-card"><span>Rejected</span><strong id="vaultOpsRejected">0</strong><small>Requests declined or deferred.</small></div>
       </div>
       <div class="tw"><table><thead><tr><th>Applicant</th><th>Request</th><th>Application</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
-        <tbody id="vaultReqTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading…</td></tr></tbody>
+        <tbody id="vaultReqTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading...</td></tr></tbody>
       </table></div>
 
       <div class="sec-hdr" style="margin-top:2rem">
@@ -1161,7 +1162,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         <button class="tbb" onclick="clearRegFilters()">✕ Clear</button>
       </div>
       <div class="tw"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Session Type</th><th>Goals</th><th>Source</th><th>Date</th><th>Actions</th></tr></thead>
-        <tbody id="regTbl"><tr><td colspan="8" style="text-align:center;color:var(--t3);padding:2rem">Loading…</td></tr></tbody>
+        <tbody id="regTbl"><tr><td colspan="8" style="text-align:center;color:var(--t3);padding:2rem">Loading...</td></tr></tbody>
       </table></div>
     </div>
 
@@ -1193,7 +1194,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <option value="blog">Blog</option>
           <option value="post">Post</option>
         </select>
-        <input class="mn" type="text" id="subTagFilt" placeholder="Filter by tag…" style="width:160px;padding:.38rem .72rem;font-size:.78rem" oninput="loadSubscribersPanel()">
+        <input class="mn" type="text" id="subTagFilt" placeholder="Filter by tag..." style="width:160px;padding:.38rem .72rem;font-size:.78rem" oninput="loadSubscribersPanel()">
         <input class="mn" type="date" id="subDateFrom" style="width:140px;padding:.38rem .72rem;font-size:.78rem" oninput="loadSubscribersPanel()">
         <span style="font-size:.72rem;color:var(--t3)">to</span>
         <input class="mn" type="date" id="subDateTo" style="width:140px;padding:.38rem .72rem;font-size:.78rem" oninput="loadSubscribersPanel()">
@@ -1212,8 +1213,62 @@ create policy "public_write_logins" on admin_logins for all using (true);
       </div>
 
       <div class="tw"><table><thead><tr><th>Email</th><th>Name</th><th>Source</th><th>Tags</th><th>Subscribed</th><th>Actions</th></tr></thead>
-        <tbody id="subTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading…</td></tr></tbody>
+        <tbody id="subTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading...</td></tr></tbody>
       </table></div>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="panel" id="panel-events">
+      <div class="sec-hdr">
+        <div>
+          <div class="sl">Events &amp; Campaigns (<span id="eventsTotalLbl">0</span>)</div>
+          <div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Public events, campaign countdowns, featured sticky CTA routing, and event funnel registrations.</div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="tbb" onclick="resetEventForm()">New</button>
+          <button class="tbb" onclick="loadEventsPanel()">Refresh</button>
+          <button class="tbb" onclick="window.open('events.html','_blank')">Open Events Page</button>
+        </div>
+      </div>
+      <div class="source-note" id="eventsSourceNote" data-kind="local"><strong><span class="source-dot"></span>Source</strong><span>Checking Events source...</span></div>
+      <div class="scc" style="margin-bottom:1rem">
+        <div class="sct">Public Event / Campaign Editor</div>
+        <div class="scd">One featured published item controls the sticky CTA and campaign language. Event images upload to the existing innerverse-media bucket and save as database URLs.</div>
+        <div class="pricing-form-grid" style="margin-top:.9rem">
+          <input type="hidden" id="evId">
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Title</label><input class="mn" id="evTitle" placeholder="Free Single Clarity Session"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Slug</label><input class="mn" id="evSlug" placeholder="free-single-clarity-session"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Kind</label><select class="mn" id="evKind"><option value="event">Event</option><option value="campaign">Campaign</option><option value="both">Event + Campaign</option></select></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Status</label><select class="mn" id="evStatus"><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Eyebrow</label><input class="mn" id="evEyebrow" placeholder="Launch Campaign"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Location</label><input class="mn" id="evLocation" placeholder="Online"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Event Date</label><input class="mn" id="evEventDate" type="datetime-local"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Countdown End</label><input class="mn" id="evEndDate" type="datetime-local"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Countdown Label</label><input class="mn" id="evCountdownLabel" placeholder="Free session ends in"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">CTA Label</label><input class="mn" id="evCtaLabel" placeholder="Reserve Spot"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">CTA URL</label><input class="mn" id="evCtaUrl" placeholder="event-register.html?event=..."></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Funnel URL</label><input class="mn" id="evFunnelUrl" placeholder="event-register.html?event=..."></div>
+          <div class="full"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Summary</label><textarea class="mn" id="evSummary" rows="3" style="resize:vertical"></textarea></div>
+          <div class="full"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Details</label><textarea class="mn" id="evDetails" rows="5" style="resize:vertical"></textarea></div>
+          <div class="full"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Image URL</label><input class="mn" id="evImageUrl" placeholder="social-preview.png"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Upload Image</label><input class="mn" id="evImageFile" type="file" accept="image/*"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Sort Order</label><input class="mn" id="evSort" type="number" value="50"></div>
+          <label style="display:flex;align-items:center;gap:.6rem;color:var(--t2);font-size:.82rem"><input type="checkbox" id="evHasCountdown"> Countdown enabled</label>
+          <label style="display:flex;align-items:center;gap:.6rem;color:var(--t2);font-size:.82rem"><input type="checkbox" id="evFeatured"> Featured sticky CTA</label>
+        </div>
+        <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem">
+          <button class="btn p" onclick="saveEventCampaign()">Save Event</button>
+          <button class="btn s" onclick="resetEventForm()">Clear</button>
+          <button class="btn d" onclick="deleteEventCampaign()">Delete</button>
+        </div>
+        <div id="eventsSaveStatus" style="font-size:.74rem;color:var(--t3);margin-top:.75rem">No event selected.</div>
+      </div>
+      <div class="tw" style="margin-bottom:1rem"><table><thead><tr><th>Title</th><th>Kind</th><th>Status</th><th>Countdown</th><th>Featured</th><th>Actions</th></tr></thead><tbody id="eventsTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading...</td></tr></tbody></table></div>
+      <div class="scc">
+        <div class="sct">Event Funnel Registrations</div>
+        <div class="scd">People who registered through event-register.html.</div>
+        <div class="tw" style="margin-top:.8rem"><table><thead><tr><th>Name</th><th>Event</th><th>Contact</th><th>Location</th><th>Registered</th></tr></thead><tbody id="eventRegsTbl"><tr><td colspan="5" style="text-align:center;color:var(--t3);padding:2rem">Loading...</td></tr></tbody></table></div>
+      </div>
     </div>
 
     <!-- CAMPAIGNS -->
@@ -1281,7 +1336,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         </div>
       </div>
       <div id="loginsList" style="display:flex;flex-direction:column;gap:.5rem">
-        <div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Loading…</div>
+        <div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Loading...</div>
       </div>
     </div>
 
@@ -1334,8 +1389,8 @@ create policy "public_write_logins" on admin_logins for all using (true);
             </button>
           </div>
         </div>
-        <div class="scc"><div class="sct">👁️ Display Settings</div><div class="scd">Control what visitors see on blog.html</div>
-          <div class="tr"><div><div class="tl">Show View Counts</div><div class="ts">Display "👁 X views" on cards</div></div><label class="tog"><input type="checkbox" id="tgv" onchange="saveSetting('showViews',this.checked)"><span class="tog-t"></span><span class="tog-k"></span></label></div>
+        <div class="scc"><div class="sct">️ Display Settings</div><div class="scd">Control what visitors see on blog.html</div>
+          <div class="tr"><div><div class="tl">Show View Counts</div><div class="ts">Display "X views" on cards</div></div><label class="tog"><input type="checkbox" id="tgv" onchange="saveSetting('showViews',this.checked)"><span class="tog-t"></span><span class="tog-k"></span></label></div>
           <div class="tr"><div><div class="tl">Show Coming Soon Posts</div><div class="ts">Placeholder cards on blog</div></div><label class="tog"><input type="checkbox" id="tgcs" onchange="saveSetting('showComingSoon',this.checked)"><span class="tog-t"></span><span class="tog-k"></span></label></div>
           <div class="tr"><div><div class="tl">Show Read Time</div><div class="ts">Estimated read time on cards</div></div><label class="tog"><input type="checkbox" id="tgrt" onchange="saveSetting('showReadTime',this.checked)" checked><span class="tog-t"></span><span class="tog-k"></span></label></div>
           <div class="tr"><div><div class="tl">Newsletter CTA</div><div class="ts">Newsletter block on blog page</div></div><label class="tog"><input type="checkbox" id="tgnl" onchange="saveSetting('showNewsletter',this.checked)" checked><span class="tog-t"></span><span class="tog-k"></span></label></div>
@@ -1368,7 +1423,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           </div>
         </div>
         <div class="scc"><div class="sct">🟢 Supabase Database</div><div class="scd">Current connection status.</div>
-          <div class="dbs" id="dbStatusTxt">⏳ Checking…</div>
+          <div class="dbs" id="dbStatusTxt">⏳ Checking...</div>
 <button class="btn s" style="width:100%;margin-bottom:.5rem" onclick="openSupabaseSetup()">🔧 Reconfigure Supabase</button>
 <button class="btn d" style="width:100%" onclick="clearSupabaseConnection()">🧹 Clear Broken Connection</button>
           <button class="btn s" style="width:100%" onclick="exportData()">⬇️ Export Posts JSON</button>
@@ -1379,7 +1434,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <div style="margin-top:.8rem;padding:.85rem;border-radius:14px;background:var(--bg3);border:1px solid var(--b)">
             <div style="font-size:.68rem;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--t2);margin-bottom:.45rem">Content Health</div>
             <div id="contentHealthBox" style="display:grid;gap:.35rem;font-size:.74rem;color:var(--t3)">
-              <div>Checking content sources…</div>
+              <div>Checking content sources...</div>
             </div>
             <button class="btn s" style="width:100%;margin-top:.65rem;font-size:.74rem" onclick="refreshContentHealth()">↻ Refresh Content Health</button>
           </div>
@@ -1401,11 +1456,11 @@ create policy "public_write_logins" on admin_logins for all using (true);
           </div>
         </div>
         <div class="scc" style="grid-column:1/-1">
-          <div class="sct">⏰ Countdown Timer</div>
+          <div class="sct">Countdown Timer</div>
           <div class="scd">Set the deadline shown on the homepage. Timer auto-updates on every visitor's page.</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem">
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Target Date &amp; Time</label><input type="datetime-local" id="cdDate" class="mn" onchange="markCountdownDirty()"></div>
-            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Label Text</label><input type="text" id="cdLabel2" class="mn" placeholder="⏰ Free Access Ends In" oninput="markCountdownDirty()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Label Text</label><input type="text" id="cdLabel2" class="mn" placeholder="Free Access Ends In" oninput="markCountdownDirty()"></div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.8rem;margin-bottom:.8rem">
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Campaign Type</label><input type="text" id="campaignType" class="mn" placeholder="free-session" oninput="markCountdownDirty()"></div>
@@ -1460,7 +1515,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         <button class="btn s" onclick="addSessionPricingPlan()">Add Custom Offer</button>
         <button class="btn s" onclick="resetSessionPricing()">Reset Balanced Defaults</button>
       </div>
-      <div class="fn" style="margin-top:.75rem">Default keeps Naira accessible and sets USD about 20% higher for international clients: $48 → ₦60,000, $36 → ₦45,000, $180 → ₦225,000.</div>
+      <div class="fn" style="margin-top:.75rem">Default keeps Naira accessible and sets USD about 20% higher for international clients: $48 -> ₦60,000, $36 -> ₦45,000, $180 -> ₦225,000.</div>
     </div>
 
 <div class="mo" id="pricingEditModal">
@@ -1521,7 +1576,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         <div class="fg" style="margin-bottom:.75rem"><label>Testimonial *</label><textarea class="mn" id="tManualText" rows="3" placeholder="What did they say about the session?"></textarea></div>
         <!-- Avatar upload -->
         <div class="fg" style="margin-bottom:.75rem">
-          <label>Avatar Photo <span style="color:var(--t3);font-weight:400">(optional — upload or paste URL)</span></label>
+          <label>Avatar Photo <span style="color:var(--t3);font-weight:400">(optional - upload or paste URL)</span></label>
           <div style="display:flex;gap:.6rem;align-items:flex-start;flex-wrap:wrap;margin-top:.4rem">
             <div style="position:relative;width:64px;height:64px;border-radius:50%;background:var(--s2);border:2px dashed var(--b);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem" id="tAvatarPreviewWrap">
               <span id="tAvatarEmoji">👤</span>
@@ -1544,7 +1599,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       </div>
 
       <div style="font-size:.7rem;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.75rem">Pending Review (<span id="pendingCountLbl">0</span>)</div>
-      <div style="font-size:.72rem;color:var(--t3);margin-bottom:1rem">These were submitted publicly — approve to show on homepage</div>
+      <div style="font-size:.72rem;color:var(--t3);margin-bottom:1rem">These were submitted publicly - approve to show on homepage</div>
       <div id="pendingList" style="display:flex;flex-direction:column;gap:1rem;margin-bottom:2.5rem"></div>
 
       <div style="font-size:.7rem;font-weight:700;color:var(--gr);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.75rem;border-top:1px solid var(--b);padding-top:1.5rem">Approved &amp; Live (<span id="approvedCountLbl">0</span>)</div>
@@ -1607,7 +1662,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
             </div>
             <div class="fg"><label>Status</label>
               <select id="libStatus" class="mn">
-                <option value="available">✅ Available</option>
+                <option value="available">Available</option>
                 <option value="coming-soon">🕐 Coming Soon</option>
                 <option value="members">🔒 Members Only</option>
               </select>
@@ -1641,7 +1696,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
             </div>
             <div id="libUploadStatus" style="font-size:.7rem;color:var(--t3);margin-bottom:.4rem"></div>
           </div>
-          <div id="libImgPreview" style="display:none;border-radius:var(--rs);overflow:hidden;aspect-ratio:16/9;background:var(--s)"><img id="libImgEl" src="" style="width:100%;height:100%;object-fit:cover"></div>
+          <div id="libImgPreview" style="display:none;border-radius:var(--rs);overflow:hidden;aspect-ratio:16/9;background:var(--s)"><img id="libImgEl" src="" style="width:100%;height:100%;object-fit:contain"></div>
           <div class="fg"><label>Download / Access File <span style="color:var(--t3);font-weight:400">(upload directly or paste URL)</span></label>
             <div style="display:flex;gap:.6rem;margin-bottom:.5rem;flex-wrap:wrap">
               <label style="display:flex;align-items:center;gap:.5rem;background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);padding:.55rem .9rem;cursor:pointer;font-size:.78rem;color:var(--t2);transition:border-color .2s;white-space:nowrap" onmouseenter="this.style.borderColor='var(--ac)'" onmouseleave="this.style.borderColor='var(--b)'">
@@ -1653,9 +1708,9 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <div id="libFileUploadStatus" style="font-size:.7rem;color:var(--t3);margin-bottom:.4rem"></div>
           </div>
           <div class="fg" id="libEmbedWrap"><label>Embed Code / Video URL <span style="color:var(--t3);font-weight:400">(YouTube, Vimeo, etc.)</span></label><textarea class="mn" id="libEmbed" rows="3" placeholder="Paste YouTube embed URL or iframe code..."></textarea></div>
-          <div class="fg"><label>Preview / Trailer URL <span style="color:var(--t3);font-weight:400">(short preview before full access)</span></label><input class="mn" type="text" id="libPreview" placeholder="https://…"></div>
+          <div class="fg"><label>Preview / Trailer URL <span style="color:var(--t3);font-weight:400">(short preview before full access)</span></label><input class="mn" type="text" id="libPreview" placeholder="https://..."></div>
           <div class="fg"><label>Sort Order <span style="color:var(--t3);font-weight:400">(lower = shown first)</span></label><input class="mn" type="number" id="libOrder" placeholder="0" value="0" min="0"></div>
-          <div class="fg"><label>Internal Notes <span style="color:var(--t3);font-weight:400">(not shown to users)</span></label><textarea class="mn" id="libNotes" rows="2" placeholder="e.g. Pending design review, update Q2…"></textarea></div>
+          <div class="fg"><label>Internal Notes <span style="color:var(--t3);font-weight:400">(not shown to users)</span></label><textarea class="mn" id="libNotes" rows="2" placeholder="e.g. Pending design review, update Q2..."></textarea></div>
         </div>
 
       </div>
@@ -1687,7 +1742,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         <div class="fr" style="margin-bottom:.75rem">
           <div class="fg" style="grid-column:1/-1"><label>Question *</label><input class="mn" type="text" id="faqQ" placeholder="e.g. What exactly is a clarity session?"></div>
         </div>
-        <div class="fg" style="margin-bottom:.75rem"><label>Answer *</label><textarea class="mn" id="faqA" rows="4" placeholder="Write a clear, helpful answer…"></textarea></div>
+        <div class="fg" style="margin-bottom:.75rem"><label>Answer *</label><textarea class="mn" id="faqA" rows="4" placeholder="Write a clear, helpful answer..."></textarea></div>
         <div class="fr" style="margin-bottom:.75rem">
           <div class="fg"><label>Category</label>
             <select id="faqCat" class="mn">
@@ -1706,7 +1761,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
       </div>
       <!-- Table -->
       <div class="tw"><table><thead><tr><th>Question</th><th>Category</th><th>Order</th><th>Actions</th></tr></thead>
-        <tbody id="faqTbl"><tr><td colspan="4" style="text-align:center;color:var(--t3);padding:2rem">Loading…</td></tr></tbody>
+        <tbody id="faqTbl"><tr><td colspan="4" style="text-align:center;color:var(--t3);padding:2rem">Loading...</td></tr></tbody>
       </table></div>
     </div>
 
@@ -1864,7 +1919,7 @@ async function dbSavePostLegacyInitial(post){
   const local=_localPosts();const idx=local.findIndex(p=>p.id===post.id);
   if(idx>=0)local[idx]=post;else local.unshift(post);
   localStorage.setItem(LOCAL_KEY,JSON.stringify(local));
-  if(_useSb()){try{await _sbReq('posts?id=eq.'+post.id,'DELETE');await _sbReq('posts','POST',{id:post.id,title:post.title,subtitle:post.subtitle||'',category:post.category,status:post.status,read_time:post.readTime||'5 min read',date:post.date,excerpt:post.excerpt||'',image:post.image||'',emoji:post.emoji||'📝',content:post.content||''});}catch(e){throw e;}}
+  if(_useSb()){try{await _sbReq('posts?id=eq.'+post.id,'DELETE');await _sbReq('posts','POST',{id:post.id,title:post.title,subtitle:post.subtitle||'',category:post.category,status:post.status,read_time:post.readTime||'5 min read',date:post.date,excerpt:post.excerpt||'',image:post.image||'',emoji:post.emoji||'',content:post.content||''});}catch(e){throw e;}}
 }
 async function dbDeletePost(id){
   const local=_localPosts().filter(p=>p.id!==id);localStorage.setItem(LOCAL_KEY,JSON.stringify(local));
@@ -2004,7 +2059,7 @@ const SEED_POSTS=[
 
                     <h3>What Really Changed</h3>
                     <p>A man could have walked into First Bank in 1987 with his HND, got interviewed on the spot, and started on Monday. His salary could rent a flat in Ikeja and buy a car. That world is dead.</p>
-                    <p>The Old Rules (1970s-90s): Degree → Automatic Job → Career Growth</p>
+                    <p>The Old Rules (1970s-90s): Degree -> Automatic Job -> Career Growth</p>
                     <p>The New Reality (Now): Degree Alone = Expensive Toilet Paper</p>
                     <p>But here's where most people get it wrong - they think education is now useless. <strong>No. Education just changed its job description.</strong> Instead of being your ticket to success, it's now your ID card for certain opportunities.</p>
 
@@ -2984,7 +3039,7 @@ const SEED_POSTS=[
                             </div>
                         </div>
                     </div>`},
-  {id:'ep4',title:'Beyond "School Na Scam" Episode 4: The Network Effect',subtitle:'Why Your Classmates May Matter More Than Grades',category:'Networking & Career Strategy',status:'published',readTime:'8 min read',date:'2025-10-22',excerpt:'The Network component — often the most underestimated but powerful element of career success...',image:'images/headers4.png',emoji:'🤝',content:`<blockquote>
+  {id:'ep4',title:'Beyond "School Na Scam" Episode 4: The Network Effect',subtitle:'Why Your Classmates May Matter More Than Grades',category:'Networking & Career Strategy',status:'published',readTime:'8 min read',date:'2025-10-22',excerpt:'The Network component - often the most underestimated but powerful element of career success...',image:'images/headers4.png',emoji:'🤝',content:`<blockquote>
                         <strong>Series Update:</strong> We've covered Paper (Episode 1), Brain - Digital Skills (Episode 2), and Brain - Business Skills (Episode 3). Today we're completing the framework with the Network component - often the most underestimated but powerful element of career success.
                     </blockquote>
 
@@ -3327,14 +3382,14 @@ tryLogin = async function(){const u=document.getElementById('lu').value.trim(),p
 // ── SETUP ─────────────────────────────────────────────────────────────────
 async function testAndSaveLegacyInitial(){
   const url=document.getElementById('sbUrlIn').value.trim(),key=document.getElementById('sbKeyIn').value.trim();
-  const res=document.getElementById('testRes');res.style.display='block';res.className='test-res';res.textContent='⏳ Testing…';
-  if(!url||!key){res.className='test-res err';res.textContent='✕ Both fields are required';return}
+  const res=document.getElementById('testRes');res.style.display='block';res.className='test-res';res.textContent='Testing...';
+  if(!url||!key){res.className='test-res err';res.textContent='Both fields are required';return}
   if(!url.includes('supabase.co')){res.className='test-res err';res.textContent='✕ URL should end in .supabase.co';return}
   try{
     const r=await fetch(url+'/rest/v1/posts?limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+key}});
-    if(!r.ok)throw new Error('HTTP '+r.status+' — check your credentials');
+    if(!r.ok)throw new Error('HTTP '+r.status+' - check your credentials');
     localStorage.setItem(SB_URL_KEY,url);localStorage.setItem(SB_KEY_KEY,key);
-    res.className='test-res ok';res.textContent='✅ Connected! Supabase is ready.';
+    res.className='test-res ok';res.textContent='Connected. Supabase is ready.';
     setTimeout(()=>document.getElementById('setupScreen').classList.add('gone'),1200);
     upDbBadge();
   }catch(e){res.className='test-res err';res.textContent='✕ '+e.message}
@@ -3343,8 +3398,8 @@ function skipSetupLegacyInitial(){localStorage.setItem('iv_setup_skip','1');docu
 function copySql(){const txt=document.getElementById('sqlBox').textContent.replace(/^Copy/,'').trim();navigator.clipboard.writeText(txt).then(()=>toast('SQL copied ✓','ok'))}
 function upDbBadge(){
   const badge=document.getElementById('dbBadge'),lbl=document.getElementById('dbModeLbl'),blk=document.getElementById('dbStatusTxt');
-  if(_useSb()){if(badge)badge.innerHTML='<div class="db-badge sb">🟢 Supabase</div>';if(lbl)lbl.textContent='Supabase';if(blk)blk.innerHTML='🟢 Connected to Supabase<br><span style="font-family:\'JetBrains Mono\',monospace;font-size:.69rem;color:var(--t3);word-break:break-all">'+_sbUrl()+'</span><br><span style="font-size:.69rem;color:var(--t3)">Project: <strong style="color:var(--t2)">'+_sbUrl().replace('https://','').split('.')[0]+'</strong></span>'}
-  else{if(badge)badge.innerHTML='<div class="db-badge loc">🟡 Local</div>';if(lbl)lbl.textContent='Local';if(blk)blk.textContent='🟡 localStorage only — configure Supabase for multi-device sync'}}
+  if(_useSb()){if(badge)badge.innerHTML='<div class="db-badge sb">Supabase</div>';if(lbl)lbl.textContent='Supabase';if(blk)blk.innerHTML='Connected to Supabase<br><span style="font-family:\'JetBrains Mono\',monospace;font-size:.69rem;color:var(--t3);word-break:break-all">'+_sbUrl()+'</span><br><span style="font-size:.69rem;color:var(--t3)">Project: <strong style="color:var(--t2)">'+_sbUrl().replace('https://','').split('.')[0]+'</strong></span>'}
+  else{if(badge)badge.innerHTML='<div class="db-badge loc">Local</div>';if(lbl)lbl.textContent='Local';if(blk)blk.textContent='🟡 localStorage only - configure Supabase for multi-device sync'}}
 
 // ── QUILL + COLOR TOOLBAR ─────────────────────────────────────────────────
 let quill=null,activeColorMode='text',curImg='',activeTab='rich',prevDk=false,modalDk=false,delId=null,vcCache={};
@@ -3362,7 +3417,7 @@ function addCustomColor(){const hex=document.getElementById('nhex').value.trim()
 function removeCustomColor(hex){_saveCustomColors(_customColors().filter(h=>h!==hex));buildColTb();renderPalGrid();toast('Removed','ok')}
 function renderPalGrid(){const g=document.getElementById('palGrid');if(!g)return;g.innerHTML=BRAND_PALETTE.map(c=>`<div class="ps" style="background:${c.hex}" title="${c.label}"></div>`).join('')+_customColors().map(h=>`<div class="ps rm" style="background:${h}" title="${h}" onclick="removeCustomColor('${h}')"></div>`).join('')}
 
-function initQuill(){if(quill)return;quill=new Quill('#quillEl',{theme:'snow',placeholder:'Write your article here…',modules:{toolbar:[[{header:[1,2,3,false]}],['bold','italic','underline','strike'],['blockquote','code-block'],[{list:'ordered'},{list:'bullet'}],['link','image'],['clean']]}});quill.on('text-change',()=>{upWc();upPrev()});buildColTb()}
+function initQuill(){if(quill)return;quill=new Quill('#quillEl',{theme:'snow',placeholder:'Write your article here...',modules:{toolbar:[[{header:[1,2,3,false]}],['bold','italic','underline','strike'],['blockquote','code-block'],[{list:'ordered'},{list:'bullet'}],['link','image'],['clean']]}});quill.on('text-change',()=>{upWc();upPrev()});buildColTb()}
 function upWc(){const t=quill?quill.getText():'';const w=t.trim()?t.trim().split(/\s+/).length:0;document.getElementById('wc').textContent=`${w.toLocaleString()} word${w!==1?'s':''}`}
 
 // ── MARKDOWN ──────────────────────────────────────────────────────────────
@@ -3374,11 +3429,11 @@ function switchTab(tab){
   document.querySelectorAll('.ep').forEach((p,i)=>p.className='ep'+(i===idx?' on':''));
   upPrev();
 }
-function upMdPrev(){const md=document.getElementById('mdt').value;document.getElementById('mdp').innerHTML=md?marked.parse(md):'<em style="color:var(--t3)">Preview…</em>'}
+function upMdPrev(){const md=document.getElementById('mdt').value;document.getElementById('mdp').innerHTML=md?marked.parse(md):'<em style="color:var(--t3)">Preview...</em>'}
 function getContent(){
   if(activeTab==='rich')return quill?quill.root.innerHTML:'';
   if(activeTab==='md'){const md=document.getElementById('mdt').value;return md?marked.parse(md):'';}
-  // paste tab — return whatever was converted to quill
+  // paste tab - return whatever was converted to quill
   return quill?quill.root.innerHTML:'';
 }
 function setContent(html){
@@ -3506,7 +3561,7 @@ function renderPasteMeta(meta){
   if(!box)return;
   if(!meta||(!meta.title&&!meta.excerpt)){box.style.display='none';box.innerHTML='';return;}
   box.style.display='block';
-  box.innerHTML=`<strong style="display:block;margin-bottom:.35rem;color:var(--t)">Smart suggestions</strong><div><strong>Title:</strong> ${meta.title||'—'}</div><div><strong>Subtitle:</strong> ${meta.subtitle||'—'}</div><div><strong>Excerpt:</strong> ${meta.excerpt||'—'}</div><div><strong>Category:</strong> ${meta.category} <span style="color:var(--t3)">· ${meta.readTime} · ${meta.words.toLocaleString()} words</span></div>`;
+  box.innerHTML=`<strong style="display:block;margin-bottom:.35rem;color:var(--t)">Smart suggestions</strong><div><strong>Title:</strong> ${meta.title||'-'}</div><div><strong>Subtitle:</strong> ${meta.subtitle||'-'}</div><div><strong>Excerpt:</strong> ${meta.excerpt||'-'}</div><div><strong>Category:</strong> ${meta.category} <span style="color:var(--t3)"> -  ${meta.readTime}  -  ${meta.words.toLocaleString()} words</span></div>`;
 }
 function fillPasteMeta(meta,{force=false}={}){
   if(!meta)return;
@@ -3608,19 +3663,19 @@ function smartProcess(raw){
   if(!clean)return '';
   let html = clean.trim().startsWith('<') ? clean : looksLikeMarkdown(clean) ? marked.parse(clean) : plainTextToHtml(clean);
 
-  // 1. blockquote → insight card
+  // 1. blockquote -> insight card
   html = html.replace(/<blockquote>\s*<p>([\s\S]*?)<\/p>\s*<\/blockquote>/gi,
     (_,inner) => `<div class="iv-insight">${inner.trim()}</div>`);
 
-  // 2. ## The Bottom Line / ## Where X Matters → accent box
+  // 2. ## The Bottom Line / ## Where X Matters -> accent box
   html = html.replace(/<h2>(The Bottom Line[^<]*|Where [^<]+ Matters?[^<]*)<\/h2>([\s\S]*?)(?=<h2>|<div class="iv-|$)/gi,
     (_,title,body) => `<div class="iv-box accent"><h2>${title}</h2>${body.trim()}</div>`);
 
-  // 3. ## What's Next / ## Next Episode → next box
+  // 3. ## What's Next / ## Next Episode -> next box
   html = html.replace(/<h2>(What[''']?s Next[^<]*|Coming Up[^<]*|Next Episode[^<]*)<\/h2>([\s\S]*?)(?=<h2>|<div class="iv-|$)/gi,
     (_,title,body) => `<div class="iv-box" style="border-left:3px solid var(--ac)"><h2>${title}</h2>${body.trim()}</div>`);
 
-  // 4. Three or more h3+p pairs → pillar grid
+  // 4. Three or more h3+p pairs -> pillar grid
   html = html.replace(/((?:<h3>(?:[^<]*)<\/h3>\s*<p>(?:[^<]*)<\/p>\s*){3,})/gi, match => {
     const pills=[];
     const re=/<h3>([^<]*)<\/h3>\s*<p>([^<]*)<\/p>/gi;
@@ -3655,7 +3710,7 @@ function convertPaste(){
   renderPasteMeta(meta);
   fillPasteMeta(meta);
   switchTab('rich');
-  toast('Converted ✓ — now in Rich Text editor','ok');
+  toast('Converted ✓ - now in Rich Text editor','ok');
   upPrev();
 }
 
@@ -3677,7 +3732,7 @@ function importPasteFile(e){
       if(ta)ta.value=ev.target.result;
       return;
     }
-    if(ta){ta.value=ev.target.result;toast('File loaded — click Convert & Use','ok');}
+    if(ta){ta.value=ev.target.result;toast('File loaded - click Convert & Use','ok');}
     if(ta&&ta.value!==text)ta.value=text;
     renderPasteMeta(inferPasteMeta(text));
   };
@@ -3695,8 +3750,8 @@ setTimeout(()=>{
 function buildPrevHtml(dark){
   const title=document.getElementById('ft')?.value||'Untitled',sub=document.getElementById('fsu')?.value||'',cat=document.getElementById('fcat')?.value||'',date=document.getElementById('fdt')?.value||'',rt=document.getElementById('frt')?.value||'5 min read',emo=document.getElementById('femo')?.value||'📝',body=processArticlePreviewContent(getContent());
   const bg=dark?'#0f172a':'#f8f9fa',tp=dark?'#f1f5f9':'#1a365d',ts=dark?'#cbd5e1':'#4a5568',tm=dark?'#94a3b8':'#6b7280',ac=dark?'#ef4444':'#dc3545',glass=dark?'rgba(30,41,59,.6)':'rgba(255,255,255,.7)',gb=dark?'rgba(255,255,255,.08)':'rgba(255,255,255,.8)',border=dark?'rgba(255,255,255,.08)':'rgba(0,0,0,.08)';
-  const cov=curImg?`<div style="width:100%;aspect-ratio:1831/958;overflow:hidden;border-radius:14px;margin:2rem 0;position:relative;background:linear-gradient(135deg,${tp},${ac})"><img src="${curImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:14px" onerror="this.style.opacity='0'"></div>`:`<div style="width:100%;aspect-ratio:1831/958;background:linear-gradient(135deg,${tp},${ac});border-radius:14px;margin:2rem 0;display:flex;align-items:center;justify-content:center;font-size:3rem">${emo}</div>`;
-  return`<div style="font-family:'DM Sans',sans-serif;background:${bg};min-height:100%;color:${ts};line-height:1.75"><div style="background:${dark?'rgba(15,23,42,.92)':bg};padding:3rem 2rem 2.5rem;text-align:center;border-bottom:1px solid ${border}"><div style="display:inline-block;background:rgba(220,53,69,.1);color:${ac};padding:.35rem 1rem;border-radius:50px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:1.2rem;border:1px solid rgba(220,53,69,.25)">${cat||'Category'}</div><h1 style="font-family:'Bebas Neue',serif;font-size:clamp(1.8rem,5vw,3.2rem);color:${tp};margin-bottom:.55rem;line-height:.95;letter-spacing:1px;text-transform:uppercase">${title}</h1>${sub?`<p style="font-style:italic;font-size:1.05rem;color:${tm};margin-bottom:1.1rem;line-height:1.4">${sub}</p>`:''}<div style="display:flex;justify-content:center;gap:1.5rem;color:${tm};font-size:.8rem;flex-wrap:wrap"><span>📅 ${date||'Today'}</span><span>⏱️ ${rt}</span><span>👁️ — views</span></div></div><div style="max-width:780px;margin:0 auto;padding:1.5rem 2rem 3rem">${cov}<div style="background:${glass};backdrop-filter:blur(20px);padding:2.5rem;border-radius:18px;border:1px solid ${gb};box-shadow:0 16px 50px rgba(0,0,0,.1);font-size:.98rem;color:${ts}">${body||`<p style="color:${tm};text-align:center;padding:2rem 0;font-style:italic">Start writing to see your preview here…</p>`}</div></div></div>`;
+  const cov=curImg?`<div style="width:100%;aspect-ratio:1831/958;overflow:hidden;border-radius:14px;margin:2rem 0;position:relative;background:linear-gradient(135deg,${tp},${ac})"><img src="${curImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;border-radius:14px" onerror="this.style.opacity='0'"></div>`:`<div style="width:100%;aspect-ratio:1831/958;background:linear-gradient(135deg,${tp},${ac});border-radius:14px;margin:2rem 0;display:flex;align-items:center;justify-content:center;font-size:3rem">${emo}</div>`;
+  return`<div style="font-family:'DM Sans',sans-serif;background:${bg};min-height:100%;color:${ts};line-height:1.75"><div style="background:${dark?'rgba(15,23,42,.92)':bg};padding:3rem 2rem 2.5rem;text-align:center;border-bottom:1px solid ${border}"><div style="display:inline-block;background:rgba(220,53,69,.1);color:${ac};padding:.35rem 1rem;border-radius:50px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:1.2rem;border:1px solid rgba(220,53,69,.25)">${cat||'Category'}</div><h1 style="font-family:'Bebas Neue',serif;font-size:clamp(1.8rem,5vw,3.2rem);color:${tp};margin-bottom:.55rem;line-height:.95;letter-spacing:1px;text-transform:uppercase">${title}</h1>${sub?`<p style="font-style:italic;font-size:1.05rem;color:${tm};margin-bottom:1.1rem;line-height:1.4">${sub}</p>`:''}<div style="display:flex;justify-content:center;gap:1.5rem;color:${tm};font-size:.8rem;flex-wrap:wrap"><span>📅 ${date||'Today'}</span><span>⏱️ ${rt}</span><span>️ - views</span></div></div><div style="max-width:780px;margin:0 auto;padding:1.5rem 2rem 3rem">${cov}<div style="background:${glass};backdrop-filter:blur(20px);padding:2.5rem;border-radius:18px;border:1px solid ${gb};box-shadow:0 16px 50px rgba(0,0,0,.1);font-size:.98rem;color:${ts}">${body||`<p style="color:${tm};text-align:center;padding:2rem 0;font-style:italic">Start writing to see your preview here...</p>`}</div></div></div>`;
 }
 function processArticlePreviewContent(html){
   if(!html||!String(html).trim())return html;
@@ -3709,7 +3764,7 @@ function processArticlePreviewContent(html){
     .replace(/<div[^>]*class="[^"]*\bcta(?:-buttons)?\b[^"]*"[\s\S]*?<\/div>/gi,'')
     .replace(/<button[^>]*onclick="(?:subscribeToNewsletter|shareArticle|scrollToComments)\(\)"[^>]*>[\s\S]*?<\/button>/gi,'')
     .replace(/<hr[^>]*class="[^"]*\bdivider\b[^"]*"[^>]*>\s*(?=<hr[^>]*class="[^"]*\bdivider\b)/gi,'')
-    .replace(/<p>\s*(?:<strong>)?\s*What(?:'|â€™|’)?s your biggest frustration[\s\S]*?<\/p>/gi,'')
+    .replace(/<p>\s*(?:<strong>)?\s*What(?:'|&rsquo;|’)?s your biggest frustration[\s\S]*?<\/p>/gi,'')
     .replace(/<p>\s*Drop a comment[\s\S]*?<\/p>/gi,'');
   out=out.replace(/(<hr[^>]*class="[^"]*\bdivider\b[^"]*"[^>]*>\s*){2,}/gi,'$1');
   out=out.replace(/<blockquote>([\s\S]*?)<\/blockquote>/gi,(_,inner)=>{
@@ -3731,7 +3786,7 @@ const _legacyPreviewHtml=buildPrevHtml;
 buildPrevHtml=function(dark){
   const title=document.getElementById('ft')?.value||'Untitled',sub=document.getElementById('fsu')?.value||'',cat=document.getElementById('fcat')?.value||'',date=document.getElementById('fdt')?.value||'',rt=document.getElementById('frt')?.value||'5 min read',emo=document.getElementById('femo')?.value||'📝',body=processArticlePreviewContent(getContent());
   const bg=dark?'#0f172a':'#f8f9fa',tp=dark?'#f1f5f9':'#1a365d',tm=dark?'#94a3b8':'#6b7280',ac=dark?'#ef4444':'#dc3545',glass=dark?'rgba(30,41,59,.6)':'rgba(255,255,255,.7)',gb=dark?'rgba(255,255,255,.08)':'rgba(255,255,255,.8)',border=dark?'rgba(255,255,255,.08)':'rgba(0,0,0,.08)';
-  const cov=curImg?`<div style="width:100%;aspect-ratio:1831/958;overflow:hidden;border-radius:14px;margin:2rem 0;position:relative;background:linear-gradient(135deg,${tp},${ac})"><img src="${curImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:14px" onerror="this.style.opacity='0'"></div>`:`<div style="width:100%;aspect-ratio:1831/958;background:linear-gradient(135deg,${tp},${ac});border-radius:14px;margin:2rem 0;display:flex;align-items:center;justify-content:center;font-size:3rem">${emo}</div>`;
+  const cov=curImg?`<div style="width:100%;aspect-ratio:1831/958;overflow:hidden;border-radius:14px;margin:2rem 0;position:relative;background:linear-gradient(135deg,${tp},${ac})"><img src="${curImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;border-radius:14px" onerror="this.style.opacity='0'"></div>`:`<div style="width:100%;aspect-ratio:1831/958;background:linear-gradient(135deg,${tp},${ac});border-radius:14px;margin:2rem 0;display:flex;align-items:center;justify-content:center;font-size:3rem">${emo}</div>`;
   return`<style>${articlePreviewCss(dark)}${articlePreviewLayoutCss()}</style><div class="article-preview-scope" style="background:${bg};min-height:100%;line-height:1.75"><div style="background:${dark?'rgba(15,23,42,.92)':bg};padding:3rem 2rem 2.5rem;text-align:center;border-bottom:1px solid ${border}"><div style="display:inline-block;background:rgba(220,53,69,.1);color:${ac};padding:.35rem 1rem;border-radius:50px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:1.2rem;border:1px solid rgba(220,53,69,.25)">${cat||'Category'}</div><h1 style="font-family:'Bebas Neue',serif;font-size:clamp(1.8rem,5vw,3.2rem);color:${tp};margin-bottom:.55rem;line-height:.95;letter-spacing:1px;text-transform:uppercase">${title}</h1>${sub?`<p style="font-style:italic;font-size:1.05rem;color:${tm};margin-bottom:1.1rem;line-height:1.4">${sub}</p>`:''}<div style="display:flex;justify-content:center;gap:1.5rem;color:${tm};font-size:.8rem;flex-wrap:wrap"><span>${date||'Today'}</span><span>${rt}</span><span>views pending</span></div></div><div style="max-width:780px;margin:0 auto;padding:1.5rem 2rem 3rem">${cov}<div class="article-content" style="background:${glass};backdrop-filter:blur(20px);padding:2.5rem;border-radius:18px;border:1px solid ${gb};box-shadow:0 16px 50px rgba(0,0,0,.1)">${body||`<p style="color:${tm};text-align:center;padding:2rem 0;font-style:italic">Start writing to see your preview here...</p>`}</div></div></div>`;
 }
 function upPrev(){const f=document.getElementById('prevFrame');if(!f||document.getElementById('prevCol').classList.contains('hid'))return;f.innerHTML=buildPrevHtml(prevDk)}
@@ -3747,13 +3802,13 @@ async function handleImg(e){
   if(f.size>5*1024*1024)return toast('Max 5MB','er');
   if(_useSb()){
     try{
-      toast('Uploading image…','inf');
+      toast('Uploading image...','inf');
       const url=await uploadToStorage(f,'covers');
       curImg=url;showImg(url);document.getElementById('fiurl').value='';upPrev();
       toast('Image uploaded ✓','ok');
       return;
     }catch(uploadErr){
-      toast('Upload failed — using local preview instead','er');
+      toast('Upload failed - using local preview instead','er');
     }
   }
   // Fallback: base64 (localStorage mode or upload failed)
@@ -3813,9 +3868,9 @@ async function savePost(statusOverride){
   if(!document.getElementById('fex').value.trim()&&excerpt)document.getElementById('fex').value=excerpt;
   syncExcerptMeta();
   const post={id,title,subtitle:document.getElementById('fsu').value.trim(),category:document.getElementById('fcat').value,status,readTime:document.getElementById('frt').value.trim()||autoRt(content),date:document.getElementById('fdt').value||new Date().toISOString().split('T')[0],excerpt,content,image:curImg,emoji:document.getElementById('femo').value.trim()||'📝'};
-  toast('Saving…','inf');
+  toast('Saving...','inf');
   try{await dbSavePost(post);}catch(e){return toast('Save failed: '+e.message,'er')}
-  upPostCount();toast(status==='published'?`Published ✓ — post.html?id=${id}`:'Saved as draft ✓','ok');nav('posts');
+  upPostCount();toast(status==='published'?`Published ✓ - post.html?id=${id}`:'Saved as draft ✓','ok');nav('posts');
 }
 function autoRt(html){const w=(html.replace(/<[^>]+>/g,' ').match(/\S+/g)||[]).length;return Math.max(1,Math.round(w/200))+' min read'}
 
@@ -3825,22 +3880,23 @@ async function doDelete(){if(!delId)return;await dbDeletePost(delId);delId=null;
 function closeModal(id){document.getElementById(id).classList.remove('on');if(id==='campEditModal')activeCampaignEditId=null}
 
 // ── NAV ───────────────────────────────────────────────────────────────────
-const WORKSPACE_PANELS={dash:'dash',analytics:'analytics',posts:'posts',editor:'editor',about:'about',settings:'settings',pricing:'pricing',library:'library',vault:'vault',testimonials:'testimonials','lib-editor':'lib-editor',comments:'comments',subscribers:'subscribers',campaigns:'campaigns',logins:'logins',registrations:'registrations',faq:'faq','vault-access':'vault'};
+const WORKSPACE_PANELS={dash:'dash',analytics:'analytics',posts:'posts',editor:'editor',about:'about',settings:'settings',pricing:'pricing',events:'events',library:'library',vault:'vault',testimonials:'testimonials','lib-editor':'lib-editor',comments:'comments',subscribers:'subscribers',campaigns:'campaigns',logins:'logins',registrations:'registrations',faq:'faq','vault-access':'vault'};
 function nav(panel,opts={}){
   panel=WORKSPACE_PANELS[String(panel||'').toLowerCase()]||'dash';
   if(!opts.fromHash&&location.hash!=='#'+panel)history.pushState(null,'','#'+panel);
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.sb-lnk').forEach(l=>l.classList.remove('on'));
   const el=document.getElementById('panel-'+panel);if(el)el.classList.add('on');
-const lmap={dash:'Dashboard',analytics:'Analytics',posts:'Posts',editor:'Post',about:'About Page',settings:'Settings',pricing:'Pricing',library:'Library',vault:'Vault Access',testimonials:'Testimonials','lib-editor':'Library Item',comments:'Comments',subscribers:'Subscribers',campaigns:'Campaigns',logins:'Admin Logins',registrations:'Registrations',faq:'FAQ'};
+const lmap={dash:'Dashboard',analytics:'Analytics',posts:'Posts',editor:'Post',about:'About Page',settings:'Settings',pricing:'Pricing',events:'Events',library:'Library',vault:'Vault Access',testimonials:'Testimonials','lib-editor':'Library Item',comments:'Comments',subscribers:'Subscribers',campaigns:'Campaigns',logins:'Admin Logins',registrations:'Registrations',faq:'FAQ'};
   document.querySelectorAll('.sb-lnk').forEach(l=>{if(lmap[panel]&&l.textContent.includes(lmap[panel].split(' ')[0]))l.classList.add('on')});
-const tmap={dash:'DASHBOARD',analytics:'ANALYTICS',posts:'ALL POSTS',editor:'NEW POST',about:'ABOUT PAGE',settings:'SETTINGS',pricing:'PRICING','lib-editor':'LIBRARY ITEM',library:'LIBRARY',vault:'VAULT ACCESS',testimonials:'TESTIMONIALS',comments:'COMMENTS',subscribers:'SUBSCRIBERS',campaigns:'CAMPAIGNS',logins:'ADMIN LOGINS',registrations:'REGISTRATIONS',faq:'FAQ'};
-const smap={dash:'See what needs attention, what is moving, and where to act next.',analytics:'Track momentum, post performance, and category signals.',posts:'Manage the full content queue from draft to published.',editor:'Write, preview, and prepare a post for publishing.',about:'Edit the public About page copy and keep the brand story current.',settings:'Control dashboard behavior, admin theme, and site-linked settings.',pricing:'Edit session offers, public card prices, and registration dropdown labels.',library:'Manage library resources, status, and presentation.',vault:'Review vault access requests and issue approved reader credentials.',testimonials:'Review proof, approve stories, and add new testimonials.',comments:'Moderate discussion across the blog.',subscribers:'Review and export the people who asked to stay connected.',campaigns:'Refine newsletter drafts, send them, and manage history.',logins:'Review admin access activity.',registrations:'Track who asked for sessions and what they need.',faq:'Maintain the answers visitors rely on.'};
+const tmap={dash:'DASHBOARD',analytics:'ANALYTICS',posts:'ALL POSTS',editor:'NEW POST',about:'ABOUT PAGE',settings:'SETTINGS',pricing:'PRICING',events:'EVENTS & CAMPAIGNS','lib-editor':'LIBRARY ITEM',library:'LIBRARY',vault:'VAULT ACCESS',testimonials:'TESTIMONIALS',comments:'COMMENTS',subscribers:'SUBSCRIBERS',campaigns:'CAMPAIGNS',logins:'ADMIN LOGINS',registrations:'REGISTRATIONS',faq:'FAQ'};
+const smap={dash:'See what needs attention, what is moving, and where to act next.',analytics:'Track momentum, post performance, and category signals.',posts:'Manage the full content queue from draft to published.',editor:'Write, preview, and prepare a post for publishing.',about:'Edit the public About page copy and keep the brand story current.',settings:'Control dashboard behavior, admin theme, and site-linked settings.',pricing:'Edit session offers, public card prices, and registration dropdown labels.',events:'Manage public events, campaigns, countdowns, featured CTA routing, and event registrations.',library:'Manage library resources, status, and presentation.',vault:'Review vault access requests and issue approved reader credentials.',testimonials:'Review proof, approve stories, and add new testimonials.',comments:'Moderate discussion across the blog.',subscribers:'Review and export the people who asked to stay connected.',campaigns:'Refine newsletter drafts, send them, and manage history.',logins:'Review admin access activity.',registrations:'Track who asked for sessions and what they need.',faq:'Maintain the answers visitors rely on.'};
   document.getElementById('pageTit').textContent=tmap[panel]||panel.toUpperCase();
   const sub=document.getElementById('pageSub');if(sub)sub.textContent=smap[panel]||'';
   if(panel==='dash')initDash();if(panel==='analytics')initAnalytics();if(panel==='posts')renderPostsTbl();
   if(panel==='about')loadAboutEditor();
   if(panel==='settings'){loadSettings();renderPalGrid();loadCountdownSettings();loadFeaturedPostSelector()}
   if(panel==='pricing')loadSessionPricingSettings({forceLive:true});
+  if(panel==='events')loadEventsPanel();
   if(panel==='editor')setTimeout(()=>{initQuill();buildColTb();syncStatusHint();syncExcerptMeta();upPrev()},50);
   if(panel==='testimonials')loadTestimonialsPanel();
   if(panel==='comments')loadCommentsPanel();
@@ -3867,7 +3923,7 @@ async function initApp(){
   applyAdminTheme(_localSettings().adminTheme||'inceptive');
   upDbBadge();
   // Auto-migrate posts to Supabase if connected and empty
-  if(_useSb()){try{const rows=await _sbReq('posts?limit=1&select=id');if(!rows||rows.length===0){toast('Migrating posts to Supabase…','inf');const cached=_localPosts();const source=(cached&&cached.length)?cached:getSeedPosts();for(const p of source){await dbSavePost(p);}toast('Migration complete ✓','ok');}}catch(e){console.warn('Migration check:',e)}}
+  if(_useSb()){try{const rows=await _sbReq('posts?limit=1&select=id');if(!rows||rows.length===0){toast('Migrating posts to Supabase...','inf');const cached=_localPosts();const source=(cached&&cached.length)?cached:getSeedPosts();for(const p of source){await dbSavePost(p);}toast('Migration complete ✓','ok');}}catch(e){console.warn('Migration check:',e)}}
   // Auto-migrate library defaults to Supabase if connected and empty
   if(_useSb()){try{const rows=await _sbReq('library?limit=1&select=id');if(!rows||rows.length===0){for(const item of LIB_DEFAULTS){await dbSaveLibItem(item);}console.log('Library seeded to Supabase');}}catch(e){console.warn('Library migration:',e)}}
   try{
@@ -3877,7 +3933,7 @@ async function initApp(){
       if(fallback&&fallback.length){
         localStorage.setItem(LOCAL_KEY,JSON.stringify(fallback));
         if(_useSb()){
-          toast('Restoring cached posts…','inf');
+          toast('Restoring cached posts...','inf');
           for(const p of fallback){await dbSavePost(p);}
         }
         bootPosts=fallback;
@@ -3984,24 +4040,24 @@ async function initDash(){
     box.innerHTML=items.length?items.map(item=>`<div class="attention-item"><div class="attention-copy"><strong>${item.title}</strong><span>${item.meta}</span></div><button class="ab" onclick="${item.action}">${item.label}</button></div>`).join(''):'<div class="attention-item"><div class="attention-copy"><strong>Everything looks calm right now.</strong><span>Your content queue, campaigns, and community surfaces are all in a manageable state.</span></div><button class="ab" onclick="nav(\'editor\')">Create post</button></div>';
   }
 }
-function renderBarChart(posts,vm){const c=document.getElementById('barchart');const pub=posts.filter(p=>p.status==='published').slice(0,8);if(!pub.length){c.innerHTML='<div style="color:var(--t3);font-size:.74rem;margin:auto">No published posts yet</div>';return}const max=Math.max(...pub.map(p=>vm[p.id]||0),1);c.innerHTML=pub.map(p=>{const v=vm[p.id]||0,h=Math.max(4,Math.round((v/max)*84)),s=p.title.split(' ').slice(0,2).join(' ')+'…';return`<div class="bw"><div class="bb" style="height:${h}px"><div class="bt">${v.toLocaleString()} views</div></div><div class="bl" title="${p.title}">${s}</div></div>`}).join('')}
+function renderBarChart(posts,vm){const c=document.getElementById('barchart');const pub=posts.filter(p=>p.status==='published').slice(0,8);if(!pub.length){c.innerHTML='<div style="color:var(--t3);font-size:.74rem;margin:auto">No published posts yet</div>';return}const max=Math.max(...pub.map(p=>vm[p.id]||0),1);c.innerHTML=pub.map(p=>{const v=vm[p.id]||0,h=Math.max(4,Math.round((v/max)*84)),s=p.title.split(' ').slice(0,2).join(' ')+'...';return`<div class="bw"><div class="bb" style="height:${h}px"><div class="bt">${v.toLocaleString()} views</div></div><div class="bl" title="${p.title}">${s}</div></div>`}).join('')}
 function renderDonut(posts){const svg=document.getElementById('donut');if(!svg)return;document.getElementById('dv').textContent=posts.length;const cm={};posts.forEach(p=>{cm[p.category]=(cm[p.category]||0)+1});const colors=['#dc3545','#3b82f6','#10b981','#f59e0b','#8b5cf6','#06b6d4','#f97316'];const cats=Object.entries(cm).sort((a,b)=>b[1]-a[1]).slice(0,6);const total=posts.length||1;let off=0;const r=50,cx=60,cy=60,circ=2*Math.PI*r;svg.innerHTML=cats.map(([cat,count],i)=>{const pct=count/total,d=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${colors[i%7]}" stroke-width="18" stroke-dasharray="${pct*circ} ${circ-pct*circ}" stroke-dashoffset="${-off*circ}" style="transition:all .6s"/>`;off+=pct;return d}).join('');document.getElementById('dleg').innerHTML=cats.map(([cat,count],i)=>`<div class="li2"><div class="ld2" style="background:${colors[i%7]}"></div>${cat}<span style="margin-left:auto;color:var(--t3)">${count}</span></div>`).join('')}
 function renderRecTbl(posts,vm){const tb=document.getElementById('recTbl');const recent=[...posts].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);if(!recent.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:1.8rem">No posts yet</td></tr>';return}tb.innerHTML=recent.map(p=>`<tr><td class="tc2">${p.title}<span>post.html?id=${p.id}</span></td><td>${p.category}</td><td><span class="pill ${p.status}">${p.status}</span></td><td class="vc">${(vm[p.id]||0).toLocaleString()}</td><td>${p.date}</td><td><button class="ab" onclick="editPost('${p.id}')">✏️</button><button class="ab del" onclick="prepDel('${p.id}')">🗑</button></td></tr>`).join('')}
 
 // ── ANALYTICS ─────────────────────────────────────────────────────────────
-async function initAnalytics(){const posts=await getPosts();const vm=await getAllViews(posts);const sorted=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0));document.getElementById('toprank').innerHTML=sorted.slice(0,8).map((p,i)=>`<div class="ri"><div class="rn">#${i+1}</div><div class="rif"><div class="rt2">${p.title}</div><div class="rc">${p.category}</div></div><div class="rv2">👁 ${(vm[p.id]||0).toLocaleString()}</div></div>`).join('');const cm={};const total=posts.length||1;posts.forEach(p=>{cm[p.category]=(cm[p.category]||0)+1});document.getElementById('catbrk').innerHTML=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([cat,count])=>`<div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px"><span style="color:var(--t2)">${cat}</span><span style="color:var(--t3)">${count}</span></div><div style="height:5px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(count/total*100)}%;background:var(--ac);border-radius:3px;transition:width .8s"></div></div></div>`).join('');document.getElementById('spklines').innerHTML=sorted.slice(0,6).map(p=>{const v=vm[p.id]||0;const bars=Array.from({length:7},()=>Math.floor(Math.random()*v*1.5+1));const bmax=Math.max(...bars,1);return`<div style="display:flex;align-items:center;gap:.8rem;padding:.58rem;background:var(--s);border-radius:var(--rs)"><div style="flex:1;min-width:0"><div style="font-size:.75rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.title}</div><div style="font-size:.62rem;color:var(--t3);margin-top:1px">${p.category}</div></div><div class="spk" style="width:68px">${bars.map(b=>`<div class="sb2" style="height:${Math.max(3,Math.round(b/bmax*28))}px"></div>`).join('')}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--bl);width:48px;text-align:right">${v.toLocaleString()}</div></div>`}).join('')}
+async function initAnalytics(){const posts=await getPosts();const vm=await getAllViews(posts);const sorted=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0));document.getElementById('toprank').innerHTML=sorted.slice(0,8).map((p,i)=>`<div class="ri"><div class="rn">#${i+1}</div><div class="rif"><div class="rt2">${p.title}</div><div class="rc">${p.category}</div></div><div class="rv2">${(vm[p.id]||0).toLocaleString()}</div></div>`).join('');const cm={};const total=posts.length||1;posts.forEach(p=>{cm[p.category]=(cm[p.category]||0)+1});document.getElementById('catbrk').innerHTML=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([cat,count])=>`<div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px"><span style="color:var(--t2)">${cat}</span><span style="color:var(--t3)">${count}</span></div><div style="height:5px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(count/total*100)}%;background:var(--ac);border-radius:3px;transition:width .8s"></div></div></div>`).join('');document.getElementById('spklines').innerHTML=sorted.slice(0,6).map(p=>{const v=vm[p.id]||0;const bars=Array.from({length:7},()=>Math.floor(Math.random()*v*1.5+1));const bmax=Math.max(...bars,1);return`<div style="display:flex;align-items:center;gap:.8rem;padding:.58rem;background:var(--s);border-radius:var(--rs)"><div style="flex:1;min-width:0"><div style="font-size:.75rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.title}</div><div style="font-size:.62rem;color:var(--t3);margin-top:1px">${p.category}</div></div><div class="spk" style="width:68px">${bars.map(b=>`<div class="sb2" style="height:${Math.max(3,Math.round(b/bmax*28))}px"></div>`).join('')}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--bl);width:48px;text-align:right">${v.toLocaleString()}</div></div>`}).join('')}
 
 // ── POSTS TABLE ───────────────────────────────────────────────────────────
 /*
-initDash = async function(){let posts=await getPosts();if(!posts||!posts.length)posts=_localPosts();if(!posts||!posts.length)posts=getSeedPosts();const pub=posts.filter(p=>p.status==='published');document.getElementById('st1').textContent=posts.length;document.getElementById('st1s').textContent=pub.length+' published';document.getElementById('st3').textContent=[...new Set(posts.map(p=>p.category))].length;document.getElementById('st4').textContent=posts.filter(p=>p.status==='draft').length;const attention=[];const vm=await getAllViews(posts);document.getElementById('st2').textContent=Object.values(vm).reduce((a,b)=>a+b,0).toLocaleString();renderBarChart(posts,vm);renderDonut(posts);renderRecTbl(posts,vm);const draftCount=posts.filter(p=>p.status==='draft').length;const comingSoonCount=posts.filter(p=>p.status==='coming-soon').length;const topPost=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0))[0];if(draftCount)attention.push({title:`${draftCount} draft${draftCount===1?'':'s'} waiting`,meta:'Finish and publish the posts that are still sitting in draft.',action:"nav('posts')",label:'Open posts'});if(comingSoonCount)attention.push({title:`${comingSoonCount} coming soon item${comingSoonCount===1?'':'s'}`,meta:'Review timing and switch them live when the article is ready.',action:"nav('posts')",label:'Review queue'});const pulseTitle=document.getElementById('dashPulseTitle'),pulseMeta=document.getElementById('dashPulseMeta'),topTitle=document.getElementById('dashTopTitle'),topMeta=document.getElementById('dashTopMeta'),nextMove=document.getElementById('dashNextMove'),nextMeta=document.getElementById('dashNextMeta');if(topTitle)topTitle.textContent=topPost?topPost.title.split(' ').slice(0,3).join(' '):'—';if(topMeta)topMeta.textContent=topPost?`${(vm[topPost.id]||0).toLocaleString()} views so far across the live audience.`:'Publish something to start measuring momentum.';if(draftCount){if(pulseTitle)pulseTitle.textContent='Needs attention';if(pulseMeta)pulseMeta.textContent='Draft work is waiting in the queue, so the studio still needs a publishing decision.';if(nextMove)nextMove.textContent='Finish drafts';if(nextMeta)nextMeta.textContent='Open the posts queue and turn unfinished work into something publishable.';}else if(comingSoonCount){if(pulseTitle)pulseTitle.textContent='Almost live';if(pulseMeta)pulseMeta.textContent='Your queue is mostly clean, but some entries are still parked as Coming Soon.';if(nextMove)nextMove.textContent='Review timing';if(nextMeta)nextMeta.textContent='Decide which scheduled-looking pieces should go live next.';}else if(pub.length){if(pulseTitle)pulseTitle.textContent='Publishing well';if(pulseMeta)pulseMeta.textContent='The content engine looks healthy and live posts are carrying the workload.';if(nextMove)nextMove.textContent='Review campaigns';if(nextMeta)nextMeta.textContent='Use campaign drafts to turn live posts into stronger newsletter moments.';}else{if(pulseTitle)pulseTitle.textContent='Quiet';if(pulseMeta)pulseMeta.textContent='Nothing is live yet, so the next best move is to create and publish the first post.';if(nextMove)nextMove.textContent='Create post';if(nextMeta)nextMeta.textContent='Start a new article draft and move it through the publishing flow.';}if(_useSb()){try{const regs=await _sbReq('registrations?select=id');const el=document.getElementById('st5');if(el)el.textContent=(regs||[]).length;const els=document.getElementById('st5s');if(els)els.textContent=(regs||[]).length===1?'1 booking':(regs||[]).length+' bookings';}catch(e){}try{const subs=await _sbReq('subscribers?select=id');const el=document.getElementById('st6');if(el){el.textContent=(subs||[]).length;document.getElementById('subCount').textContent=(subs||[]).length;}}catch(e){}try{const pend=await _sbReq('testimonials?select=id&approved=eq.false');const el=document.getElementById('st7');if(el)el.textContent=(pend||[]).length;const els=document.getElementById('st7s');if(els){els.textContent=(pend||[]).length+' pending review';document.getElementById('pendingCount').textContent=(pend||[]).length;}}catch(e){}try{const cmts=await _sbReq('comments?select=id');const el=document.getElementById('st8');if(el){el.textContent=(cmts||[]).length;document.getElementById('cmtCount').textContent=(cmts||[]).length;}}catch(e){}try{const camps=await _sbReq('newsletter_campaigns?select=id,status');const active=(camps||[]).filter(c=>['draft','queued','sending'].includes(c.status));const badge=document.getElementById('campCount');if(badge)badge.textContent=(camps||[]).filter(c=>c.status==='draft').length;if(active.length)attention.push({title:`${active.length} campaign${active.length===1?'':'s'} in progress`,meta:'Draft, queued, or sending campaigns still need review or monitoring.',action:"nav('campaigns')",label:'Open campaigns'});}catch(e){}try{const regs=await _sbReq('registrations?select=id');if((regs||[]).length)attention.push({title:`${(regs||[]).length} registration${(regs||[]).length===1?'':'s'} captured`,meta:'Check who recently asked for sessions and decide what needs follow-up.',action:"nav('registrations')",label:'View registrations'});}catch(e){}}const box=document.getElementById('attentionList');if(box){const items=attention.slice(0,4);box.innerHTML=items.length?items.map(item=>`<div class="attention-item"><div class="attention-copy"><strong>${item.title}</strong><span>${item.meta}</span></div><button class="ab" onclick="${item.action}">${item.label}</button></div>`).join(''):'<div class="attention-item"><div class="attention-copy"><strong>Everything looks calm right now.</strong><span>Your content queue, campaigns, and community surfaces are all in a manageable state.</span></div><button class="ab" onclick="nav(\'editor\')">Create post</button></div>';}}
+initDash = async function(){let posts=await getPosts();if(!posts||!posts.length)posts=_localPosts();if(!posts||!posts.length)posts=getSeedPosts();const pub=posts.filter(p=>p.status==='published');document.getElementById('st1').textContent=posts.length;document.getElementById('st1s').textContent=pub.length+' published';document.getElementById('st3').textContent=[...new Set(posts.map(p=>p.category))].length;document.getElementById('st4').textContent=posts.filter(p=>p.status==='draft').length;const attention=[];const vm=await getAllViews(posts);document.getElementById('st2').textContent=Object.values(vm).reduce((a,b)=>a+b,0).toLocaleString();renderBarChart(posts,vm);renderDonut(posts);renderRecTbl(posts,vm);const draftCount=posts.filter(p=>p.status==='draft').length;const comingSoonCount=posts.filter(p=>p.status==='coming-soon').length;const topPost=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0))[0];if(draftCount)attention.push({title:`${draftCount} draft${draftCount===1?'':'s'} waiting`,meta:'Finish and publish the posts that are still sitting in draft.',action:"nav('posts')",label:'Open posts'});if(comingSoonCount)attention.push({title:`${comingSoonCount} coming soon item${comingSoonCount===1?'':'s'}`,meta:'Review timing and switch them live when the article is ready.',action:"nav('posts')",label:'Review queue'});const pulseTitle=document.getElementById('dashPulseTitle'),pulseMeta=document.getElementById('dashPulseMeta'),topTitle=document.getElementById('dashTopTitle'),topMeta=document.getElementById('dashTopMeta'),nextMove=document.getElementById('dashNextMove'),nextMeta=document.getElementById('dashNextMeta');if(topTitle)topTitle.textContent=topPost?topPost.title.split(' ').slice(0,3).join(' '):'-';if(topMeta)topMeta.textContent=topPost?`${(vm[topPost.id]||0).toLocaleString()} views so far across the live audience.`:'Publish something to start measuring momentum.';if(draftCount){if(pulseTitle)pulseTitle.textContent='Needs attention';if(pulseMeta)pulseMeta.textContent='Draft work is waiting in the queue, so the studio still needs a publishing decision.';if(nextMove)nextMove.textContent='Finish drafts';if(nextMeta)nextMeta.textContent='Open the posts queue and turn unfinished work into something publishable.';}else if(comingSoonCount){if(pulseTitle)pulseTitle.textContent='Almost live';if(pulseMeta)pulseMeta.textContent='Your queue is mostly clean, but some entries are still parked as Coming Soon.';if(nextMove)nextMove.textContent='Review timing';if(nextMeta)nextMeta.textContent='Decide which scheduled-looking pieces should go live next.';}else if(pub.length){if(pulseTitle)pulseTitle.textContent='Publishing well';if(pulseMeta)pulseMeta.textContent='The content engine looks healthy and live posts are carrying the workload.';if(nextMove)nextMove.textContent='Review campaigns';if(nextMeta)nextMeta.textContent='Use campaign drafts to turn live posts into stronger newsletter moments.';}else{if(pulseTitle)pulseTitle.textContent='Quiet';if(pulseMeta)pulseMeta.textContent='Nothing is live yet, so the next best move is to create and publish the first post.';if(nextMove)nextMove.textContent='Create post';if(nextMeta)nextMeta.textContent='Start a new article draft and move it through the publishing flow.';}if(_useSb()){try{const regs=await _sbReq('registrations?select=id');const el=document.getElementById('st5');if(el)el.textContent=(regs||[]).length;const els=document.getElementById('st5s');if(els)els.textContent=(regs||[]).length===1?'1 booking':(regs||[]).length+' bookings';}catch(e){}try{const subs=await _sbReq('subscribers?select=id');const el=document.getElementById('st6');if(el){el.textContent=(subs||[]).length;document.getElementById('subCount').textContent=(subs||[]).length;}}catch(e){}try{const pend=await _sbReq('testimonials?select=id&approved=eq.false');const el=document.getElementById('st7');if(el)el.textContent=(pend||[]).length;const els=document.getElementById('st7s');if(els){els.textContent=(pend||[]).length+' pending review';document.getElementById('pendingCount').textContent=(pend||[]).length;}}catch(e){}try{const cmts=await _sbReq('comments?select=id');const el=document.getElementById('st8');if(el){el.textContent=(cmts||[]).length;document.getElementById('cmtCount').textContent=(cmts||[]).length;}}catch(e){}try{const camps=await _sbReq('newsletter_campaigns?select=id,status');const active=(camps||[]).filter(c=>['draft','queued','sending'].includes(c.status));const badge=document.getElementById('campCount');if(badge)badge.textContent=(camps||[]).filter(c=>c.status==='draft').length;if(active.length)attention.push({title:`${active.length} campaign${active.length===1?'':'s'} in progress`,meta:'Draft, queued, or sending campaigns still need review or monitoring.',action:"nav('campaigns')",label:'Open campaigns'});}catch(e){}try{const regs=await _sbReq('registrations?select=id');if((regs||[]).length)attention.push({title:`${(regs||[]).length} registration${(regs||[]).length===1?'':'s'} captured`,meta:'Check who recently asked for sessions and decide what needs follow-up.',action:"nav('registrations')",label:'View registrations'});}catch(e){}}const box=document.getElementById('attentionList');if(box){const items=attention.slice(0,4);box.innerHTML=items.length?items.map(item=>`<div class="attention-item"><div class="attention-copy"><strong>${item.title}</strong><span>${item.meta}</span></div><button class="ab" onclick="${item.action}">${item.label}</button></div>`).join(''):'<div class="attention-item"><div class="attention-copy"><strong>Everything looks calm right now.</strong><span>Your content queue, campaigns, and community surfaces are all in a manageable state.</span></div><button class="ab" onclick="nav(\'editor\')">Create post</button></div>';}}
 
 // ── VIEW COUNTS ───────────────────────────────────────────────────────────
 async function fetchView(id){if(vcCache[id]!==undefined)return vcCache[id];if(window.ivGetPostView){const count=await window.ivGetPostView(id);vcCache[id]=Number(count||0);return vcCache[id];}vcCache[id]=0;return 0;}
 async function getAllViews(posts){try{const ids=(posts||[]).map(p=>p.id);if(window.ivGetPostViews){const m=await window.ivGetPostViews(ids);vcCache=Object.assign({},vcCache,m);return m||{};}const res=await Promise.all((posts||[]).map(p=>fetchView(p.id).catch(()=>0)));const m={};(posts||[]).forEach((p,i)=>{m[p.id]=res[i]||0});return m}catch(e){console.warn('View counts unavailable',e);const m={};(posts||[]).forEach(p=>{m[p.id]=vcCache[p.id]||0});return m}}
-async function refreshViews(){vcCache={};toast('Refreshing…','inf');await initDash();toast('Updated ✓','ok')}
+async function refreshViews(){vcCache={};toast('Refreshing...','inf');await initDash();toast('Updated ✓','ok')}
 
 function getDailySeriesForPost(snapshot, postId){if(snapshot&&snapshot.perPostSeries7d&&snapshot.perPostSeries7d[postId])return snapshot.perPostSeries7d[postId];return [0,0,0,0,0,0,0]}
-function renderAnalyticsSparklines(posts,vm,snapshot){const host=document.getElementById('spklines');if(!host)return;host.innerHTML=posts.slice(0,6).map(p=>{const bars=getDailySeriesForPost(snapshot,p.id);const bmax=Math.max(...bars,1);const recentViews=snapshot&&snapshot.perPostViews24h?Number(snapshot.perPostViews24h[p.id]||0):0;const recentVisitors=snapshot&&snapshot.perPostVisitors24h?Number(snapshot.perPostVisitors24h[p.id]||0):0;return`<div style="display:flex;align-items:center;gap:.8rem;padding:.58rem;background:var(--s);border-radius:var(--rs)"><div style="flex:1;min-width:0"><div style="font-size:.75rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.title}</div><div style="font-size:.62rem;color:var(--t3);margin-top:1px">${p.category} · ${recentViews.toLocaleString()} views in 24h · ${recentVisitors.toLocaleString()} visitors</div></div><div class="spk" style="width:68px">${bars.map(b=>`<div class="sb2" style="height:${Math.max(3,Math.round(b/bmax*28))}px"></div>`).join('')}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--bl);width:48px;text-align:right">${(vm[p.id]||0).toLocaleString()}</div></div>`}).join('')}
+function renderAnalyticsSparklines(posts,vm,snapshot){const host=document.getElementById('spklines');if(!host)return;host.innerHTML=posts.slice(0,6).map(p=>{const bars=getDailySeriesForPost(snapshot,p.id);const bmax=Math.max(...bars,1);const recentViews=snapshot&&snapshot.perPostViews24h?Number(snapshot.perPostViews24h[p.id]||0):0;const recentVisitors=snapshot&&snapshot.perPostVisitors24h?Number(snapshot.perPostVisitors24h[p.id]||0):0;return`<div style="display:flex;align-items:center;gap:.8rem;padding:.58rem;background:var(--s);border-radius:var(--rs)"><div style="flex:1;min-width:0"><div style="font-size:.75rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.title}</div><div style="font-size:.62rem;color:var(--t3);margin-top:1px">${p.category}  -  ${recentViews.toLocaleString()} views in 24h  -  ${recentVisitors.toLocaleString()} visitors</div></div><div class="spk" style="width:68px">${bars.map(b=>`<div class="sb2" style="height:${Math.max(3,Math.round(b/bmax*28))}px"></div>`).join('')}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--bl);width:48px;text-align:right">${(vm[p.id]||0).toLocaleString()}</div></div>`}).join('')}
 
 // ── SETTINGS ─────────────────────────────────────────────────────────────
 function applyAdminTheme(theme){
@@ -4015,8 +4071,8 @@ function applyAdminTheme(theme){
 async function refreshContentHealth(){
   const box=document.getElementById('contentHealthBox');
   if(!box)return;
-  box.innerHTML='<div>Checking content sources…</div>';
-  let dbCount='—',dbState='unavailable';
+  box.innerHTML='<div>Checking content sources...</div>';
+  let dbCount='-',dbState='unavailable';
   try{
     if(_useSb()){
       const rows=await _sbReq('posts?select=id');
@@ -4037,7 +4093,7 @@ async function refreshContentHealth(){
   const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;
   let chosen='seed fallback';
   if(typeof dbCount==='number'&&dbCount>0) chosen='database';
-  else if(typeof dbCount==='string'&&dbCount!=='—'&&Number(dbCount)>0) chosen='database';
+  else if(typeof dbCount==='string'&&dbCount!=='-'&&Number(dbCount)>0) chosen='database';
   else if(localCount>0) chosen='local cache';
   box.innerHTML=
     `<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div>`+
@@ -4096,7 +4152,7 @@ async function loadLibraryAccessLogs(){
       const title=clean(r.resource_title||'Library');
       const user=clean(r.username||'visitor');
       const event=clean(r.event_type||'event');
-      return `<div style="padding:.55rem;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid var(--b)"><strong style="color:var(--t2)">${event}</strong> <span>${title}</span><br><span>${user} · ${when}</span></div>`;
+      return `<div style="padding:.55rem;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid var(--b)"><strong style="color:var(--t2)">${event}</strong> <span>${title}</span><br><span>${user}  -  ${when}</span></div>`;
     }).join('');
   }catch(e){
     box.innerHTML='<div>Activity table is not ready yet. Run the latest setup SQL.</div>';
@@ -4111,7 +4167,7 @@ async function exportData(){const posts=await getPosts();const blob=new Blob([JS
 async function forceResync(){
   if(!_useSb())return toast('Supabase not connected','er');
   if(!confirm('This will overwrite ALL posts in Supabase with the full seed content (ep1-ep4). Continue?'))return;
-  toast('Resyncing posts to Supabase…','inf');
+  toast('Resyncing posts to Supabase...','inf');
   const seed=getSeedPosts();
   let ok=0;
   for(const p of seed){
@@ -4127,7 +4183,7 @@ async function forceResync(){
 async function restoreLibraryToSupabase(){
   if(!_useSb())return toast('Supabase not connected','er');
   if(!confirm('Restore the library collection into the current Supabase project?'))return;
-  toast('Restoring library…','inf');
+  toast('Restoring library...','inf');
   const source=(getLibItems()||[]).length?getLibItems():LIB_DEFAULTS;
   let ok=0;
   for(const item of source){
@@ -4187,9 +4243,9 @@ async function resolvePostsSource(){
 getPosts = async function(){const resolved=await resolvePostsSource();return resolved.items}
 upPostCount = function(){resolvePostsSource().then(r=>{const el=document.getElementById('pc');if(el)el.textContent=r.items.length;})}
 renderRecTbl = function(posts,vm){const tb=document.getElementById('recTbl');const recent=[...posts].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);if(!recent.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:1.8rem">No posts yet</td></tr>';return}tb.innerHTML=recent.map(p=>`<tr><td class="tc2">${p.title}<span>post.html?id=${p.id}</span></td><td><div style="display:grid;gap:.22rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${p.category}</strong><span class="mini-tag">${p.status==='published'?'Live post':p.status==='draft'?'Draft item':'Coming soon'}</span></div></td><td><span class="pill ${p.status}">${p.status}</span></td><td class="vc">${(vm[p.id]||0).toLocaleString()}</td><td>${p.date}</td><td><div class="action-row"><button class="ab" onclick="editPost('${p.id}')">Edit</button><button class="ab del" onclick="prepDel('${p.id}')">Delete</button></div></td></tr>`).join('')}
-renderAnalyticsSparklines = function(posts,vm,snapshot){const host=document.getElementById('spklines');if(!host)return;host.innerHTML=posts.slice(0,6).map(p=>{const bars=getDailySeriesForPost(snapshot,p.id);const bmax=Math.max(...bars,1);const recentViews=snapshot&&snapshot.perPostViews24h?Number(snapshot.perPostViews24h[p.id]||0):0;const recentVisitors=snapshot&&snapshot.perPostVisitors24h?Number(snapshot.perPostVisitors24h[p.id]||0):0;return`<div style="display:flex;align-items:center;gap:.8rem;padding:.58rem;background:var(--s);border-radius:var(--rs)"><div style="flex:1;min-width:0"><div style="font-size:.75rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.title}</div><div style="font-size:.62rem;color:var(--t3);margin-top:1px">${p.category} · ${recentViews.toLocaleString()} views in 24h · ${recentVisitors.toLocaleString()} visitors</div></div><div class="spk" style="width:68px">${bars.map(b=>`<div class="sb2" style="height:${Math.max(3,Math.round(b/bmax*28))}px"></div>`).join('')}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--bl);width:48px;text-align:right">${(vm[p.id]||0).toLocaleString()}</div></div>`}).join('')}
-initDash = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const pub=posts.filter(p=>p.status==='published');document.getElementById('st1').textContent=posts.length;document.getElementById('st1s').textContent=pub.length+' published';document.getElementById('st3').textContent=[...new Set(posts.map(p=>p.category))].length;document.getElementById('st4').textContent=posts.filter(p=>p.status==='draft').length;const attention=[];const vm=await getAllViews(posts);document.getElementById('st2').textContent=Object.values(vm).reduce((a,b)=>a+b,0).toLocaleString();renderBarChart(posts,vm);renderDonut(posts);renderRecTbl(posts,vm);const draftCount=posts.filter(p=>p.status==='draft').length;const comingSoonCount=posts.filter(p=>p.status==='coming-soon').length;const topPost=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0))[0];if(draftCount)attention.push({title:`${draftCount} draft${draftCount===1?'':'s'} waiting`,meta:'Finish and publish the posts that are still sitting in draft.',action:"nav('posts')",label:'Open posts'});if(comingSoonCount)attention.push({title:`${comingSoonCount} coming soon item${comingSoonCount===1?'':'s'}`,meta:'Review timing and switch them live when the article is ready.',action:"nav('posts')",label:'Review queue'});const pulseTitle=document.getElementById('dashPulseTitle'),pulseMeta=document.getElementById('dashPulseMeta'),topTitle=document.getElementById('dashTopTitle'),topMeta=document.getElementById('dashTopMeta'),nextMove=document.getElementById('dashNextMove'),nextMeta=document.getElementById('dashNextMeta');if(topTitle)topTitle.textContent=topPost?topPost.title.split(' ').slice(0,3).join(' '):'—';if(topMeta)topMeta.textContent=topPost?`${(vm[topPost.id]||0).toLocaleString()} views so far across the live audience.`:'Publish something to start measuring momentum.';if(draftCount){if(pulseTitle)pulseTitle.textContent='Needs attention';if(pulseMeta)pulseMeta.textContent='Draft work is waiting in the queue, so the studio still needs a publishing decision.';if(nextMove)nextMove.textContent='Finish drafts';if(nextMeta)nextMeta.textContent='Open the posts queue and turn unfinished work into something publishable.';}else if(comingSoonCount){if(pulseTitle)pulseTitle.textContent='Almost live';if(pulseMeta)pulseMeta.textContent='Your queue is mostly clean, but some entries are still parked as Coming Soon.';if(nextMove)nextMove.textContent='Review timing';if(nextMeta)nextMeta.textContent='Decide which scheduled-looking pieces should go live next.';}else if(pub.length){if(pulseTitle)pulseTitle.textContent='Publishing well';if(pulseMeta)pulseMeta.textContent='The content engine looks healthy and live posts are carrying the workload.';if(nextMove)nextMove.textContent='Review campaigns';if(nextMeta)nextMeta.textContent='Use campaign drafts to turn live posts into stronger newsletter moments.';}else{if(pulseTitle)pulseTitle.textContent='Quiet';if(pulseMeta)pulseMeta.textContent='Nothing is live yet, so the next best move is to create the first post.';if(nextMove)nextMove.textContent='Create post';if(nextMeta)nextMeta.textContent='Start a new article draft and move it through the publishing flow.';}if(_useSb()){try{const regs=await _sbReq('registrations?select=id');const el=document.getElementById('st5');if(el)el.textContent=(regs||[]).length;const els=document.getElementById('st5s');if(els)els.textContent=(regs||[]).length===1?'1 booking':(regs||[]).length+' bookings';}catch(e){}try{const subs=await _sbReq('subscribers?select=id');const el=document.getElementById('st6');if(el){el.textContent=(subs||[]).length;document.getElementById('subCount').textContent=(subs||[]).length;}}catch(e){}try{const pend=await _sbReq('testimonials?select=id&approved=eq.false');const el=document.getElementById('st7');if(el)el.textContent=(pend||[]).length;const els=document.getElementById('st7s');if(els){els.textContent=(pend||[]).length+' pending review';document.getElementById('pendingCount').textContent=(pend||[]).length;}}catch(e){}try{const cmts=await _sbReq('comments?select=id');const el=document.getElementById('st8');if(el){el.textContent=(cmts||[]).length;document.getElementById('cmtCount').textContent=(cmts||[]).length;}}catch(e){}try{const camps=await _sbReq('newsletter_campaigns?select=id,status');const active=(camps||[]).filter(c=>['draft','queued','sending'].includes(c.status));const badge=document.getElementById('campCount');if(badge)badge.textContent=(camps||[]).filter(c=>c.status==='draft').length;if(active.length)attention.push({title:`${active.length} campaign${active.length===1?'':'s'} in progress`,meta:'Draft, queued, or sending campaigns still need review or monitoring.',action:"nav('campaigns')",label:'Open campaigns'});}catch(e){}try{const regs=await _sbReq('registrations?select=id');if((regs||[]).length)attention.push({title:`${(regs||[]).length} registration${(regs||[]).length===1?'':'s'} captured`,meta:'Check who recently asked for sessions and decide what needs follow-up.',action:"nav('registrations')",label:'View registrations'});}catch(e){}}const box=document.getElementById('attentionList');if(box){const items=attention.slice(0,4);box.innerHTML=items.length?items.map(item=>`<div class="attention-item"><div class="attention-copy"><strong>${item.title}</strong><span>${item.meta}</span></div><button class="ab" onclick="${item.action}">${item.label}</button></div>`).join(''):'<div class="attention-item"><div class="attention-copy"><strong>Everything looks calm right now.</strong><span>Your content queue, campaigns, and community surfaces are all in a manageable state.</span></div><button class="ab" onclick="nav(\'editor\')">Create post</button></div>';}}
-const renderPostsTblLegacyUnsafe = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const vm=await getAllViews(posts);const srch=(document.getElementById('psrch')?.value||'').toLowerCase();const sf=document.getElementById('pfstt')?.value||'';const filt=posts.filter(p=>(!srch||p.title.toLowerCase().includes(srch)||p.category.toLowerCase().includes(srch))&&(!sf||p.status===sf));document.getElementById('pclbl').textContent=filt.length;upPostCount();const drafts=posts.filter(p=>p.status==='draft').length;const coming=posts.filter(p=>p.status==='coming-soon').length;const published=posts.filter(p=>p.status==='published').length;const totalEl=document.getElementById('postOpsTotal');if(totalEl)totalEl.textContent=posts.length;const draftEl=document.getElementById('postOpsDrafts');if(draftEl)draftEl.textContent=drafts+coming;const pubEl=document.getElementById('postOpsPublished');if(pubEl)pubEl.textContent=published;const tb=document.getElementById('allTbl');if(!filt.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">No posts found for this filter. Clear the queue filters or create a new post.</td></tr>';return}tb.innerHTML=filt.map(p=>{const nextAction=p.status==='published'?'Move to Coming Soon':p.status==='coming-soon'?'Publish now':'Publish';const statusMeta=p.status==='published'?'Live and visible on the blog.':p.status==='coming-soon'?'Visible only as a timed placeholder.':'Still private inside admin.';return`<tr><td class="tc2">${p.title}<span>post.html?id=${p.id}</span><span style="font-family:inherit;font-size:.69rem;color:var(--t3);margin-top:.28rem">${statusMeta}</span></td><td><div style="display:grid;gap:.25rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${p.category}</strong><span class="mini-tag">${p.status==='published'?'Campaign ready':p.status==='draft'?'Needs finishing':'Schedule carefully'}</span></div></td><td><span class="pill ${p.status}">${p.status}</span></td><td class="vc">${(vm[p.id]||0).toLocaleString()}</td><td>${p.readTime||'—'}</td><td>${p.date}</td><td><div class="action-row"><button class="ab" onclick="editPost('${p.id}')">Edit</button><button class="ab" onclick="quickToggleStatus('${p.id}','${p.status}')" title="Toggle status" style="${p.status==='published'?'border-color:rgba(245,158,11,.5);color:var(--yl)':p.status==='draft'?'border-color:rgba(59,130,246,.5);color:var(--bl)':'border-color:rgba(16,185,129,.5);color:var(--gr)'}">${nextAction}</button><button class="ab" onclick="window.open('post.html?id=${p.id}','_blank')">View</button><button class="ab del" onclick="prepDel('${p.id}')">Delete</button></div></td></tr>`}).join('')}
+renderAnalyticsSparklines = function(posts,vm,snapshot){const host=document.getElementById('spklines');if(!host)return;host.innerHTML=posts.slice(0,6).map(p=>{const bars=getDailySeriesForPost(snapshot,p.id);const bmax=Math.max(...bars,1);const recentViews=snapshot&&snapshot.perPostViews24h?Number(snapshot.perPostViews24h[p.id]||0):0;const recentVisitors=snapshot&&snapshot.perPostVisitors24h?Number(snapshot.perPostVisitors24h[p.id]||0):0;return`<div style="display:flex;align-items:center;gap:.8rem;padding:.58rem;background:var(--s);border-radius:var(--rs)"><div style="flex:1;min-width:0"><div style="font-size:.75rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.title}</div><div style="font-size:.62rem;color:var(--t3);margin-top:1px">${p.category}  -  ${recentViews.toLocaleString()} views in 24h  -  ${recentVisitors.toLocaleString()} visitors</div></div><div class="spk" style="width:68px">${bars.map(b=>`<div class="sb2" style="height:${Math.max(3,Math.round(b/bmax*28))}px"></div>`).join('')}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--bl);width:48px;text-align:right">${(vm[p.id]||0).toLocaleString()}</div></div>`}).join('')}
+initDash = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const pub=posts.filter(p=>p.status==='published');document.getElementById('st1').textContent=posts.length;document.getElementById('st1s').textContent=pub.length+' published';document.getElementById('st3').textContent=[...new Set(posts.map(p=>p.category))].length;document.getElementById('st4').textContent=posts.filter(p=>p.status==='draft').length;const attention=[];const vm=await getAllViews(posts);document.getElementById('st2').textContent=Object.values(vm).reduce((a,b)=>a+b,0).toLocaleString();renderBarChart(posts,vm);renderDonut(posts);renderRecTbl(posts,vm);const draftCount=posts.filter(p=>p.status==='draft').length;const comingSoonCount=posts.filter(p=>p.status==='coming-soon').length;const topPost=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0))[0];if(draftCount)attention.push({title:`${draftCount} draft${draftCount===1?'':'s'} waiting`,meta:'Finish and publish the posts that are still sitting in draft.',action:"nav('posts')",label:'Open posts'});if(comingSoonCount)attention.push({title:`${comingSoonCount} coming soon item${comingSoonCount===1?'':'s'}`,meta:'Review timing and switch them live when the article is ready.',action:"nav('posts')",label:'Review queue'});const pulseTitle=document.getElementById('dashPulseTitle'),pulseMeta=document.getElementById('dashPulseMeta'),topTitle=document.getElementById('dashTopTitle'),topMeta=document.getElementById('dashTopMeta'),nextMove=document.getElementById('dashNextMove'),nextMeta=document.getElementById('dashNextMeta');if(topTitle)topTitle.textContent=topPost?topPost.title.split(' ').slice(0,3).join(' '):'-';if(topMeta)topMeta.textContent=topPost?`${(vm[topPost.id]||0).toLocaleString()} views so far across the live audience.`:'Publish something to start measuring momentum.';if(draftCount){if(pulseTitle)pulseTitle.textContent='Needs attention';if(pulseMeta)pulseMeta.textContent='Draft work is waiting in the queue, so the studio still needs a publishing decision.';if(nextMove)nextMove.textContent='Finish drafts';if(nextMeta)nextMeta.textContent='Open the posts queue and turn unfinished work into something publishable.';}else if(comingSoonCount){if(pulseTitle)pulseTitle.textContent='Almost live';if(pulseMeta)pulseMeta.textContent='Your queue is mostly clean, but some entries are still parked as Coming Soon.';if(nextMove)nextMove.textContent='Review timing';if(nextMeta)nextMeta.textContent='Decide which scheduled-looking pieces should go live next.';}else if(pub.length){if(pulseTitle)pulseTitle.textContent='Publishing well';if(pulseMeta)pulseMeta.textContent='The content engine looks healthy and live posts are carrying the workload.';if(nextMove)nextMove.textContent='Review campaigns';if(nextMeta)nextMeta.textContent='Use campaign drafts to turn live posts into stronger newsletter moments.';}else{if(pulseTitle)pulseTitle.textContent='Quiet';if(pulseMeta)pulseMeta.textContent='Nothing is live yet, so the next best move is to create the first post.';if(nextMove)nextMove.textContent='Create post';if(nextMeta)nextMeta.textContent='Start a new article draft and move it through the publishing flow.';}if(_useSb()){try{const regs=await _sbReq('registrations?select=id');const el=document.getElementById('st5');if(el)el.textContent=(regs||[]).length;const els=document.getElementById('st5s');if(els)els.textContent=(regs||[]).length===1?'1 booking':(regs||[]).length+' bookings';}catch(e){}try{const subs=await _sbReq('subscribers?select=id');const el=document.getElementById('st6');if(el){el.textContent=(subs||[]).length;document.getElementById('subCount').textContent=(subs||[]).length;}}catch(e){}try{const pend=await _sbReq('testimonials?select=id&approved=eq.false');const el=document.getElementById('st7');if(el)el.textContent=(pend||[]).length;const els=document.getElementById('st7s');if(els){els.textContent=(pend||[]).length+' pending review';document.getElementById('pendingCount').textContent=(pend||[]).length;}}catch(e){}try{const cmts=await _sbReq('comments?select=id');const el=document.getElementById('st8');if(el){el.textContent=(cmts||[]).length;document.getElementById('cmtCount').textContent=(cmts||[]).length;}}catch(e){}try{const camps=await _sbReq('newsletter_campaigns?select=id,status');const active=(camps||[]).filter(c=>['draft','queued','sending'].includes(c.status));const badge=document.getElementById('campCount');if(badge)badge.textContent=(camps||[]).filter(c=>c.status==='draft').length;if(active.length)attention.push({title:`${active.length} campaign${active.length===1?'':'s'} in progress`,meta:'Draft, queued, or sending campaigns still need review or monitoring.',action:"nav('campaigns')",label:'Open campaigns'});}catch(e){}try{const regs=await _sbReq('registrations?select=id');if((regs||[]).length)attention.push({title:`${(regs||[]).length} registration${(regs||[]).length===1?'':'s'} captured`,meta:'Check who recently asked for sessions and decide what needs follow-up.',action:"nav('registrations')",label:'View registrations'});}catch(e){}}const box=document.getElementById('attentionList');if(box){const items=attention.slice(0,4);box.innerHTML=items.length?items.map(item=>`<div class="attention-item"><div class="attention-copy"><strong>${item.title}</strong><span>${item.meta}</span></div><button class="ab" onclick="${item.action}">${item.label}</button></div>`).join(''):'<div class="attention-item"><div class="attention-copy"><strong>Everything looks calm right now.</strong><span>Your content queue, campaigns, and community surfaces are all in a manageable state.</span></div><button class="ab" onclick="nav(\'editor\')">Create post</button></div>';}}
+const renderPostsTblLegacyUnsafe = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const vm=await getAllViews(posts);const srch=(document.getElementById('psrch')?.value||'').toLowerCase();const sf=document.getElementById('pfstt')?.value||'';const filt=posts.filter(p=>(!srch||p.title.toLowerCase().includes(srch)||p.category.toLowerCase().includes(srch))&&(!sf||p.status===sf));document.getElementById('pclbl').textContent=filt.length;upPostCount();const drafts=posts.filter(p=>p.status==='draft').length;const coming=posts.filter(p=>p.status==='coming-soon').length;const published=posts.filter(p=>p.status==='published').length;const totalEl=document.getElementById('postOpsTotal');if(totalEl)totalEl.textContent=posts.length;const draftEl=document.getElementById('postOpsDrafts');if(draftEl)draftEl.textContent=drafts+coming;const pubEl=document.getElementById('postOpsPublished');if(pubEl)pubEl.textContent=published;const tb=document.getElementById('allTbl');if(!filt.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">No posts found for this filter. Clear the queue filters or create a new post.</td></tr>';return}tb.innerHTML=filt.map(p=>{const nextAction=p.status==='published'?'Move to Coming Soon':p.status==='coming-soon'?'Publish now':'Publish';const statusMeta=p.status==='published'?'Live and visible on the blog.':p.status==='coming-soon'?'Visible only as a timed placeholder.':'Still private inside admin.';return`<tr><td class="tc2">${p.title}<span>post.html?id=${p.id}</span><span style="font-family:inherit;font-size:.69rem;color:var(--t3);margin-top:.28rem">${statusMeta}</span></td><td><div style="display:grid;gap:.25rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${p.category}</strong><span class="mini-tag">${p.status==='published'?'Campaign ready':p.status==='draft'?'Needs finishing':'Schedule carefully'}</span></div></td><td><span class="pill ${p.status}">${p.status}</span></td><td class="vc">${(vm[p.id]||0).toLocaleString()}</td><td>${p.readTime||'-'}</td><td>${p.date}</td><td><div class="action-row"><button class="ab" onclick="editPost('${p.id}')">Edit</button><button class="ab" onclick="quickToggleStatus('${p.id}','${p.status}')" title="Toggle status" style="${p.status==='published'?'border-color:rgba(245,158,11,.5);color:var(--yl)':p.status==='draft'?'border-color:rgba(59,130,246,.5);color:var(--bl)':'border-color:rgba(16,185,129,.5);color:var(--gr)'}">${nextAction}</button><button class="ab" onclick="window.open('post.html?id=${p.id}','_blank')">View</button><button class="ab del" onclick="prepDel('${p.id}')">Delete</button></div></td></tr>`}).join('')}
 const renderPostsTblLegacyPreSafe = async function(){
   const tb=document.getElementById('allTbl');
   if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">Loading posts...</td></tr>';
@@ -4229,7 +4285,7 @@ const renderPostsTblLegacyPreSafe = async function(){
       const nextAction=status==='published'?'Move to Coming Soon':status==='coming-soon'?'Publish now':'Publish';
       const statusMeta=status==='published'?'Live and visible on the blog.':status==='coming-soon'?'Visible only as a timed placeholder.':'Still private inside admin.';
       const actionStyle=status==='published'?'border-color:rgba(245,158,11,.5);color:var(--yl)':status==='draft'?'border-color:rgba(59,130,246,.5);color:var(--bl)':'border-color:rgba(16,185,129,.5);color:var(--gr)';
-      return`<tr><td class="tc2">${title}<span>post.html?id=${id}</span><span style="font-family:inherit;font-size:.69rem;color:var(--t3);margin-top:.28rem">${statusMeta}</span></td><td><div style="display:grid;gap:.25rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${category}</strong><span class="mini-tag">${status==='published'?'Campaign ready':status==='draft'?'Needs finishing':'Schedule carefully'}</span></div></td><td><span class="pill ${status}">${status}</span></td><td class="vc">${(vm[id]||0).toLocaleString()}</td><td>${p.readTime||'—'}</td><td>${p.date||'—'}</td><td><div class="action-row"><button class="ab" onclick="editPost('${id}')">Edit</button><button class="ab" onclick="quickToggleStatus('${id}','${status}')" title="Toggle status" style="${actionStyle}">${nextAction}</button><button class="ab" onclick="window.open('post.html?id=${id}','_blank')">View</button><button class="ab del" onclick="prepDel('${id}')">Delete</button></div></td></tr>`;
+      return`<tr><td class="tc2">${title}<span>post.html?id=${id}</span><span style="font-family:inherit;font-size:.69rem;color:var(--t3);margin-top:.28rem">${statusMeta}</span></td><td><div style="display:grid;gap:.25rem"><strong style="font-size:.8rem;color:var(--t2);font-weight:600">${category}</strong><span class="mini-tag">${status==='published'?'Campaign ready':status==='draft'?'Needs finishing':'Schedule carefully'}</span></div></td><td><span class="pill ${status}">${status}</span></td><td class="vc">${(vm[id]||0).toLocaleString()}</td><td>${p.readTime||'-'}</td><td>${p.date||'-'}</td><td><div class="action-row"><button class="ab" onclick="editPost('${id}')">Edit</button><button class="ab" onclick="quickToggleStatus('${id}','${status}')" title="Toggle status" style="${actionStyle}">${nextAction}</button><button class="ab" onclick="window.open('post.html?id=${id}','_blank')">View</button><button class="ab del" onclick="prepDel('${id}')">Delete</button></div></td></tr>`;
     }).join('');
   }catch(e){
     console.warn('Posts table failed',e);
@@ -4320,15 +4376,15 @@ renderPostsTbl = async function(){
     if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:1.8rem">Posts could not load. Refresh the workspace or check Supabase connection.</td></tr>';
   }
 }
-initAnalytics = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const vm=await getAllViews(posts);const snapshot=window.ivGetAnalyticsSnapshot?await window.ivGetAnalyticsSnapshot(posts.map(p=>p.id)):null;const sorted=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0));const lead=sorted[0];const coverage=[...new Set(posts.map(p=>p.category))].length;const drafts=posts.filter(p=>p.status==='draft').length;const published=posts.filter(p=>p.status==='published').length;const views24h=snapshot?Number(snapshot.views24h||0):0;const visitors24h=snapshot?Number(snapshot.visitors24h||0):0;const sessions24h=snapshot?Number(snapshot.sessions24h||0):0;const leadTitle=document.getElementById('analyticsLeadTitle');if(leadTitle)leadTitle.textContent=lead?lead.title.split(' ').slice(0,3).join(' '):'—';const leadMeta=document.getElementById('analyticsLeadMeta');if(leadMeta)leadMeta.textContent=lead?`${(vm[lead.id]||0).toLocaleString()} total views · ${lead.category}`:'Publish more posts to unlock leaderboard signals.';const vis=document.getElementById('analyticsVisitors24h');if(vis)vis.textContent=visitors24h.toLocaleString();const visMeta=document.getElementById('analyticsVisitors24hMeta');if(visMeta)visMeta.textContent=visitors24h?`${sessions24h.toLocaleString()} tracked session${sessions24h===1?'':'s'} contributed during the last 24 hours.`:'No tracked visitors in the last 24 hours yet.';const v24=document.getElementById('analyticsViews24h');if(v24)v24.textContent=views24h.toLocaleString();const v24Meta=document.getElementById('analyticsViews24hMeta');if(v24Meta)v24Meta.textContent=views24h?'Fresh event rows are flowing into your first-party analytics layer.':'Open live posts in the browser to start generating real activity.';const cov=document.getElementById('analyticsCoverage');if(cov)cov.textContent=coverage;const covMeta=document.getElementById('analyticsCoverageMeta');if(covMeta)covMeta.textContent=coverage?`${coverage} topic area${coverage===1?'':'s'} are represented right now.`:'No category coverage yet.';const mom=document.getElementById('analyticsMomentum');if(mom)mom.textContent=views24h>24?'Rising':views24h>0?'Active':drafts?'Building':published?'Live':'Quiet';const momMeta=document.getElementById('analyticsMomentumMeta');if(momMeta)momMeta.textContent=views24h>24?'Audience activity is meaningfully above idle and the analytics layer is catching it in near real time.':views24h>0?'You have live traffic now, even if it is still early.':drafts?'You still have draft energy waiting to be turned into published reach.':published?'Published posts are carrying attention across the blog.':'The analytics layer will come alive once posts start moving.';document.getElementById('toprank').innerHTML=sorted.slice(0,8).map((p,i)=>`<div class="ri"><div class="rn">#${i+1}</div><div class="rif"><div class="rt2">${p.title}</div><div class="rc">${p.category} · ${p.status}${snapshot?` · ${Number(snapshot.perPostVisitors24h[p.id]||0).toLocaleString()} visitors in 24h`:''}</div></div><div class="rv2">👁 ${(vm[p.id]||0).toLocaleString()}</div></div>`).join('');const cm={};const total=posts.length||1;posts.forEach(p=>{cm[p.category]=(cm[p.category]||0)+1});document.getElementById('catbrk').innerHTML=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([cat,count])=>`<div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px"><span style="color:var(--t2)">${cat}</span><span style="color:var(--t3)">${count}</span></div><div style="height:5px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(count/total*100)}%;background:var(--ac);border-radius:3px;transition:width .8s"></div></div></div>`).join('');renderAnalyticsSparklines(sorted,vm,snapshot)}
+initAnalytics = async function(){const resolved=await resolvePostsSource();const posts=resolved.items;const vm=await getAllViews(posts);const snapshot=window.ivGetAnalyticsSnapshot?await window.ivGetAnalyticsSnapshot(posts.map(p=>p.id)):null;const sorted=[...posts].sort((a,b)=>(vm[b.id]||0)-(vm[a.id]||0));const lead=sorted[0];const coverage=[...new Set(posts.map(p=>p.category))].length;const drafts=posts.filter(p=>p.status==='draft').length;const published=posts.filter(p=>p.status==='published').length;const views24h=snapshot?Number(snapshot.views24h||0):0;const visitors24h=snapshot?Number(snapshot.visitors24h||0):0;const sessions24h=snapshot?Number(snapshot.sessions24h||0):0;const leadTitle=document.getElementById('analyticsLeadTitle');if(leadTitle)leadTitle.textContent=lead?lead.title.split(' ').slice(0,3).join(' '):'-';const leadMeta=document.getElementById('analyticsLeadMeta');if(leadMeta)leadMeta.textContent=lead?`${(vm[lead.id]||0).toLocaleString()} total views  -  ${lead.category}`:'Publish more posts to unlock leaderboard signals.';const vis=document.getElementById('analyticsVisitors24h');if(vis)vis.textContent=visitors24h.toLocaleString();const visMeta=document.getElementById('analyticsVisitors24hMeta');if(visMeta)visMeta.textContent=visitors24h?`${sessions24h.toLocaleString()} tracked session${sessions24h===1?'':'s'} contributed during the last 24 hours.`:'No tracked visitors in the last 24 hours yet.';const v24=document.getElementById('analyticsViews24h');if(v24)v24.textContent=views24h.toLocaleString();const v24Meta=document.getElementById('analyticsViews24hMeta');if(v24Meta)v24Meta.textContent=views24h?'Fresh event rows are flowing into your first-party analytics layer.':'Open live posts in the browser to start generating real activity.';const cov=document.getElementById('analyticsCoverage');if(cov)cov.textContent=coverage;const covMeta=document.getElementById('analyticsCoverageMeta');if(covMeta)covMeta.textContent=coverage?`${coverage} topic area${coverage===1?'':'s'} are represented right now.`:'No category coverage yet.';const mom=document.getElementById('analyticsMomentum');if(mom)mom.textContent=views24h>24?'Rising':views24h>0?'Active':drafts?'Building':published?'Live':'Quiet';const momMeta=document.getElementById('analyticsMomentumMeta');if(momMeta)momMeta.textContent=views24h>24?'Audience activity is meaningfully above idle and the analytics layer is catching it in near real time.':views24h>0?'You have live traffic now, even if it is still early.':drafts?'You still have draft energy waiting to be turned into published reach.':published?'Published posts are carrying attention across the blog.':'The analytics layer will come alive once posts start moving.';document.getElementById('toprank').innerHTML=sorted.slice(0,8).map((p,i)=>`<div class="ri"><div class="rn">#${i+1}</div><div class="rif"><div class="rt2">${p.title}</div><div class="rc">${p.category}  -  ${p.status}${snapshot?`  -  ${Number(snapshot.perPostVisitors24h[p.id]||0).toLocaleString()} visitors in 24h`:''}</div></div><div class="rv2">${(vm[p.id]||0).toLocaleString()}</div></div>`).join('');const cm={};const total=posts.length||1;posts.forEach(p=>{cm[p.category]=(cm[p.category]||0)+1});document.getElementById('catbrk').innerHTML=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([cat,count])=>`<div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px"><span style="color:var(--t2)">${cat}</span><span style="color:var(--t3)">${count}</span></div><div style="height:5px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(count/total*100)}%;background:var(--ac);border-radius:3px;transition:width .8s"></div></div></div>`).join('');renderAnalyticsSparklines(sorted,vm,snapshot)}
 loadSettings = function(){const s=_localSettings();document.getElementById('tgv').checked=!!s.showViews;document.getElementById('tgcs').checked=s.showComingSoon!==false;document.getElementById('tgrt').checked=s.showReadTime!==false;document.getElementById('tgnl').checked=s.showNewsletter!==false;applyAdminTheme(s.adminTheme||'inceptive');loadLibraryAccessSettings();loadLibraryAccessLogs();if(typeof loadSessionPricingSettings==='function')loadSessionPricingSettings();updateLockHint();refreshContentHealth()}
 changeCredentials = function(){const u=document.getElementById('nu').value.trim(),p=document.getElementById('np').value,c=document.getElementById('cp').value;if(!u||!p)return toast('Fill all fields','er');if(p!==c)return toast('Access keys do not match','er');localStorage.setItem(AUTH_K,JSON.stringify({u,p}));updateLockHint();document.getElementById('sbUn').textContent=u;['nu','np','cp'].forEach(id=>document.getElementById(id).value='');toast('Workspace access updated','ok')}
-refreshContentHealth = async function(){const box=document.getElementById('contentHealthBox');if(!box)return;box.innerHTML='<div>Checking content sources...</div>';let dbCount='—',dbState='unavailable';try{if(_useSb()){const rows=await _sbReq('posts?select=id');dbCount=Array.isArray(rows)?rows.length:'0';dbState=Array.isArray(rows)&&rows.length?'available':'empty';}else dbState='not connected';}catch(e){dbState='error'}let localCount=0;try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];localCount=Array.isArray(parsed)?parsed.length:0;}catch(e){}const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;const resolved=await resolvePostsSource();const sourceMeta=resolved.source==='database'?'Shared live content':'This browser is currently driving the workspace view';box.innerHTML=`<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div><div><strong style="color:var(--t2)">Local cache posts:</strong> ${localCount}</div><div><strong style="color:var(--t2)">Seed fallback posts:</strong> ${seedCount}</div><div><strong style="color:var(--t2)">Active render source:</strong> ${resolved.source}</div><div><strong style="color:var(--t2)">Authority note:</strong> <span style="color:var(--t3)">${sourceMeta}</span></div>`}
-refreshContentHealth = async function(){const box=document.getElementById('contentHealthBox');if(!box)return;box.innerHTML='<div>Checking content sources...</div>';let dbCount='—',dbState='unavailable';try{if(_useSb()){const rows=await _sbReq('posts?select=id');dbCount=Array.isArray(rows)?rows.length:'0';dbState=Array.isArray(rows)&&rows.length?'available':'empty';}else dbState='not connected';}catch(e){dbState=_sbState==='paused'?'paused':_sbState==='offline'?'offline':'error'}let localCount=0;try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];localCount=Array.isArray(parsed)?parsed.length:0;}catch(e){}const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;const resolved=await resolvePostsSource();const sourceMeta=resolved.source==='database'?'Shared live content':_sbIsUnavailable()?'Live database is unavailable, so this browser is driving the workspace view':'This browser is currently driving the workspace view';box.innerHTML=`<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div><div><strong style="color:var(--t2)">Local cache posts:</strong> ${localCount}</div><div><strong style="color:var(--t2)">Seed fallback posts:</strong> ${seedCount}</div><div><strong style="color:var(--t2)">Active render source:</strong> ${resolved.source}</div><div><strong style="color:var(--t2)">Authority note:</strong> <span style="color:var(--t3)">${sourceMeta}</span></div>`}
+refreshContentHealth = async function(){const box=document.getElementById('contentHealthBox');if(!box)return;box.innerHTML='<div>Checking content sources...</div>';let dbCount='-',dbState='unavailable';try{if(_useSb()){const rows=await _sbReq('posts?select=id');dbCount=Array.isArray(rows)?rows.length:'0';dbState=Array.isArray(rows)&&rows.length?'available':'empty';}else dbState='not connected';}catch(e){dbState='error'}let localCount=0;try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];localCount=Array.isArray(parsed)?parsed.length:0;}catch(e){}const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;const resolved=await resolvePostsSource();const sourceMeta=resolved.source==='database'?'Shared live content':'This browser is currently driving the workspace view';box.innerHTML=`<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div><div><strong style="color:var(--t2)">Local cache posts:</strong> ${localCount}</div><div><strong style="color:var(--t2)">Seed fallback posts:</strong> ${seedCount}</div><div><strong style="color:var(--t2)">Active render source:</strong> ${resolved.source}</div><div><strong style="color:var(--t2)">Authority note:</strong> <span style="color:var(--t3)">${sourceMeta}</span></div>`}
+refreshContentHealth = async function(){const box=document.getElementById('contentHealthBox');if(!box)return;box.innerHTML='<div>Checking content sources...</div>';let dbCount='-',dbState='unavailable';try{if(_useSb()){const rows=await _sbReq('posts?select=id');dbCount=Array.isArray(rows)?rows.length:'0';dbState=Array.isArray(rows)&&rows.length?'available':'empty';}else dbState='not connected';}catch(e){dbState=_sbState==='paused'?'paused':_sbState==='offline'?'offline':'error'}let localCount=0;try{const raw=localStorage.getItem(LOCAL_KEY);const parsed=raw?JSON.parse(raw):[];localCount=Array.isArray(parsed)?parsed.length:0;}catch(e){}const seedCount=Array.isArray(SEED_POSTS)?SEED_POSTS.length:0;const resolved=await resolvePostsSource();const sourceMeta=resolved.source==='database'?'Shared live content':_sbIsUnavailable()?'Live database is unavailable, so this browser is driving the workspace view':'This browser is currently driving the workspace view';box.innerHTML=`<div><strong style="color:var(--t2)">Database posts:</strong> ${dbCount} <span style="color:var(--t3)">(${dbState})</span></div><div><strong style="color:var(--t2)">Local cache posts:</strong> ${localCount}</div><div><strong style="color:var(--t2)">Seed fallback posts:</strong> ${seedCount}</div><div><strong style="color:var(--t2)">Active render source:</strong> ${resolved.source}</div><div><strong style="color:var(--t2)">Authority note:</strong> <span style="color:var(--t3)">${sourceMeta}</span></div>`}
 const _baseInitDashUnavailableAware=initDash;
-initDash=async function(){await _baseInitDashUnavailableAware();if(!_sbIsUnavailable())return;const liveOnly=['st2','st5','st6','st7','st8'];liveOnly.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});const map={st5s:'Supabase unavailable',st6:'—',st7s:_sbState==='paused'?'Resume project to load live reviews':'Reconnect Supabase to load live reviews'};Object.entries(map).forEach(([id,text])=>{const el=document.getElementById(id);if(el)el.textContent=text;});const subCount=document.getElementById('subCount');if(subCount)subCount.textContent='—';const pendingCount=document.getElementById('pendingCount');if(pendingCount)pendingCount.textContent='—';const cmtCount=document.getElementById('cmtCount');if(cmtCount)cmtCount.textContent='—';const pulseTitle=document.getElementById('dashPulseTitle');if(pulseTitle)pulseTitle.textContent=_sbState==='paused'?'Supabase paused':'Supabase unavailable';const pulseMeta=document.getElementById('dashPulseMeta');if(pulseMeta)pulseMeta.textContent='Live community, campaign, and analytics counters are temporarily unavailable, so the workspace is showing local content only.';}
+initDash=async function(){await _baseInitDashUnavailableAware();if(!_sbIsUnavailable())return;const liveOnly=['st2','st5','st6','st7','st8'];liveOnly.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='-';});const map={st5s:'Supabase unavailable',st6:'-',st7s:_sbState==='paused'?'Resume project to load live reviews':'Reconnect Supabase to load live reviews'};Object.entries(map).forEach(([id,text])=>{const el=document.getElementById(id);if(el)el.textContent=text;});const subCount=document.getElementById('subCount');if(subCount)subCount.textContent='-';const pendingCount=document.getElementById('pendingCount');if(pendingCount)pendingCount.textContent='-';const cmtCount=document.getElementById('cmtCount');if(cmtCount)cmtCount.textContent='-';const pulseTitle=document.getElementById('dashPulseTitle');if(pulseTitle)pulseTitle.textContent=_sbState==='paused'?'Supabase paused':'Supabase unavailable';const pulseMeta=document.getElementById('dashPulseMeta');if(pulseMeta)pulseMeta.textContent='Live community, campaign, and analytics counters are temporarily unavailable, so the workspace is showing local content only.';}
 const _baseInitAnalyticsUnavailableAware=initAnalytics;
-initAnalytics=async function(){await _baseInitAnalyticsUnavailableAware();if(!_sbIsUnavailable())return;['analyticsVisitors24h','analyticsViews24h'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});const visMeta=document.getElementById('analyticsVisitors24hMeta');if(visMeta)visMeta.textContent=_sbState==='paused'?'This Supabase project is paused, so recent visitor data cannot be queried right now.':'Supabase is currently unavailable, so recent visitor data cannot be queried right now.';const vMeta=document.getElementById('analyticsViews24hMeta');if(vMeta)vMeta.textContent='Live analytics will return once the shared database connection is healthy again.';const mom=document.getElementById('analyticsMomentum');if(mom)mom.textContent='Unavailable';const momMeta=document.getElementById('analyticsMomentumMeta');if(momMeta)momMeta.textContent='Momentum is temporarily hidden because first-party analytics data is not currently reachable.';}
+initAnalytics=async function(){await _baseInitAnalyticsUnavailableAware();if(!_sbIsUnavailable())return;['analyticsVisitors24h','analyticsViews24h'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='-';});const visMeta=document.getElementById('analyticsVisitors24hMeta');if(visMeta)visMeta.textContent=_sbState==='paused'?'This Supabase project is paused, so recent visitor data cannot be queried right now.':'Supabase is currently unavailable, so recent visitor data cannot be queried right now.';const vMeta=document.getElementById('analyticsViews24hMeta');if(vMeta)vMeta.textContent='Live analytics will return once the shared database connection is healthy again.';const mom=document.getElementById('analyticsMomentum');if(mom)mom.textContent='Unavailable';const momMeta=document.getElementById('analyticsMomentumMeta');if(momMeta)momMeta.textContent='Momentum is temporarily hidden because first-party analytics data is not currently reachable.';}
 forceResync = async function(){if(!_useSb())return toast('Supabase not connected','er');if(!confirm('This will upsert the seed content (ep1-ep4) into Supabase without deleting existing posts. Continue?'))return;toast('Resyncing posts to Supabase...','inf');const seed=getSeedPosts();let ok=0;for(const p of seed){try{await _sbUpsert('posts',{id:p.id,title:p.title,subtitle:p.subtitle||'',category:p.category,status:p.status,read_time:p.readTime||'5 min read',date:p.date,excerpt:p.excerpt||'',image:p.image||'',emoji:p.emoji||'📝',content:p.content||''});ok++;}catch(e){toast('Failed on '+p.id+': '+e.message,'er');}}toast(ok+' posts resynced to Supabase ✓','ok');initDash();renderPostsTbl();refreshContentHealth()}
 // Final admin dashboard/analytics pass. Keep this after legacy overrides.
 function avAdminEsc(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -4499,7 +4555,7 @@ const FAQ_DEFAULTS_ADMIN=[
 async function restoreFaqToSupabase(){
   if(!_useSb())return toast('Supabase not connected','er');
   if(!confirm('Restore the FAQ collection into the current Supabase project?'))return;
-  toast('Restoring FAQ…','inf');
+  toast('Restoring FAQ...','inf');
   let ok=0;
   for(const item of FAQ_DEFAULTS_ADMIN){
     try{await dbSaveFaq(item);ok++;}catch(e){console.warn('FAQ restore failed for',item&&item.id,e);}
@@ -4515,7 +4571,7 @@ async function restoreTestimonialsToSupabase(){
   const source=[...pend.map(t=>({...t,approved:false})),...appr.map(t=>({...t,approved:true}))];
   if(!source.length)return toast('No testimonial cache found in this browser','er');
   if(!confirm('Restore cached testimonials into the current Supabase project?'))return;
-  toast('Restoring testimonials…','inf');
+  toast('Restoring testimonials...','inf');
   let ok=0;
   for(const item of source){
     try{await dbSaveTestimonial(item,!!item.approved);ok++;}catch(e){console.warn('Testimonial restore failed for',item&&item.id,e);}
@@ -4847,10 +4903,10 @@ async function saveManualTestimonial(){
   const text=document.getElementById('tManualText').value.trim();
   if(!name||!text){toast('Name and testimonial text are required','er');return;}
   let avatar='';
-  const btn=document.querySelector('#addTestForm .btn.p');if(btn)btn.textContent='Saving…';
+  const btn=document.querySelector('#addTestForm .btn.p');if(btn)btn.textContent='Saving...';
   try{
     if(_tAvatarPending instanceof File){
-      if(_useSb()){document.getElementById('tAvatarUploadStatus').textContent='Uploading…';avatar=await uploadToStorage(_tAvatarPending,'avatars');}
+      if(_useSb()){document.getElementById('tAvatarUploadStatus').textContent='Uploading...';avatar=await uploadToStorage(_tAvatarPending,'avatars');}
       else{avatar=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(_tAvatarPending);});}
     }else if(typeof _tAvatarPending==='string'&&_tAvatarPending){avatar=_tAvatarPending;}
     const t={id:'tm-'+Date.now(),name,role:document.getElementById('tManualRole').value.trim(),text,avatar,submittedAt:new Date().toISOString(),source:'admin'};
@@ -4873,15 +4929,15 @@ async function loadTestimonialsPanel(){
   const pl=document.getElementById('pendingList');
   if(pl){
     if(!pend.length){pl.innerHTML='<div class="table-note"><strong>No pending submissions</strong><span>New public testimonials will land here for review before they appear on the homepage.</span></div>';}
-    else{pl.innerHTML=pend.map(t=>{const av=t.avatar?`<img src="${t.avatar}" style="width:42px;height:42px;border-radius:50%;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'">`:'<div style="width:42px;height:42px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">👤</div>';return`<div class="stack-card"><div class="stack-head"><div class="stack-title"><div style="display:flex;align-items:center;gap:.7rem">${av}<div><strong>${t.name}</strong><div class="stack-meta">${t.role||'No role provided'} · ${new Date(t.submittedAt).toLocaleDateString()}</div></div></div></div><div class="stack-actions"><button class="btn p" style="padding:.35rem .85rem;font-size:.72rem" onclick="approveTestimonial('${t.id}')">✓ Approve</button><button class="btn d" style="padding:.35rem .85rem;font-size:.72rem" onclick="rejectTestimonial('${t.id}')">✕ Reject</button></div></div><div class="stack-body">"${t.text}"</div></div>`;}).join('');}
+    else{pl.innerHTML=pend.map(t=>{const av=t.avatar?`<img src="${t.avatar}" style="width:42px;height:42px;border-radius:50%;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'">`:'<div style="width:42px;height:42px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">👤</div>';return`<div class="stack-card"><div class="stack-head"><div class="stack-title"><div style="display:flex;align-items:center;gap:.7rem">${av}<div><strong>${t.name}</strong><div class="stack-meta">${t.role||'No role provided'}  -  ${new Date(t.submittedAt).toLocaleDateString()}</div></div></div></div><div class="stack-actions"><button class="btn p" style="padding:.35rem .85rem;font-size:.72rem" onclick="approveTestimonial('${t.id}')">✓ Approve</button><button class="btn d" style="padding:.35rem .85rem;font-size:.72rem" onclick="rejectTestimonial('${t.id}')">✕ Reject</button></div></div><div class="stack-body">"${t.text}"</div></div>`;}).join('');}
   }
   const al=document.getElementById('approvedList');
   if(al){
     if(!appr.length){al.innerHTML='<div class="table-note"><strong>No approved testimonials yet</strong><span>Approve public submissions or add a manual one to start building visible proof.</span></div>';}
-    else{al.innerHTML=appr.map(t=>{const av=t.avatar?`<img src="${t.avatar}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'">`:'<div style="width:30px;height:30px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">👤</div>';return`<div style="background:var(--s);border:1px solid rgba(16,185,129,.2);border-radius:var(--rs);padding:.9rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap"><div style="display:flex;align-items:center;gap:.6rem;flex:1;min-width:0">${av}<div style="min-width:0"><span style="font-weight:700;font-size:.84rem">${t.name}</span><span style="color:var(--t3);font-size:.74rem"> · ${t.role||''}</span><p style="font-size:.8rem;color:var(--t2);margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">"${t.text.substring(0,80)}${t.text.length>80?'…':''}"</p></div></div><button class="btn d" style="padding:.28rem .65rem;font-size:.68rem;flex-shrink:0" onclick="removeApproved('${t.id}')">Remove</button></div>`;}).join('');}
+    else{al.innerHTML=appr.map(t=>{const av=t.avatar?`<img src="${t.avatar}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'">`:'<div style="width:30px;height:30px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">👤</div>';return`<div style="background:var(--s);border:1px solid rgba(16,185,129,.2);border-radius:var(--rs);padding:.9rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap"><div style="display:flex;align-items:center;gap:.6rem;flex:1;min-width:0">${av}<div style="min-width:0"><span style="font-weight:700;font-size:.84rem">${t.name}</span><span style="color:var(--t3);font-size:.74rem">  -  ${t.role||''}</span><p style="font-size:.8rem;color:var(--t2);margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">"${t.text.substring(0,80)}${t.text.length>80?'...':''}"</p></div></div><button class="btn d" style="padding:.28rem .65rem;font-size:.68rem;flex-shrink:0" onclick="removeApproved('${t.id}')">Remove</button></div>`;}).join('');}
   }
 }
-async function approveTestimonial(id){const{pend}=await dbGetTestimonials();const t=pend.find(x=>x.id===id);if(!t)return;await dbSaveTestimonial(t,true);await loadTestimonialsPanel();toast('Approved ✓ — live on homepage','ok');}
+async function approveTestimonial(id){const{pend}=await dbGetTestimonials();const t=pend.find(x=>x.id===id);if(!t)return;await dbSaveTestimonial(t,true);await loadTestimonialsPanel();toast('Approved ✓ - live on homepage','ok');}
 async function rejectTestimonial(id){await dbDeleteTestimonial(id);await loadTestimonialsPanel();toast('Rejected','ok');}
 async function removeApproved(id){await dbDeleteTestimonial(id);await loadTestimonialsPanel();toast('Removed','ok');}
 
@@ -4891,7 +4947,7 @@ const LIB_KEY = 'iv_library';
 
 const LIB_DEFAULTS = [
   {id:'lib-1',title:'5-Day Clarity Challenge',category:'guides',desc:'A structured 5-day programme with daily prompts to break through mental fog and uncover what truly matters.',emoji:'🧭',tag:'Free with signup',status:'available',url:'',image:'',embed:'',preview:'',duration:'',order:0,featured:true,free:true,notes:''},
-  {id:'lib-2',title:'The Clarity Framework',category:'guides',desc:'Our core methodology for understanding where you are, where you want to go, and what is standing in the way.',emoji:'🔑',tag:'Free',status:'available',url:'',image:'',embed:'',preview:'',duration:'',order:1,featured:false,free:true,notes:''},
+  {id:'lib-2',title:'The Clarity Framework',category:'guides',desc:'Our core methodology for understanding where you are, where you want to go, and what is standing in the way.',emoji:'',tag:'Free',status:'available',url:'',image:'',embed:'',preview:'',duration:'',order:1,featured:false,free:true,notes:''},
   {id:'lib-3',title:'Career Clarity Guide',category:'guides',desc:'For graduates navigating career decisions in Nigeria.',emoji:'💼',tag:'Coming Soon',status:'coming-soon',url:'',image:'',embed:'',preview:'',duration:'',order:2,featured:false,free:true,notes:''},
   {id:'lib-4',title:'Relationship Clarity Guide',category:'guides',desc:'Understanding your patterns, needs, and how to build connections that genuinely support your growth.',emoji:'💞',tag:'Coming Soon',status:'coming-soon',url:'',image:'',embed:'',preview:'',duration:'',order:3,featured:false,free:true,notes:''},
   {id:'lib-5',title:'Morning Clarity Meditation',category:'audio',desc:'A 10-minute guided morning practice to clear mental noise.',emoji:'🧘',tag:'Coming Soon - 10 min',status:'coming-soon',url:'',image:'',embed:'',preview:'',duration:'10 min',order:0,featured:false,free:true,notes:''},
@@ -4937,7 +4993,7 @@ async function handleLibImageUpload(e){
   const f=e.target.files[0];if(!f)return;
   _libImgFile=f;
   const st=document.getElementById('libUploadStatus');
-  if(st)st.textContent=_useSb()?'Photo selected — will upload on save':'Photo selected — will store as base64';
+  if(st)st.textContent=_useSb()?'Photo selected - will upload on save':'Photo selected - will store as base64';
   // Show local preview immediately
   const r=new FileReader();
   r.onload=ev=>{
@@ -4950,7 +5006,7 @@ function handleLibFileUpload(e){
   const f=e.target.files&&e.target.files[0];if(!f)return;
   _libAccessFile=f;
   const st=document.getElementById('libFileUploadStatus');
-  if(st)st.textContent=_useSb()?('Selected: '+f.name+' — will upload on save'):('Selected: '+f.name+' — connect Supabase to upload files');
+  if(st)st.textContent=_useSb()?('Selected: '+f.name+' - will upload on save'):('Selected: '+f.name+' - connect Supabase to upload files');
 }
 function previewLibImg(src){
   const ip=document.getElementById('libImgPreview'),img=document.getElementById('libImgEl');
@@ -4981,11 +5037,11 @@ async function renderLibTbl(){
       <td class="tc2">${CAT_ICONS[i.category]||'📄'} ${i.title}${imgBadge}${i.featured?' <span style="color:var(--yl);font-size:.65rem">★</span>':''}</td>
       <td>${CAT_NAMES[i.category]||i.category}${i.duration?'<span style="display:block;font-size:.65rem;color:var(--t3)">'+i.duration+'</span>':''}</td>
       <td><span class="pill ${sc}">${sl}</span></td>
-      <td style="font-size:.74rem;color:var(--t3)">${i.tag||'—'}</td>
-      <td style="text-align:center">${i.featured?'<span style="color:var(--yl)">★</span>':'<span style="color:var(--t3)">—</span>'}</td>
+      <td style="font-size:.74rem;color:var(--t3)">${i.tag||'-'}</td>
+      <td style="text-align:center">${i.featured?'<span style="color:var(--yl)">★</span>':'<span style="color:var(--t3)">-</span>'}</td>
       <td>
         <button class="ab" onclick="editLibItem('${i.id}')">✏️ Edit</button>
-        <button class="ab" onclick="quickToggleLibStatus('${i.id}','${i.status}')" title="${i.status==='available'?'Set Coming Soon':'Set Available'}">${i.status==='available'?'🕐':'✅'}</button>
+        <button class="ab" onclick="quickToggleLibStatus('${i.id}','${i.status}')" title="${i.status==='available'?'Set Coming Soon':'Set Available'}">${i.status==='available'?'🕐':''}</button>
         <button class="ab del" onclick="deleteLibItem('${i.id}')">🗑</button>
       </td>
     </tr>`;
@@ -5091,7 +5147,7 @@ async function saveLibItem(){
   const title=document.getElementById('libTitle').value.trim();
   if(!title){toast('Title is required','er');document.getElementById('libTitle').focus();return;}
   const btn=document.querySelector('#panel-lib-editor .btn.p');
-  if(btn){btn.textContent='Saving…';btn.disabled=true;}
+  if(btn){btn.textContent='Saving...';btn.disabled=true;}
   try{
     let image=document.getElementById('libImage').value.trim();
     let accessUrl=document.getElementById('libUrl').value.trim();
@@ -5099,7 +5155,7 @@ async function saveLibItem(){
     if(_libImgFile instanceof File){
       const st=document.getElementById('libUploadStatus');
       if(_useSb()){
-        if(st)st.textContent='Uploading image…';
+        if(st)st.textContent='Uploading image...';
         image=await uploadToStorage(_libImgFile,'library');
         if(st)st.textContent='✓ Uploaded';
       } else {
@@ -5152,7 +5208,7 @@ async function quickToggleLibStatus(id,current){
   const items=await dbGetLibrary();
   const item=items.find(i=>i.id===id);if(!item)return;
   item.status=next;
-  try{await dbSaveLibItem(item);toast((next==='available'?'✅ Available':'🕐 Coming Soon')+' — '+item.title.substring(0,25),'ok');renderLibTbl();}
+  try{await dbSaveLibItem(item);toast((next==='available'?'Available':'🕐 Coming Soon')+' - '+item.title.substring(0,25),'ok');renderLibTbl();}
   catch(e){toast('Failed: '+e.message,'er');}
 }
 
@@ -5165,7 +5221,7 @@ async function quickToggleStatus(id, currentStatus) {
   post.status = next;
   try {
     await dbSavePost(post);
-    toast((next==='published'?'✅ Published':'🕐 Set to Coming Soon') + ' — ' + post.title.substring(0,30), 'ok');
+    toast((next==='published'?'Published':'🕐 Set to Coming Soon') + ' - ' + post.title.substring(0,30), 'ok');
     renderPostsTbl();
     upPostCount();
   } catch(e) { toast('Failed: ' + e.message, 'er'); }
@@ -5183,11 +5239,11 @@ async function loadCommentsPanel() {
     noteForUnavailable('commentsSourceNote','Comments');
     const totalOps = document.getElementById('cmtOpsTotal'); if (totalOps) totalOps.textContent = '0';
     const postOps = document.getElementById('cmtOpsPosts'); if (postOps) postOps.textContent = '0';
-    const latestOps = document.getElementById('cmtOpsLatest'); if (latestOps) latestOps.textContent = '—';
+    const latestOps = document.getElementById('cmtOpsLatest'); if (latestOps) latestOps.textContent = '-';
     list.innerHTML = '<div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Connect Supabase to manage comments</div>';
     return;
   }
-  list.innerHTML = '<div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Loading…</div>';
+  list.innerHTML = '<div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Loading...</div>';
   try {
     // Load comments joined with post titles
     const cmts = await _sbReq('comments?select=*&order=ts.desc');
@@ -5196,7 +5252,7 @@ async function loadCommentsPanel() {
     (posts || []).forEach(p => postMap[p.id] = p.title);
     const total = (cmts || []).length;
     const postCount = new Set((cmts || []).map(c => c.post_id)).size;
-    const latest = cmts && cmts[0] ? new Date(cmts[0].ts).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
+    const latest = cmts && cmts[0] ? new Date(cmts[0].ts).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '-';
     const totalOps = document.getElementById('cmtOpsTotal'); if (totalOps) totalOps.textContent = total;
     const postOps = document.getElementById('cmtOpsPosts'); if (postOps) postOps.textContent = postCount;
     const latestOps = document.getElementById('cmtOpsLatest'); if (latestOps) latestOps.textContent = latest;
@@ -5214,7 +5270,7 @@ async function loadCommentsPanel() {
         <div class="stack-head">
           <div class="stack-title">
             <strong>${cmt.name}</strong>
-            <div class="stack-meta">${cmt.email ? cmt.email + ' · ' : ''}${dt}</div>
+            <div class="stack-meta">${cmt.email ? cmt.email + '  -  ' : ''}${dt}</div>
             <div class="stack-meta">On <a href="${brandedPostPath(cmt.post_id)}" target="_blank" style="color:var(--ac);text-decoration:none">${postTitle}</a></div>
           </div>
           <div class="stack-actions"><span class="mini-tag">${cmt.email ? 'Known email' : 'No email'}</span><button class="btn d" style="padding:.3rem .7rem;font-size:.7rem;flex-shrink:0" onclick="deleteComment('${cmt.id}')">🗑 Delete</button></div>
@@ -5290,7 +5346,7 @@ async function loadSubscribersPanel() {
     tbl.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Connect Supabase to manage subscribers</td></tr>';
     return;
   }
-  tbl.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:1.5rem">Loading…</td></tr>';
+  tbl.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:1.5rem">Loading...</td></tr>';
   try {
     const rows = await _sbReq('subscribers?select=*&order=subscribed_at.desc') || [];
     _allSubs = rows;
@@ -5312,9 +5368,9 @@ async function loadSubscribersPanel() {
       const tags = (s.tags || '').split(',').map(v => v.trim()).filter(Boolean).slice(0,3);
       return `<tr>
         <td class="tc2">${s.email}<span>${srcLabel} subscriber</span></td>
-        <td>${s.name || '—'}</td>
+        <td>${s.name || '-'}</td>
         <td><span style="font-size:.7rem;font-weight:700;color:${srcColor}">${srcLabel}</span></td>
-        <td style="font-size:.74rem;color:var(--t3)">${tags.length ? tags.map(tag => `<span class="mini-tag" style="margin-right:.3rem">${tag}</span>`).join('') : '—'}</td>
+        <td style="font-size:.74rem;color:var(--t3)">${tags.length ? tags.map(tag => `<span class="mini-tag" style="margin-right:.3rem">${tag}</span>`).join('') : '-'}</td>
         <td style="font-size:.74rem;color:var(--t3)">${dt}</td>
         <td><div class="action-row">
           <button class="ab" onclick="editSubTags('${s.id}','${(s.tags||'').replace(/'/g,'\\\'')}')">🏷 Tags</button>
@@ -5509,7 +5565,7 @@ async function loadCampaignsPanel() {
       const dt = new Date(c.created_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
       const pillClass = c.status === 'sent' ? 'published' : c.status === 'draft' ? 'draft' : c.status === 'archived' ? 'draft' : 'coming-soon';
       const m = metrics[c.id] || { sent: 0, failed: 0, pending: 0 };
-      const results = `${m.sent} sent${m.failed ? ' · ' + m.failed + ' failed' : ''}${m.pending ? ' · ' + m.pending + ' pending' : ''}`;
+      const results = `${m.sent} sent${m.failed ? '  -  ' + m.failed + ' failed' : ''}${m.pending ? '  -  ' + m.pending + ' pending' : ''}`;
       const isDraft = c.status === 'draft';
       const isArchived = c.status === 'archived';
       const actionBtn = isDraft
@@ -5519,7 +5575,7 @@ async function loadCampaignsPanel() {
           : `<button class="ab" onclick="previewCampaign('${c.id}')">Preview</button><button class="ab" onclick="duplicateCampaign('${c.id}')">Duplicate</button><button class="ab" onclick="archiveCampaign('${c.id}')">Archive</button><button class="ab" onclick="viewCampaignPost('${c.post_id||''}')">View Post</button>`;
       return `<tr>
         <td class="tc2">${c.subject}</td>
-        <td>${c.post_id || '—'}</td>
+        <td>${c.post_id || '-'}</td>
         <td><span class="pill ${pillClass}">${c.status}</span></td>
         <td style="font-size:.74rem;color:var(--t3)">${results}</td>
         <td>${c.audience_filter || 'all'}</td>
@@ -5657,7 +5713,7 @@ async function previewCampaign(campaignId) {
           <div style="font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:#f8b4bc">Atanda Verse</div>
           <div style="font-size:15px;line-height:1.75;color:rgba(255,255,255,.78);margin-top:12px;max-width:520px">${headerTeaser}</div>
         </div>
-      ${image ? `<div style="background:#ffffff;padding:24px 24px 0"><img src="${image}" alt="${title}" style="display:block;width:100%;height:auto;max-height:280px;object-fit:cover;border-radius:18px"></div>` : ''}
+      ${image ? `<div style="background:#ffffff;padding:24px 24px 0"><img src="${image}" alt="${title}" style="display:block;width:100%;height:auto;max-height:280px;object-fit:contain;border-radius:18px"></div>` : ''}
       <div style="padding:28px;background:#ffffff;color:#172033">
         <div style="font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:#c7374a;font-weight:700;margin-bottom:12px">${kicker}</div>
         <div style="font-size:28px;font-weight:800;line-height:1.18;margin-bottom:14px">${title}</div>
@@ -5681,7 +5737,7 @@ async function sendCampaign(campaignId) {
     if (!current) throw new Error('Campaign not found');
     const extras = _getCampaignExtras(campaignId);
     await _sbUpsert('newsletter_campaigns', { ...current, status: 'queued' });
-    setCampaignFeedback('Campaign queued. Triggering sender and watching for delivery updates…', 'info');
+    setCampaignFeedback('Campaign queued. Triggering sender and watching for delivery updates...', 'info');
     toast('Campaign queued. Triggering sender...', 'inf');
     const result = await invokeNewsletterSend(campaignId, extras);
     setCampaignFeedback(`Send request completed. ${result?.sent || 0} email(s) sent.`, 'success');
@@ -5722,6 +5778,198 @@ function _downloadBlob(blob, filename) {
 // ── ADMIN LOGINS PANEL ────────────────────────────────────────────────────
 
 // ── FAQ ADMIN ─────────────────────────────────────────────────────────────
+// EVENTS & CAMPAIGNS ADMIN
+const EVENTS_LOCAL_KEY='iv_events_campaigns_admin';
+const EVENTS_PUBLIC_CACHE_KEY='iv_events_campaigns';
+let _eventsCache=[];
+function eventEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function localEvents(){try{const rows=JSON.parse(localStorage.getItem(EVENTS_LOCAL_KEY)||'[]');if(Array.isArray(rows)&&rows.length)return rows;}catch{}return (window.ivDefaultEventsCampaigns||[]).map(x=>Object.assign({},x));}
+function persistLocalEvents(rows){localStorage.setItem(EVENTS_LOCAL_KEY,JSON.stringify(rows||[]));}
+function syncPublicEventsCache(rows){
+  try{
+    const publicRows=(rows||[]).filter(x=>!x._localOnly).map(normalizeEventAdmin).filter(x=>x.status==='published');
+    localStorage.setItem(EVENTS_PUBLIC_CACHE_KEY,JSON.stringify(publicRows));
+  }catch(e){console.warn('Public events cache sync failed',e);}
+}
+function normalizeEventAdmin(row){
+  const fallback=window.ivNormalizeEventCampaign?window.ivNormalizeEventCampaign(row):Object.assign({},row);
+  fallback.slug=fallback.slug||String(fallback.title||'event').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  fallback.funnel_url=fallback.funnel_url||('event-register.html?event='+fallback.slug);
+  fallback.cta_url=fallback.cta_url||fallback.funnel_url;
+  fallback.image_url=fallback.image_url||'social-preview.png';
+  fallback.status=fallback.status||'draft';
+  fallback.kind=fallback.kind||'event';
+  fallback.sort_order=Number(fallback.sort_order||50);
+  return fallback;
+}
+function eventDateToInput(v){if(!v)return'';const d=new Date(v);if(isNaN(d))return'';const pad=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;}
+function eventInputToIso(id){const v=document.getElementById(id)?.value;if(!v)return null;const d=new Date(v);return isNaN(d)?null:d.toISOString();}
+function eventComparable(row){
+  const item=normalizeEventAdmin(row);
+  return JSON.stringify(['title','slug','kind','status','eyebrow','summary','details','image_url','location','event_date','end_date','has_countdown','countdown_label','cta_label','cta_url','funnel_url','featured','sort_order'].map(key=>item[key]??null));
+}
+function setEventsSource(text,kind='local'){const note=document.getElementById('eventsSourceNote');if(!note)return;note.dataset.kind=kind;note.innerHTML=`<strong><span class="source-dot"></span>${kind==='database'?'Live Supabase':'Local Draft'}</strong><span>${eventEsc(text)}</span>`;}
+async function getEventsAdmin(){
+  if(_useSb()){
+    try{
+      const localBefore=localEvents().map(normalizeEventAdmin);
+      const rows=await _sbReq('events_campaigns?select=*&order=sort_order.asc,created_at.desc');
+      const databaseRows=(rows||[]).map(normalizeEventAdmin);
+      const localChanges=[];
+      localBefore.forEach(localItem=>{
+        const liveItem=databaseRows.find(dbItem=>String(dbItem.id)===String(localItem.id)||String(dbItem.slug)===String(localItem.slug));
+        if(!liveItem||eventComparable(localItem)!==eventComparable(liveItem))localChanges.push(Object.assign({},localItem,{_localOnly:true}));
+      });
+      const changedKeys=new Set(localChanges.flatMap(item=>[String(item.id),String(item.slug)]));
+      _eventsCache=databaseRows.filter(item=>!changedKeys.has(String(item.id))&&!changedKeys.has(String(item.slug))).concat(localChanges);
+      persistLocalEvents(_eventsCache);
+      syncPublicEventsCache(_eventsCache);
+      setEventsSource(localChanges.length
+        ?`Loaded from Supabase. ${localChanges.length} unsynced local item${localChanges.length===1?' is':'s are'} preserved; open it and Save to publish the pending changes.`
+        :'Loaded from Supabase events_campaigns. Event images are stored as URLs in this table.','database');
+      return _eventsCache;
+    }catch(e){
+      console.warn('Events table unavailable',e);
+      setEventsSource('Events table is not live yet. Apply supabase/migrations/202607080001_create_events_campaigns.sql, then refresh. Editing local fallback for now.','fallback');
+    }
+  }else{
+    setEventsSource('Supabase is not connected in this browser. Editing local fallback only.','local');
+  }
+  _eventsCache=localEvents().map(normalizeEventAdmin);
+  syncPublicEventsCache(_eventsCache);
+  return _eventsCache;
+}
+function resetEventForm(){
+  ['evId','evTitle','evSlug','evEyebrow','evLocation','evEventDate','evEndDate','evCountdownLabel','evCtaLabel','evCtaUrl','evFunnelUrl','evSummary','evDetails','evImageUrl'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('evKind').value='event';
+  document.getElementById('evStatus').value='draft';
+  document.getElementById('evSort').value='50';
+  document.getElementById('evHasCountdown').checked=false;
+  document.getElementById('evFeatured').checked=false;
+  const file=document.getElementById('evImageFile');if(file)file.value='';
+  document.getElementById('eventsSaveStatus').textContent='New event draft.';
+}
+function fillEventForm(id){
+  const item=_eventsCache.find(x=>String(x.id)===String(id));
+  if(!item)return;
+  document.getElementById('evId').value=item.id||'';
+  document.getElementById('evTitle').value=item.title||'';
+  document.getElementById('evSlug').value=item.slug||'';
+  document.getElementById('evKind').value=item.kind||'event';
+  document.getElementById('evStatus').value=item.status||'draft';
+  document.getElementById('evEyebrow').value=item.eyebrow||'';
+  document.getElementById('evLocation').value=item.location||'';
+  document.getElementById('evEventDate').value=eventDateToInput(item.event_date);
+  document.getElementById('evEndDate').value=eventDateToInput(item.end_date);
+  document.getElementById('evCountdownLabel').value=item.countdown_label||'';
+  document.getElementById('evCtaLabel').value=item.cta_label||'';
+  document.getElementById('evCtaUrl').value=item.cta_url||'';
+  document.getElementById('evFunnelUrl').value=item.funnel_url||'';
+  document.getElementById('evSummary').value=item.summary||'';
+  document.getElementById('evDetails').value=item.details||'';
+  document.getElementById('evImageUrl').value=item.image_url||'';
+  document.getElementById('evSort').value=item.sort_order||50;
+  document.getElementById('evHasCountdown').checked=!!item.has_countdown;
+  document.getElementById('evFeatured').checked=!!item.featured;
+  document.getElementById('eventsSaveStatus').textContent='Editing '+(item.title||item.slug);
+}
+function collectEventForm(){
+  const title=document.getElementById('evTitle').value.trim();
+  const slug=(document.getElementById('evSlug').value.trim()||title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''));
+  return normalizeEventAdmin({
+    id:document.getElementById('evId').value.trim()||slug||('event-'+Date.now()),
+    title,slug,
+    kind:document.getElementById('evKind').value,
+    status:document.getElementById('evStatus').value,
+    eyebrow:document.getElementById('evEyebrow').value.trim(),
+    summary:document.getElementById('evSummary').value.trim(),
+    details:document.getElementById('evDetails').value.trim(),
+    image_url:document.getElementById('evImageUrl').value.trim()||'social-preview.png',
+    location:document.getElementById('evLocation').value.trim()||'Online',
+    event_date:eventInputToIso('evEventDate'),
+    end_date:eventInputToIso('evEndDate'),
+    has_countdown:document.getElementById('evHasCountdown').checked,
+    countdown_label:document.getElementById('evCountdownLabel').value.trim(),
+    cta_label:document.getElementById('evCtaLabel').value.trim()||'Reserve Spot',
+    cta_url:document.getElementById('evCtaUrl').value.trim(),
+    funnel_url:document.getElementById('evFunnelUrl').value.trim(),
+    featured:document.getElementById('evFeatured').checked,
+    sort_order:Number(document.getElementById('evSort').value||50)
+  });
+}
+async function saveEventCampaign(){
+  let item=collectEventForm();
+  if(!item.title){toast('Event title is required','err');return;}
+  const file=document.getElementById('evImageFile')?.files?.[0];
+  const status=document.getElementById('eventsSaveStatus');
+  try{
+    if(file){status.textContent='Uploading event image...';item.image_url=await uploadToStorage(file,'events');document.getElementById('evImageUrl').value=item.image_url;}
+    if(_useSb()){
+      status.textContent='Saving to live database...';
+      if(item.featured){try{await _sbReq('events_campaigns?featured=eq.true','PATCH',{featured:false});}catch(e){console.warn('Feature reset failed',e);}}
+      await _sbUpsert('events_campaigns',item);
+      const confirmed=await _sbReq('events_campaigns?select=*&id=eq.'+encodeURIComponent(item.id));
+      if(!Array.isArray(confirmed)||!confirmed[0])throw new Error('Supabase did not return the saved event during verification.');
+      item=normalizeEventAdmin(confirmed[0]);
+      try{
+        const liveRows=await _sbReq('events_campaigns?select=*&order=sort_order.asc,created_at.desc');
+        _eventsCache=(liveRows||[]).map(normalizeEventAdmin);
+      }catch(refreshError){
+        console.warn('Event saved but full list refresh failed',refreshError);
+        _eventsCache=_eventsCache.filter(x=>String(x.id)!==String(item.id)&&String(x.slug)!==String(item.slug));
+        _eventsCache.push(item);
+      }
+      persistLocalEvents(_eventsCache);
+      syncPublicEventsCache(_eventsCache);
+      setEventsSource('Saved and verified in Supabase events_campaigns.','database');
+    }else{
+      let rows=localEvents().filter(x=>String(x.id)!==String(item.id)&&String(x.slug)!==String(item.slug));
+      if(item.featured)rows=rows.map(x=>Object.assign({},x,{featured:false}));
+      rows.push(item);persistLocalEvents(rows);
+      syncPublicEventsCache(rows);
+      setEventsSource('Saved only in this browser because Supabase is not configured.','local');
+    }
+    toast(item.status==='published'?'Event published and verified':'Event draft saved and verified','ok');
+    await loadEventsPanel();
+    fillEventForm(item.id);
+    status.textContent=item.status==='published'
+      ?'Live save verified. This event is published and available to the site.'
+      :'Save verified. This event is still a draft and will not appear publicly until its status is Published.';
+  }catch(e){
+    console.error(e);
+    toast('Event save failed','err');
+    status.textContent='Live save failed. Nothing was published: '+(e.message||e);
+  }
+}
+async function deleteEventCampaign(){
+  const id=document.getElementById('evId').value.trim();
+  if(!id)return toast('Select an event first','err');
+  if(!confirm('Delete this event or campaign?'))return;
+  try{
+    if(_useSb())await _sbReq('events_campaigns?id=eq.'+encodeURIComponent(id),'DELETE');
+    const remaining=localEvents().filter(x=>String(x.id)!==String(id));
+    persistLocalEvents(remaining);
+    syncPublicEventsCache(remaining);
+    resetEventForm();await loadEventsPanel();toast('Event deleted','ok');
+  }catch(e){console.error(e);toast('Delete failed','err');}
+}
+async function loadEventRegistrations(){
+  const host=document.getElementById('eventRegsTbl');if(!host)return;
+  if(!_useSb()||_sbIsUnavailable()){host.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--t3);padding:1.2rem">Connect Supabase and apply the Events migration to see event funnel registrations.</td></tr>';return;}
+  try{
+    const rows=await _sbReq('event_registrations?select=*&order=registered_at.desc&limit=50');
+    host.innerHTML=(rows||[]).length?rows.map(r=>`<tr><td><strong>${eventEsc(r.full_name)}</strong></td><td>${eventEsc(r.event_slug||r.event_id)}</td><td>${eventEsc(r.email)}<br><span style="color:var(--t3)">${eventEsc(r.phone)}</span></td><td>${eventEsc([r.city,r.country].filter(Boolean).join(', '))}</td><td>${eventEsc(r.registered_at?new Date(r.registered_at).toLocaleString():'')}</td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--t3);padding:1.2rem">No event registrations yet.</td></tr>';
+  }catch(e){host.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--ac);padding:1.2rem">Could not load registrations. Apply the Events migration if the table is missing.</td></tr>';}
+}
+async function loadEventsPanel(){
+  const rows=await getEventsAdmin();
+  const tbody=document.getElementById('eventsTbl');if(!tbody)return;
+  document.getElementById('eventsTotalLbl').textContent=rows.length;
+  tbody.innerHTML=rows.length?rows.map(item=>`<tr><td class="tc2">${eventEsc(item.title)}<span>${eventEsc(item.slug)}${item._localOnly?' - Local only':''}</span></td><td><span class="pill">${eventEsc(item.kind)}</span></td><td><span class="pill ${eventEsc(item.status)}">${eventEsc(item.status)}</span>${item._localOnly?'<br><span style="font-size:.66rem;color:var(--ac)">Needs live save</span>':''}</td><td>${item.has_countdown?eventEsc(item.end_date?new Date(item.end_date).toLocaleString():'Enabled, no date'):'Off'}</td><td>${item.featured?'Yes':'No'}</td><td><button class="ab" onclick="fillEventForm('${eventEsc(item.id)}')">Edit</button><button class="ab" onclick="window.open('${eventEsc(item.funnel_url||('event-register.html?event='+item.slug))}','_blank')">Funnel</button></td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No events or campaigns yet.</td></tr>';
+  await loadEventRegistrations();
+}
+Object.assign(window,{loadEventsPanel,resetEventForm,fillEventForm,saveEventCampaign,deleteEventCampaign});
+
 // ABOUT PAGE ADMIN
 const ABOUT_DEFAULT_CONTENT={
   heroEyebrow:'About Atanda Verse',
@@ -5762,6 +6010,14 @@ const ABOUT_DEFAULT_CONTENT={
   valueTwoText:'The work respects Nigerian pressure, family systems, money, faith, and ambition.',
   valueThreeTitle:'Actionable clarity',
   valueThreeText:'Insight should become a decision, habit, conversation, or next step.',
+  founderEyebrow:'Founded by',
+  founderTitle:'A human voice behind the clarity work.',
+  founderBio:'Atanda Verse is led by a founder building reflective tools, guided conversations, and practical resources for people who need language for the questions they carry.',
+  founderImage:'founder-placeholder.png',
+  founderEmailLabel:'Email',
+  founderEmailUrl:'mailto:support@atanda.site',
+  founderSocialLabel:'Social',
+  founderSocialUrl:'https://verse.atanda.site',
   ctaTitle:'Start where the question feels loudest.',
   ctaText:'Read an essay, compare session paths, or register when you are ready to turn the fog into a conversation.',
   ctaPrimaryLabel:'Register',
@@ -5777,6 +6033,7 @@ const ABOUT_FIELD_GROUPS=[
   {title:'Purpose',fields:[['purposeEyebrow','Eyebrow'],['purposeTitle','Section title','long'],['quoteText','Quote panel','area'],['purposeParagraphOne','Paragraph 1','area'],['purposeParagraphTwo','Paragraph 2','area']]},
   {title:'Paths',fields:[['pathsEyebrow','Eyebrow'],['pathsTitle','Section title'],['pathOneTag','Card 1 tag'],['pathOneTitle','Card 1 title'],['pathOneText','Card 1 text','area'],['pathTwoTag','Card 2 tag'],['pathTwoTitle','Card 2 title'],['pathTwoText','Card 2 text','area'],['pathThreeTag','Card 3 tag'],['pathThreeTitle','Card 3 title'],['pathThreeText','Card 3 text','area']]},
   {title:'Values',fields:[['valueOneTitle','Value 1 title'],['valueOneText','Value 1 text','area'],['valueTwoTitle','Value 2 title'],['valueTwoText','Value 2 text','area'],['valueThreeTitle','Value 3 title'],['valueThreeText','Value 3 text','area']]},
+  {title:'Founder',fields:[['founderEyebrow','Eyebrow'],['founderTitle','Founder title','long'],['founderBio','Short biography','area'],['founderImage','Founder image URL'],['founderEmailLabel','Email label'],['founderEmailUrl','Email URL'],['founderSocialLabel','Social label'],['founderSocialUrl','Social URL']]},
   {title:'CTA and SEO',fields:[['ctaTitle','CTA title','long'],['ctaText','CTA text','area'],['ctaPrimaryLabel','Primary CTA label'],['ctaSecondaryLabel','Secondary CTA label'],['ctaTertiaryLabel','Third CTA label'],['metaDescription','Meta description','area'],['ogDescription','Share description','area']]}
 ];
 function aboutEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -5865,7 +6122,7 @@ async function loadFaqPanel(){
   else noteForLocal('faqSourceNote','FAQ items',items.length);
   const cnt=document.getElementById('faqCount');if(cnt)cnt.textContent=items.length;
   const tb=document.getElementById('faqTbl');if(!tb)return;
-  if(!items.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--t3);padding:2rem">No FAQ items yet — click + Add Question</td></tr>';return;}
+  if(!items.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--t3);padding:2rem">No FAQ items yet - click + Add Question</td></tr>';return;}
   tb.innerHTML=items.map(i=>`<tr>
     <td class="tc2" style="max-width:320px">${avAdminEsc(i.question)}</td>
     <td style="font-size:.78rem;color:var(--t2)">${avAdminEsc(FAQ_CATS[i.category]||i.category)}</td>
@@ -5907,7 +6164,7 @@ async function saveFaqItem(){
   if(!q||!a)return toast('Question and answer are required','er');
   const id=document.getElementById('faqEid').value||'faq-'+Date.now();
   const item={id,question:q,answer:a,category:document.getElementById('faqCat').value,order:parseInt(document.getElementById('faqOrder').value)||0};
-  const btn=document.querySelector('#faqForm .btn.p');if(btn)btn.textContent='Saving…';
+  const btn=document.querySelector('#faqForm .btn.p');if(btn)btn.textContent='Saving...';
   try{
     const source=await dbSaveFaq(item);
     hideFaqForm();
@@ -5933,11 +6190,11 @@ async function loadLoginsPanel(){
     list.innerHTML = '<div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Connect Supabase to see login history</div>';
     return;
   }
-  list.innerHTML = '<div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Loading…</div>';
+  list.innerHTML = '<div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">Loading...</div>';
   try {
     const rows = await _sbReq('admin_logins?select=*&order=logged_in_at.desc&limit=100') || [];
     if (!rows.length) {
-      list.innerHTML = '<div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">No login history yet — it starts recording from your next login</div>';
+      list.innerHTML = '<div style="color:var(--t3);font-size:.84rem;padding:2rem;text-align:center">No login history yet - it starts recording from your next login</div>';
       return;
     }
     list.innerHTML = rows.map(r => {
@@ -5953,7 +6210,7 @@ async function loadLoginsPanel(){
       return `<div style="background:var(--bg2);border:1px solid var(--b);border-radius:var(--rs);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
         <div>
           <span style="font-weight:700;font-size:.86rem">${r.username}</span>
-          <span style="color:var(--t3);font-size:.74rem;margin-left:.5rem">${browser} · ${isMobile ? '📱 Mobile' : '🖥️ Desktop'}</span>
+          <span style="color:var(--t3);font-size:.74rem;margin-left:.5rem">${browser}  -  ${isMobile ? '📱 Mobile' : '🖥️ Desktop'}</span>
         </div>
         <span style="font-size:.74rem;color:var(--t3)">${dt}</span>
       </div>`;
@@ -5992,7 +6249,7 @@ async function loadRegistrationsPanel() {
     tbl.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--t3);padding:2rem">Connect Supabase to view registrations</td></tr>';
     return;
   }
-  tbl.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--t3);padding:1.5rem">Loading…</td></tr>';
+  tbl.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--t3);padding:1.5rem">Loading...</td></tr>';
   try {
     const rows = await _sbReq('registrations?select=*&order=registered_at.desc') || [];
     _allRegs = rows;
@@ -6030,7 +6287,7 @@ async function loadRegistrationsPanel() {
     const srcLabels = {'index':'Homepage','register':'Register Page','sessions':'Sessions Page'};
     tbl.innerHTML = filtered.map(r => {
       const dt = new Date(r.registered_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-      const goals = (r.goals || '').slice(0,60) + ((r.goals||'').length>60?'…':'');
+      const goals = (r.goals || '').slice(0,60) + ((r.goals||'').length>60?'...':'');
       return `<tr>
         <td class="tc2">${clean(r.full_name)}<span>${clean(srcLabels[sourceKey(r.source)]||r.source)}</span></td>
         <td style="font-size:.8rem">${clean(r.email)}</td>
@@ -6116,7 +6373,7 @@ async function loadVaultRequests(){
     setSourceNote('vaultSourceNote','database','Supabase DB',`Vault requests loaded: ${rows.length}. Credentials, warnings, restrictions, and approval status are database-backed.`);
     if(!rows.length){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No vault requests yet</td></tr>';loadVaultMaterials();return}
     tbl.innerHTML=rows.map(r=>{
-      const dt=r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
+      const dt=r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'-';
       const reason=String(r.reason||'').slice(0,90)+(String(r.reason||'').length>90?'...':'');
       const pill=r.status==='approved'?'published':r.status==='rejected'||r.status==='restricted'?'draft':'coming-soon';
       const creds=r.status==='approved'?`<span>${vaultClean(r.vault_username||'')}</span>`:'<span>Awaiting decision</span>';
@@ -6335,7 +6592,7 @@ async function dbSavePost(post){
   if(idx>=0)local[idx]=post;else local.unshift(post);
   localStorage.setItem(LOCAL_KEY,JSON.stringify(local));
   if(_useSb()){
-    await _sbUpsert('posts',{id:post.id,title:post.title,subtitle:post.subtitle||'',category:post.category,status:post.status,read_time:post.readTime||'5 min read',date:post.date,excerpt:post.excerpt||'',image:post.image||'',emoji:post.emoji||'ðŸ“',content:post.content||''});
+    await _sbUpsert('posts',{id:post.id,title:post.title,subtitle:post.subtitle||'',category:post.category,status:post.status,read_time:post.readTime||'5 min read',date:post.date,excerpt:post.excerpt||'',image:post.image||'',emoji:post.emoji||'',content:post.content||''});
   }
 }
 
@@ -6405,23 +6662,23 @@ async function testAndSaveLegacyPreDefaults(){
   const res=document.getElementById('testRes');
   res.style.display='block';
   res.className='test-res';
-  res.textContent='â³ Testingâ€¦';
-  if(!url||!key){res.className='test-res err';res.textContent='âœ• Both fields are required';return}
-  if(!_validSbUrl(url)){res.className='test-res err';res.textContent='âœ• URL should look like https://your-project.supabase.co';return}
+  res.textContent='Testing...';
+  if(!url||!key){res.className='test-res err';res.textContent='Both fields are required';return}
+  if(!_validSbUrl(url)){res.className='test-res err';res.textContent='URL should look like https://your-project.supabase.co';return}
   try{
     const r=await fetch(url+'/rest/v1/posts?limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+key}});
-    if(!r.ok)throw new Error('HTTP '+r.status+' â€” check your credentials');
+    if(!r.ok)throw new Error('HTTP '+r.status+' - check your credentials');
     localStorage.setItem(SB_URL_KEY,url);
     localStorage.setItem(SB_KEY_KEY,key);
     _setSbState('live');
     res.className='test-res ok';
-    res.textContent='âœ… Connected! Supabase is ready.';
+    res.textContent='Connected. Supabase is ready.';
     setTimeout(()=>document.getElementById('setupScreen').classList.add('gone'),1200);
     upDbBadge();
   }catch(e){
     _setSbState('offline',e&&e.message?e.message:'Failed to reach Supabase');
     res.className='test-res err';
-    res.textContent='âœ• '+e.message;
+    res.textContent=e.message;
   }
 }
 
@@ -6436,19 +6693,19 @@ function upDbBadge(){
       return;
     }
     if(_sbState==='offline'){
-      if(badge)badge.innerHTML='<div class="db-badge loc">ðŸ”´ Offline</div>';
+      if(badge)badge.innerHTML='<div class="db-badge loc">Offline</div>';
       if(lbl)lbl.textContent='Supabase Offline';
-      if(blk)blk.innerHTML='ðŸ”´ Saved Supabase config is failing<br><span style="font-family:\'JetBrains Mono\',monospace;font-size:.69rem;color:var(--t3);word-break:break-all">'+_sbUrl()+'</span><br><span style="font-size:.69rem;color:var(--t3)">'+(_sbStateMsg||'Reconnect in Settings to restore sync')+'</span>';
+      if(blk)blk.innerHTML='Saved Supabase config is failing<br><span style="font-family:\'JetBrains Mono\',monospace;font-size:.69rem;color:var(--t3);word-break:break-all">'+_sbUrl()+'</span><br><span style="font-size:.69rem;color:var(--t3)">'+(_sbStateMsg||'Reconnect in Settings to restore sync')+'</span>';
       return;
     }
-    if(badge)badge.innerHTML='<div class="db-badge sb">ðŸŸ¢ Supabase</div>';
+    if(badge)badge.innerHTML='<div class="db-badge sb">Supabase</div>';
     if(lbl)lbl.textContent='Supabase';
-    if(blk)blk.innerHTML='ðŸŸ¢ Connected to Supabase<br><span style="font-family:\'JetBrains Mono\',monospace;font-size:.69rem;color:var(--t3);word-break:break-all">'+_sbUrl()+'</span><br><span style="font-size:.69rem;color:var(--t3)">Project: <strong style="color:var(--t2)">'+project+'</strong></span>';
+    if(blk)blk.innerHTML='Connected to Supabase<br><span style="font-family:\'JetBrains Mono\',monospace;font-size:.69rem;color:var(--t3);word-break:break-all">'+_sbUrl()+'</span><br><span style="font-size:.69rem;color:var(--t3)">Project: <strong style="color:var(--t2)">'+project+'</strong></span>';
     return;
   }
-  if(badge)badge.innerHTML='<div class="db-badge loc">ðŸŸ¡ Local</div>';
+  if(badge)badge.innerHTML='<div class="db-badge loc">Local</div>';
   if(lbl)lbl.textContent='Local';
-  if(blk)blk.textContent='ðŸŸ¡ localStorage only â€” configure Supabase for multi-device sync';
+  if(blk)blk.textContent='localStorage only - configure Supabase for multi-device sync';
 }
 
 function openSupabaseSetup(){
@@ -6546,7 +6803,7 @@ dbGetPosts=async function(){
     const rows=await _sbReq('posts?select=*&order=date.desc,id.asc');
     const seed=_workspaceSeedMap();
     const cache=_workspaceCacheMap();
-    const mapped=(rows||[]).map(r=>{const seedPost=seed[r.id]||{};const cachedPost=cache[r.id]||{};return{id:r.id,title:r.title,subtitle:r.subtitle||seedPost.subtitle||cachedPost.subtitle||'',category:r.category,status:r.status,readTime:r.read_time||seedPost.readTime||cachedPost.readTime||'5 min read',date:r.date,excerpt:r.excerpt||seedPost.excerpt||cachedPost.excerpt||'',image:r.image||seedPost.image||cachedPost.image||'',emoji:r.emoji||seedPost.emoji||cachedPost.emoji||'ðŸ“',content:r.content||seedPost.content||cachedPost.content||''};});
+    const mapped=(rows||[]).map(r=>{const seedPost=seed[r.id]||{};const cachedPost=cache[r.id]||{};return{id:r.id,title:r.title,subtitle:r.subtitle||seedPost.subtitle||cachedPost.subtitle||'',category:r.category,status:r.status,readTime:r.read_time||seedPost.readTime||cachedPost.readTime||'5 min read',date:r.date,excerpt:r.excerpt||seedPost.excerpt||cachedPost.excerpt||'',image:r.image||seedPost.image||cachedPost.image||'',emoji:r.emoji||seedPost.emoji||cachedPost.emoji||'',content:r.content||seedPost.content||cachedPost.content||''};});
     if(mapped.length) localStorage.setItem(LOCAL_KEY,JSON.stringify(mapped));
     return mapped;
   }catch(e){
@@ -6558,7 +6815,7 @@ dbGetPosts=async function(){
 testAndSave=async function(){
   const url=_cleanSbUrl(document.getElementById('sbUrlIn')?.value),key=(document.getElementById('sbKeyIn')?.value||'').trim();
   const res=document.getElementById('testRes');
-  if(res){res.style.display='block';res.className='test-res';res.textContent='Testing connection...';}
+  if(res){res.style.display='block';res.className='test-res';res.textContent='Testing...';}
   if(!url||!key){if(res){res.className='test-res err';res.textContent='Both fields are required';}return;}
   if(!_validSbUrl(url)){if(res){res.className='test-res err';res.textContent='URL should look like https://your-project.supabase.co';}return;}
   try{

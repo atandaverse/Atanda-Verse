@@ -26,7 +26,7 @@
 <meta name="twitter:title" content="Atanda Verse - Clarity Sessions, Guides &amp; Direction">
 <meta name="twitter:description" content="Clarity sessions, reflective essays, and practical resources for Nigerians and the diaspora ready to move from confusion to direction.">
 <meta name="twitter:image" content="https://verse.atanda.site/social-preview.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://verse.atanda.site/#organization","name":"Atanda Verse","url":"https://verse.atanda.site/","logo":{"@type":"ImageObject","url":"https://verse.atanda.site/logo%20I.png"},"description":"Clarity sessions, reflective resources, and practical guidance for Nigerians and the diaspora.","email":"support@atanda.site","contactPoint":[{"@type":"ContactPoint","contactType":"customer support","email":"support@atanda.site","availableLanguage":["English","Nigerian Pidgin"]},{"@type":"ContactPoint","contactType":"session enquiries","email":"sessions@atanda.site","availableLanguage":["English","Nigerian Pidgin"]}],"areaServed":[{"@type":"Country","name":"Nigeria"},{"@type":"Place","name":"Nigerian diaspora"}]},{"@type":"WebSite","@id":"https://verse.atanda.site/#website","url":"https://verse.atanda.site/","name":"Atanda Verse","inLanguage":"en-NG","publisher":{"@id":"https://verse.atanda.site/#organization"}},{"@type":"Service","name":"Atanda Verse Clarity Sessions","serviceType":"Virtual clarity sessions","provider":{"@id":"https://verse.atanda.site/#organization"},"areaServed":[{"@type":"Country","name":"Nigeria"},{"@type":"Place","name":"Nigerian diaspora"}],"offers":{"@type":"Offer","url":"https://verse.atanda.site/sessions","availability":"https://schema.org/InStock"}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://verse.atanda.site/#organization","name":"Atanda Verse","url":"https://verse.atanda.site/","logo":{"@type":"ImageObject","url":"https://verse.atanda.site/atanda-logo-primary.png"},"description":"Clarity sessions, reflective resources, and practical guidance for Nigerians and the diaspora.","email":"support@atanda.site","contactPoint":[{"@type":"ContactPoint","contactType":"customer support","email":"support@atanda.site","availableLanguage":["English","Nigerian Pidgin"]},{"@type":"ContactPoint","contactType":"session enquiries","email":"sessions@atanda.site","availableLanguage":["English","Nigerian Pidgin"]}],"areaServed":[{"@type":"Country","name":"Nigeria"},{"@type":"Place","name":"Nigerian diaspora"}]},{"@type":"WebSite","@id":"https://verse.atanda.site/#website","url":"https://verse.atanda.site/","name":"Atanda Verse","inLanguage":"en-NG","publisher":{"@id":"https://verse.atanda.site/#organization"}},{"@type":"Service","name":"Atanda Verse Clarity Sessions","serviceType":"Virtual clarity sessions","provider":{"@id":"https://verse.atanda.site/#organization"},"areaServed":[{"@type":"Country","name":"Nigeria"},{"@type":"Place","name":"Nigerian diaspora"}],"offers":{"@type":"Offer","url":"https://verse.atanda.site/sessions","availability":"https://schema.org/InStock"}}]}</script>
 <script>!function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.style.colorScheme=t==="dark"?"dark":"light"}();</script>
 <script src="config.js"></script>
 
@@ -53,7 +53,7 @@
 
 
 
-    <link rel="icon" type="image/png" href="logo I.png">
+    <link rel="icon" type="image/png" href="atanda-logo-primary.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -247,6 +247,8 @@ width: 50px; height: 50px; cursor: pointer;
         }
 
         .hero-title { margin-bottom: 1.5rem; line-height: .88; }
+        .hero-title, .hero-subtitle { transition: opacity .45s ease, transform .45s ease; }
+        .hero-title.is-flipping, .hero-subtitle.is-flipping { opacity: 0; transform: translateY(10px) rotateX(8deg); }
         .title-virtual, .title-clarity {
             display: block; font-family: 'Bebas Neue', sans-serif;
             font-size: clamp(4rem, 12vw, 8.5rem);
@@ -504,11 +506,30 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
         .price-naira { font-size: .8rem; color: var(--text-muted); margin-top: .2rem; }
         .pricing-features { list-style: none; margin-bottom: 1.8rem; }
         .pricing-features li { padding: .35rem 0; color: var(--text-secondary); font-size: .88rem; display: flex; align-items: center; gap: .5rem; text-align: left; }
-        .pricing-features li::before { content: "✓"; color: var(--accent); font-weight: 700; flex-shrink: 0; width: 14px; }
+        .pricing-features li::before { content: "+"; color: var(--accent); font-weight: 700; flex-shrink: 0; width: 14px; }
 
-        /* ── SERVICES ── */
-        .services { padding: 7rem 0; }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 2.5rem; margin-top: .5rem; }
+        /* Events preview */
+        .events-showcase { padding: 3rem 0 3.8rem; background: linear-gradient(180deg,var(--bg-secondary),var(--bg-primary)); }
+        .events-shell { max-width: 1180px; margin: 0 auto; }
+        .events-head { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 1.1rem; margin-bottom: 1.05rem; }
+        .events-head .section-title { font-size: clamp(3rem,6vw,5.4rem); }
+        .events-link { color: var(--accent); font-weight: 800; text-decoration: none; white-space: nowrap; }
+        .home-events-grid { display: grid; gap: 1rem; }
+        .home-event-card { display: grid; grid-template-columns: minmax(220px,.42fr) minmax(0,1fr); align-items: center; gap: 1.35rem; background: rgba(255,255,255,.64); border: 1px solid var(--glass-border); border-radius: 24px; overflow: hidden; color: var(--text-primary); text-decoration: none; box-shadow: 0 18px 48px var(--shadow); padding: 1rem 1.25rem 1rem 1rem; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+        .home-event-card:hover { transform: translateY(-5px); box-shadow: 0 26px 64px var(--shadow-hover); border-color: rgba(220,53,69,.22); }
+        [data-theme="dark"] .home-event-card { background: rgba(255,255,255,.08); }
+        .home-event-media { justify-self: stretch; max-width: 360px; position: relative; isolation: isolate; border-radius: 18px; padding: 4px; background: rgba(255,255,255,.84); box-shadow: 0 10px 28px rgba(24,54,93,.14); }
+        .home-event-media::before { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit; padding: 3px; pointer-events: none; background: conic-gradient(from var(--event-edge-angle),transparent 0 78%,rgba(66,133,244,.25) 81%,#4285f4 84%,#34a853 88%,#fbbc05 92%,#ea4335 96%,transparent 100%); -webkit-mask: linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; filter: drop-shadow(0 0 5px rgba(66,133,244,.82)); animation: eventEdgeOrbit 4.5s linear infinite; }
+        .home-event-media img { position: relative; z-index: 1; width: 100%; height: auto; max-height: 210px; object-fit: contain; display: block; border-radius: 13px; box-shadow: 0 8px 22px rgba(15,23,42,.16); background: #fff; }
+        @property --event-edge-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+        @keyframes eventEdgeOrbit { to { --event-edge-angle: 360deg; } }
+        .home-event-body { padding: .35rem 0; min-width: 0; }
+        .home-event-kind { color: var(--accent); font-size: .7rem; font-weight: 900; letter-spacing: 2.2px; text-transform: uppercase; margin-bottom: .35rem; }
+        .home-event-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem,4vw,3.15rem); line-height: .95; letter-spacing: 1px; margin: 0 0 .55rem; }
+        .home-event-card p { color: var(--text-secondary); font-size: 1rem; line-height: 1.65; margin: 0 0 .8rem; max-width: 620px; }
+        .home-event-meta { color: var(--text-muted); font-size: .82rem; font-weight: 800; letter-spacing: .2px; }
+
+        /* Services */
         .service-card {
             background: var(--glass); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border-radius: 24px;
             padding: 3.5rem 2.5rem; text-align: center;
@@ -707,7 +728,7 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
             .logo-text { font-size: 1.25rem; }
         }
     </style>
-<!-- SHARED PATCH: Skeletons · Animations · Mobile 100% -->
+<!-- SHARED PATCH: Skeletons  -  Animations  -  Mobile 100% -->
 <style>
 /* ── SKELETON LOADER (shared) ──────────────────────────── */
 @keyframes iv-shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -749,7 +770,7 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
 }
 .iv-rule.center::before{ transform-origin:center; }
 .iv-rule.in::before{ transform:scaleX(1); }
-/* Shimmer pulse after draw — GPU accelerated */
+/* Shimmer pulse after draw - GPU accelerated */
 .iv-rule.in::after{
   content:'';
   position:absolute;
@@ -813,7 +834,7 @@ margin: .7rem; border: none; cursor: pointer; position: relative; overflow: hidd
 }
 
 /* ══════════════════════════════════════════════════════════
-   MOBILE 100% — Global fixes applied to all pages
+   MOBILE 100% - Global fixes applied to all pages
 ══════════════════════════════════════════════════════════ */
 
 /* Safe area for notched/Dynamic-Island phones */
@@ -847,7 +868,7 @@ nav{padding-left:env(safe-area-inset-left,0);padding-right:env(safe-area-inset-r
   .faq-item.active .faq-answer{grid-template-rows:1fr;}
 }
 
-/* Post: university-comparison, skill-reality, framework grids → stack on mobile */
+/* Post: university-comparison, skill-reality, framework grids -> stack on mobile */
 @media(max-width:600px){
   .university-comparison{grid-template-columns:1fr!important;}
   .skill-reality{grid-template-columns:1fr!important;}
@@ -914,6 +935,10 @@ img.loaded{opacity:1;}
   .hero-subtitle{margin:1.4rem auto!important;max-width:34ch!important;font-size:1rem!important;}
   .pricing-grid,.services-grid,.testimonial-grid,.library-grid{gap:1rem!important;}
   .pricing-card,.service-card{padding:1.55rem 1.15rem!important;border-radius:20px!important;}
+  .events-shell{padding:0!important;border-radius:0!important;}
+  .events-head{grid-template-columns:1fr!important;align-items:flex-start!important;}
+  .home-event-card{grid-template-columns:1fr!important;padding:1rem!important;}
+  .home-event-media{max-width:100%!important;}
   .pricing-card.featured{transform:none!important;}
   .pricing-card.featured:hover{transform:translateY(-8px)!important;}
   #latestPostsGrid{grid-template-columns:1fr!important;gap:1.2rem!important;}
@@ -1058,7 +1083,7 @@ img.loaded{opacity:1;}
 <!-- Page Loader -->
 <div class="loader" id="loader">
         <div class="l-brand">
-            <div class="l-brand-mark"><img src="ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo"></div>
+            <div class="l-brand-mark"><img src="atanda-logo-primary.png" alt="Atanda logo"></div>
             <div class="l-brand-copy">
                 <div class="l-brand-word">ATANDA <span>VERSE</span></div>
                 <div class="l-brand-note">Clarity in motion</div>
@@ -1074,12 +1099,13 @@ img.loaded{opacity:1;}
     <div class="nav-container">
         <div class="nav-logo">
             <div class="logo-icon">
-                <img src="ChatGPT Image Apr 6, 2026, 04_48_50 AM.png" alt="Atanda logo" onerror="this.style.opacity='0'">
+                <img src="atanda-logo-primary.png" alt="Atanda logo" onerror="this.style.opacity='0'">
             </div>
             <a href="index.html" class="logo-text">ATANDA <span class="logo-verse">VERSE</span></a>
         </div>
         <ul class="nav-links" id="navLinks">
             <li><a href="#home" class="active">Home</a></li><li><a href="about.html">About</a></li><li><a href="sessions.html">Sessions</a></li>
+            <li><a href="events.html">Events</a></li>
             <li><a href="blog.html">Blog</a></li>
             <li><a href="faq.html">FAQ</a></li>
             <li><a href="library.html">Library</a></li>
@@ -1099,7 +1125,7 @@ img.loaded{opacity:1;}
         <div class="orb orb-3" data-p="0.15"></div>
         <canvas class="particles" id="pc"></canvas>
         <div class="container hero-inner">
-            <div class="hero-badge s1" data-launch-copy data-launch-expired-copy="Single Sessions Open">🔑 Free Single Session During Launch</div>
+            <div class="hero-badge s1" data-launch-copy data-launch-expired-copy="Single Sessions Open">Free Single Session During Launch</div>
             <h1 class="hero-title">
                 <span class="title-virtual s2">VIRTUAL</span>
                 <span class="title-clarity s3">CLARITY</span>
@@ -1107,7 +1133,7 @@ img.loaded{opacity:1;}
             </h1>
             <p class="hero-subtitle s5">Break through the digital noise and mental barriers. Discover your authentic self and unlock the clarity that transforms your life from within.</p>
             <div class="countdown-timer s5">
-                <div class="countdown-text" id="cdLabel">⏰ Free Access Ends In</div>
+                <div class="countdown-text" id="cdLabel">Free Access Ends In</div>
                 <div class="countdown-display">
                     <div class="countdown-item"><span id="days">30</span><span>Days</span></div>
                     <div class="countdown-item"><span id="hours">00</span><span>Hours</span></div>
@@ -1141,6 +1167,25 @@ img.loaded{opacity:1;}
         </div>
     </section>
 
+    <!-- EVENTS & CAMPAIGNS -->
+    <section class="events-showcase" id="events">
+        <div class="container">
+            <div class="events-shell rv">
+                <div class="events-head">
+                    <div>
+                        <span class="section-tag">Events &amp; Campaigns</span>
+                        <h2 class="section-title" style="margin-bottom:.35rem">WHAT IS HAPPENING NOW</h2>
+                        <p class="section-subtitle" style="margin:0;text-align:left;max-width:640px">Featured sessions, campaigns, and time-bound experiences from the Atanda Verse path.</p>
+                    </div>
+                    <a class="events-link" href="events.html">View all events -></a>
+                </div>
+                <div class="home-events-grid" id="homeEventsGrid">
+                    <div class="iv-skel"><div class="iv-skel-img"></div><div class="iv-skel-body"><div class="iv-skel-line xl l"></div><div class="iv-skel-line m"></div></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- PRICING -->
     <section class="pricing" id="sessions">
         <div class="container">
@@ -1158,21 +1203,21 @@ img.loaded{opacity:1;}
                 <div class="pricing-card featured iv-pop" data-price-plan="three-pack">
                     <div class="pricing-badge" data-price-badge>MOST POPULAR</div>
                     <h3 class="pricing-title">Three Session Package</h3>
-                    <div class="pricing-price"><span class="price-current" data-price-current>$48</span><div class="price-naira" data-price-naira>N60,000 · paid package</div></div>
+                    <div class="pricing-price"><span class="price-current" data-price-current>$48</span><div class="price-naira" data-price-naira>N60,000  -  paid package</div></div>
                     <ul class="pricing-features"><li>3× 90-minute sessions</li><li>Progressive clarity building</li><li>Comprehensive life mapping</li><li>Ongoing support between sessions</li><li>Digital library access</li></ul>
                     <a href="register.html?session=three-pack&label=Three%20Session%20Package&source=index-pricing" class="cta-button">Start Package</a>
                 </div>
                 <div class="pricing-card iv-pop" data-price-plan="group">
                     <div class="pricing-badge" data-price-badge>GROUP PATH</div>
                     <h3 class="pricing-title">Weekly Group</h3>
-                    <div class="pricing-price"><span class="price-current" data-price-current>$36</span><div class="price-naira" data-price-naira>N45,000 · paid group access</div></div>
+                    <div class="pricing-price"><span class="price-current" data-price-current>$36</span><div class="price-naira" data-price-naira>N45,000  -  paid group access</div></div>
                     <ul class="pricing-features"><li>Weekly group sessions</li><li>Community support</li><li>Shared breakthrough experiences</li><li>Group accountability</li></ul>
                     <a href="register.html?session=group&label=Weekly%20Group%20Sessions&source=index-pricing" class="cta-button">Join Group</a>
                 </div>
                 <div class="pricing-card iv-pop" data-price-plan="intensive">
                     <div class="pricing-badge" data-price-badge>INTENSIVE</div>
                     <h3 class="pricing-title">Monthly Intensive</h3>
-                    <div class="pricing-price"><span class="price-current" data-price-current>$180</span><div class="price-naira" data-price-naira>N225,000 · paid intensive</div></div>
+                    <div class="pricing-price"><span class="price-current" data-price-current>$180</span><div class="price-naira" data-price-naira>N225,000  -  paid intensive</div></div>
                     <ul class="pricing-features"><li>4 weekly intensive sessions</li><li>Deep transformation program</li><li>Personal clarity roadmap</li><li>Unlimited support access</li><li>Exclusive resources</li></ul>
                     <a href="register.html?session=intensive&label=Monthly%20Intensive&source=index-pricing" class="cta-button">Go Intensive</a>
                 </div>
@@ -1181,7 +1226,7 @@ img.loaded{opacity:1;}
     </section>
 
     <!-- SERVICES -->
-    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>✦</span></div>
+    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>*</span></div>
     <section class="services">
         <div class="container">
             <span class="section-tag rv">What We Offer</span>
@@ -1308,7 +1353,7 @@ img.loaded{opacity:1;}
         </div>
     </section>
 
-    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>✦</span></div>
+    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>*</span></div>
     <!-- SUPPORT THE WORK -->
     <section class="support-work" id="support">
         <div class="container">
@@ -1330,7 +1375,7 @@ img.loaded{opacity:1;}
         </div>
     </section>
 
-    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>âœ¦</span></div>
+    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>*</span></div>
     <!-- LATEST INSIGHTS -->
     <section style="padding:6rem 0;background:var(--bg-secondary)" id="insights">
       <div class="container">
@@ -1343,12 +1388,12 @@ img.loaded{opacity:1;}
           <div class="iv-skel"><div class="iv-skel-img"></div><div class="iv-skel-body"><div class="iv-skel-line xl l"></div><div class="iv-skel-line m"></div><div class="iv-skel-line s"></div></div></div>
         </div>
         <div style="text-align:center">
-          <a href="blog.html" style="display:inline-block;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:50px;padding:.7rem 2rem;font-size:.88rem;font-weight:700;color:var(--text-primary);text-decoration:none;transition:all .3s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--glass-border)';this.style.color='var(--text-primary)'">View All Articles →</a>
+          <a href="blog.html" style="display:inline-block;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:50px;padding:.7rem 2rem;font-size:.88rem;font-weight:700;color:var(--text-primary);text-decoration:none;transition:all .3s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--glass-border)';this.style.color='var(--text-primary)'">View All Articles -></a>
         </div>
       </div>
     </section>
 
-    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>✦</span></div>
+    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>*</span></div>
     <!-- FAQ -->
     <section class="faq">
         <div class="container">
@@ -1360,15 +1405,15 @@ img.loaded{opacity:1;}
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>What if I miss a scheduled session?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Life happens! Just give us 24 hours notice and we'll reschedule at no cost. We offer flexible timing to accommodate your schedule, including evening and weekend slots.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>What should I expect from my first session?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Your first session focuses on understanding your current situation, identifying mental blocks, and creating a clear vision for your path forward. You'll leave with actionable insights and a personalized clarity plan.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>Is this coaching, therapy, or counselling?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Clarity sessions are coaching-based, not therapy. We help you gain clarity, set direction, and take meaningful action. For clinical mental health needs, we recommend a licensed therapist.</p></div></div>
-                <div class="faq-item iv-pop"><div class="faq-question"><h4>Can I do sessions in Yoruba, Igbo, or Pidgin?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Absolutely. Some things are best expressed in the language you think and feel in. Sessions can be conducted in English, Pidgin, Yoruba, or Igbo — whatever helps you express yourself most authentically.</p></div></div>
+                <div class="faq-item iv-pop"><div class="faq-question"><h4>Can I do sessions in Yoruba, Igbo, or Pidgin?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>Absolutely. Some things are best expressed in the language you think and feel in. Sessions can be conducted in English, Pidgin, Yoruba, or Igbo - whatever helps you express yourself most authentically.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>Do I need to prepare anything beforehand?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p>You'll receive a short guide 24 hours before your session with 3 reflection questions. All you need is a quiet space, stable internet, and an open mind. Come as you are.</p></div></div>
                 <div class="faq-item iv-pop"><div class="faq-question"><h4>What if the session doesn't help me?</h4><span class="faq-toggle">+</span></div><div class="faq-answer"><p data-launch-copy data-launch-active-copy="Your first single session has no payment risk during launch. If it does not add value, tell us honestly - your feedback helps us improve. Our goal is genuine transformation, not just a completed session." data-launch-expired-copy="If a session does not add value, tell us honestly. Your feedback helps us improve. Our goal is genuine transformation, not just a completed session.">If a session does not add value, tell us honestly. Your feedback helps us improve. Our goal is genuine transformation, not just a completed session.</p></div></div>
             </div>
-            <div style="text-align:center;margin-top:2rem"><a href="faq.html" style="color:var(--accent);font-weight:600;font-size:.9rem;text-decoration:none">See all FAQs →</a></div>
+            <div style="text-align:center;margin-top:2rem"><a href="faq.html" style="color:var(--accent);font-weight:600;font-size:.9rem;text-decoration:none">See all FAQs -></a></div>
         </div>
     </section>
 
-    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>✦</span></div>
+    <div class="iv-divider rv" style="padding:0 2rem;max-width:1200px;margin:0 auto;"><span>*</span></div>
     <!-- LIBRARY -->
     <section class="library" id="library">
         <div class="container">
@@ -1382,7 +1427,7 @@ img.loaded{opacity:1;}
                 <div class="library-item iv-pop"><span class="library-icon">🎥</span><h4>Video Library</h4><p>Inspirational talks and practical workshops to support your ongoing growth.</p></div>
             </div>
             <div style="text-align:center;margin-top:2.5rem;position:relative;z-index:1">
-                <a href="library.html" class="cta-button" style="background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);color:white;backdrop-filter:blur(10px)">Explore Full Library →</a>
+                <a href="library.html" class="cta-button" style="background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);color:white;backdrop-filter:blur(10px)">Explore Full Library -></a>
             </div>
         </div>
     </section>
@@ -1409,7 +1454,7 @@ img.loaded{opacity:1;}
                         <div class="form-group"><label>Role / Background</label><input type="text" id="tRole" placeholder="e.g. Software Engineer, Lagos"></div>
                     </div>
                     <div class="form-group"><label>Your Experience *</label><textarea id="tText" rows="4" required placeholder="Tell us about your clarity journey and what changed for you..." style="width:100%;resize:vertical"></textarea></div>
-                    <div class="form-group"><label>Your Photo URL <span style="font-weight:400;color:var(--text-muted);font-size:.8rem">(optional — paste a link to your photo)</span></label><input type="url" id="tAvatar" placeholder="https://…"></div>
+                    <div class="form-group"><label>Your Photo URL <span style="font-weight:400;color:var(--text-muted);font-size:.8rem">(optional - paste a link to your photo)</span></label><input type="url" id="tAvatar" placeholder="https://..."></div>
                     <button type="submit" class="cta-button" style="margin:1rem 0 0">Submit Story</button>
                 </form>
                 <p id="tSubmitMsg" style="display:none;margin-top:1rem;color:var(--accent);font-weight:600;font-size:.9rem">✓ Thank you! Your story has been submitted for review.</p>
@@ -1445,7 +1490,7 @@ img.loaded{opacity:1;}
     <div class="nav-container" style="flex-direction:column;gap:0">
         <div class="footer-logo">ATANDA</div>
         <div class="footer-links">
-            <a href="index.html">Home</a><a href="about.html">About</a><a href="sessions.html">Sessions</a><a href="blog.html">Blog</a>
+            <a href="index.html">Home</a><a href="about.html">About</a><a href="sessions.html">Sessions</a><a href="events.html">Events</a><a href="blog.html">Blog</a>
             <a href="faq.html">FAQ</a>
             <a href="library.html">Library</a>
             <a href="register.html">Register</a>
@@ -1453,7 +1498,7 @@ img.loaded{opacity:1;}
             <a href="privacy.html">Privacy</a><a href="legal.html">Legal</a>
         </div>
         <div class="footer-divider"></div>
-        <p>&copy; 2025–2026 Atanda. All rights reserved.</p>
+        <p>&copy; 2025-2026 Atanda. All rights reserved.</p>
     </div>
 </footer>
 
@@ -1472,14 +1517,49 @@ img.loaded{opacity:1;}
     const body = document.body;
     document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
     body.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
-    const updateThemeIcon = () => themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '🌙' : '☀️';
+    const updateThemeIcon = () => themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? 'Dark' : 'Light';
     updateThemeIcon();
     themeToggle.addEventListener('click', () => {
         const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', t);document.body.setAttribute('data-theme', t); localStorage.setItem('theme', t); updateThemeIcon();
     });
+    (function initHeroIdentityFlip(){
+        const title = document.querySelector('.hero-title');
+        const subtitle = document.querySelector('.hero-subtitle');
+        const first = document.querySelector('.title-virtual');
+        const second = document.querySelector('.title-clarity');
+        const third = document.querySelector('.title-session');
+        if (!title || !subtitle || !first || !second || !third) return;
+        const states = [
+            { duration: 60000, first: 'VIRTUAL', second: 'CLARITY', third: 'Session', subtitle: 'Break through the digital noise and mental barriers. Discover your authentic self and unlock the clarity that transforms your life from within.' },
+            { duration: 120000, first: 'ATANDA', second: 'VERSE', third: 'Clarity Pathway', subtitle: 'Clarity sessions, reflective essays, practical resources, and events built to move you from mental fog to language, direction, and action.' }
+        ];
+        let index = 0;
+        function applyState(nextIndex) {
+            const state = states[nextIndex];
+            title.classList.add('is-flipping');
+            subtitle.classList.add('is-flipping');
+            setTimeout(function () {
+                first.textContent = state.first;
+                second.textContent = state.second;
+                third.textContent = state.third;
+                subtitle.textContent = state.subtitle;
+                title.classList.remove('is-flipping');
+                subtitle.classList.remove('is-flipping');
+            }, 450);
+            clearTimeout(window.__ivHeroFlipTimer);
+            window.__ivHeroFlipTimer = setTimeout(function () {
+                index = (nextIndex + 1) % states.length;
+                applyState(index);
+            }, state.duration);
+        }
+        window.__ivHeroFlipTimer = setTimeout(function () {
+            index = 1;
+            applyState(index);
+        }, states[0].duration);
+    })();
 
-    // ── CUSTOM CURSOR ──
+    // Custom cursor
     const reduceUiLoad = window.matchMedia('(hover: none), (max-width: 768px), (prefers-reduced-motion: reduce)').matches;
     const cd = document.getElementById('cd'), cr = document.getElementById('cr');
     let mx = 0, my = 0, rx = 0, ry = 0;
@@ -2007,6 +2087,25 @@ img.loaded{opacity:1;}
     loadTestimonials();
 
     // ── LATEST POSTS on homepage ──
+    (async function loadHomeEvents(){
+      const grid=document.getElementById('homeEventsGrid');
+      if(!grid)return;
+      function esc(v){return String(v||'').replace(/[&<>"']/g,function(ch){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch];});}
+      function fmtDate(v){if(!v)return 'Date to be announced';try{return new Date(v).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch{return 'Date to be announced';}}
+      function href(item){return item.funnel_url||item.cta_url||('event-register.html?event='+encodeURIComponent(item.slug||item.id));}
+      try{
+        let items=window.ivGetPublicEventsCampaigns?await window.ivGetPublicEventsCampaigns():(window.ivDefaultEventsCampaigns||[]).filter(x=>x.status==='published');
+        const featured=window.ivGetFeaturedEventCampaign&&window.ivGetFeaturedEventCampaign(items);
+        items=items.slice().sort((a,b)=>Number(b.id===featured?.id)-Number(a.id===featured?.id)||((a.sort_order||50)-(b.sort_order||50))).slice(0,3);
+        if(!items.length){grid.innerHTML='<div class="home-event-card"><div class="home-event-body"><div class="home-event-kind">Soon</div><h3>Events will appear here</h3><p>New Atanda Verse experiences will show once published from Workspace.</p></div></div>';return;}
+        grid.innerHTML=items.map(item=>`<a class="home-event-card iv-pop" href="${esc(href(item))}"><div class="home-event-media"><img src="${esc(item.image_url||'social-preview.png')}" alt="${esc(item.title)}" onerror="this.src='social-preview.png'"></div><div class="home-event-body"><div class="home-event-kind">${esc(item.eyebrow||item.kind||'Event')}</div><h3>${esc(item.title)}</h3><p>${esc(item.summary)}</p><div class="home-event-meta">${esc(fmtDate(item.event_date))} - ${esc(item.location||'Online')}</div></div></a>`).join('');
+        if(window.revealObs){document.querySelectorAll('.home-event-card').forEach(el=>revealObs.observe(el));}
+      }catch(err){
+        console.warn('Events preview failed',err);
+        grid.innerHTML='<div class="home-event-card"><div class="home-event-body"><div class="home-event-kind">Events</div><h3>Events are loading</h3><p>Open the events page to see the current experiences.</p></div></div>';
+      }
+    })();
+
     (async function loadLatestPosts(){
       const grid=document.getElementById('latestPostsGrid');
       if(!grid)return;
@@ -2047,13 +2146,13 @@ img.loaded{opacity:1;}
         grid.innerHTML=posts.map(p=>`
           <a href="${brandedPostPath(p)}" style="text-decoration:none;display:block;background:var(--glass);backdrop-filter:blur(20px);border-radius:20px;overflow:hidden;border:1px solid var(--glass-border);box-shadow:0 8px 32px var(--shadow);transition:all .4s cubic-bezier(.34,1.56,.64,1)" onmouseover="this.style.transform='translateY(-8px)';this.style.boxShadow='0 24px 60px var(--shadow-hover)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px var(--shadow)'">
             <div style="width:100%;aspect-ratio:1831/958;background:linear-gradient(135deg,var(--text-primary),var(--accent));position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2.5rem">
-              ${p.image?`<img src="${p.image}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:2" onerror="this.style.display='none'">`:''}
+              ${p.image?`<img src="${p.image}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;z-index:2" onerror="this.style.display='none'">`:''}
               <span style="z-index:1">${p.emoji||'📝'}</span>
             </div>
             <div style="padding:1.6rem">
               <div style="color:var(--accent);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:.5rem">${p.category||''}</div>
               <h3 style="font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:.7rem;line-height:1.35">${p.title}</h3>
-              <p style="color:var(--text-secondary);font-size:.85rem;line-height:1.6;margin-bottom:1rem">${(p.excerpt||'').substring(0,100)}${(p.excerpt||'').length>100?'…':''}</p>
+              <p style="color:var(--text-secondary);font-size:.85rem;line-height:1.6;margin-bottom:1rem">${(p.excerpt||'').substring(0,100)}${(p.excerpt||'').length>100?'...':''}</p>
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:.76rem;color:var(--text-muted);padding-top:.8rem;border-top:1px solid var(--border-color)">
                 <span>📅 ${fmtD(p.date)}</span>
                 <span style="color:var(--accent);font-weight:600">⏱ ${p.read_time||'5 min read'}</span>
@@ -2077,7 +2176,7 @@ img.loaded{opacity:1;}
         const wrap = document.getElementById('tAvatarPreviewWrap');
         if (!wrap) return;
         if (src) {
-            wrap.innerHTML = `<img src="${src}" alt="Photo preview" style="width:100%;height:100%;object-fit:cover">`;
+            wrap.innerHTML = `<img src="${src}" alt="Photo preview" style="width:100%;height:100%;object-fit:contain">`;
         } else {
             wrap.textContent = '[photo]';
         }

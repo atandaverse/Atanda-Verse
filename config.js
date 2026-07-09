@@ -1,4 +1,4 @@
-// ── ATANDA VERSE — SHARED CONFIG ─────────────────────────────────────────
+// ATANDA VERSE - SHARED CONFIG
 // Single source of truth for Supabase credentials.
 // All pages load this before their own scripts.
 
@@ -160,6 +160,21 @@
           catch (_err) { settings[row.key] = row.value; }
         });
         var merged = Object.assign({}, cached, settings);
+        try {
+          var publicEvents = await getPublicEventsCampaigns();
+          merged.eventsCampaigns = publicEvents;
+          var featured = getFeaturedEventCampaign(publicEvents);
+          if (featured) {
+            merged.publicFeaturedCampaign = featured;
+            merged.publicCampaign = eventCampaignToPublicCampaign(featured);
+            if (featured.has_countdown && featured.end_date) {
+              merged.countdownTarget = featured.end_date;
+              merged.countdownLabel = featured.countdown_label || featured.title || merged.countdownLabel;
+            }
+          }
+        } catch (eventErr) {
+          console.warn('Public events/campaigns fetch failed', eventErr);
+        }
         localStorage.setItem('iv_settings', JSON.stringify(merged));
         return merged;
       }
@@ -171,6 +186,128 @@
   }
 
   window.ivGetPublicSettings = getPublicSettings;
+
+  var DEFAULT_EVENTS_CAMPAIGNS = [
+    {
+      id: 'free-session-launch',
+      title: 'Free Single Clarity Session',
+      slug: 'free-single-clarity-session',
+      kind: 'both',
+      status: 'published',
+      eyebrow: 'Launch Campaign',
+      summary: 'A focused single clarity session for people ready to move from mental fog to direction.',
+      details: 'The launch campaign gives new visitors a simple first step into the Atanda Verse clarity path. Confirmation happens after registration.',
+      image_url: 'social-preview.png',
+      location: 'Online',
+      event_date: '',
+      end_date: '',
+      has_countdown: true,
+      countdown_label: 'Free Session Ends In',
+      cta_label: 'Book Session',
+      cta_url: 'event-register.html?event=free-single-clarity-session',
+      funnel_url: 'event-register.html?event=free-single-clarity-session',
+      featured: true,
+      sort_order: 10
+    },
+    {
+      id: 'pause-001-placeholder',
+      title: 'Pause 001',
+      slug: 'pause-001',
+      kind: 'event',
+      status: 'draft',
+      eyebrow: 'Coming Event',
+      summary: 'A guided pause for reflection, clarity, and next-step language.',
+      details: 'Placeholder event copy. Replace the image, date, and full details from Workspace when the event is ready.',
+      image_url: 'social-preview.png',
+      location: 'Online',
+      event_date: '',
+      end_date: '',
+      has_countdown: false,
+      countdown_label: '',
+      cta_label: 'View Event',
+      cta_url: 'event-register.html?event=pause-001',
+      funnel_url: 'event-register.html?event=pause-001',
+      featured: false,
+      sort_order: 20
+    }
+  ];
+
+  function normalizeEventCampaign(row) {
+    row = row || {};
+    var slug = String(row.slug || row.id || '').trim() || ('event-' + Date.now());
+    return {
+      id: String(row.id || slug),
+      title: String(row.title || 'Untitled event'),
+      slug: slug,
+      kind: String(row.kind || 'campaign'),
+      status: String(row.status || 'draft'),
+      eyebrow: String(row.eyebrow || ''),
+      summary: String(row.summary || ''),
+      details: String(row.details || ''),
+      image_url: String(row.image_url || ''),
+      location: String(row.location || ''),
+      event_date: row.event_date || '',
+      end_date: row.end_date || '',
+      has_countdown: !!row.has_countdown,
+      countdown_label: String(row.countdown_label || ''),
+      cta_label: String(row.cta_label || 'Learn More'),
+      cta_url: String(row.cta_url || ''),
+      funnel_url: String(row.funnel_url || ''),
+      featured: !!row.featured,
+      sort_order: Number(row.sort_order) || 0
+    };
+  }
+
+  async function getPublicEventsCampaigns() {
+    var cached = [];
+    try { cached = JSON.parse(localStorage.getItem('iv_events_campaigns') || '[]') || []; }
+    catch (_err) {}
+    try {
+      var rows = await sbFetch('events_campaigns?select=*&status=eq.published&order=sort_order.asc,created_at.desc');
+      if (Array.isArray(rows)) {
+        var items = rows.map(normalizeEventCampaign);
+        localStorage.setItem('iv_events_campaigns', JSON.stringify(items));
+        return items;
+      }
+    } catch (err) {
+      console.warn('Events/campaigns fetch failed', err);
+    }
+    return cached.length ? cached : DEFAULT_EVENTS_CAMPAIGNS.filter(function (item) { return item.status === 'published'; });
+  }
+
+  function getFeaturedEventCampaign(items) {
+    var list = Array.isArray(items) ? items : [];
+    return list.find(function (item) { return item && item.status === 'published' && item.featured; }) || null;
+  }
+
+  function eventCampaignToPublicCampaign(item) {
+    if (!item) return {};
+    var label = item.cta_label || 'Learn More';
+    var detail = item.eyebrow || item.title || 'Featured';
+    var url = item.funnel_url || item.cta_url || ('event-register.html?event=' + encodeURIComponent(item.slug));
+    return {
+      enabled: true,
+      type: item.kind || 'campaign',
+      activeBadge: item.eyebrow || item.title,
+      expiredBadge: item.eyebrow || item.title,
+      activeNavCta: label,
+      expiredNavCta: 'Register',
+      activeStickyLabel: label,
+      expiredStickyLabel: 'Book a Session',
+      activeStickyDetail: detail,
+      expiredStickyDetail: 'Clarity support',
+      activeSingleCta: label,
+      expiredSingleCta: 'Reserve Session',
+      ctaUrl: url,
+      itemId: item.id,
+      slug: item.slug
+    };
+  }
+
+  window.ivDefaultEventsCampaigns = DEFAULT_EVENTS_CAMPAIGNS;
+  window.ivNormalizeEventCampaign = normalizeEventCampaign;
+  window.ivGetPublicEventsCampaigns = getPublicEventsCampaigns;
+  window.ivGetFeaturedEventCampaign = getFeaturedEventCampaign;
 
   async function getPublicFaq(defaults) {
     var fallback = Array.isArray(defaults) ? defaults : [];
@@ -226,7 +363,9 @@
       try { source = JSON.parse(localStorage.getItem('iv_settings') || '{}') || {}; }
       catch (_err) { source = {}; }
     }
-    var target = source && source.countdownTarget ? new Date(source.countdownTarget).getTime() : NaN;
+    var featured = source && source.publicFeaturedCampaign ? source.publicFeaturedCampaign : null;
+    var countdownSource = featured && featured.has_countdown && featured.end_date ? featured.end_date : (source && source.countdownTarget);
+    var target = countdownSource ? new Date(countdownSource).getTime() : NaN;
     var hasTarget = Number.isFinite(target);
     var expired = hasTarget ? target <= Date.now() : false;
     var campaign = source && source.publicCampaign && typeof source.publicCampaign === 'object' ? source.publicCampaign : {};
@@ -236,6 +375,7 @@
       expired: expired,
       active: hasTarget && !expired && campaignEnabled,
       hasCampaign: hasTarget && campaignEnabled,
+      featuredCampaign: featured || null,
       settings: source || {}
     };
   }
@@ -415,6 +555,12 @@
     textMap.forEach(function (pair) {
       setText(pair[0], pair[1], false);
     });
+    var activeUrl = campaign && campaign.ctaUrl ? campaign.ctaUrl : '';
+    if (active && activeUrl) {
+      document.querySelectorAll('.sticky-cta,.nav-cta').forEach(function (el) {
+        if (el && el.tagName && el.tagName.toLowerCase() === 'a') el.setAttribute('href', activeUrl);
+      });
+    }
     if (active) {
       setHtml('#registerMicrocopy', '', true);
     } else {
@@ -825,35 +971,28 @@
     }
 
     try {
-      var fnResult = await sbInvoke('track-post-view', getAnalyticsContext(id));
-      if (fnResult && fnResult.ok) {
-        markCountedView(id);
-        return { ok: true, views: Number(fnResult.views || 0), source: 'edge-function' };
-      }
-    } catch (fnErr) {
-      console.warn('track-post-view function unavailable, falling back', fnErr);
-    }
-
-    var currentViews = 0;
-    try {
-      var currentRow = await sbFetch('post_views?select=post_id,views&post_id=eq.' + encodeURIComponent(id));
-      if (currentRow && currentRow[0]) currentViews = Number(currentRow[0].views || 0);
-    } catch (_err) {}
-
-    var nextRow = {
-      post_id: id,
-      views: currentViews + 1,
-      updated_at: new Date().toISOString()
-    };
-
-    try {
-      await sbFetch('post_views?on_conflict=post_id', {
+      var context = getAnalyticsContext(id);
+      var rpcRows = await sbFetch('rpc/increment_post_view', {
         method: 'POST',
-        headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
-        body: JSON.stringify(nextRow)
+        body: JSON.stringify({
+          p_post_id: id,
+          p_visitor_key: context.visitorKey,
+          p_session_id: context.sessionId,
+          p_path: context.path,
+          p_href: context.href,
+          p_referrer: context.referrer,
+          p_user_agent: context.userAgent,
+          p_language: context.language,
+          p_viewport_width: context.viewport.width,
+          p_viewport_height: context.viewport.height,
+          p_screen_width: context.screen.width,
+          p_screen_height: context.screen.height,
+          p_timezone: context.timezone
+        })
       });
       markCountedView(id);
-      return { ok: true, views: nextRow.views, source: 'direct-fallback' };
+      var rpcRow = Array.isArray(rpcRows) ? rpcRows[0] : null;
+      return { ok: true, views: Number((rpcRow && rpcRow.views) || 0), source: 'database-rpc' };
     } catch (err) {
       console.warn('Post view record failed', err);
       return { ok: false, reason: err && err.message ? err.message : 'view-record-failed' };
