@@ -211,7 +211,7 @@
       cta_label: 'Book Session',
       cta_url: 'event-register.html?event=free-single-clarity-session',
       funnel_url: 'event-register.html?event=free-single-clarity-session',
-      featured: true,
+      featured: false,
       sort_order: 10
     },
     {
@@ -264,20 +264,15 @@
   }
 
   async function getPublicEventsCampaigns() {
-    var cached = [];
-    try { cached = JSON.parse(localStorage.getItem('iv_events_campaigns') || '[]') || []; }
-    catch (_err) {}
     try {
       var rows = await sbFetch('events_campaigns?select=*&status=eq.published&order=sort_order.asc,created_at.desc');
       if (Array.isArray(rows)) {
-        var items = rows.map(normalizeEventCampaign);
-        localStorage.setItem('iv_events_campaigns', JSON.stringify(items));
-        return items;
+        return rows.map(normalizeEventCampaign);
       }
     } catch (err) {
       console.warn('Events/campaigns fetch failed', err);
     }
-    return cached.length ? cached : DEFAULT_EVENTS_CAMPAIGNS.filter(function (item) { return item.status === 'published'; });
+    return DEFAULT_EVENTS_CAMPAIGNS.filter(function (item) { return item.status === 'published'; }).map(normalizeEventCampaign);
   }
 
   function getFeaturedEventCampaign(items) {
@@ -1339,7 +1334,7 @@
     if (!document.getElementById('ivSharedThemeIconStyle')) {
       var style = document.createElement('style');
       style.id = 'ivSharedThemeIconStyle';
-      style.textContent = '.theme-toggle{font-size:0!important;display:flex!important;align-items:center!important;justify-content:center!important}.theme-toggle svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.iv-shared-theme-toggle{position:fixed;right:18px;top:96px;z-index:80;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.78);color:#19385f;box-shadow:0 14px 34px rgba(15,23,42,.14);backdrop-filter:blur(18px);cursor:pointer}[data-theme="dark"] .iv-shared-theme-toggle{background:rgba(24,35,55,.8);color:#fff;border-color:rgba(255,255,255,.13)}';
+      style.textContent = '.theme-toggle{font-size:0!important;display:flex!important;align-items:center!important;justify-content:center!important}.theme-toggle svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.iv-shared-theme-toggle{position:fixed;right:18px;top:96px;z-index:80;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.78);color:#19385f;box-shadow:0 14px 34px rgba(15,23,42,.14);backdrop-filter:blur(18px);cursor:pointer}[data-theme="dark"] .iv-shared-theme-toggle{background:rgba(24,35,55,.8);color:#fff;border-color:rgba(255,255,255,.13)}.sticky-cta[hidden]{display:none!important}';
       document.head.appendChild(style);
     }
     function update() {
