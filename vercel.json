@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/blog/:slug", "destination": "/api/blog/:slug" },
+    { "source": "/blog/:slug", "destination": "/api/blog?slug=:slug" },
     { "source": "/blog", "destination": "/blog.html" },
     { "source": "/sessions", "destination": "/sessions.html" },
     { "source": "/events", "destination": "/events.html" },
@@ -114,18 +114,6 @@
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Referrer-Policy", "value": "no-referrer" }
-      ]
-    },
-    {
-      "source": "/post",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, follow, noarchive, max-image-preview:large" }
-      ]
-    },
-    {
-      "source": "/post.html",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, follow, noarchive, max-image-preview:large" }
       ]
     },
     {
