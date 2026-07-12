@@ -1232,8 +1232,19 @@ create policy "public_write_logins" on admin_logins for all using (true);
       </div>
       <div class="source-note" id="eventsSourceNote" data-kind="local"><strong><span class="source-dot"></span>Source</strong><span>Checking Events source...</span></div>
       <div class="scc" style="margin-bottom:1rem">
+        <div class="sct">PAUSE Landing Page Editor</div>
+        <div class="scd">This is separate from Events &amp; Campaigns. Events control countdown, date, location, and CTA routing; this controls the PAUSE page words and visuals.</div>
+        <div class="pricing-form-grid" style="margin-top:.9rem" id="pauseLandingGrid"></div>
+        <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem">
+          <button class="btn p" onclick="savePauseLandingContent()">Save PAUSE Page</button>
+          <button class="btn s" onclick="loadPauseLandingEditor(true)">Reload Live</button>
+          <button class="btn s" onclick="resetPauseLandingEditor()">Reset Defaults</button>
+        </div>
+        <div id="pauseLandingStatus" style="font-size:.74rem;color:var(--t3);margin-top:.75rem">PAUSE landing content not loaded yet.</div>
+      </div>
+      <div class="scc" style="margin-bottom:1rem">
         <div class="sct">Public Event / Campaign Editor</div>
-        <div class="scd">One featured published item controls the sticky CTA and campaign language. Event images upload to the existing innerverse-media bucket and save as database URLs.</div>
+        <div class="scd">Campaign, countdown, featured CTA, and featured event post are separate controls. Event images upload to the existing innerverse-media bucket and save as database URLs.</div>
         <div class="pricing-form-grid" style="margin-top:.9rem">
           <input type="hidden" id="evId">
           <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Title</label><input class="mn" id="evTitle" placeholder="Free Single Clarity Session"></div>
@@ -1246,6 +1257,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Countdown End</label><input class="mn" id="evEndDate" type="datetime-local"></div>
           <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Countdown Label</label><input class="mn" id="evCountdownLabel" placeholder="Free session ends in"></div>
           <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">CTA Label</label><input class="mn" id="evCtaLabel" placeholder="Reserve Spot"></div>
+          <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Sticky Short Label</label><input class="mn" id="evStickyShortLabel" placeholder="Reserve"></div>
           <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">CTA URL</label><input class="mn" id="evCtaUrl" placeholder="event-register.html?event=..."></div>
           <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Funnel URL</label><input class="mn" id="evFunnelUrl" placeholder="event-register.html?event=..."></div>
           <div class="full"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Summary</label><textarea class="mn" id="evSummary" rows="3" style="resize:vertical"></textarea></div>
@@ -1253,8 +1265,10 @@ create policy "public_write_logins" on admin_logins for all using (true);
           <div class="full"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Image URL</label><input class="mn" id="evImageUrl" placeholder="social-preview.png"></div>
           <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Upload Image</label><input class="mn" id="evImageFile" type="file" accept="image/*"></div>
           <div><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Sort Order</label><input class="mn" id="evSort" type="number" value="50"></div>
-          <label style="display:flex;align-items:center;gap:.6rem;color:var(--t2);font-size:.82rem"><input type="checkbox" id="evHasCountdown"> Show countdown on homepage hero and event</label>
-          <label style="display:flex;align-items:center;gap:.6rem;color:var(--t2);font-size:.82rem"><input type="checkbox" id="evFeatured"> Featured sticky CTA</label>
+          <label style="display:flex;align-items:center;gap:.6rem;color:var(--t2);font-size:.82rem"><input type="checkbox" id="evIsCampaign"> Campaign</label>
+          <label style="display:flex;align-items:center;gap:.6rem;color:var(--t2);font-size:.82rem"><input type="checkbox" id="evHasCountdown"> Countdown</label>
+          <label style="display:flex;align-items:center;gap:.6rem;color:var(--t2);font-size:.82rem"><input type="checkbox" id="evFeaturedCta"> Featured CTA</label>
+          <label style="display:flex;align-items:center;gap:.6rem;color:var(--t2);font-size:.82rem"><input type="checkbox" id="evFeaturedPost"> Featured Event Post</label>
         </div>
         <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem">
           <button class="btn p" onclick="saveEventCampaign()">Save Event</button>
@@ -1263,7 +1277,7 @@ create policy "public_write_logins" on admin_logins for all using (true);
         </div>
         <div id="eventsSaveStatus" style="font-size:.74rem;color:var(--t3);margin-top:.75rem">No event selected.</div>
       </div>
-      <div class="tw" style="margin-bottom:1rem"><table><thead><tr><th>Title</th><th>Kind</th><th>Status</th><th>Countdown</th><th>Featured</th><th>Actions</th></tr></thead><tbody id="eventsTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading...</td></tr></tbody></table></div>
+      <div class="tw" style="margin-bottom:1rem"><table><thead><tr><th>Title</th><th>Kind</th><th>Status</th><th>Countdown</th><th>Roles</th><th>Actions</th></tr></thead><tbody id="eventsTbl"><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">Loading...</td></tr></tbody></table></div>
       <div class="scc">
         <div class="sct">Event Funnel Registrations</div>
         <div class="scd">People who registered through event-register.html.</div>
@@ -1406,7 +1420,8 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <button class="btn s" style="padding:.38rem .8rem;font-size:.72rem" onclick="addCustomColor()">+ Add</button>
           </div>
         </div>
-        <div class="scc"><div class="sct">Library Access</div><div class="scd">Control the full library gate and monitor reader activity. Public snippets remain visible on the library page.</div>
+        <div class="scc"><div class="sct">Library Access</div><div class="scd">Control whether the public library is visible, then manage the full library gate and reader activity.</div>
+          <div class="tr"><div><div class="tl">Publish Library Page</div><div class="ts">When off, visitors see a polished Coming Soon page until you reopen the library.</div></div><label class="tog"><input type="checkbox" id="libraryPublicEnabled"><span class="tog-t"></span><span class="tog-k"></span></label></div>
           <div class="tr"><div><div class="tl">Require Library Login</div><div class="ts">Visitors need the credentials below before opening locked resources.</div></div><label class="tog"><input type="checkbox" id="libAccessEnabled" checked><span class="tog-t"></span><span class="tog-k"></span></label></div>
           <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin-top:.8rem">
             <input class="mn" id="libAccessUsername" placeholder="Library username" autocomplete="off">
@@ -1468,6 +1483,8 @@ create policy "public_write_logins" on admin_logins for all using (true);
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired Badge</label><input type="text" id="campaignExpiredBadge" class="mn" placeholder="Paid Single Sessions Now Open" oninput="markCountdownDirty()"></div>
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active CTA</label><input type="text" id="campaignActiveCta" class="mn" placeholder="Book a Session" oninput="markCountdownDirty()"></div>
             <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired CTA</label><input type="text" id="campaignExpiredCta" class="mn" placeholder="Reserve Session" oninput="markCountdownDirty()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Active Sticky Short</label><input type="text" id="campaignActiveShortCta" class="mn" placeholder="Book" oninput="markCountdownDirty()"></div>
+            <div style="display:flex;flex-direction:column;gap:.38rem"><label style="font-size:.67rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Expired Sticky Short</label><input type="text" id="campaignExpiredShortCta" class="mn" placeholder="Reserve" oninput="markCountdownDirty()"></div>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;background:var(--s);border-radius:var(--rs);padding:.7rem;font-size:.74rem;color:var(--t3)">
             <div>
@@ -4108,10 +4125,12 @@ async function saveAdminTheme(theme){
 }
 function loadLibraryAccessSettings(){
   const s=_localSettings();
+  const publicEnabled=document.getElementById('libraryPublicEnabled');
   const enabled=document.getElementById('libAccessEnabled');
   const user=document.getElementById('libAccessUsername');
   const pass=document.getElementById('libAccessPassword');
   const note=document.getElementById('libAccessNote');
+  if(publicEnabled)publicEnabled.checked=s.libraryPublicEnabled===true;
   if(enabled)enabled.checked=s.libraryAccessEnabled!==false;
   if(user)user.value=s.libraryAccessUsername||'';
   if(pass){pass.value='';pass.placeholder=s.libraryAccessPasswordHash?'Leave blank to keep current password':'Library password';}
@@ -4124,12 +4143,14 @@ async function sha256Text(text){
 }
 async function saveLibraryAccessSettings(){
   const s=_localSettings();
+  const publicEnabled=document.getElementById('libraryPublicEnabled')?.checked===true;
   const enabled=document.getElementById('libAccessEnabled')?.checked!==false;
   const username=(document.getElementById('libAccessUsername')?.value||'').trim();
   const password=document.getElementById('libAccessPassword')?.value||'';
   const note=(document.getElementById('libAccessNote')?.value||'').trim();
   const passwordHash=password?await sha256Text(password):(s.libraryAccessPasswordHash||'');
   if(enabled&&(!username||!passwordHash))return toast('Add a library username and password first','er');
+  await dbSaveSetting('libraryPublicEnabled',publicEnabled);
   await dbSaveSetting('libraryAccessEnabled',enabled);
   await dbSaveSetting('libraryAccessUsername',username);
   await dbSaveSetting('libraryAccessPasswordHash',passwordHash);
@@ -4779,6 +4800,8 @@ function loadCountdownSettings(){
     set('campaignExpiredBadge',c.expiredBadge||'Paid Single Sessions Now Open');
     set('campaignActiveCta',c.activeSingleCta||'Book a Session');
     set('campaignExpiredCta',c.expiredSingleCta||'Reserve Session');
+    set('campaignActiveShortCta',c.activeStickyShortLabel||'Book');
+    set('campaignExpiredShortCta',c.expiredStickyShortLabel||'Reserve');
     const cur=document.getElementById('cdCurrentTarget');
     if(cur)cur.textContent=s.countdownTarget?new Date(s.countdownTarget).toLocaleString():(()=>{const d=localStorage.getItem('iv_cd_default');return d?new Date(parseInt(d)).toLocaleString():'Not set'})();
     setCountdownSaveStatus('No unsaved timer changes.', 'idle');
@@ -4814,7 +4837,9 @@ async function saveCountdown(){
     expiredSingleCta:document.getElementById('campaignExpiredCta')?.value.trim()||'Reserve Session',
     expiredRegisterButton:(document.getElementById('campaignExpiredCta')?.value.trim()||'Reserve Session').replace(/^Reserve /i,'Reserve my '),
     activeStickyLabel:document.getElementById('campaignActiveCta')?.value.trim()||'Book a Session',
-    expiredStickyLabel:document.getElementById('campaignExpiredCta')?.value.trim()||'Book a Session',
+    expiredStickyLabel:document.getElementById('campaignExpiredCta')?.value.trim()||'Reserve Session',
+    activeStickyShortLabel:document.getElementById('campaignActiveShortCta')?.value.trim()||'Book',
+    expiredStickyShortLabel:document.getElementById('campaignExpiredShortCta')?.value.trim()||'Reserve',
     activeStickyDetail:'Campaign active',
     expiredStickyDetail:'Clarity support'
   };
@@ -5783,6 +5808,151 @@ const EVENTS_LOCAL_KEY='iv_events_campaigns_admin';
 const EVENTS_PUBLIC_CACHE_KEY='iv_events_campaigns';
 let _eventsCache=[];
 function eventEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+const PAUSE_LANDING_DEFAULT_CONTENT={
+  pageTitle:'PAUSE001 - Atanda Verse',
+  heroImage:'images/pause001-hero.png',
+  heroMobileImage:'images/pause001-hero-mobile.png',
+  registerImage:'images/pause001-register.png',
+  registerMobileImage:'images/pause001-register-mobile.png',
+  packImage:'images/pause001-pack.png',
+  packMobileImage:'images/pause001-pack-mobile.png',
+  followupImage:'images/pause001-followup.png',
+  whyTitle:'The World Is Not Waiting For You To Feel Ready.',
+  whyCopyOne:'Technology is changing careers. AI is changing how work is valued. Relationships are changing. Faith is being tested by speed, pressure, and noise.',
+  whyCopyTwo:'Most people do not need more content. They need space to think before life quietly turns delay into direction.',
+  whyCopyThree:'PAUSE001 is a two-hour virtual experience designed to slow the room down long enough for the right questions to become visible.',
+  registerKicker:'PAUSE001',
+  registerCopy:'Reserve your seat for PAUSE001 and join hundreds of people choosing clarity over confusion.',
+  formTitle:'Reserve Your Seat',
+  successMessage:'Your PAUSE001 seat is reserved. Watch your email or preferred contact channel for confirmation.'
+};
+const PAUSE_LANDING_FIELDS=[
+  ['pageTitle','Browser title'],
+  ['heroImage','Hero image URL'],
+  ['heroMobileImage','Hero mobile image URL'],
+  ['registerImage','Registration image URL'],
+  ['registerMobileImage','Registration mobile image URL'],
+  ['packImage','Welcome pack image URL'],
+  ['packMobileImage','Welcome pack mobile image URL'],
+  ['followupImage','Follow-up section image URL'],
+  ['whyTitle','Why section title','long'],
+  ['whyCopyOne','Why paragraph 1','area'],
+  ['whyCopyTwo','Why paragraph 2','area'],
+  ['whyCopyThree','Why paragraph 3','area'],
+  ['registerKicker','Registration kicker'],
+  ['registerCopy','Registration copy','area'],
+  ['formTitle','Form title'],
+  ['successMessage','Success message','area']
+];
+function getPauseLandingContentSettings(){return Object.assign({},PAUSE_LANDING_DEFAULT_CONTENT,(_localSettings().pauseLandingContent||{}));}
+function setPauseLandingStatus(text,kind='local'){
+  const el=document.getElementById('pauseLandingStatus');if(!el)return;
+  el.textContent=text;
+  el.style.color=kind==='database'?'var(--ok)':kind==='error'?'var(--ac)':'var(--t3)';
+}
+function renderPauseLandingEditor(content){
+  const host=document.getElementById('pauseLandingGrid');if(!host)return;
+  const data=Object.assign({},PAUSE_LANDING_DEFAULT_CONTENT,content||{});
+  const imageFields=new Set(['heroImage','heroMobileImage','registerImage','registerMobileImage','packImage','packMobileImage','followupImage']);
+  host.innerHTML=PAUSE_LANDING_FIELDS.map(([key,label,type])=>{
+    const value=eventEsc(data[key]||'');
+    const control=type==='area'
+      ? `<textarea class="mn" data-pause-field="${eventEsc(key)}" rows="3" style="resize:vertical">${value}</textarea>`
+      : `<input class="mn" data-pause-field="${eventEsc(key)}" value="${value}">`;
+    const uploader=imageFields.has(key)
+      ? `<div style="display:flex;gap:.55rem;align-items:center;flex-wrap:wrap;margin-top:.55rem"><label class="btn s" style="cursor:pointer">Upload Image<input type="file" accept="image/*" style="display:none" onchange="handlePauseLandingImageUpload(event,'${eventEsc(key)}')"></label><span id="pauseUploadStatus-${eventEsc(key)}" style="font-size:.72rem;color:var(--t3)">Paste a URL or upload an image.</span></div>`
+      : '';
+    return `<div class="${type==='area'||type==='long'||imageFields.has(key)?'full':''}"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${eventEsc(label)}</label>${control}${uploader}</div>`;
+  }).join('');
+}
+async function handlePauseLandingImageUpload(ev,key){
+  const file=ev.target.files&&ev.target.files[0];if(!file)return;
+  const status=document.getElementById(`pauseUploadStatus-${key}`);
+  const input=document.querySelector(`[data-pause-field="${CSS.escape(key)}"]`);
+  try{
+    if(status)status.textContent=_useSb()?'Uploading...':'Supabase not connected - storing image in this browser.';
+    let url='';
+    if(_useSb())url=await uploadToStorage(file,'pause-landing');
+    else url=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(file);});
+    if(input)input.value=url;
+    if(status)status.textContent=_useSb()?'Uploaded. Click Save PAUSE Page to publish.':'Stored locally. Click Save PAUSE Page.';
+    toast('PAUSE image ready','ok');
+  }catch(e){
+    console.warn('PAUSE landing image upload failed',e);
+    if(status)status.textContent='Upload failed. Paste a URL or check Storage access.';
+    toast('PAUSE image upload failed','err');
+  }finally{
+    ev.target.value='';
+  }
+}
+async function loadPauseLandingEditor(forceLive=false){
+  let data=getPauseLandingContentSettings();
+  let source='local';
+  if(forceLive&&_useSb()&&!_sbIsUnavailable()){
+    try{
+      const rows=await _sbReq('settings?select=key,value&key=eq.pauseLandingContent');
+      if(Array.isArray(rows)&&rows[0]){
+        data=Object.assign({},PAUSE_LANDING_DEFAULT_CONTENT,JSON.parse(rows[0].value||'{}'));
+        const s=_localSettings();s.pauseLandingContent=data;localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+        source='database';
+      }
+    }catch(e){console.warn('PAUSE landing live fetch failed',e);}
+  }
+  renderPauseLandingEditor(data);
+  setPauseLandingStatus(source==='database'?'Live PAUSE landing content loaded.':'Editing PAUSE landing content from local settings. Save will sync live when Supabase is available.',source);
+}
+async function savePauseLandingContent(){
+  const flat=Object.assign({},PAUSE_LANDING_DEFAULT_CONTENT);
+  document.querySelectorAll('[data-pause-field]').forEach(el=>{flat[el.dataset.pauseField]=el.value.trim();});
+  const data=Object.assign({},flat,{whyCopy:[flat.whyCopyOne,flat.whyCopyTwo,flat.whyCopyThree]});
+  const s=_localSettings();s.pauseLandingContent=data;localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+  try{await dbSaveSetting('pauseLandingContent',data);setPauseLandingStatus('Saved PAUSE landing content separately from Events/Campaigns.','database');toast('PAUSE page saved','ok');}
+  catch(e){console.warn('PAUSE landing save failed',e);setPauseLandingStatus('Saved locally. Live sync needs Supabase settings access.','local');toast('Saved locally. Live sync needs Supabase.','inf');}
+}
+function resetPauseLandingEditor(){renderPauseLandingEditor(PAUSE_LANDING_DEFAULT_CONTENT);setPauseLandingStatus('Defaults loaded. Click Save PAUSE Page to publish them.','local');}
+function eventRoleKey(item){return String((item&&(item.id||item.slug))||'');}
+function getEventRoleSettings(){try{return (_localSettings().eventCampaignRoles||{});}catch{return{};}}
+function getEventRole(item){const roles=getEventRoleSettings();return roles[item.id]||roles[item.slug]||roles[eventRoleKey(item)]||{};}
+function applyEventRolesAdmin(item){
+  const role=getEventRole(item);
+  const next=Object.assign({},item);
+  if(role.is_campaign!==undefined)next.is_campaign=!!role.is_campaign;else next.is_campaign=['campaign','both'].includes(String(next.kind||'').toLowerCase());
+  if(role.has_countdown!==undefined)next.has_countdown=!!role.has_countdown;
+  if(role.featured_cta!==undefined)next.featured_cta=!!role.featured_cta;else next.featured_cta=!!next.featured;
+  if(role.featured_event_post!==undefined)next.featured_event_post=!!role.featured_event_post;else next.featured_event_post=false;
+  if(role.sticky_short_label!==undefined)next.sticky_short_label=String(role.sticky_short_label||'');
+  next.featured=!!(next.featured_cta||next.featured_event_post);
+  if(next.is_campaign&&next.kind==='event')next.kind='both';
+  if(!next.is_campaign&&(next.kind==='campaign'||next.kind==='both'))next.kind='event';
+  return next;
+}
+function eventDbPayload(item){
+  const allowed=['id','title','slug','kind','status','eyebrow','summary','details','image_url','location','event_date','end_date','has_countdown','countdown_label','cta_label','cta_url','funnel_url','featured','sort_order'];
+  const payload={};
+  allowed.forEach(key=>payload[key]=item[key]??null);
+  payload.featured=!!item.featured_event_post;
+  payload.has_countdown=!!item.has_countdown;
+  return payload;
+}
+async function saveEventRoleSettings(item){
+  const roles=Object.assign({},getEventRoleSettings());
+  const key=eventRoleKey(item);
+  Object.keys(roles).forEach(roleKey=>{
+    const role=Object.assign({},roles[roleKey]);
+    if(item.featured_cta)role.featured_cta=false;
+    if(item.featured_event_post)role.featured_event_post=false;
+    roles[roleKey]=role;
+  });
+  roles[key]={
+    is_campaign:!!item.is_campaign,
+    has_countdown:!!item.has_countdown,
+    featured_cta:!!item.featured_cta,
+    featured_event_post:!!item.featured_event_post,
+    sticky_short_label:String(item.sticky_short_label||'').trim()
+  };
+  if(item.slug&&item.slug!==key)roles[item.slug]=roles[key];
+  await dbSaveSetting('eventCampaignRoles',roles);
+}
 function localEvents(){try{const rows=JSON.parse(localStorage.getItem(EVENTS_LOCAL_KEY)||'[]');if(Array.isArray(rows)&&rows.length)return rows;}catch{}return (window.ivDefaultEventsCampaigns||[]).map(x=>Object.assign({},x));}
 function persistLocalEvents(rows){localStorage.setItem(EVENTS_LOCAL_KEY,JSON.stringify(rows||[]));}
 function syncPublicEventsCache(rows){
@@ -5800,13 +5970,13 @@ function normalizeEventAdmin(row){
   fallback.status=fallback.status||'draft';
   fallback.kind=fallback.kind||'event';
   fallback.sort_order=Number(fallback.sort_order||50);
-  return fallback;
+  return applyEventRolesAdmin(fallback);
 }
 function eventDateToInput(v){if(!v)return'';const d=new Date(v);if(isNaN(d))return'';const pad=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;}
 function eventInputToIso(id){const v=document.getElementById(id)?.value;if(!v)return null;const d=new Date(v);return isNaN(d)?null:d.toISOString();}
 function eventComparable(row){
   const item=normalizeEventAdmin(row);
-  return JSON.stringify(['title','slug','kind','status','eyebrow','summary','details','image_url','location','event_date','end_date','has_countdown','countdown_label','cta_label','cta_url','funnel_url','featured','sort_order'].map(key=>item[key]??null));
+  return JSON.stringify(['title','slug','kind','status','eyebrow','summary','details','image_url','location','event_date','end_date','has_countdown','countdown_label','cta_label','sticky_short_label','cta_url','funnel_url','featured','is_campaign','featured_cta','featured_event_post','sort_order'].map(key=>item[key]??null));
 }
 function setEventsSource(text,kind='local'){const note=document.getElementById('eventsSourceNote');if(!note)return;note.dataset.kind=kind;note.innerHTML=`<strong><span class="source-dot"></span>${kind==='database'?'Live Supabase':'Local Draft'}</strong><span>${eventEsc(text)}</span>`;}
 async function getEventsAdmin(){
@@ -5840,12 +6010,14 @@ async function getEventsAdmin(){
   return _eventsCache;
 }
 function resetEventForm(){
-  ['evId','evTitle','evSlug','evEyebrow','evLocation','evEventDate','evEndDate','evCountdownLabel','evCtaLabel','evCtaUrl','evFunnelUrl','evSummary','evDetails','evImageUrl'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['evId','evTitle','evSlug','evEyebrow','evLocation','evEventDate','evEndDate','evCountdownLabel','evCtaLabel','evStickyShortLabel','evCtaUrl','evFunnelUrl','evSummary','evDetails','evImageUrl'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('evKind').value='event';
   document.getElementById('evStatus').value='draft';
   document.getElementById('evSort').value='50';
+  document.getElementById('evIsCampaign').checked=false;
   document.getElementById('evHasCountdown').checked=false;
-  document.getElementById('evFeatured').checked=false;
+  document.getElementById('evFeaturedCta').checked=false;
+  document.getElementById('evFeaturedPost').checked=false;
   const file=document.getElementById('evImageFile');if(file)file.value='';
   document.getElementById('eventsSaveStatus').textContent='New event draft.';
 }
@@ -5863,14 +6035,17 @@ function fillEventForm(id){
   document.getElementById('evEndDate').value=eventDateToInput(item.end_date);
   document.getElementById('evCountdownLabel').value=item.countdown_label||'';
   document.getElementById('evCtaLabel').value=item.cta_label||'';
+  document.getElementById('evStickyShortLabel').value=item.sticky_short_label||'';
   document.getElementById('evCtaUrl').value=item.cta_url||'';
   document.getElementById('evFunnelUrl').value=item.funnel_url||'';
   document.getElementById('evSummary').value=item.summary||'';
   document.getElementById('evDetails').value=item.details||'';
   document.getElementById('evImageUrl').value=item.image_url||'';
   document.getElementById('evSort').value=item.sort_order||50;
+  document.getElementById('evIsCampaign').checked=!!item.is_campaign;
   document.getElementById('evHasCountdown').checked=!!item.has_countdown;
-  document.getElementById('evFeatured').checked=!!item.featured;
+  document.getElementById('evFeaturedCta').checked=!!item.featured_cta;
+  document.getElementById('evFeaturedPost').checked=!!item.featured_event_post;
   document.getElementById('eventsSaveStatus').textContent='Editing '+(item.title||item.slug);
 }
 function collectEventForm(){
@@ -5879,7 +6054,9 @@ function collectEventForm(){
   return normalizeEventAdmin({
     id:document.getElementById('evId').value.trim()||slug||('event-'+Date.now()),
     title,slug,
-    kind:document.getElementById('evKind').value,
+    kind:document.getElementById('evIsCampaign').checked
+      ? (document.getElementById('evKind').value==='event'?'both':document.getElementById('evKind').value)
+      : (document.getElementById('evKind').value==='campaign'?'event':document.getElementById('evKind').value),
     status:document.getElementById('evStatus').value,
     eyebrow:document.getElementById('evEyebrow').value.trim(),
     summary:document.getElementById('evSummary').value.trim(),
@@ -5888,12 +6065,16 @@ function collectEventForm(){
     location:document.getElementById('evLocation').value.trim()||'Online',
     event_date:eventInputToIso('evEventDate'),
     end_date:eventInputToIso('evEndDate'),
+    is_campaign:document.getElementById('evIsCampaign').checked,
     has_countdown:document.getElementById('evHasCountdown').checked,
     countdown_label:document.getElementById('evCountdownLabel').value.trim(),
     cta_label:document.getElementById('evCtaLabel').value.trim()||'Reserve Spot',
+    sticky_short_label:document.getElementById('evStickyShortLabel').value.trim(),
     cta_url:document.getElementById('evCtaUrl').value.trim(),
     funnel_url:document.getElementById('evFunnelUrl').value.trim(),
-    featured:document.getElementById('evFeatured').checked,
+    featured_cta:document.getElementById('evFeaturedCta').checked,
+    featured_event_post:document.getElementById('evFeaturedPost').checked,
+    featured:document.getElementById('evFeaturedCta').checked||document.getElementById('evFeaturedPost').checked,
     sort_order:Number(document.getElementById('evSort').value||50)
   });
 }
@@ -5906,10 +6087,11 @@ async function saveEventCampaign(){
     if(file){status.textContent='Uploading event image...';item.image_url=await uploadToStorage(file,'events');document.getElementById('evImageUrl').value=item.image_url;}
     if(_useSb()){
       status.textContent='Saving to live database...';
-      if(item.featured){try{await _sbReq('events_campaigns?featured=eq.true','PATCH',{featured:false});}catch(e){console.warn('Feature reset failed',e);}}
-      await _sbUpsert('events_campaigns',item);
+      if(item.featured_event_post){try{await _sbReq('events_campaigns?featured=eq.true','PATCH',{featured:false});}catch(e){console.warn('Feature reset failed',e);}}
+      await _sbUpsert('events_campaigns',eventDbPayload(item));
       const confirmed=await _sbReq('events_campaigns?select=*&id=eq.'+encodeURIComponent(item.id));
       if(!Array.isArray(confirmed)||!confirmed[0])throw new Error('Supabase did not return the saved event during verification.');
+      await saveEventRoleSettings(item);
       item=normalizeEventAdmin(confirmed[0]);
       try{
         const liveRows=await _sbReq('events_campaigns?select=*&order=sort_order.asc,created_at.desc');
@@ -5924,7 +6106,9 @@ async function saveEventCampaign(){
       setEventsSource('Saved and verified in Supabase events_campaigns.','database');
     }else{
       let rows=localEvents().filter(x=>String(x.id)!==String(item.id)&&String(x.slug)!==String(item.slug));
-      if(item.featured)rows=rows.map(x=>Object.assign({},x,{featured:false}));
+      if(item.featured_cta)rows=rows.map(x=>Object.assign({},x,{featured_cta:false}));
+      if(item.featured_event_post)rows=rows.map(x=>Object.assign({},x,{featured_event_post:false,featured:false}));
+      await saveEventRoleSettings(item);
       rows.push(item);persistLocalEvents(rows);
       syncPublicEventsCache(rows);
       setEventsSource('Saved only in this browser because Supabase is not configured.','local');
@@ -5962,13 +6146,14 @@ async function loadEventRegistrations(){
   }catch(e){host.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--ac);padding:1.2rem">Could not load registrations. Apply the Events migration if the table is missing.</td></tr>';}
 }
 async function loadEventsPanel(){
+  await loadPauseLandingEditor();
   const rows=await getEventsAdmin();
   const tbody=document.getElementById('eventsTbl');if(!tbody)return;
   document.getElementById('eventsTotalLbl').textContent=rows.length;
-  tbody.innerHTML=rows.length?rows.map(item=>`<tr><td class="tc2">${eventEsc(item.title)}<span>${eventEsc(item.slug)}${item._localOnly?' - Local only':''}</span></td><td><span class="pill">${eventEsc(item.kind)}</span></td><td><span class="pill ${eventEsc(item.status)}">${eventEsc(item.status)}</span>${item._localOnly?'<br><span style="font-size:.66rem;color:var(--ac)">Needs live save</span>':''}</td><td>${item.has_countdown?eventEsc(item.end_date?new Date(item.end_date).toLocaleString():'Enabled, no date'):'Off'}</td><td>${item.featured?'Yes':'No'}</td><td><button class="ab" onclick="fillEventForm('${eventEsc(item.id)}')">Edit</button><button class="ab" onclick="window.open('${eventEsc(item.funnel_url||('event-register.html?event='+item.slug))}','_blank')">Funnel</button></td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No events or campaigns yet.</td></tr>';
+  tbody.innerHTML=rows.length?rows.map(item=>{const roles=[item.is_campaign?'Campaign':'',item.featured_cta?'Featured CTA':'',item.featured_event_post?'Featured Post':''].filter(Boolean).join(', ')||'None';return`<tr><td class="tc2">${eventEsc(item.title)}<span>${eventEsc(item.slug)}${item._localOnly?' - Local only':''}</span></td><td><span class="pill">${eventEsc(item.kind)}</span></td><td><span class="pill ${eventEsc(item.status)}">${eventEsc(item.status)}</span>${item._localOnly?'<br><span style="font-size:.66rem;color:var(--ac)">Needs live save</span>':''}</td><td>${item.has_countdown?eventEsc(item.end_date?new Date(item.end_date).toLocaleString():'Enabled, no date'):'Off'}</td><td>${eventEsc(roles)}</td><td><button class="ab" onclick="fillEventForm('${eventEsc(item.id)}')">Edit</button><button class="ab" onclick="window.open('${eventEsc(item.funnel_url||('event-register.html?event='+item.slug))}','_blank')">Funnel</button></td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem">No events or campaigns yet.</td></tr>';
   await loadEventRegistrations();
 }
-Object.assign(window,{loadEventsPanel,resetEventForm,fillEventForm,saveEventCampaign,deleteEventCampaign});
+Object.assign(window,{loadEventsPanel,resetEventForm,fillEventForm,saveEventCampaign,deleteEventCampaign,loadPauseLandingEditor,savePauseLandingContent,resetPauseLandingEditor});
 
 // ABOUT PAGE ADMIN
 const ABOUT_DEFAULT_CONTENT={
@@ -6046,7 +6231,32 @@ function setAboutSourceStatus(text,kind='local'){
 function renderAboutEditor(content){
   const host=document.getElementById('aboutEditorGrid');if(!host)return;
   const data=Object.assign({},ABOUT_DEFAULT_CONTENT,content||{});
-  host.innerHTML=ABOUT_FIELD_GROUPS.map(group=>`<section class="scc" style="grid-column:1/-1"><div class="sct">${aboutEsc(group.title)}</div><div class="pricing-form-grid" style="margin-top:.85rem">${group.fields.map(([key,label,type])=>`<div class="${type==='area'||type==='long'?'full':''}"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${aboutEsc(label)}</label>${type==='area'?`<textarea class="mn" data-about-field="${aboutEsc(key)}" rows="4" style="min-height:98px;resize:vertical">${aboutEsc(data[key])}</textarea>`:`<input class="mn" data-about-field="${aboutEsc(key)}" value="${aboutEsc(data[key])}">`}</div>`).join('')}</div></section>`).join('');
+  host.innerHTML=ABOUT_FIELD_GROUPS.map(group=>`<section class="scc" style="grid-column:1/-1"><div class="sct">${aboutEsc(group.title)}</div><div class="pricing-form-grid" style="margin-top:.85rem">${group.fields.map(([key,label,type])=>{
+    const isFounderImage=key==='founderImage';
+    const control=type==='area'
+      ? `<textarea class="mn" data-about-field="${aboutEsc(key)}" rows="4" style="min-height:98px;resize:vertical">${aboutEsc(data[key])}</textarea>`
+      : `<input class="mn" data-about-field="${aboutEsc(key)}" value="${aboutEsc(data[key])}">`;
+    return `<div class="${type==='area'||type==='long'||isFounderImage?'full':''}"><label style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${aboutEsc(label)}</label>${control}${isFounderImage?`<div style="display:flex;gap:.55rem;align-items:center;flex-wrap:wrap;margin-top:.55rem"><label class="btn s" style="cursor:pointer">Upload Founder Image<input type="file" accept="image/*" style="display:none" onchange="handleAboutFounderImageUpload(event)"></label><span id="aboutFounderImageStatus" style="font-size:.72rem;color:var(--t3)">Paste a URL or upload an image.</span></div>`:''}</div>`;
+  }).join('')}</div></section>`).join('');
+}
+async function handleAboutFounderImageUpload(event){
+  const file=event?.target?.files?.[0];
+  if(!file)return;
+  const status=document.getElementById('aboutFounderImageStatus');
+  const input=document.querySelector('[data-about-field="founderImage"]');
+  try{
+    if(status)status.textContent='Uploading founder image...';
+    const url=await uploadToStorage(file,'about');
+    if(input)input.value=url;
+    if(status)status.textContent='Uploaded. Click Save About Page to publish.';
+    toast('Founder image uploaded','ok');
+  }catch(e){
+    console.warn('Founder image upload failed',e);
+    if(status)status.textContent='Upload failed. Paste an image URL instead.';
+    toast('Founder image upload failed','err');
+  }finally{
+    event.target.value='';
+  }
 }
 async function loadAboutEditor(forceLive=false){
   let data=getAboutContentSettings();
@@ -6072,7 +6282,7 @@ async function saveAboutContent(){
   catch(e){console.warn('About content save failed',e);setAboutSourceStatus('Saved locally. Live sync needs Supabase.','local');toast('Saved locally. Live sync needs Supabase.','inf');}
 }
 function resetAboutEditor(){renderAboutEditor(ABOUT_DEFAULT_CONTENT);setAboutSourceStatus('Defaults loaded in the editor. Click Save About Page to publish them.','local');}
-Object.assign(window,{loadAboutEditor,saveAboutContent,resetAboutEditor});
+Object.assign(window,{loadAboutEditor,saveAboutContent,resetAboutEditor,handleAboutFounderImageUpload});
 
 const FAQ_CATS={sessions:'About Sessions',pricing:'Pricing & Access',logistics:'Logistics',language:'Language & Culture'};
 
