@@ -13,3 +13,4 @@ Disallow: /*?preview=
 Disallow: /*?draft=
 
 Sitemap: https://verse.atanda.site/api/sitemap.xml
+Sitemap: https://verse.atanda.site/sitemap.xml

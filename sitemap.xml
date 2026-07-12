@@ -45,10 +45,30 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://verse.atanda.site/events</loc>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://verse.atanda.site/social-preview.png</image:loc>
+      <image:title>Atanda Verse events and campaigns</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://verse.atanda.site/faq</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://verse.atanda.site/pause001</loc>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://verse.atanda.site/images/pause001-hero.png</image:loc>
+      <image:title>PAUSE001 Atanda Verse Live</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://verse.atanda.site/privacy</loc>

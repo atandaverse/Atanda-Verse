@@ -16,6 +16,8 @@ const CORE_URLS = [
   { loc: '/blog', changefreq: 'daily', priority: '0.9', image: '/images/headers.png', imageTitle: 'Atanda Verse Blog' },
   { loc: '/library', changefreq: 'weekly', priority: '0.85' },
   { loc: '/about', changefreq: 'monthly', priority: '0.8' },
+  { loc: '/events', changefreq: 'weekly', priority: '0.88', image: '/social-preview.png', imageTitle: 'Atanda Verse events and campaigns' },
+  { loc: '/pause001', changefreq: 'weekly', priority: '0.9', image: '/images/pause001-hero.png', imageTitle: 'PAUSE001 Atanda Verse Live' },
   { loc: '/faq', changefreq: 'monthly', priority: '0.75' },
   { loc: '/privacy', changefreq: 'yearly', priority: '0.5' },
   { loc: '/legal', changefreq: 'yearly', priority: '0.5' }

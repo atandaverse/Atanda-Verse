@@ -5,8 +5,29 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Event Details - Atanda Verse</title>
 <meta name="description" content="View full details for an Atanda Verse event or campaign.">
+<meta name="keywords" content="Atanda Verse event, Atanda Verse campaign, clarity event Nigeria, virtual clarity event, PAUSE001">
 <meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="author" content="Atanda Verse">
 <meta name="theme-color" content="#1a365d">
+<link rel="canonical" href="https://verse.atanda.site/events">
+<link rel="alternate" hreflang="en-ng" href="https://verse.atanda.site/events">
+<link rel="alternate" hreflang="x-default" href="https://verse.atanda.site/events">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Atanda Verse">
+<meta property="og:locale" content="en_NG">
+<meta property="og:title" content="Event Details - Atanda Verse">
+<meta property="og:description" content="View full details for an Atanda Verse event or campaign.">
+<meta property="og:url" content="https://verse.atanda.site/events">
+<meta property="og:image" content="https://verse.atanda.site/social-preview.png">
+<meta property="og:image:secure_url" content="https://verse.atanda.site/social-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Atanda Verse clarity sessions, guides, and direction">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Event Details - Atanda Verse">
+<meta name="twitter:description" content="View full details for an Atanda Verse event or campaign.">
+<meta name="twitter:image" content="https://verse.atanda.site/social-preview.png">
+<meta name="twitter:url" content="https://verse.atanda.site/events">
 <script>!function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t)}();</script>
 <script src="config.js"></script>
 <link rel="icon" href="atanda-logo-primary.png">
@@ -29,7 +50,7 @@ function esc(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function fmt(v){if(!v)return'Date to be announced';return new Date(v).toLocaleString('en-GB',{dateStyle:'long',timeStyle:'short'});}
 function countdown(item){if(!item.has_countdown||!item.end_date)return'';return `<div class="countdown" data-deadline="${esc(item.end_date)}">${['Days','Hours','Minutes','Seconds'].map(x=>`<div class="time"><strong>00</strong><span>${x}</span></div>`).join('')}</div>`;}
 function tick(){document.querySelectorAll('.countdown').forEach(el=>{const d=Math.max(0,new Date(el.dataset.deadline)-Date.now()),v=[Math.floor(d/86400000),Math.floor(d/3600000)%24,Math.floor(d/60000)%60,Math.floor(d/1000)%60];el.querySelectorAll('strong').forEach((n,i)=>n.textContent=String(v[i]).padStart(2,'0'));if(!d)el.hidden=true;});}
-(async function(){const key=new URLSearchParams(location.search).get('event');const items=await window.ivGetPublicEventsCampaigns();const item=items.find(x=>x.slug===key||String(x.id)===key);const host=document.getElementById('eventDetail');if(!item){host.innerHTML='<div class="copy"><h1>Event not found</h1><p class="summary">This event may no longer be public.</p><a class="cta" href="events.html">View current events</a></div>';return;}document.title=item.title+' - Atanda Verse';const url=item.funnel_url||item.cta_url||('event-register.html?event='+encodeURIComponent(item.slug));host.innerHTML=`<div class="media"><img src="${esc(item.image_url||'social-preview.png')}" alt="${esc(item.title)}"></div><article class="copy"><div class="kind">${esc(item.eyebrow||item.kind)}</div><h1>${esc(item.title)}</h1><p class="summary">${esc(item.summary)}</p><div class="meta"><span>${esc(fmt(item.event_date))}</span><span>${esc(item.location||'Online')}</span></div>${countdown(item)}<p class="details">${esc(item.details||'')}</p><a class="cta" href="${esc(url)}">${esc(item.cta_label||'Register')}</a></article>`;tick();setInterval(tick,1000);})();
+(async function(){const key=new URLSearchParams(location.search).get('event');const items=await window.ivGetPublicEventsCampaigns();const item=items.find(x=>x.slug===key||String(x.id)===key);const host=document.getElementById('eventDetail');if(!item){host.innerHTML='<div class="copy"><h1>Event not found</h1><p class="summary">This event may no longer be public.</p><a class="cta" href="events.html">View current events</a></div>';return;}document.title=item.title+' - Atanda Verse';const rawUrl=item.funnel_url||item.cta_url||('event-register.html?event='+encodeURIComponent(item.slug));const url=window.ivPublicEventUrl?window.ivPublicEventUrl(rawUrl):rawUrl;host.innerHTML=`<div class="media"><img src="${esc(item.image_url||'social-preview.png')}" alt="${esc(item.title)}"></div><article class="copy"><div class="kind">${esc(item.eyebrow||item.kind)}</div><h1>${esc(item.title)}</h1><p class="summary">${esc(item.summary)}</p><div class="meta"><span>${esc(fmt(item.event_date))}</span><span>${esc(item.location||'Online')}</span></div>${countdown(item)}<p class="details">${esc(item.details||'')}</p><a class="cta" href="${esc(url)}">${esc(item.cta_label||'Register')}</a></article>`;tick();setInterval(tick,1000);})();
 </script>
 </body>
 </html>

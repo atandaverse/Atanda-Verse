@@ -216,22 +216,23 @@
     },
     {
       id: 'pause-001-placeholder',
-      title: 'Pause 001',
+      title: 'PAUSE001',
       slug: 'pause-001',
       kind: 'event',
-      status: 'draft',
-      eyebrow: 'Coming Event',
-      summary: 'A guided pause for reflection, clarity, and next-step language.',
-      details: 'Placeholder event copy. Replace the image, date, and full details from Workspace when the event is ready.',
-      image_url: 'social-preview.png',
+      status: 'published',
+      eyebrow: 'Atanda Verse Live',
+      summary: 'A two-hour virtual clarity experience for sight, speed, sign, and the decisions you should not keep postponing.',
+      details: 'Before you make another decision. Before another year disappears. Before life chooses for you. Pause.',
+      image_url: 'images/pause001-hero.png',
       location: 'Online',
-      event_date: '',
-      end_date: '',
-      has_countdown: false,
-      countdown_label: '',
-      cta_label: 'View Event',
-      cta_url: 'event-register.html?event=pause-001',
-      funnel_url: 'event-register.html?event=pause-001',
+      event_date: '2026-08-06T20:00:00+01:00',
+      end_date: '2026-08-06T20:00:00+01:00',
+      has_countdown: true,
+      countdown_label: 'PAUSE001 Begins In',
+      cta_label: 'Reserve My Seat',
+      sticky_short_label: 'Reserve',
+      cta_url: '/pause001',
+      funnel_url: '/pause001',
       featured: false,
       sort_order: 20
     }
@@ -240,6 +241,11 @@
   function normalizeEventCampaign(row) {
     row = row || {};
     var slug = String(row.slug || row.id || '').trim() || ('event-' + Date.now());
+    var ctaUrl = String(row.cta_url || '');
+    var funnelUrl = String(row.funnel_url || '');
+    if ((slug === 'pause-001' || slug === 'pause001') && (!funnelUrl || /event-register\.html\?event=pause-001/i.test(funnelUrl) || /pause-001\.html/i.test(funnelUrl))) {
+      funnelUrl = '/pause001';
+    }
     return {
       id: String(row.id || slug),
       title: String(row.title || 'Untitled event'),
@@ -256,35 +262,105 @@
       has_countdown: !!row.has_countdown,
       countdown_label: String(row.countdown_label || ''),
       cta_label: String(row.cta_label || 'Learn More'),
-      cta_url: String(row.cta_url || ''),
-      funnel_url: String(row.funnel_url || ''),
+      sticky_short_label: String(row.sticky_short_label || ''),
+      cta_url: publicEventUrl(ctaUrl),
+      funnel_url: publicEventUrl(funnelUrl),
       featured: !!row.featured,
+      is_campaign: row.is_campaign !== undefined ? !!row.is_campaign : ['campaign', 'both'].includes(String(row.kind || '').toLowerCase()),
+      featured_cta: row.featured_cta !== undefined ? !!row.featured_cta : !!row.featured,
+      featured_event_post: row.featured_event_post !== undefined ? !!row.featured_event_post : false,
       sort_order: Number(row.sort_order) || 0
     };
+  }
+
+  function isLocalPreviewHost() {
+    return /^(127\.0\.0\.1|localhost|::1)$/i.test(String(location.hostname || ''));
+  }
+
+  function publicEventUrl(url) {
+    var value = String(url || '').trim();
+    if (/^\/?pause-?001(?:\.html)?$/i.test(value)) {
+      return isLocalPreviewHost() ? 'pause001.html' : '/pause001';
+    }
+    return value;
+  }
+
+  function getRoleKey(item) {
+    return String((item && (item.id || item.slug)) || '');
+  }
+
+  function roleForItem(roles, item) {
+    if (!roles || !item) return {};
+    return roles[item.id] || roles[item.slug] || roles[getRoleKey(item)] || {};
+  }
+
+  async function getEventCampaignRoles() {
+    try {
+      var rows = await sbFetch('settings?select=key,value&key=eq.eventCampaignRoles');
+      var raw = Array.isArray(rows) && rows[0] ? rows[0].value : null;
+      if (!raw) {
+        var cached = JSON.parse(localStorage.getItem('iv_settings') || '{}') || {};
+        return cached.eventCampaignRoles || {};
+      }
+      return typeof raw === 'string' ? JSON.parse(raw) : raw;
+    } catch (_err) {
+      try {
+        var fallback = JSON.parse(localStorage.getItem('iv_settings') || '{}') || {};
+        return fallback.eventCampaignRoles || {};
+      } catch (_localErr) {
+        return {};
+      }
+    }
+  }
+
+  function applyEventCampaignRoles(items, roles) {
+    return (items || []).map(function (item) {
+      var normalized = normalizeEventCampaign(item);
+      var role = roleForItem(roles, normalized);
+      if (role.is_campaign !== undefined) {
+        normalized.is_campaign = !!role.is_campaign;
+        if (normalized.is_campaign && normalized.kind === 'event') normalized.kind = 'both';
+        if (!normalized.is_campaign && (normalized.kind === 'campaign' || normalized.kind === 'both')) normalized.kind = 'event';
+      }
+      if (role.has_countdown !== undefined) normalized.has_countdown = !!role.has_countdown;
+      if (role.featured_cta !== undefined) normalized.featured_cta = !!role.featured_cta;
+      if (role.featured_event_post !== undefined) normalized.featured_event_post = !!role.featured_event_post;
+      if (role.sticky_short_label !== undefined) normalized.sticky_short_label = String(role.sticky_short_label || '');
+      normalized.featured = !!(normalized.featured_cta || normalized.featured_event_post);
+      return normalized;
+    });
   }
 
   async function getPublicEventsCampaigns() {
     try {
       var rows = await sbFetch('events_campaigns?select=*&status=eq.published&order=sort_order.asc,created_at.desc');
       if (Array.isArray(rows)) {
-        return rows.map(normalizeEventCampaign);
+        var roles = await getEventCampaignRoles();
+        return applyEventCampaignRoles(rows, roles);
       }
     } catch (err) {
       console.warn('Events/campaigns fetch failed', err);
     }
-    return DEFAULT_EVENTS_CAMPAIGNS.filter(function (item) { return item.status === 'published'; }).map(normalizeEventCampaign);
+    var fallbackRoles = await getEventCampaignRoles();
+    return applyEventCampaignRoles(DEFAULT_EVENTS_CAMPAIGNS.filter(function (item) { return item.status === 'published'; }), fallbackRoles);
   }
 
   function getFeaturedEventCampaign(items) {
     var list = Array.isArray(items) ? items : [];
-    return list.find(function (item) { return item && item.status === 'published' && item.featured; }) || null;
+    return list.find(function (item) { return item && item.status === 'published' && item.featured_cta; }) || null;
+  }
+
+  function getFeaturedEventPost(items) {
+    var list = Array.isArray(items) ? items : [];
+    return list.find(function (item) { return item && item.status === 'published' && item.featured_event_post; }) || null;
   }
 
   function eventCampaignToPublicCampaign(item) {
     if (!item) return {};
     var label = item.cta_label || 'Learn More';
+    var shortLabel = item.sticky_short_label || shortStickyLabel(label);
     var detail = item.eyebrow || item.title || 'Featured';
-    var url = item.funnel_url || item.cta_url || ('event-register.html?event=' + encodeURIComponent(item.slug));
+    var url = publicEventUrl(item.funnel_url || item.cta_url || ('event-register.html?event=' + encodeURIComponent(item.slug)));
     return {
       enabled: true,
       type: item.kind || 'campaign',
@@ -293,7 +369,9 @@
       activeNavCta: label,
       expiredNavCta: 'Register',
       activeStickyLabel: label,
-      expiredStickyLabel: 'Book a Session',
+      expiredStickyLabel: label,
+      activeStickyShortLabel: shortLabel,
+      expiredStickyShortLabel: shortLabel,
       activeStickyDetail: detail,
       expiredStickyDetail: 'Clarity support',
       activeSingleCta: label,
@@ -308,6 +386,8 @@
   window.ivNormalizeEventCampaign = normalizeEventCampaign;
   window.ivGetPublicEventsCampaigns = getPublicEventsCampaigns;
   window.ivGetFeaturedEventCampaign = getFeaturedEventCampaign;
+  window.ivGetFeaturedEventPost = getFeaturedEventPost;
+  window.ivPublicEventUrl = publicEventUrl;
 
   async function getPublicFaq(defaults) {
     var fallback = Array.isArray(defaults) ? defaults : [];
@@ -393,6 +473,8 @@
     expiredNavCta: 'Register',
     activeStickyLabel: 'Book a Session',
     expiredStickyLabel: 'Book a Session',
+    activeStickyShortLabel: 'Book',
+    expiredStickyShortLabel: 'Reserve',
     activeStickyDetail: 'Single launch slot',
     expiredStickyDetail: 'Clarity support',
     activeSingleCta: 'Book a Session',
@@ -401,6 +483,14 @@
     expiredRegisterButton: 'Reserve my session',
     expiredRegisterMicrocopy: 'Single sessions and guided plans are reviewed before confirmation. Session questions belong at sessions@atanda.site.'
   };
+
+  function shortStickyLabel(label) {
+    var text = String(label || '').trim();
+    if (!text) return 'Book';
+    if (text.length <= 8) return text;
+    var firstWord = text.split(/\s+/)[0] || text;
+    return firstWord.length <= 8 ? firstWord : firstWord.slice(0, 8);
+  }
 
   function getPublicCampaign(settings) {
     var source = settings || {};
@@ -1313,9 +1403,7 @@
   }
 
   function themeIconMarkup(theme) {
-    return theme === 'dark'
-      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>'
-      : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.3A8.5 8.5 0 0 1 8.7 3.8 8.5 8.5 0 1 0 20.2 15.3Z"></path></svg>';
+    return theme === 'dark' ? '☀️' : '🌙';
   }
 
   function installThemeIcon() {
@@ -1334,7 +1422,7 @@
     if (!document.getElementById('ivSharedThemeIconStyle')) {
       var style = document.createElement('style');
       style.id = 'ivSharedThemeIconStyle';
-      style.textContent = '.theme-toggle{font-size:0!important;display:flex!important;align-items:center!important;justify-content:center!important}.theme-toggle svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.iv-shared-theme-toggle{position:fixed;right:18px;top:96px;z-index:80;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.78);color:#19385f;box-shadow:0 14px 34px rgba(15,23,42,.14);backdrop-filter:blur(18px);cursor:pointer}[data-theme="dark"] .iv-shared-theme-toggle{background:rgba(24,35,55,.8);color:#fff;border-color:rgba(255,255,255,.13)}.sticky-cta[hidden]{display:none!important}';
+      style.textContent = '.theme-toggle{font-size:1.12rem!important;line-height:1!important;display:flex!important;align-items:center!important;justify-content:center!important}.theme-toggle svg{display:none!important}.iv-shared-theme-toggle{position:fixed;right:18px;top:96px;z-index:80;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.78);color:#19385f;box-shadow:0 14px 34px rgba(15,23,42,.14);backdrop-filter:blur(18px);cursor:pointer}[data-theme="dark"] .iv-shared-theme-toggle{background:rgba(24,35,55,.8);color:#fff;border-color:rgba(255,255,255,.13)}.sticky-cta[hidden]{display:none!important}';
       document.head.appendChild(style);
     }
     function update() {
@@ -1393,7 +1481,90 @@
     });
   }
 
+  function installPublicImageProtection() {
+    var page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    if (['admin.html', 'workspace.html', 'vaultlibrary.html'].indexOf(page) !== -1) return;
+    if (window.__ivPublicImageProtection) return;
+    window.__ivPublicImageProtection = true;
+    var protectedSelector = [
+      'img',
+      'picture',
+      'canvas',
+      'video',
+      '.hero',
+      '.hero-poster',
+      '.visual-image',
+      '.media',
+      '.event-media',
+      '.blog-image',
+      '.post-hero',
+      '.article-image',
+      '.register-shell',
+      '.follow-card',
+      '.no-save-media',
+      '[style*="background-image"]'
+    ].join(',');
+    var imageHref = /\.(?:png|jpe?g|webp|gif|svg|avif)(?:$|[?#])/i;
+
+    if (!document.getElementById('ivImageProtectionStyle')) {
+      var style = document.createElement('style');
+      style.id = 'ivImageProtectionStyle';
+      style.textContent = 'img,picture,canvas,video,.no-save-media{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}img{pointer-events:auto}';
+      document.head.appendChild(style);
+    }
+
+    function isProtected(target) {
+      return !!(target && target.closest && target.closest(protectedSelector));
+    }
+
+    function isImageOnlyLink(anchor) {
+      if (!anchor || !anchor.getAttribute) return false;
+      var href = anchor.getAttribute('href') || '';
+      if (!href || !anchor.querySelector('img,picture,canvas,video')) return false;
+      try {
+        return imageHref.test(new URL(href, location.href).pathname);
+      } catch (error) {
+        return imageHref.test(href);
+      }
+    }
+
+    function protectImages(root) {
+      Array.prototype.slice.call((root || document).querySelectorAll ? (root || document).querySelectorAll('img') : []).forEach(function (img) {
+        img.draggable = false;
+        img.setAttribute('draggable', 'false');
+        img.setAttribute('oncontextmenu', 'return false');
+        if (!img.getAttribute('decoding')) img.setAttribute('decoding', 'async');
+      });
+    }
+
+    document.addEventListener('contextmenu', function (event) {
+      if (isProtected(event.target)) event.preventDefault();
+    }, true);
+    document.addEventListener('dragstart', function (event) {
+      if (isProtected(event.target)) event.preventDefault();
+    }, true);
+    ['click', 'auxclick'].forEach(function (type) {
+      document.addEventListener(type, function (event) {
+        var anchor = event.target && event.target.closest ? event.target.closest('a') : null;
+        if (isImageOnlyLink(anchor)) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+    });
+
+    protectImages(document);
+    new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        Array.prototype.slice.call(mutation.addedNodes || []).forEach(function (node) {
+          if (node && node.nodeType === 1) protectImages(node);
+        });
+      });
+    }).observe(document.documentElement, { childList: true, subtree: true });
+  }
+
   function installSharedPublicUi() {
+    installPublicImageProtection();
     installThemeIcon();
     installSharedNewsletter();
   }
