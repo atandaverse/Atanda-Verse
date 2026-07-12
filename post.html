@@ -6,7 +6,7 @@
 <title id="pageTitle">Atanda Verse Article - Clarity Insights</title>
 <meta name="description" id="metaDesc" content="Read Atanda Verse clarity insights on career growth, Nigerian life, purpose, relationships, and personal transformation.">
 <meta name="keywords" id="metaKeywords" content="Atanda Verse article, clarity insights, Nigerian career growth, personal transformation blog">
-<meta name="robots" content="noindex, follow, max-image-preview:large">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Atanda Verse">
 <meta name="theme-color" content="#1a365d">
 <link rel="canonical" id="canonical" href="https://verse.atanda.site/post">
@@ -1405,18 +1405,21 @@ function normalizePostBodyLinks(root){
 function stripHtml(v){return (v||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();}
 function seoDesc(post){const base=(post.excerpt&&post.excerpt.trim())||stripHtml(post.content)||post.title||'Atanda Verse article';return base.length>160?base.slice(0,157).trimEnd()+'...':base;}
 function seoKeywords(post){const parts=[post.category,post.title,'Atanda Verse',post.readTime].filter(Boolean).join(' ');return [...new Set(parts.toLowerCase().match(/[a-z0-9&]+/gi)||[])].filter(w=>w.length>2).slice(0,12).join(', ');}
+const POST_CANONICAL_SLUGS={ep1:'school-na-scam-ep1',ep2:'school-na-scam-ep2',ep3:'school-na-scam-ep3',ep4:'school-na-scam-ep4'};
+const POST_SLUG_ALIASES=Object.keys(POST_CANONICAL_SLUGS).reduce((map,id)=>{map[POST_CANONICAL_SLUGS[id]]=id;return map;},{});
+function canonicalPostId(id){return POST_SLUG_ALIASES[String(id||'').trim()]||String(id||'').trim();}
 function postIdFromLocation(){
   const params=new URLSearchParams(location.search);
   const direct=params.get('id');
-  if(direct)return direct;
+  if(direct)return canonicalPostId(direct);
   const parts=location.pathname.split('/').filter(Boolean).map(decodeURIComponent);
-  if(parts[0]==='blog'&&parts[1])return parts.slice(1).join('/');
-  if(parts[0]==='post'&&parts[1])return parts.slice(1).join('/');
+  if(parts[0]==='blog'&&parts[1])return canonicalPostId(parts.slice(1).join('/'));
+  if(parts[0]==='post'&&parts[1])return canonicalPostId(parts.slice(1).join('/'));
   return '';
 }
 function brandedPostPath(postOrId){
   const id=String((postOrId&&postOrId.id)||postOrId||'').trim();
-  return id?'/blog/'+encodeURIComponent(id):'/blog';
+  return id?'/blog/'+encodeURIComponent(POST_CANONICAL_SLUGS[id]||id):'/blog';
 }
 function cleanPostUrl(post){return absUrl(brandedPostPath(post||postIdFromLocation()));}
 function updateLdJson(post){const ld=document.getElementById('ldJson');if(!ld)return;ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"Article","headline":post.title||'Atanda Verse Article',"description":seoDesc(post),"image":post.image?[absUrl(post.image)]:[absUrl('images/headers.png')],"datePublished":post.date||new Date().toISOString(),"dateModified":post.date||new Date().toISOString(),"articleSection":post.category||'Clarity',"keywords":seoKeywords(post),"mainEntityOfPage":cleanPostUrl(post),"author":{"@type":"Organization","name":"Atanda Verse"},"publisher":{"@type":"Organization","name":"Atanda Verse","logo":{"@type":"ImageObject","url":absUrl('atanda-logo-primary.png')}}});}

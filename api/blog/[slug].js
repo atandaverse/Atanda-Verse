@@ -14,6 +14,52 @@ const BRANDED_POST_ALIASES = Object.keys(LEGACY_POST_ALIASES).reduce((map, legac
   map[LEGACY_POST_ALIASES[legacy]] = legacy;
   return map;
 }, {});
+const FALLBACK_POSTS = {
+  ep1: {
+    id: 'ep1',
+    title: 'Beyond "School Na Scam" Episode 1',
+    subtitle: 'The New Reality of Education in Nigeria',
+    excerpt: 'The new reality of education in Nigeria. We are decoding the new rules of the game and revealing the strategy that actually works.',
+    category: 'Education & Career',
+    date: '2025-10-01',
+    read_time: '5 min read',
+    image: 'images/headers.png',
+    status: 'published'
+  },
+  ep2: {
+    id: 'ep2',
+    title: 'Beyond "School Na Scam" Episode 2',
+    subtitle: 'The Digital Skills That Actually Pay in Nigeria',
+    excerpt: 'We are diving deep into digital skills that are transforming Nigerian careers.',
+    category: 'Education & Career',
+    date: '2025-10-07',
+    read_time: '8 min read',
+    image: 'images/headers2.png',
+    status: 'published'
+  },
+  ep3: {
+    id: 'ep3',
+    title: 'Beyond "School Na Scam" Episode 3: The Business Skills That Pay in Nigeria',
+    subtitle: 'The Business Skills That Pay in Nigeria',
+    excerpt: 'We are exploring business skills that work regardless of your technical ability.',
+    category: 'Business Skills & Entrepreneurship',
+    date: '2025-10-15',
+    read_time: '7 min read',
+    image: 'images/headers3.png',
+    status: 'published'
+  },
+  ep4: {
+    id: 'ep4',
+    title: 'Beyond "School Na Scam" Episode 4: The Network Effect',
+    subtitle: 'Why Your Classmates May Matter More Than Grades',
+    excerpt: 'The Network component is often the most underestimated but powerful element of career success.',
+    category: 'Networking & Career Strategy',
+    date: '2025-10-22',
+    read_time: '8 min read',
+    image: 'images/headers4.png',
+    status: 'published'
+  }
+};
 
 function attr(value) {
   return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -66,7 +112,9 @@ async function resolvePost(slug) {
   if (legacySlug) {
     post = await fetchPost(legacySlug);
     if (post) return { post, canonicalSlug: slug };
+    if (FALLBACK_POSTS[legacySlug]) return { post: FALLBACK_POSTS[legacySlug], canonicalSlug: slug };
   }
+  if (FALLBACK_POSTS[slug]) return { post: FALLBACK_POSTS[slug], canonicalSlug: LEGACY_POST_ALIASES[slug] || slug };
   return { post: null, canonicalSlug: LEGACY_POST_ALIASES[slug] || slug };
 }
 
