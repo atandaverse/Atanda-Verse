@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/blog/:slug", "destination": "/api/blog?slug=:slug" },
+    { "source": "/blog/:slug", "destination": "/api/post?slug=:slug" },
     { "source": "/blog", "destination": "/blog.html" },
     { "source": "/sessions", "destination": "/sessions.html" },
     { "source": "/events", "destination": "/events.html" },
