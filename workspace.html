@@ -5963,6 +5963,7 @@ function syncPublicEventsCache(rows){
 }
 function normalizeEventAdmin(row){
   const fallback=window.ivNormalizeEventCampaign?window.ivNormalizeEventCampaign(row):Object.assign({},row);
+  if(row&&row._localOnly)fallback._localOnly=true;
   fallback.slug=fallback.slug||String(fallback.title||'event').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
   fallback.funnel_url=fallback.funnel_url||('event-register.html?event='+fallback.slug);
   fallback.cta_url=fallback.cta_url||fallback.funnel_url;
@@ -5986,16 +5987,17 @@ async function getEventsAdmin(){
       const rows=await _sbReq('events_campaigns?select=*&order=sort_order.asc,created_at.desc');
       const databaseRows=(rows||[]).map(normalizeEventAdmin);
       const localChanges=[];
+      const defaultKeys=new Set((window.ivDefaultEventsCampaigns||[]).flatMap(defaultItem=>[String(defaultItem.id||''),String(defaultItem.slug||'')]).filter(Boolean));
       localBefore.forEach(localItem=>{
         const liveItem=databaseRows.find(dbItem=>String(dbItem.id)===String(localItem.id)||String(dbItem.slug)===String(localItem.slug));
-        if(!liveItem||eventComparable(localItem)!==eventComparable(liveItem))localChanges.push(Object.assign({},localItem,{_localOnly:true}));
+        const isDefault=defaultKeys.has(String(localItem.id))||defaultKeys.has(String(localItem.slug));
+        if(!liveItem&&(localItem._localOnly||!isDefault))localChanges.push(Object.assign({},localItem,{_localOnly:true}));
       });
-      const changedKeys=new Set(localChanges.flatMap(item=>[String(item.id),String(item.slug)]));
-      _eventsCache=databaseRows.filter(item=>!changedKeys.has(String(item.id))&&!changedKeys.has(String(item.slug))).concat(localChanges);
+      _eventsCache=databaseRows.concat(localChanges);
       persistLocalEvents(_eventsCache);
       syncPublicEventsCache(_eventsCache);
       setEventsSource(localChanges.length
-        ?`Loaded from Supabase. ${localChanges.length} unsynced local item${localChanges.length===1?' is':'s are'} preserved; open it and Save to publish the pending changes.`
+        ?`Loaded from Supabase. ${localChanges.length} local-only draft${localChanges.length===1?' is':'s are'} preserved; open it and Save to publish the pending draft.`
         :'Loaded from Supabase events_campaigns. Event images are stored as URLs in this table.','database');
       return _eventsCache;
     }catch(e){
@@ -6092,7 +6094,13 @@ async function saveEventCampaign(){
       const confirmed=await _sbReq('events_campaigns?select=*&id=eq.'+encodeURIComponent(item.id));
       if(!Array.isArray(confirmed)||!confirmed[0])throw new Error('Supabase did not return the saved event during verification.');
       await saveEventRoleSettings(item);
-      item=normalizeEventAdmin(confirmed[0]);
+      item=normalizeEventAdmin(Object.assign({},confirmed[0],{
+        is_campaign:item.is_campaign,
+        has_countdown:item.has_countdown,
+        featured_cta:item.featured_cta,
+        featured_event_post:item.featured_event_post,
+        sticky_short_label:item.sticky_short_label
+      }));
       try{
         const liveRows=await _sbReq('events_campaigns?select=*&order=sort_order.asc,created_at.desc');
         _eventsCache=(liveRows||[]).map(normalizeEventAdmin);
@@ -6103,13 +6111,14 @@ async function saveEventCampaign(){
       }
       persistLocalEvents(_eventsCache);
       syncPublicEventsCache(_eventsCache);
+      try{localStorage.removeItem(EVENTS_PUBLIC_CACHE_KEY);}catch{}
       setEventsSource('Saved and verified in Supabase events_campaigns.','database');
     }else{
       let rows=localEvents().filter(x=>String(x.id)!==String(item.id)&&String(x.slug)!==String(item.slug));
       if(item.featured_cta)rows=rows.map(x=>Object.assign({},x,{featured_cta:false}));
       if(item.featured_event_post)rows=rows.map(x=>Object.assign({},x,{featured_event_post:false,featured:false}));
       await saveEventRoleSettings(item);
-      rows.push(item);persistLocalEvents(rows);
+      rows.push(Object.assign({},item,{_localOnly:true}));persistLocalEvents(rows);
       syncPublicEventsCache(rows);
       setEventsSource('Saved only in this browser because Supabase is not configured.','local');
     }
