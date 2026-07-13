@@ -93,25 +93,29 @@ function keywordsFor(post) {
 }
 
 async function fetchPost(slug) {
-  const url = `${SUPABASE_URL}/rest/v1/posts?select=id,title,subtitle,excerpt,category,date,read_time,image,emoji,status,content&id=eq.${encodeURIComponent(slug)}&limit=1`;
-  const response = await fetch(url, {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`
-    }
-  });
-  if (!response.ok) return null;
-  const rows = await response.json();
-  return Array.isArray(rows) && rows[0] ? rows[0] : null;
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/posts?select=id,title,subtitle,excerpt,category,date,read_time,image,emoji,status,content&id=eq.${encodeURIComponent(slug)}&limit=1`;
+    const response = await fetch(url, {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+      }
+    });
+    if (!response.ok) return null;
+    const rows = await response.json();
+    return Array.isArray(rows) && rows[0] ? rows[0] : null;
+  } catch (_err) {
+    return null;
+  }
 }
 
 async function resolvePost(slug) {
   let post = await fetchPost(slug);
-  if (post) return { post, canonicalSlug: LEGACY_POST_ALIASES[slug] || slug };
+  if (post && (!post.status || post.status === 'published')) return { post, canonicalSlug: LEGACY_POST_ALIASES[slug] || slug };
   const legacySlug = BRANDED_POST_ALIASES[slug];
   if (legacySlug) {
     post = await fetchPost(legacySlug);
-    if (post) return { post, canonicalSlug: slug };
+    if (post && (!post.status || post.status === 'published')) return { post, canonicalSlug: slug };
     if (FALLBACK_POSTS[legacySlug]) return { post: FALLBACK_POSTS[legacySlug], canonicalSlug: slug };
   }
   if (FALLBACK_POSTS[slug]) return { post: FALLBACK_POSTS[slug], canonicalSlug: LEGACY_POST_ALIASES[slug] || slug };
