@@ -76,6 +76,11 @@ function absoluteUrl(value) {
   return `${SITE_ORIGIN}/${clean.replace(/^\/+/, '')}`;
 }
 
+function socialImageUrl(value) {
+  const image = absoluteUrl(value);
+  return `${SITE_ORIGIN}/api/og-image?src=${encodeURIComponent(image)}`;
+}
+
 function descriptionFor(post) {
   const base = post.excerpt || post.subtitle || stripHtml(post.content) || post.title || 'Read Atanda Verse clarity insights.';
   return base.length > 160 ? `${base.slice(0, 157).trimEnd()}...` : base;
@@ -128,7 +133,7 @@ function injectMeta(html, post, slug, options) {
   const canonical = `${SITE_ORIGIN}/blog/${encodeURIComponent(canonicalSlug)}`;
   const title = post && post.title ? `${post.title} | Atanda Verse` : 'Atanda Verse Article - Clarity Insights';
   const desc = post ? descriptionFor(post) : 'Read Atanda Verse clarity insights on career growth, Nigerian life, purpose, relationships, and personal transformation.';
-  const image = absoluteUrl(post && post.image);
+  const image = socialImageUrl(post && post.image);
   const category = post && post.category ? post.category : 'Clarity';
   const date = post && post.date ? post.date : new Date().toISOString();
   const keywords = post ? keywordsFor(post) : 'Atanda Verse article, clarity insights, Nigerian career growth, personal transformation blog';
@@ -169,7 +174,7 @@ function injectMeta(html, post, slug, options) {
     .replace(/(<meta name="twitter:description" id="twDesc" content=")[^"]*(")/, `$1${attr(desc)}$2`)
     .replace(/(<meta name="twitter:image" id="twImg" content=")[^"]*(")/, `$1${attr(image)}$2`)
     .replace(/<script type="application\/ld\+json" id="ldJson">[\s\S]*?<\/script>/, `<script type="application/ld+json" id="ldJson">${JSON.stringify(articleLd).replace(/</g, '\\u003c')}</script>`)
-    .replace('</head>', `<meta property="og:image:secure_url" content="${attr(image)}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="628"><meta property="og:image:alt" content="${attr(post && post.title ? post.title : 'Atanda Verse article image')}"><meta name="twitter:url" content="${attr(canonical)}"></head>`);
+    .replace('</head>', `<meta property="og:image:secure_url" content="${attr(image)}"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="628"><meta property="og:image:alt" content="${attr(post && post.title ? post.title : 'Atanda Verse article image')}"><meta name="twitter:url" content="${attr(canonical)}"></head>`);
 }
 
 module.exports = async function handler(req, res) {
