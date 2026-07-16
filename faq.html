@@ -799,8 +799,8 @@ img.loaded{opacity:1;}
 }
 [data-theme="dark"] #faqContent .faq-item,[data-theme="dark"] .faq-filter-btn{background:rgba(15,23,42,.86)!important;border-color:rgba(255,255,255,.1)!important;}
 @media(max-width:768px){
-  #faqContent .faq-item:not(.active) .faq-answer{display:none!important;height:0!important;max-height:0!important;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;visibility:hidden!important;}
-  #faqContent .faq-item:not(.active) .faq-answer *{display:none!important;}
+  #faqContent .faq-item:not(.active) .faq-answer{display:none!important;height:0!important;max-height:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;overflow:hidden!important;visibility:hidden!important;content-visibility:hidden!important;}
+  #faqContent .faq-item:not(.active) .faq-answer *{display:none!important;height:0!important;max-height:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;overflow:hidden!important;visibility:hidden!important;}
   #faqContent .faq-item.active .faq-answer{
     display:block!important;
     height:auto!important;
@@ -816,6 +816,39 @@ img.loaded{opacity:1;}
     visibility:visible!important;
   }
   #faqContent .faq-item.active .faq-answer p{padding:0 1rem 1.05rem!important;margin:0!important;}
+}
+</style>
+<style>
+/* Final FAQ mobile guard: closed cards must not leak answer text or padding. */
+@media(max-width:768px){
+  #faqContent .faq-grid .faq-item:not(.active) > .faq-answer,
+  #faqContent .faq-grid .faq-item:not(.active) > .faq-answer > *,
+  #faqContent .faq-grid .faq-item:not(.active) > .faq-answer .faq-inner,
+  #faqContent .faq-grid .faq-item:not(.active) > .faq-answer .faq-inner > *{
+    display:none!important;
+    height:0!important;
+    max-height:0!important;
+    min-height:0!important;
+    padding:0!important;
+    margin:0!important;
+    border:0!important;
+    overflow:hidden!important;
+    visibility:hidden!important;
+    content-visibility:hidden!important;
+  }
+  #faqContent .faq-grid .faq-item.active > .faq-answer{
+    display:block!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    visibility:visible!important;
+    content-visibility:visible!important;
+  }
+  #faqContent .faq-grid .faq-item.active > .faq-answer p{
+    display:block!important;
+    padding:0 1rem 1.05rem!important;
+    margin:0!important;
+  }
 }
 </style>
 <script>

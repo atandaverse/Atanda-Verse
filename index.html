@@ -964,8 +964,34 @@ img.loaded{opacity:1;}
   .service-card h3,.pricing-title{font-size:1.6rem!important;}
 }
 @media(max-width:768px){
-  .faq-item:not(.active) .faq-answer{display:none!important;max-height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;visibility:hidden!important;}
-  .faq-item.active .faq-answer{display:block!important;max-height:none!important;overflow:visible!important;visibility:visible!important;}
+  .faq-grid .faq-item:not(.active) > .faq-answer,
+  .faq-grid .faq-item:not(.active) > .faq-answer > *,
+  .faq-grid .faq-item:not(.active) > .faq-answer .faq-inner,
+  .faq-grid .faq-item:not(.active) > .faq-answer .faq-inner > *{
+    display:none!important;
+    height:0!important;
+    max-height:0!important;
+    min-height:0!important;
+    padding:0!important;
+    margin:0!important;
+    border:0!important;
+    overflow:hidden!important;
+    visibility:hidden!important;
+    content-visibility:hidden!important;
+  }
+  .faq-grid .faq-item.active > .faq-answer{
+    display:block!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    visibility:visible!important;
+    content-visibility:visible!important;
+  }
+  .faq-grid .faq-item.active > .faq-answer p{
+    display:block!important;
+    padding:0 1.2rem 1.2rem!important;
+    margin:0!important;
+  }
 }
 </style>
 <script>
